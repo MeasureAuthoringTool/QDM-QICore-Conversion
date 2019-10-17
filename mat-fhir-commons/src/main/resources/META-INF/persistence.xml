@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="gov.cms.mat_qdm-qicore-commons_jar_1.0PU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>gov.cms.mat.fhir.commons.model.Measure</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureExport</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureSet</class>
+    <class>gov.cms.mat.fhir.commons.model.EmailAuditLog</class>
+    <class>gov.cms.mat.fhir.commons.model.QualityDataModel</class>
+    <class>gov.cms.mat.fhir.commons.model.CqlLibraryExport</class>
+    <class>gov.cms.mat.fhir.commons.model.TransactionAuditLog</class>
+    <class>gov.cms.mat.fhir.commons.model.UserPassword</class>
+    <class>gov.cms.mat.fhir.commons.model.Operator</class>
+    <class>gov.cms.mat.fhir.commons.model.RecentMsrActivityLog</class>
+    <class>gov.cms.mat.fhir.commons.model.Unit</class>
+    <class>gov.cms.mat.fhir.commons.model.AttributeDetails</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasurementTerm</class>
+    <class>gov.cms.mat.fhir.commons.model.UserSecurityQuestions</class>
+    <class>gov.cms.mat.fhir.commons.model.UserBonnieAccessInfo</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureValidationLog</class>
+    <class>gov.cms.mat.fhir.commons.model.GroupedCodeLists</class>
+    <class>gov.cms.mat.fhir.commons.model.UnitType</class>
+    <class>gov.cms.mat.fhir.commons.model.Category</class>
+    <class>gov.cms.mat.fhir.commons.model.CqlLibraryShare</class>
+    <class>gov.cms.mat.fhir.commons.model.RecentCqlActivityLog</class>
+    <class>gov.cms.mat.fhir.commons.model.Databasechangelog</class>
+    <class>gov.cms.mat.fhir.commons.model.Databasechangeloglock</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureDeveloperAssociation</class>
+    <class>gov.cms.mat.fhir.commons.model.UserPasswordHistory</class>
+    <class>gov.cms.mat.fhir.commons.model.CqlLibraryHistory</class>
+    <class>gov.cms.mat.fhir.commons.model.Attributes</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureXml</class>
+    <class>gov.cms.mat.fhir.commons.model.CqlLibrary</class>
+    <class>gov.cms.mat.fhir.commons.model.Decision</class>
+    <class>gov.cms.mat.fhir.commons.model.UnitTypeMatrix</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureDetailsReference</class>
+    <class>gov.cms.mat.fhir.commons.model.CodeSystem</class>
+    <class>gov.cms.mat.fhir.commons.model.QdmAttributes</class>
+    <class>gov.cms.mat.fhir.commons.model.DataType</class>
+    <class>gov.cms.mat.fhir.commons.model.CqlLibraryAssociation</class>
+    <class>gov.cms.mat.fhir.commons.model.CqlAuditLog</class>
+    <class>gov.cms.mat.fhir.commons.model.Author</class>
+    <class>gov.cms.mat.fhir.commons.model.Clause</class>
+    <class>gov.cms.mat.fhir.commons.model.CqlData</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureTypes</class>
+    <class>gov.cms.mat.fhir.commons.model.Code</class>
+    <class>gov.cms.mat.fhir.commons.model.Context</class>
+    <class>gov.cms.mat.fhir.commons.model.ShareLevel</class>
+    <class>gov.cms.mat.fhir.commons.model.StewardOrg</class>
+    <class>gov.cms.mat.fhir.commons.model.UserAuditLog</class>
+    <class>gov.cms.mat.fhir.commons.model.ComponentMeasures</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureScore</class>
+    <class>gov.cms.mat.fhir.commons.model.CqlLibrarySet</class>
+    <class>gov.cms.mat.fhir.commons.model.OperatorType</class>
+    <class>gov.cms.mat.fhir.commons.model.AttributesModes</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureShare</class>
+    <class>gov.cms.mat.fhir.commons.model.QualityDataModelOidGen</class>
+    <class>gov.cms.mat.fhir.commons.model.Packager</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureTypeAssociation</class>
+    <class>gov.cms.mat.fhir.commons.model.CodeList</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureDetails</class>
+    <class>gov.cms.mat.fhir.commons.model.CodeListAuditLog</class>
+    <class>gov.cms.mat.fhir.commons.model.ListObject</class>
+    <class>gov.cms.mat.fhir.commons.model.Modes</class>
+    <class>gov.cms.mat.fhir.commons.model.MeasureAuditLog</class>
+    <class>gov.cms.mat.fhir.commons.model.UserPreference</class>
+    <class>gov.cms.mat.fhir.commons.model.ObjectStatus</class>
+    <class>gov.cms.mat.fhir.commons.model.QdmTerm</class>
+    <class>gov.cms.mat.fhir.commons.model.SecurityQuestions</class>
+    <class>gov.cms.mat.fhir.commons.model.Metadata</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/MAT_APP_BLANK?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="changeme"/>
+    </properties>
+  </persistence-unit>
+</persistence>
