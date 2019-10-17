@@ -58,7 +58,7 @@ public class MeasureTranslationService {
             Measure qdmMeasure = measureRepo.getMeasureById(id);
             res.setFhirIdentity("Measure/"+qdmMeasure.getAbbrName());
             MeasureExport qdmExport =   exportRepo.getMeasureExportById(id);
-            String humanReadible = qdmExport.getHumanReadable();
+            String humanReadible = new String(qdmExport.getHumanReadable());
             MeasureMapper fhirMapper = new MeasureMapper(qdmMeasure, humanReadible);
             org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
             Bundle bundle = new Bundle();

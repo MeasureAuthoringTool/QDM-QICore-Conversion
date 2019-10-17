@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -25,9 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "MEASURE_EXPORT")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "MeasureExport.findAll", query = "SELECT m FROM MeasureExport m"),
-    @NamedQuery(name = "MeasureExport.findByMeasureExportId", query = "SELECT m FROM MeasureExport m WHERE m.measureExportId = :measureExportId")})
 public class MeasureExport implements Serializable {
 
     @Lob
@@ -42,22 +40,22 @@ public class MeasureExport implements Serializable {
     @Basic(optional = false)
     @Lob
     @Column(name = "SIMPLE_XML")
-    private String simpleXml;
+    private byte[] simpleXml;
     @Lob
     @Column(name = "HUMAN_READABLE")
-    private String humanReadable;
+    private byte[] humanReadable;
     @Lob
     @Column(name = "HQMF")
-    private String hqmf;
+    private byte[] hqmf;
     @Lob
     @Column(name = "CQL")
-    private String cql;
+    private byte[] cql;
     @Lob
     @Column(name = "ELM")
-    private String elm;
+    private byte[] elm;
     @Lob
     @Column(name = "JSON")
-    private String json;
+    private byte[] json;
     @JoinColumn(name = "MEASURE_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Measure measureId;
@@ -69,11 +67,12 @@ public class MeasureExport implements Serializable {
         this.measureExportId = measureExportId;
     }
 
-    public MeasureExport(String measureExportId, String simpleXml) {
+    public MeasureExport(String measureExportId, byte[] simpleXml) {
         this.measureExportId = measureExportId;
         this.simpleXml = simpleXml;
     }
 
+    @XmlElement
     public String getMeasureExportId() {
         return measureExportId;
     }
@@ -82,14 +81,16 @@ public class MeasureExport implements Serializable {
         this.measureExportId = measureExportId;
     }
 
-    public String getSimpleXml() {
+    @XmlElement
+    public byte[] getSimpleXml() {
         return simpleXml;
     }
 
-    public void setSimpleXml(String simpleXml) {
+    public void setSimpleXml(byte[] simpleXml) {
         this.simpleXml = simpleXml;
     }
 
+    @XmlElement
     public byte[] getCodeList() {
         return codeList;
     }
@@ -98,46 +99,52 @@ public class MeasureExport implements Serializable {
         this.codeList = codeList;
     }
 
-    public String getHumanReadable() {
+    @XmlElement
+    public byte[] getHumanReadable() {
         return humanReadable;
     }
 
-    public void setHumanReadable(String humanReadable) {
+    public void setHumanReadable(byte[] humanReadable) {
         this.humanReadable = humanReadable;
     }
 
-    public String getHqmf() {
+    @XmlElement
+    public byte[] getHqmf() {
         return hqmf;
     }
 
-    public void setHqmf(String hqmf) {
+    public void setHqmf(byte[] hqmf) {
         this.hqmf = hqmf;
     }
 
-    public String getCql() {
+    @XmlElement
+    public byte[] getCql() {
         return cql;
     }
 
-    public void setCql(String cql) {
+    public void setCql(byte[] cql) {
         this.cql = cql;
     }
 
-    public String getElm() {
+    @XmlElement
+    public byte[] getElm() {
         return elm;
     }
 
-    public void setElm(String elm) {
+    public void setElm(byte[] elm) {
         this.elm = elm;
     }
 
-    public String getJson() {
+    @XmlElement
+    public byte[] getJson() {
         return json;
     }
 
-    public void setJson(String json) {
+    public void setJson(byte[] json) {
         this.json = json;
     }
 
+    @XmlElement
     public Measure getMeasureId() {
         return measureId;
     }

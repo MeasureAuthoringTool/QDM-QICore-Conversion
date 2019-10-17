@@ -45,7 +45,7 @@ public class MeasureMapper {
             coding.setSystem("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms");
             Coding nqfCoding = new Coding();
             nqfCoding.setSystem("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf");
-            nqfCoding.setSystem(qdmMeasure.getNqfNumber());
+            nqfCoding.setSystem(new String(qdmMeasure.getNqfNumber()));
             
             concept1.getCoding().add(coding);
             concept1.getCoding().add(nqfCoding);
