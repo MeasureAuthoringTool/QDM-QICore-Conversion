@@ -1,13 +1,13 @@
 package mat.model.cql;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 // TODO: Auto-generated Javadoc
 
 /**
  * The Class CQLCodeSystem.
  */
-public class CQLCodeSystem  {
+public class CQLCodeSystem implements IsSerializable {
 
 	/** The id. */
 	private String id;

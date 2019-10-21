@@ -1,8 +1,8 @@
 package mat.model.cql;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class CQLLibraryModel {
+public class CQLLibraryModel implements IsSerializable{
 	private String libraryName;
 	private String versionUsed;
 	private String aliasName;

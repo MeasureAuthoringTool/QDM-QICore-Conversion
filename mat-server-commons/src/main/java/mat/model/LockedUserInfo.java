@@ -3,7 +3,7 @@
  */
 package mat.model;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ import java.util.Objects;
  *         since that involves transferring the security role and password model
  *         over the network from server to client.
  */
-public class LockedUserInfo  {
+public class LockedUserInfo implements IsSerializable {
 
 	@Override
 	public int hashCode() {

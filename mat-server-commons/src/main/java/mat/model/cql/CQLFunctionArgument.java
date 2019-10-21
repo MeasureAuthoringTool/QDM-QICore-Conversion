@@ -1,8 +1,8 @@
 package mat.model.cql;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class CQLFunctionArgument implements Cloneable {
+public class CQLFunctionArgument implements IsSerializable, Cloneable {
 	private String id;
 	private String argumentName;
 	private String argumentType;

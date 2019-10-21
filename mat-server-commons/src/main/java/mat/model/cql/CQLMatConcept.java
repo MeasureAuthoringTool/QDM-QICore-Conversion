@@ -1,11 +1,11 @@
 package mat.model.cql;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * The Class MatConcept.
  */
-public class CQLMatConcept  {
+public class CQLMatConcept implements IsSerializable {
 
 	/** The code. */
 	private String code;

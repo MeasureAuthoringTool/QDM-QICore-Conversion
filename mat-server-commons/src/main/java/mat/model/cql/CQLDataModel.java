@@ -1,9 +1,9 @@
 package mat.model.cql;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class CQLDataModel {
-	// Stan Data type to attribute mapping xml will be reterived from this model.
+public class CQLDataModel implements IsSerializable{
+	// Stan Data type to attribute mapping xml will be retrieved from this model.
 	private String name;
 	private String qdmVersion;
 

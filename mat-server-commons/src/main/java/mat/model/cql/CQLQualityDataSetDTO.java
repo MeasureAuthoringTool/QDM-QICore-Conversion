@@ -1,17 +1,17 @@
 package mat.model.cql;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * The Class QualityDataSetDTO.
  */
-public class CQLQualityDataSetDTO implements CQLExpression {
+public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 	
 	
 	/**
 	 * The Class Comparator.
 	 */
-	public static class Comparator implements java.util.Comparator<CQLQualityDataSetDTO> {
+	public static class Comparator implements java.util.Comparator<CQLQualityDataSetDTO>, IsSerializable {
 		
 		/* (non-Javadoc)
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)

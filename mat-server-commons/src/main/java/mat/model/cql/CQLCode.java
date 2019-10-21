@@ -1,13 +1,13 @@
 package mat.model.cql;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.util.Objects;
 
 /**
  * The Class CQLCode.
  */
-public class CQLCode implements CQLExpression {
+public class CQLCode implements CQLExpression, IsSerializable {
 
 	/** The id. */
 	private String id;

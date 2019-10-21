@@ -1,6 +1,6 @@
 package mat.model.cql;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import mat.model.BaseModel;
 import mat.model.LockedUserInfo;
 import mat.shared.CQLError;
@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CQLLibraryDataSetObject implements BaseModel{
+public class CQLLibraryDataSetObject implements BaseModel, IsSerializable{
 	private String id;
 	private String cqlName;
 	private String version="0.0";

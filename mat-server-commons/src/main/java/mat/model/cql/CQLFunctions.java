@@ -1,10 +1,10 @@
 package mat.model.cql;
 
-//import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.util.List;
 
-public class CQLFunctions implements CQLExpression {
+public class CQLFunctions implements CQLExpression, IsSerializable {
 	
 	private String aliasName;
 	
