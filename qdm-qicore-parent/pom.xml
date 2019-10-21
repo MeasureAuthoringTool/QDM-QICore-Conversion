@@ -8,6 +8,7 @@
     <modules>
         <module>../mat-fhir-commons</module>
         <module>../mat-fhir-services</module>
+        <module>../mat-server-commons</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
