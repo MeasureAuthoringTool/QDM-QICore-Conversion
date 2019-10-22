@@ -3,23 +3,23 @@ package gov.cms.mat.fhir.services.translate;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import org.hl7.fhir.r4.model.Library;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Base64;
 import java.util.Date;
 
 import static gov.cms.mat.fhir.services.translate.LibraryMapper.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class LibraryMapperTest {
+class LibraryMapperTest {
     private final String MEASURE_ID = "ID";
     private MeasureExport measureExport;
     private LibraryMapper libraryMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         measureExport = new MeasureExport();
         measureExport.setMeasureId(new Measure());
         measureExport.getMeasureId().setId(MEASURE_ID);
@@ -27,7 +27,7 @@ public class LibraryMapperTest {
     }
 
     @Test
-    public void testTranslateToFhir_SendEmptyMeasureExport() {
+    void testTranslateToFhir_SendEmptyMeasureExport() {
         Library library = libraryMapper.translateToFhir();
 
         assertEquals(library.getDate().getTime(), new Date().getTime(), 10L);
@@ -48,7 +48,7 @@ public class LibraryMapperTest {
     }
 
     @Test
-    public void testTranslateToFhir_verifyAttachments() {
+    void testTranslateToFhir_verifyAttachments() {
         final String cql = "CQL";
         final String elm = "ELM";
 

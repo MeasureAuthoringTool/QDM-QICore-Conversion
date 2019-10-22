@@ -1,0 +1,26 @@
+server:
+  port: 9080
+
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306?MAT_APP_BLANK&serverTimezone=UTC
+    username: mat
+    password: mat
+  jpa:
+    hibernate.ddl-auto: none
+    generate-ddl: false
+    show-sql: true
+
+vsac-client:
+  server: https://vsac.nlm.nih.gov/vsac/ws/Ticket
+  service: http://umlsks.nlm.nih.gov
+  retrieve-multi-oids-service: https://vsac.nlm.nih.gov/vsac/svs/RetrieveMultipleValueSets?
+  profile-service: https://vsac.nlm.nih.gov/vsac/profiles
+  version-service: https://vsac.nlm.nih.gov/vsac/oid/
+  vsac-server-drc-url: https://vsac.nlm.nih.gov/vsac
+  auth-class: mat.server.twofactorauth.DefaultOTPValidatorForUser
+
+fhir:
+  r4:
+    baseurl: http://localhost:8080/cqf-ruler-r4/

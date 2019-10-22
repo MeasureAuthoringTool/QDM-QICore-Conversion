@@ -1,21 +1,21 @@
 package gov.cms.mat.fhir.services.translate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.r4.model.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 public class LibraryMapper {
     static final String SYSTEM_TYPE = "http://hl7.org/fhir/codesystem-library-type.html";
     static final String SYSTEM_CODE = "logic-library";
     static final String ELM_CONTENT_TYPE = "application/elm+xml";
     static final String CQL_CONTENT_TYPE = "text/cql";
 
-    private static final Logger LOGGER = Logger.getLogger(LibraryMapper.class.getName());
+
     private final gov.cms.mat.fhir.commons.model.MeasureExport qdmMeasureExport;
 
     public LibraryMapper(gov.cms.mat.fhir.commons.model.MeasureExport qdmMeasureExport) {
@@ -37,7 +37,7 @@ public class LibraryMapper {
         fhirLibrary.setText(createNarrative());
         fhirLibrary.setContent(createContent());
 
-        LOGGER.log(Level.FINER, "Converted library: {}", fhirLibrary);
+        log.debug("Converted library: {}", fhirLibrary);
 
         return fhirLibrary;
     }

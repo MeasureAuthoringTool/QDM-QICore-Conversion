@@ -16,42 +16,31 @@
 package gov.cms.mat.fhir.services.config;
 
 
-
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import gov.cms.mat.fhir.services.rest.MeasureTranslationService;
-import java.util.Arrays;
-import org.apache.cxf.Bus;
-import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
  * @author duanedecouteau
  */
 @Configuration()
 public class WebServiceConfig {
-    @Autowired
-    private Bus bus;
-    
-    @Autowired
-    private MeasureTranslationService translationservice;
-        
-
-    
-    @Bean
-    public Server rsServer() {
-        Swagger2Feature swag = new Swagger2Feature();
-        JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
-        endpoint.setBus(bus);
-        endpoint.setAddress("/");
-        endpoint.setProvider(new JacksonJaxbJsonProvider());
-        endpoint.setServiceBeans(Arrays.<Object>asList(translationservice));
-        endpoint.setFeatures(Arrays.asList(swag));
-        return endpoint.create();
-    }
-    
+//    @Autowired
+//    private Bus bus;
+//
+//    @Autowired
+//    private MeasureTranslationService translationservice;
+//
+//
+//
+//    @Bean
+//    public Server rsServer() {
+//        Swagger2Feature swag = new Swagger2Feature();
+//        JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
+//        endpoint.setBus(bus);
+//        endpoint.setAddress("/");
+//        endpoint.setProvider(new JacksonJaxbJsonProvider());
+//        endpoint.setServiceBeans(Arrays.<Object>asList(translationservice));
+//        endpoint.setFeatures(Arrays.asList(swag));
+//        return endpoint.create();
+//    }
+//
 }

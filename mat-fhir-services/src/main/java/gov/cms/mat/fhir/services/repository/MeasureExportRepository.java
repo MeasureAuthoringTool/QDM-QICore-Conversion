@@ -10,16 +10,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 /**
  * /**
  *
  * @author duanedecouteau
  */
 public interface MeasureExportRepository extends JpaRepository<MeasureExport, String> {
-    List<MeasureExport> findAll();
-
     @Query("select a from MeasureExport a where a.measureId = :measureId")
     MeasureExport getMeasureExportById(@Param("measureId") String measureId);
 }
