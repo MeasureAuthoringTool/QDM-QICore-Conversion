@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "vsac-client")
 @Data
 public class VsacConfig {
-   // private static String PROXY_HOST = null;
-   // private static int PROXY_PORT = 0;
+    String proxyHost = null;
+    int proxyPort = 0;
 
     private String server;
     private String service;

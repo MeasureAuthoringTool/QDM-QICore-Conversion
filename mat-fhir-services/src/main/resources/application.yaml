@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306?MAT_APP_BLANK&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306?mat&serverTimezone=UTC
     username: mat
     password: mat
   jpa:
