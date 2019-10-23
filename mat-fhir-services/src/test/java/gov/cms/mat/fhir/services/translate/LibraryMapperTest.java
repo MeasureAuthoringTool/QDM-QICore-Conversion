@@ -39,7 +39,7 @@ class LibraryMapperTest {
     }
 
     @Test
-    public void testTranslateToFhir_verifyNarrative() {
+    void testTranslateToFhir_verifyNarrative() {
         final String readable = "Readable";
         measureExport.setHumanReadable(readable.getBytes());
         Library library = libraryMapper.translateToFhir();

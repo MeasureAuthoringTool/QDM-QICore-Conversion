@@ -19,5 +19,4 @@ public class VsacConfig {
     private String profileService;
     private String versionService;
     private String vsacServerDrcUrl;
-    private String authCLass;
 }

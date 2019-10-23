@@ -24,3 +24,6 @@ hs_err_pid*
 /qdm-qicore-commons/target/
 /mat-fhir-commons/target/
 /mat-fhir-services/target/
+/mat-server-commons/target/
+
+.idea

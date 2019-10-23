@@ -1,20 +1,19 @@
 package gov.cms.mat.fhir.services.translate;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Attachment;
+import org.hl7.fhir.r4.model.Library;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
-public class LibraryMapper {
+public class LibraryMapper implements FhirCreator {
     static final String SYSTEM_TYPE = "http://hl7.org/fhir/codesystem-library-type.html";
     static final String SYSTEM_CODE = "logic-library";
     static final String ELM_CONTENT_TYPE = "application/elm+xml";
     static final String CQL_CONTENT_TYPE = "text/cql";
-
 
     private final gov.cms.mat.fhir.commons.model.MeasureExport qdmMeasureExport;
 
@@ -32,25 +31,14 @@ public class LibraryMapper {
         fhirLibrary.setId("Library/" + qdmMeasureExport.getMeasureId().getId());
         fhirLibrary.setDate(new Date());
 
-        fhirLibrary.setType(createType());
+        fhirLibrary.setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
 
-        fhirLibrary.setText(createNarrative());
+        fhirLibrary.setText(createNarrative(convertBytes(qdmMeasureExport.getHumanReadable())));
         fhirLibrary.setContent(createContent());
 
         log.debug("Converted library: {}", fhirLibrary);
 
         return fhirLibrary;
-    }
-
-    private CodeableConcept createType() {
-        return new CodeableConcept()
-                .setCoding(Collections.singletonList(new Coding(SYSTEM_TYPE, SYSTEM_CODE, null)));
-    }
-
-    private Narrative createNarrative() {
-        Narrative narrative = new Narrative();
-        narrative.setDivAsString(convertBytes(qdmMeasureExport.getHumanReadable()));
-        return narrative;
     }
 
     private List<Attachment> createContent() {
@@ -62,26 +50,5 @@ public class LibraryMapper {
         return attachments;
     }
 
-    /* rawData are bytes that are NOT base64 encoded */
-    private Attachment createAttachment(String contentType, byte[] rawData) {
-        return new Attachment()
-                .setContentType(contentType)
-                .setData(rawData == null ? null : encodeBase64(rawData));
-    }
 
-    private byte[] encodeBase64(byte[] src) {
-        return Base64.getEncoder().encode(src);
-    }
-
-    private String convertBytes(byte[] data) {
-        if (data == null) {
-            return null;
-        } else {
-            try {
-                return IOUtils.toString(data, null);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
-    }
 }
