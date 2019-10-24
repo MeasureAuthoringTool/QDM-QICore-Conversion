@@ -12,6 +12,11 @@ spring:
     generate-ddl: false
     show-sql: false
 
+logging:
+  level:
+    root: INFO
+    gov.cms.mat: DEBUG
+
 vsac-client:
   server: https://vsac.nlm.nih.gov/vsac/ws/Ticket
   service: http://umlsks.nlm.nih.gov
