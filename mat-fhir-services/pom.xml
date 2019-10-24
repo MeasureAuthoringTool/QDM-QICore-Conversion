@@ -90,6 +90,12 @@
         </dependency>
 
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mat-server-commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>mat</groupId>
             <artifactId>vsac</artifactId>
             <version>1.0</version>

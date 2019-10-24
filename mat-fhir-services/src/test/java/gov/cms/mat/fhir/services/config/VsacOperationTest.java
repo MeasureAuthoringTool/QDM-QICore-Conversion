@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.config;
 
 
 import gov.cms.mat.fhir.services.service.VsacService;
+import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -33,14 +34,35 @@ class VsacOperationTest {
     }
 
     @Test
-    void testLogin() {
-        if (StringUtils.isBlank(environment.getProperty("VSAC_USER")) || StringUtils.isBlank(environment.getProperty("VSAC_PASS"))) {
-            // wont fail build if not found when running in jenkins
-            System.out.println("CANNOT run vsac test! Environment vars VSAC_USER and/or VSAC_PASS not set.");
-        } else {
-            String data = vsacService.validateUser();
-            assertNotNull(data);
+    void testValidateUser() {
+        if (haveVsacCredentialsInEnviroment()) {
+            assertTrue(vsacService.validateUser());
+            assertTrue(vsacService.validateTicket());
         }
     }
 
+    private boolean haveVsacCredentialsInEnviroment() {
+        boolean haveProperties =
+                StringUtils.isNotBlank(environment.getProperty("VSAC_USER")) ||
+                        StringUtils.isNotBlank(environment.getProperty("VSAC_PASS"));
+
+        if (!haveProperties) {
+            // wont fail build if not found when running in jenkins
+            System.out.println("CANNOT run vsac test! Environment vars VSAC_USER and/or VSAC_PASS not set.");
+        }
+
+        return haveProperties;
+    }
+
+    @Test
+    void testValidateData() {
+        CQLQualityDataSetDTO cqlQualityDataSetDTO = new CQLQualityDataSetDTO();
+        cqlQualityDataSetDTO.setOid("2.16.840.1.113762.1.4.1195.291");
+        cqlQualityDataSetDTO.setVersion("20190129");
+
+        if (haveVsacCredentialsInEnviroment()) {
+            assertTrue(vsacService.getData(cqlQualityDataSetDTO));
+        }
+
+    }
 }
