@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.config;
 
-
 import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @ActiveProfiles("test")
 class VsacOperationTest {
+    // when the vsac connect timeout's the groovy client will retry, making testing impossible.
+    private final static boolean RUN_VSAC_INTEGRATION_TESTS = false;
+
     @Autowired
     private VsacConfig vsacConfig;
     @Autowired
@@ -35,34 +37,38 @@ class VsacOperationTest {
 
     @Test
     void testValidateUser() {
-        if (haveVsacCredentialsInEnviroment()) {
+        if (haveVsacCredentialsInEnvironmentAndFlag()) {
             assertTrue(vsacService.validateUser());
             assertTrue(vsacService.validateTicket());
         }
     }
 
-    private boolean haveVsacCredentialsInEnviroment() {
-        boolean haveProperties =
-                StringUtils.isNotBlank(environment.getProperty("VSAC_USER")) ||
-                        StringUtils.isNotBlank(environment.getProperty("VSAC_PASS"));
-
-        if (!haveProperties) {
-            // wont fail build if not found when running in jenkins
-            System.out.println("CANNOT run vsac test! Environment vars VSAC_USER and/or VSAC_PASS not set.");
-        }
-
-        return haveProperties;
-    }
-
     @Test
     void testValidateData() {
-        CQLQualityDataSetDTO cqlQualityDataSetDTO = new CQLQualityDataSetDTO();
-        cqlQualityDataSetDTO.setOid("2.16.840.1.113762.1.4.1195.291");
-        cqlQualityDataSetDTO.setVersion("20190129");
+        if (haveVsacCredentialsInEnvironmentAndFlag()) {
+            CQLQualityDataSetDTO cqlQualityDataSetDTO = new CQLQualityDataSetDTO();
+            cqlQualityDataSetDTO.setOid("2.16.840.1.113762.1.4.1195.291");
+            cqlQualityDataSetDTO.setVersion("20190129");
 
-        if (haveVsacCredentialsInEnviroment()) {
             assertTrue(vsacService.getData(cqlQualityDataSetDTO));
         }
+    }
 
+    private boolean haveVsacCredentialsInEnvironmentAndFlag() {
+        if (RUN_VSAC_INTEGRATION_TESTS) {
+            boolean haveProperties =
+                    StringUtils.isNotBlank(environment.getProperty("VSAC_USER")) ||
+                            StringUtils.isNotBlank(environment.getProperty("VSAC_PASS"));
+
+            if (!haveProperties) {
+                // wont fail build if not found when running in jenkins
+                System.out.println("CANNOT run vsac test! Environment vars VSAC_USER and/or VSAC_PASS not set.");
+            }
+
+            return haveProperties;
+        } else {
+            System.out.println("RUN_VSAC_INTEGRATION_TESTS flag is off");
+            return false;
+        }
     }
 }

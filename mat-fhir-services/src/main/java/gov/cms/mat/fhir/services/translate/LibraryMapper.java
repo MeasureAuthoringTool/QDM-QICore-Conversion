@@ -1,9 +1,14 @@
 package gov.cms.mat.fhir.services.translate;
 
 import lombok.extern.slf4j.Slf4j;
+import mat.client.measure.ManageMeasureDetailModel;
+import mat.server.MeasureLibraryService;
+import org.apache.commons.lang3.ArrayUtils;
 import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Library;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +32,19 @@ public class LibraryMapper implements FhirCreator {
 		String simpleXML = measureExport.getSimpleXML();
 		CQLModel cqlModel = CQLUtilityClass.getCQLModelFromXML(simpleXML);
          */
+
+        if (ArrayUtils.isNotEmpty(qdmMeasureExport.getSimpleXml())) {
+
+            try {
+                String simpleXML = new String(qdmMeasureExport.getSimpleXml());
+                ManageMeasureDetailModel m = MeasureLibraryService.createModelFromXML(simpleXML);
+                log.debug(" ManageMeasureDetailModel: {}", m);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e); // todo - what do we do
+            }
+        }
+
+
         Library fhirLibrary = new Library();
         fhirLibrary.setId("Library/" + qdmMeasureExport.getMeasureId().getId());
         fhirLibrary.setDate(new Date());

@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<measure>
+    <measureDetails>
+        <uuid>40280381-3cd1-4954-013c-d500fdfc01c3</uuid>
+        <title>ZZ-TEST1 PCA CLONE</title>
+        <shortTitle>ZZ-TEST1CLONE</shortTitle>
+        <guid>997ece4e-eca8-4642-b05c-fc873e5ac6da</guid>
+        <version>0.10</version>
+        <status>In Progress</status>
+        <nqfid extension="58" root="2.16.840.1.113883.3.560.1"/>
+        <period uuid="9780997b-2cb3-4e94-87e1-04af79954175">
+            <startDate uuid="cb066612-c086-489b-bf1d-234d437eab8d">00000101</startDate>
+            <stopDate uuid="70a4fbb3-f4f6-4c9a-a120-afcefad0a74d">00001231</stopDate>
+        </period>
+        <steward id="2.16.840.1.113883.3.560.3.31">Centers for Medicare &amp; Medicaid Services</steward>
+        <developers>
+            <developer id="5a552c38-6b60-4ca1-822f-3c48894b0e21">Abt Associates</developer>
+        </developers>
+        <endorsement id="2.16.840.1.113883.3.560">National Quality Forum</endorsement>
+        <description>Patients receiving intravenous opioids via patient controlled analgesia who receive appropriate
+            monitoring of their respiratory status (respiratory rate and pulse oximetry) and level of sedation.
+        </description>
+        <copyright>none</copyright>
+        <disclaimer>none</disclaimer>
+        <scoring id="PROPOR">Proportion</scoring>
+        <types>
+            <type id="PROCESS">Process</type>
+        </types>
+        <stratification>none</stratification>
+        <riskAdjustment>none</riskAdjustment>
+        <aggregation>none</aggregation>
+        <rationale>Patients who receive opiates via patient controlled analgesia are at risk of serious adverse
+            respiratory events including respiratory depression, respiratory arrest and death. Estimates of the
+            frequency of such events among the over 13 million patients who are placed on a PCA each year in the US vary
+            depending on the definition of respiratory depression used, however one review quotes a rate of between 0.19
+            to 5.2% (Hagle, 2004). Naloxone use, usually indicating severe respiratory depression, is required in
+            0.2-0.7% of patients receiving postoperative opioid treatment (Looi-Lyons LC, 1996; Shapiro, 2005).
+            Furthermore, the risk for respiratory depression persists even if a ”basal” infusion is not used. Studies
+            have shown that the period of highest risk for these events is during the first day after the initiation of
+            the PCA (Shapiro, 2005; Taylor, 2005). Regular monitoring of the respiratory status of these patients is
+            recommended by clinical practice guidelines (Jarzyna, 2011) and expert opinion (Tsui, 1997). However, there
+            is evidence that this recommendation is often not adhered to (Butler-Williams, 2005; Hogan, 2006) and that
+            severe adverse events are associated with monitoring lapses. In a report from the Joint Commission,
+            opioid-related events resulting in death or permanent loss of function accounted for 0.25% of all events
+            reviewed between 2004 through the third quarter of 2010 and 58% were the result of improper monitoring
+            (Jarzyna, 2011).
+        </rationale>
+        <recommendations>Patients receiving intravenous opioids via patient controlled analgesia are at risk of serious
+            adverse events related to respiratory depression. Regular monitoring of the respiratory status and level of
+            sedation in these patients is recommended in order to reduce the risk of these events.
+        </recommendations>
+        <improvementNotations>An increase in the rate.</improvementNotations>
+        <references>
+            <reference>Butler-Williams C, Cantrill N, Maton S. Increasing staff awareness of respiratory rate
+                significance. Nursing Times 2005;101:35-7, 2005.
+            </reference>
+            <reference>Hagle ME, Lehr VT, Brubakken K, et al. Respiratory depression in adult patients with intravenous
+                patient-controlled analgesia. Orthop Nurs. 2004;23:18-27.
+            </reference>
+            <reference>Jarzyna D, Jungquist CR, Pasero C, et al. American Society for Pain Management Nursing guidelines
+                on monitoring for opioid-induced sedation and respiratory depression. Pain Manag Nurs. 2011;12:118-145.
+            </reference>
+            <reference>Looi-Lyons LC, Chung FF, Chan VW, et al. Respiratory depression: an adverse outcome during
+                patient controlled analgesia therapy. J Clin Anesth 1996;8:151-6.
+            </reference>
+            <reference>Shapiro A, Zohar E, Zaslansky R, et al. The frequency and timing of respiratory depression in
+                1524 postoperative patients treated with systemic or neuraxial morphine. Journal of Clinical Anesthesia.
+                2005;17:537-42.
+            </reference>
+            <reference>Taylor S, Kirton OC, Staff I, et al. Postoperative day one: a high risk period for respiratory
+                events. Am J Surgery 2005;190:752-756.
+            </reference>
+            <reference>Tsui SL, Irwin MG, Wong CM et al. An audit of the safety of an acute pain service. Anaesthesia.
+                1997;52:042-7.
+            </reference>
+        </references>
+        <definitions>none</definitions>
+        <guidance>Many experts feel that continuous monitoring of respiratory status provides greater safety than
+            intermittent monitoring. While this measure assesses intermittent documentation of respiratory status and
+            level of sedation, the implementation of this measure is not meant to imply that intermittent assessment of
+            respiratory status is preferred over continuous monitoring. For those hospitals already using continuous
+            monitoring, the required elements of respiratory status can be obtained from continuous monitoring.
+
+            There are rare patients in whom a valid pulse oximetry value cannot be obtained (for example a patient with
+            severe peripheral vasoconstriction). In such patients, the nurse may note a patient reason for not
+            documenting the pulse oximetry (in this case, the most appropriate SNOMED-CT codes as listed in the medical
+            reason value set, to represent inability to obtain a valid pulse oximetry reading are the various codes
+            representing contraindication or lack of indication). Similarly, a rare patient may refuse pulse oximetry,
+            and this should also be documented in SNOMED-CT codes as listed in the patient reason value set. Such
+            patients will be eligible to be included in the numerator if the documentation of respiratory rate and
+            sedation score meet the measure criteria. Inability to measure pulse oximetry for other reasons, (for
+            example the patient being off of the floor) should not be documented as a patient reason.
+
+            The sedation assessment scales in EHR that are not represented in the Sedation Scale Or Assessment value
+            set, such as Pasero Opioid-Induced Sedation Scale (POSS) , Riker Sedation-Agitation Scale (SAS), the
+            Richmond Agitation Sedation Scale (RASS), or any other sedation assessment tools, should use the code of
+            Ramsay sedation scale instead.
+        </guidance>
+        <transmissionFormat>Transmission Format None</transmissionFormat>
+        <initialPatientPopDescription>All patients who receive an intravenous opioid via patient controlled analgesia in
+            a hospital setting.
+        </initialPatientPopDescription>
+        <denominatorDescription>All patients who receive an intravenous opioid via patient controlled analgesia in a
+            hospital setting for more than 2.5 continuous hours.
+        </denominatorDescription>
+        <denominatorExclusionsDescription>Comfort measures only order prior to PCA use.
+            Allow natural death order prior to PCA use.
+        </denominatorExclusionsDescription>
+        <numeratorDescription>Hospitalizations during which the maximum time interval between documentation of each of
+            the following parameters does not exceed 2.5 hours, starting at the beginning of the first episode of IV
+            opioid administration via PCA, until either 24 hours later or discontinuation of the PCA, whichever occurs
+            first:
+
+            1. Respiratory rate
+            2. Sedation score
+            3. Pulse oximetry
+        </numeratorDescription>
+        <numeratorExclusionsDescription>Not applicable</numeratorExclusionsDescription>
+        <denominatorExceptionsDescription>None</denominatorExceptionsDescription>
+        <measurePopulationDescription>Not applicable</measurePopulationDescription>
+        <measureObservationsDescription>Not applicable</measureObservationsDescription>
+        <supplementalData>For every patient evaluated by this measure also identify payer, race, ethnicity and gender.
+        </supplementalData>
+        <qualityMeasureSet uuid="03b12e6c-fe05-4337-a1fa-469017508f0a">not applicable</qualityMeasureSet>
+    </measureDetails>
+    <supplementalDataElements>
+        <elementRef id="40280381-3cd1-4954-013c-d500fe0501c4" name="ONC Administrative Sex"/>
+        <elementRef id="40280381-3cd1-4954-013c-d500fe0501c5" name="Race"/>
+        <elementRef id="40280381-3cd1-4954-013c-d500fe0501c6" name="Ethnicity"/>
+        <elementRef id="40280381-3cd1-4954-013c-d500fe0501c7" name="Payer"/>
+    </supplementalDataElements>
+    <measureGrouping>
+        <group sequence="1">
+            <clause displayName="Initial Patient Population 1" type="initialPatientPopulation"
+                    uuid="C4121626-D68E-4EF1-AF42-0A71DDF9E130">
+                <logicalOp displayName="AND" type="and">
+                    <relationalOp displayName="During" type="DURING">
+                        <elementRef displayName="Occurrence A of Inpatient Encounter : Encounter, Performed"
+                                    id="40280381-3cd1-4954-013d-22e85b182820" type="qdm">
+                            <attribute mode="Check if Present" name="discharge datetime"/>
+                            <attribute mode="Value Set" name="negation rationale"
+                                       qdmUUID="40280381-3d61-56a7-013d-d17afaa928e2"/>
+                        </elementRef>
+                        <elementRef displayName="Measurement Period : Timing Element"
+                                    id="40280381-3cd1-4954-013c-d520d8390207" type="qdm"/>
+                    </relationalOp>
+                    <relationalOp displayName="During" type="DURING">
+                        <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                    id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm">
+                            <attribute mode="Value Set" name="patient preference"
+                                       qdmUUID="40280381-3cd1-4954-013d-22f78bcf2837"/>
+                        </elementRef>
+                        <elementRef displayName="Occurrence A of Inpatient Encounter : Encounter, Performed"
+                                    id="40280381-3cd1-4954-013d-22e85b182820" type="qdm"/>
+                    </relationalOp>
+                </logicalOp>
+            </clause>
+            <clause displayName="Denominator 1" type="denominator" uuid="A8B9A05B-2B04-43C5-AD1D-A9B74CC004DF">
+                <logicalOp displayName="AND" type="and">
+                    <functionalOp displayName="TIMEDIFF &gt; 2.5 hours" operatorType="Greater Than" quantity="2.5"
+                                  type="TIMEDIFF" unit="hours" uuid="19773a5e-bf90-45ee-beba-5e07448582c9">
+                        <logicalOp displayName="AND" type="and">
+                            <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                        id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm">
+                                <attribute mode="Check if Present" name="stop datetime"/>
+                            </elementRef>
+                            <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                        id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm">
+                                <attribute mode="Check if Present" name="start datetime"/>
+                            </elementRef>
+                        </logicalOp>
+                    </functionalOp>
+                    <logicalOp displayName="OR" type="or">
+                        <relationalOp displayName="During" type="DURING">
+                            <elementRef
+                                    displayName="Continuous Pulse Oximetry or Capnography Monitoring : Procedure, Performed"
+                                    id="40280381-3d61-56a7-013d-d1328168286a" type="qdm"/>
+                            <elementRef displayName="Occurrence A of Inpatient Encounter : Encounter, Performed"
+                                        id="40280381-3cd1-4954-013d-22e8c4002822" type="qdm"/>
+                        </relationalOp>
+                        <functionalOp displayName="NOT" type="NOT" uuid="ff3bea0e-41d9-49b4-8213-cdba1ede7d52">
+                            <relationalOp displayName="During" type="DURING">
+                                <elementRef
+                                        displayName="Continuous Pulse Oximetry or Capnography Monitoring : Procedure, Performed"
+                                        id="40280381-3d61-56a7-013d-d1328168286a" type="qdm"/>
+                                <elementRef displayName="Acute Inpatient Encounter : Encounter, Performed"
+                                            id="40280381-3cd1-4954-013c-d512cb7301ef" type="qdm"/>
+                            </relationalOp>
+                        </functionalOp>
+                    </logicalOp>
+                </logicalOp>
+            </clause>
+            <clause displayName="Denominator Exclusions 1" type="denominatorExclusions"
+                    uuid="01AC4FA3-6F12-4502-AB72-5CE3CAE28F4A">
+                <logicalOp displayName="AND" type="and">
+                    <relationalOp displayName="Starts After Start Of" type="SAS">
+                        <elementRef displayName="Comfort Measures Only : Procedure, Order"
+                                    id="40280381-3cd1-4954-013c-d516be0701f3" type="qdm"/>
+                        <elementRef displayName="Occurrence A of Acute Inpatient Encounter : Encounter, Performed"
+                                    id="40280381-3cd1-4954-013c-d51df5b00203" type="qdm"/>
+                    </relationalOp>
+                    <relationalOp displayName="Starts Before Or During" type="SBOD">
+                        <elementRef displayName="Comfort Measures Only : Procedure, Order"
+                                    id="40280381-3cd1-4954-013c-d516be0701f3" type="qdm"/>
+                        <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                    id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm"/>
+                    </relationalOp>
+                </logicalOp>
+            </clause>
+            <clause displayName="Numerator 1" type="numerator" uuid="7AB46715-1EA3-4200-87BE-CA21A9BE7BCF">
+                <logicalOp displayName="AND" type="and">
+                    <logicalOp displayName="OR" type="or">
+                        <logicalOp displayName="AND" type="and">
+                            <functionalOp displayName="TIMEDIFF &lt;= 24 hours" operatorType="Less Than or Equal To"
+                                          quantity="24" type="TIMEDIFF" unit="hours"
+                                          uuid="1fdd8b4a-24ab-4efc-8235-be9aa320b32a">
+                                <logicalOp displayName="AND" type="and">
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm">
+                                        <attribute mode="Check if Present" name="start datetime"/>
+                                    </elementRef>
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm">
+                                        <attribute mode="Check if Present" name="stop datetime"/>
+                                    </elementRef>
+                                </logicalOp>
+                            </functionalOp>
+                            <functionalOp displayName="FIRST" type="FIRST" uuid="b4f0c62e-3d02-4c91-b45e-2e64e8e7cad7">
+                                <relationalOp displayName="&lt;= 150 minutes Starts After Start Of"
+                                              operatorType="Less Than or Equal To" quantity="150" type="SAS"
+                                              unit="minutes">
+                                    <elementRef displayName="Taking Respiratory Rate : Procedure, Performed"
+                                                id="40280381-3cd1-4954-013c-d5174bcd01f5" type="qdm"/>
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm"/>
+                                </relationalOp>
+                            </functionalOp>
+                            <functionalOp displayName="RELATIVEFIRST" type="RELATIVEFIRST"
+                                          uuid="87805b90-18d5-41b5-b511-ef197155892e">
+                                <relationalOp displayName="During" type="DURING">
+                                    <elementRef
+                                            displayName="Occurrence A of Taking Respiratory Rate : Procedure, Performed"
+                                            id="40280381-3cd1-4954-013c-d519d3e101fb" type="qdm"/>
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm"/>
+                                </relationalOp>
+                            </functionalOp>
+                            <functionalOp displayName="MOST RECENT" type="MOST RECENT"
+                                          uuid="11d47cb7-8a59-4382-99d1-e41eca6e8fc3">
+                                <relationalOp displayName="&lt;= 150 minutes Starts Before Or During"
+                                              operatorType="Less Than or Equal To" quantity="150" type="SBOD"
+                                              unit="minutes">
+                                    <elementRef
+                                            displayName="Occurrence A of Taking Respiratory Rate : Procedure, Performed"
+                                            id="40280381-3cd1-4954-013c-d519d3e101fb" type="qdm"/>
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm"/>
+                                </relationalOp>
+                            </functionalOp>
+                            <functionalOp displayName="RELATIVESECOND" type="RELATIVESECOND"
+                                          uuid="89830cfc-e79f-4eb0-a8c0-38b37fea08d4">
+                                <relationalOp displayName="During" type="DURING">
+                                    <elementRef
+                                            displayName="Occurrence B of Taking Respiratory Rate : Procedure, Performed"
+                                            id="40280381-3d61-56a7-013d-d187016e2906" type="qdm"/>
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm"/>
+                                </relationalOp>
+                            </functionalOp>
+                            <relationalOp displayName="&lt;= 150 minutes Ends Before Start Of"
+                                          operatorType="Less Than or Equal To" quantity="150" type="EBS" unit="minutes">
+                                <elementRef displayName="Occurrence A of Taking Respiratory Rate : Procedure, Performed"
+                                            id="40280381-3cd1-4954-013c-d519d3e101fb" type="qdm"/>
+                                <elementRef displayName="Occurrence B of Taking Respiratory Rate : Procedure, Performed"
+                                            id="40280381-3d61-56a7-013d-d187016e2906" type="qdm"/>
+                            </relationalOp>
+                        </logicalOp>
+                        <logicalOp displayName="AND" type="and">
+                            <functionalOp displayName="TIMEDIFF &gt; 24 hours" operatorType="Greater Than" quantity="24"
+                                          type="TIMEDIFF" unit="hours" uuid="ccba36cb-6513-41ab-9822-4b8ff9bc5d3b">
+                                <logicalOp displayName="AND" type="and">
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm">
+                                        <attribute mode="Check if Present" name="start datetime"/>
+                                    </elementRef>
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm">
+                                        <attribute mode="Check if Present" name="stop datetime"/>
+                                    </elementRef>
+                                </logicalOp>
+                            </functionalOp>
+                            <functionalOp displayName="FIRST" type="FIRST" uuid="75e6671e-6027-4055-bf5d-a142b8362d96">
+                                <relationalOp displayName="&lt;= 150 minutes Starts After Start Of"
+                                              operatorType="Less Than or Equal To" quantity="150" type="SAS"
+                                              unit="minutes">
+                                    <elementRef displayName="Taking Respiratory Rate : Procedure, Performed"
+                                                id="40280381-3cd1-4954-013c-d5174bcd01f5" type="qdm"/>
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm"/>
+                                </relationalOp>
+                            </functionalOp>
+                            <functionalOp displayName="RELATIVEFIRST" type="RELATIVEFIRST"
+                                          uuid="59fcc940-6a0a-4f26-bc2e-fbbebefae640">
+                                <relationalOp displayName="&lt;= 24 hours Starts After Start Of"
+                                              operatorType="Less Than or Equal To" quantity="24" type="SAS"
+                                              unit="hours">
+                                    <elementRef
+                                            displayName="Occurrence A of Taking Respiratory Rate : Procedure, Performed"
+                                            id="40280381-3cd1-4954-013c-d519d3e101fb" type="qdm"/>
+                                    <elementRef displayName="Occurrence A of Opioid : Medication, Administered"
+                                                id="40280381-3cd1-4954-013c-d51ae91801fd" type="qdm"/>
+                                </relationalOp>
+                            </functionalOp>
+                        </logicalOp>
+                    </logicalOp>
+                </logicalOp>
+            </clause>
+        </group>
+    </measureGrouping>
+    <elementLookUp>
+        <qdm codeSystemName="National Library of Medicine" datatype="Patient Characteristic Sex"
+             id="40280381-3cd1-4954-013c-d500fe0501c4" name="ONC Administrative Sex" oid="2.16.840.1.113762.1.4.1"
+             suppDataElement="true" taxonomy="Administrative Sex" uuid="40280381-3cd1-4954-013c-d500fe0501c4"
+             version="1"/>
+        <qdm codeSystemName="CDC NCHS" datatype="Patient Characteristic Race" id="40280381-3cd1-4954-013c-d500fe0501c5"
+             name="Race" oid="2.16.840.1.114222.4.11.836" suppDataElement="true" taxonomy="CDC"
+             uuid="40280381-3cd1-4954-013c-d500fe0501c5" version="1"/>
+        <qdm codeSystemName="CDC NCHS" datatype="Patient Characteristic Ethnicity"
+             id="40280381-3cd1-4954-013c-d500fe0501c6" name="Ethnicity" oid="2.16.840.1.114222.4.11.837"
+             suppDataElement="true" taxonomy="CDC" uuid="40280381-3cd1-4954-013c-d500fe0501c6" version="1"/>
+        <qdm codeSystemName="PHDSC" datatype="Patient Characteristic Payer" id="40280381-3cd1-4954-013c-d500fe0501c7"
+             name="Payer" oid="2.16.840.1.114222.4.11.3591" suppDataElement="true" taxonomy="Source of Payment Typology"
+             uuid="40280381-3cd1-4954-013c-d500fe0501c7" version="1"/>
+        <qdm codeSystemName="HS" datatype="Encounter, Performed" id="40280381-3cd1-4954-013c-d512cb7301ef"
+             name="Acute Inpatient Encounter" oid="2.16.840.1.113883.3.1528.000.398" suppDataElement="false"
+             taxonomy="CPT" uuid="40280381-3cd1-4954-013c-d512cb7301ef" version="1"/>
+        <qdm codeSystemName="Centers for Medicare &amp; Medicaid Services" datatype="Procedure, Order"
+             id="40280381-3cd1-4954-013c-d516be0701f3" name="Comfort Measures Only"
+             oid="2.16.840.1.113883.3.117.1.7.1.121" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3cd1-4954-013c-d516be0701f3" version="1"/>
+        <qdm codeSystemName="Centers for Medicare &amp; Medicaid Services" datatype="Procedure, Performed"
+             id="40280381-3cd1-4954-013c-d5174bcd01f5" name="Taking Respiratory Rate"
+             oid="2.16.840.1.113883.3.117.1.7.1.120" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3cd1-4954-013c-d5174bcd01f5" version="1"/>
+        <qdm codeSystemName="Centers for Medicare &amp; Medicaid Services" datatype="Procedure, Performed"
+             id="40280381-3cd1-4954-013c-d519d3e101fb" instance="Occurrence A" name="Taking Respiratory Rate"
+             oid="2.16.840.1.113883.3.117.1.7.1.120" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3cd1-4954-013c-d519d3e101fb" version="1"/>
+        <qdm codeSystemName="Centers for Medicare &amp; Medicaid Services" datatype="Medication, Administered"
+             id="40280381-3cd1-4954-013c-d51ae91801fd" instance="Occurrence A" name="Opioid"
+             oid="2.16.840.1.113883.3.117.1.7.1.113" suppDataElement="false" taxonomy="RxNorm"
+             uuid="40280381-3cd1-4954-013c-d51ae91801fd" version="1"/>
+        <qdm codeSystemName="HS" datatype="Encounter, Performed" id="40280381-3cd1-4954-013c-d51df5b00203"
+             instance="Occurrence A" name="Acute Inpatient Encounter" oid="2.16.840.1.113883.3.1528.000.398"
+             suppDataElement="false" taxonomy="CPT" uuid="40280381-3cd1-4954-013c-d51df5b00203" version="1"/>
+        <qdm codeSystemName="National Quality Forum" datatype="Timing Element" id="40280381-3cd1-4954-013c-d520d8390207"
+             name="Measurement Period" oid="2.16.840.1.113883.3.67.1.101.1.53" suppDataElement="false" taxonomy="NQF"
+             uuid="40280381-3cd1-4954-013c-d520d8390207" version="1"/>
+        <qdm codeSystemName="National Committee for Quality Assurance" datatype="Encounter, Performed"
+             id="40280381-3cd1-4954-013d-22e85b182820" instance="Occurrence A" name="Inpatient Encounter"
+             oid="2.16.840.1.113883.3.464.1003.101.12.1060" suppDataElement="false" taxonomy="Grouping"
+             uuid="40280381-3cd1-4954-013d-22e85b182820" version="1"/>
+        <qdm codeSystemName="Joint Commission" datatype="Encounter, Performed" id="40280381-3cd1-4954-013d-22e8c4002822"
+             instance="Occurrence A" name="Inpatient Encounter" oid="2.16.840.1.113883.3.117.1.7.1.71"
+             suppDataElement="false" taxonomy="Grouping" uuid="40280381-3cd1-4954-013d-22e8c4002822" version="1"/>
+        <qdm codeSystemName="Centers for Medicare &amp; Medicaid Services" datatype="attribute"
+             id="40280381-3cd1-4954-013d-22f78bcf2837" name="Patient Controlled Analgesia"
+             oid="2.16.840.1.113883.3.117.1.7.1.116" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3cd1-4954-013d-22f78bcf2837" version="1"/>
+        <qdm codeSystemName="Centers for Medicare &amp; Medicaid Services" datatype="Procedure, Performed"
+             id="40280381-3d61-56a7-013d-d1328168286a" name="Continuous Pulse Oximetry or Capnography Monitoring"
+             oid="2.16.840.1.113883.3.117.1.7.1.135" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3d61-56a7-013d-d1328168286a" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="attribute"
+             id="40280381-3d61-56a7-013d-d17afaa928e2" name="Medical Reason" oid="2.16.840.1.113883.3.666.5.1994"
+             suppDataElement="false" taxonomy="SNOMED-CT" uuid="40280381-3d61-56a7-013d-d17afaa928e2" version="1"/>
+        <qdm codeSystemName="Centers for Medicare &amp; Medicaid Services" datatype="Procedure, Performed"
+             id="40280381-3d61-56a7-013d-d187016e2906" instance="Occurrence B" name="Taking Respiratory Rate"
+             oid="2.16.840.1.113883.3.117.1.7.1.120" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3d61-56a7-013d-d187016e2906" version="1"/>
+    </elementLookUp>
+    <strata displayName="Stratification">
+        <clause displayName="Stratum 1" type="stratum" uuid="40280381-3cd1-4954-013c-d500fe6701d1">
+            <logicalOp displayName="AND" type="and"/>
+        </clause>
+    </strata>
+</measure>
