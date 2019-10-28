@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.translate;
 
 import lombok.extern.slf4j.Slf4j;
-import mat.client.measure.ManageMeasureDetailModel;
+import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.server.MeasureLibraryService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.hl7.fhir.r4.model.Attachment;
@@ -27,24 +27,6 @@ public class LibraryMapper implements FhirCreator {
     }
 
     public Library translateToFhir() {
-        /* todo MCG  from XML
-        MeasureExport measureExport = getMeasureExport(measureId);
-		String simpleXML = measureExport.getSimpleXML();
-		CQLModel cqlModel = CQLUtilityClass.getCQLModelFromXML(simpleXML);
-         */
-
-        if (ArrayUtils.isNotEmpty(qdmMeasureExport.getSimpleXml())) {
-
-            try {
-                String simpleXML = new String(qdmMeasureExport.getSimpleXml());
-                ManageMeasureDetailModel m = MeasureLibraryService.createModelFromXML(simpleXML);
-                log.debug(" ManageMeasureDetailModel: {}", m);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e); // todo - what do we do
-            }
-        }
-
-
         Library fhirLibrary = new Library();
         fhirLibrary.setId("Library/" + qdmMeasureExport.getMeasureId().getId());
         fhirLibrary.setDate(new Date());
@@ -66,6 +48,18 @@ public class LibraryMapper implements FhirCreator {
         attachments.add(createAttachment(CQL_CONTENT_TYPE, qdmMeasureExport.getCql()));
 
         return attachments;
+    }
+
+    private ManageCompositeMeasureDetailModel getFromXml(byte[] xmlBytes) {
+        if (ArrayUtils.isNotEmpty(xmlBytes)) {
+            try {
+                return MeasureLibraryService.createModelFromXML(new String(xmlBytes));
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        } else {
+            throw new IllegalArgumentException("Xml bytes are null");
+        }
     }
 
 

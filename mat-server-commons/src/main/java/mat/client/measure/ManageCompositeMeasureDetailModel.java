@@ -12,8 +12,10 @@ import java.util.Map;
 public class ManageCompositeMeasureDetailModel extends ManageMeasureDetailModel implements IsSerializable, BaseModel {
 
 	private String compositeScoringMethod;
-	private String compositeScoringAbbreviation; 
+	private String compositeScoringAbbreviation;
+	@SetByMeasure
 	private List<ManageMeasureSearchModel.Result> appliedComponentMeasures = new ArrayList<ManageMeasureSearchModel.Result>();
+	@SetByMeasure
 	private Map<String, String> aliasMapping = new HashMap<>();
 	private Map<String, MeasurePackageOverview> packageMap = new HashMap<>();
 	private String compositeScoringAbbreviation1;

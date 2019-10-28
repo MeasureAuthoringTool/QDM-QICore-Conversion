@@ -9,7 +9,9 @@ import java.util.List;
 
 
 public class ManageMeasureDetailModel implements IsSerializable, BaseModel {
+	@SetByMeasure
 	private String id;
+
 	private String measureName;
 	private String cqlLibraryName;
 	private String shortName;
@@ -39,6 +41,7 @@ public class ManageMeasureDetailModel implements IsSerializable, BaseModel {
 	private List<MeasureSteward> stewardSelectedList;
 	private List<MeasureType> measureTypeSelectedList;
 	private List<QualityDataSetDTO> qdsSelectedList;
+	@SetByMeasure
 	private List<ManageMeasureSearchModel.Result> componentMeasuresSelectedList;
 	private List<Author> toCompareAuthor;
 	private List<MeasureType> toCompareMeasure;

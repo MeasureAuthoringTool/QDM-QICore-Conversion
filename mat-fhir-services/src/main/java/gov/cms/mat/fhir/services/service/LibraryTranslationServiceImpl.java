@@ -6,13 +6,10 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
-import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
-import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.translate.LibraryMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Library;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,27 +19,13 @@ public class LibraryTranslationServiceImpl implements LibraryTranslationService 
     @Value("${fhir.r4.baseurl}")
     private String baseURL;
 
-    @Autowired
-    private MeasureRepository measureRepo;
 
-    @Autowired
-    private MeasureExportRepository exportRepo;
 
     @Override
-    public TranslationOutcome translateMeasureById(String id) {
+    public TranslationOutcome translate(Measure qdmMeasure, MeasureExport measureExport) {
         TranslationOutcome res = new TranslationOutcome();
 
         try {
-            Measure qdmMeasure = measureRepo.getMeasureById(id);
-            MeasureExport measureExport = exportRepo.findByMeasureId(qdmMeasure);
-
-            if (measureExport == null) {
-                res.setSuccessful(Boolean.FALSE);
-                res.setMessage("/qdmtofhir/translateLibrary Failed " + id + " NOT FOUND");
-                log.debug("Failed to Find MeasureExport with  id: {}", id);
-                return res;
-            }
-
             Library library = new LibraryMapper(measureExport).translateToFhir();
 
 //            Bundle bundle = new Bundle();
@@ -67,8 +50,8 @@ public class LibraryTranslationServiceImpl implements LibraryTranslationService 
 
         } catch (Exception ex) {
             res.setSuccessful(Boolean.FALSE);
-            res.setMessage("/qdmtofhir/translateLibrary Failed " + id + " " + ex.getMessage());
-            log.debug("Failed to Translate Measure id: {} ", id, ex);
+            res.setMessage("/qdmtofhir/translateLibrary Failed " + qdmMeasure.getId() + " " + ex.getMessage());
+            log.debug("Failed to Translate Measure id: {} ", qdmMeasure.getId(), ex);
         }
         return res;
     }
