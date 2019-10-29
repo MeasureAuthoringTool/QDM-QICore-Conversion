@@ -10,29 +10,29 @@ import org.exolab.castor.xml.ValidationException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 @Component
 @Slf4j
 public class VsacConverter {
+    private final XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
 
-   public VSACValueSetWrapper toWrapper(String xml) {
-
-        VSACValueSetWrapper details = null;
-
-        if (StringUtils.isNotBlank(xml)) {
-            log.info("xml To reterive RetrieveMultipleValueSetsResponse tag is not null ");
+    public VSACValueSetWrapper toWrapper(String xml) {
+        if (StringUtils.isBlank(xml)) {
+            log.warn("Xml is blank");
+            throw new UncheckedIOException(new IOException("Xml is blank"));
+        } else {
+            return convertXml(xml);
         }
+    }
+
+    private VSACValueSetWrapper convertXml(String xml) {
         try {
-            XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
-            details = (VSACValueSetWrapper) xmlMarshalUtil.convertXMLToObject("MultiValueSetMapping.xml",
+            return (VSACValueSetWrapper) xmlMarshalUtil.convertXMLToObject("MultiValueSetMapping.xml",
                     xml,
                     VSACValueSetWrapper.class);
-
         } catch (MarshalException | ValidationException | MappingException | IOException e) {
-            log.debug("Exception in convertXmltoValueSet:" + e);
-            e.printStackTrace();
+            throw new UncheckedIOException(new IOException(e));
         }
-
-        return details;
     }
 }

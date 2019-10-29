@@ -22,7 +22,6 @@ class ManageMeasureDetailMapperTest {
 
     @Test
     void testConvertWithEmptyMeasure() {
-
         Measure measure = new Measure();
         ManageMeasureDetailMapper manageMeasureDetailMapper = new ManageMeasureDetailMapper(xmlBytes, measure);
 

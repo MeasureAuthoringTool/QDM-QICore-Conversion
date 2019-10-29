@@ -22,8 +22,9 @@ public class VsacServiceImpl implements VsacService {
     @Value("28795") // 8 hours - 5 secs
     private String grantedTicketTimeOutSeconds;
     @Value("485") // 8 hours - 5 secs
-
     private String serviceTicketTimeOutSeconds;
+
+
     private VsacGrantingTicket vsacGrantingTicket;
     private VsacServiceTicket vsacServiceTicket;
 
