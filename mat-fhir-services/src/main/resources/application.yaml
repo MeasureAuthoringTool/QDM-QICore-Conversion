@@ -5,8 +5,8 @@ spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC
-    username: mat
-    password: mat
+    username: root
+    password: changeme
   jpa:
     hibernate.ddl-auto: none
     generate-ddl: false
@@ -27,4 +27,4 @@ vsac-client:
 
 fhir:
   r4:
-    baseurl: http://localhost:8080/cqf-ruler-r4/
+    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/

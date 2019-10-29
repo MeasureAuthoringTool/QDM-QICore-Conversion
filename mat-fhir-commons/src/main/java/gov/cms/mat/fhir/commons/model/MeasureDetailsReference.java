@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,10 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "MEASURE_DETAILS_REFERENCE")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "MeasureDetailsReference.findAll", query = "SELECT m FROM MeasureDetailsReference m"),
-    @NamedQuery(name = "MeasureDetailsReference.findById", query = "SELECT m FROM MeasureDetailsReference m WHERE m.id = :id"),
-    @NamedQuery(name = "MeasureDetailsReference.findByReferenceNumber", query = "SELECT m FROM MeasureDetailsReference m WHERE m.referenceNumber = :referenceNumber")})
 public class MeasureDetailsReference implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,9 +41,8 @@ public class MeasureDetailsReference implements Serializable {
     private String reference;
     @Column(name = "REFERENCE_NUMBER")
     private Integer referenceNumber;
-    @JoinColumn(name = "MEASURE_DETAILS_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private MeasureDetails measureDetailsId;
+    @Column(name = "MEASURE_DETAILS_ID")
+    private Integer measureDetailsId;
 
     public MeasureDetailsReference() {
     }
@@ -55,6 +51,7 @@ public class MeasureDetailsReference implements Serializable {
         this.id = id;
     }
 
+    @XmlElement
     public Integer getId() {
         return id;
     }
@@ -63,6 +60,7 @@ public class MeasureDetailsReference implements Serializable {
         this.id = id;
     }
 
+    @XmlElement
     public String getReference() {
         return reference;
     }
@@ -71,6 +69,7 @@ public class MeasureDetailsReference implements Serializable {
         this.reference = reference;
     }
 
+    @XmlElement
     public Integer getReferenceNumber() {
         return referenceNumber;
     }
@@ -79,11 +78,12 @@ public class MeasureDetailsReference implements Serializable {
         this.referenceNumber = referenceNumber;
     }
 
-    public MeasureDetails getMeasureDetailsId() {
+    @XmlElement
+    public Integer getMeasureDetailsId() {
         return measureDetailsId;
     }
 
-    public void setMeasureDetailsId(MeasureDetails measureDetailsId) {
+    public void setMeasureDetailsId(Integer measureDetailsId) {
         this.measureDetailsId = measureDetailsId;
     }
 

@@ -21,6 +21,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -31,9 +32,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "MEASURE_DETAILS")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "MeasureDetails.findAll", query = "SELECT m FROM MeasureDetails m"),
-    @NamedQuery(name = "MeasureDetails.findById", query = "SELECT m FROM MeasureDetails m WHERE m.id = :id")})
 public class MeasureDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -111,9 +109,10 @@ public class MeasureDetails implements Serializable {
     @Lob
     @Column(name = "MEASURE_SET")
     private String measureSet;
-    @JoinColumn(name = "MEASURE_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private Measure measureId;
+
+    @Column(name = "MEASURE_ID")
+    private String measureId;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "measureDetailsId")
     private Collection<MeasureDetailsReference> measureDetailsReferenceCollection;
 
@@ -124,6 +123,7 @@ public class MeasureDetails implements Serializable {
         this.id = id;
     }
 
+    @XmlElement
     public Integer getId() {
         return id;
     }
@@ -132,6 +132,7 @@ public class MeasureDetails implements Serializable {
         this.id = id;
     }
 
+    @XmlElement
     public String getDescription() {
         return description;
     }
@@ -140,6 +141,7 @@ public class MeasureDetails implements Serializable {
         this.description = description;
     }
 
+    @XmlElement
     public String getCopyright() {
         return copyright;
     }
@@ -148,6 +150,7 @@ public class MeasureDetails implements Serializable {
         this.copyright = copyright;
     }
 
+    @XmlElement
     public String getDisclaimer() {
         return disclaimer;
     }
@@ -156,6 +159,7 @@ public class MeasureDetails implements Serializable {
         this.disclaimer = disclaimer;
     }
 
+    @XmlElement
     public String getStratification() {
         return stratification;
     }
@@ -164,6 +168,7 @@ public class MeasureDetails implements Serializable {
         this.stratification = stratification;
     }
 
+    @XmlElement
     public String getRiskAdjustment() {
         return riskAdjustment;
     }
@@ -172,6 +177,7 @@ public class MeasureDetails implements Serializable {
         this.riskAdjustment = riskAdjustment;
     }
 
+    @XmlElement
     public String getRateAggregation() {
         return rateAggregation;
     }
@@ -180,6 +186,7 @@ public class MeasureDetails implements Serializable {
         this.rateAggregation = rateAggregation;
     }
 
+    @XmlElement
     public String getRationale() {
         return rationale;
     }
@@ -188,6 +195,7 @@ public class MeasureDetails implements Serializable {
         this.rationale = rationale;
     }
 
+    @XmlElement
     public String getClinicalRecommendation() {
         return clinicalRecommendation;
     }
@@ -196,6 +204,7 @@ public class MeasureDetails implements Serializable {
         this.clinicalRecommendation = clinicalRecommendation;
     }
 
+    @XmlElement
     public String getImprovementNotation() {
         return improvementNotation;
     }
@@ -204,6 +213,7 @@ public class MeasureDetails implements Serializable {
         this.improvementNotation = improvementNotation;
     }
 
+    @XmlElement
     public String getDefinition() {
         return definition;
     }
@@ -212,6 +222,7 @@ public class MeasureDetails implements Serializable {
         this.definition = definition;
     }
 
+    @XmlElement
     public String getGuidance() {
         return guidance;
     }
@@ -220,6 +231,7 @@ public class MeasureDetails implements Serializable {
         this.guidance = guidance;
     }
 
+    @XmlElement
     public String getTransmissionFormat() {
         return transmissionFormat;
     }
@@ -228,6 +240,7 @@ public class MeasureDetails implements Serializable {
         this.transmissionFormat = transmissionFormat;
     }
 
+    @XmlElement
     public String getInitialPopulation() {
         return initialPopulation;
     }
@@ -236,6 +249,7 @@ public class MeasureDetails implements Serializable {
         this.initialPopulation = initialPopulation;
     }
 
+    @XmlElement
     public String getDenominator() {
         return denominator;
     }
@@ -244,6 +258,7 @@ public class MeasureDetails implements Serializable {
         this.denominator = denominator;
     }
 
+    @XmlElement
     public String getDenominatorExclusions() {
         return denominatorExclusions;
     }
@@ -252,6 +267,7 @@ public class MeasureDetails implements Serializable {
         this.denominatorExclusions = denominatorExclusions;
     }
 
+    @XmlElement
     public String getNumerator() {
         return numerator;
     }
@@ -260,6 +276,7 @@ public class MeasureDetails implements Serializable {
         this.numerator = numerator;
     }
 
+    @XmlElement
     public String getNumeratorExclusions() {
         return numeratorExclusions;
     }
@@ -268,6 +285,7 @@ public class MeasureDetails implements Serializable {
         this.numeratorExclusions = numeratorExclusions;
     }
 
+    @XmlElement
     public String getMeasureObservations() {
         return measureObservations;
     }
@@ -276,6 +294,7 @@ public class MeasureDetails implements Serializable {
         this.measureObservations = measureObservations;
     }
 
+    @XmlElement
     public String getMeasurePopulation() {
         return measurePopulation;
     }
@@ -284,6 +303,7 @@ public class MeasureDetails implements Serializable {
         this.measurePopulation = measurePopulation;
     }
 
+    @XmlElement
     public String getMeasurePopulationExclusions() {
         return measurePopulationExclusions;
     }
@@ -292,6 +312,7 @@ public class MeasureDetails implements Serializable {
         this.measurePopulationExclusions = measurePopulationExclusions;
     }
 
+    @XmlElement
     public String getDenominatorExceptions() {
         return denominatorExceptions;
     }
@@ -300,6 +321,7 @@ public class MeasureDetails implements Serializable {
         this.denominatorExceptions = denominatorExceptions;
     }
 
+    @XmlElement
     public String getSupplementalDataElements() {
         return supplementalDataElements;
     }
@@ -308,6 +330,7 @@ public class MeasureDetails implements Serializable {
         this.supplementalDataElements = supplementalDataElements;
     }
 
+    @XmlElement
     public String getMeasureSet() {
         return measureSet;
     }
@@ -316,11 +339,12 @@ public class MeasureDetails implements Serializable {
         this.measureSet = measureSet;
     }
 
-    public Measure getMeasureId() {
+    @XmlElement
+    public String getMeasureId() {
         return measureId;
     }
 
-    public void setMeasureId(Measure measureId) {
+    public void setMeasureId(String measureId) {
         this.measureId = measureId;
     }
 
