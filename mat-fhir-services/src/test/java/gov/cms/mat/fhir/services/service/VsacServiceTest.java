@@ -17,6 +17,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class VsacServiceTest {
+    private static final String TOKEN = "token";
     private static final String PASS = "pass";
     private static final String USER_NAME = "user_name";
     private long TOKEN_SECS = 2;
@@ -34,6 +35,39 @@ class VsacServiceTest {
     }
 
     @Test
+    void testValidateTicket_GrantingTicketFails() {
+        when(vsacClient.getGrantingTicket(USER_NAME, PASS)).thenReturn(null);
+
+        assertFalse(vsacService.validateTicket());
+
+        verify(vsacClient).getGrantingTicket(USER_NAME, PASS); // calls granting and fails
+        verify(vsacClient, never()).getServiceTicket(anyString()); // since granting fails no need to call service
+    }
+
+    @Test
+    void testValidateTicket_ServiceTicketFails() {
+        when(vsacClient.getGrantingTicket(USER_NAME, PASS)).thenReturn(TOKEN);
+        when(vsacClient.getServiceTicket(TOKEN)).thenReturn(null);
+
+        assertFalse(vsacService.validateTicket());
+
+        verify(vsacClient).getGrantingTicket(USER_NAME, PASS); // calls granting and succeeds
+        verify(vsacClient).getServiceTicket(TOKEN); // calls service and fails
+    }
+
+    @Test
+    void testValidateTicket_ServiceTicketSucceeds() {
+        when(vsacClient.getGrantingTicket(USER_NAME, PASS)).thenReturn(TOKEN);
+        when(vsacClient.getServiceTicket(TOKEN)).thenReturn("service");
+
+        assertTrue(vsacService.validateTicket());
+
+        verify(vsacClient).getGrantingTicket(USER_NAME, PASS); // calls granting and succeeds
+        verify(vsacClient).getServiceTicket(TOKEN); // calls service and fails
+    }
+
+
+    @Test
     void testValidateUser_GrantingTicketFails() {
         when(vsacClient.getGrantingTicket(USER_NAME, PASS)).thenReturn(null);
         assertFalse(vsacService.validateUser());
@@ -45,7 +79,7 @@ class VsacServiceTest {
 
     @Test
     void testValidateUser_GrantingTicketSuccess() throws InterruptedException {
-        when(vsacClient.getGrantingTicket(USER_NAME, PASS)).thenReturn("token");
+        when(vsacClient.getGrantingTicket(USER_NAME, PASS)).thenReturn(TOKEN);
         assertTrue(vsacService.validateUser());
         verify(vsacClient).getGrantingTicket(USER_NAME, PASS);
 

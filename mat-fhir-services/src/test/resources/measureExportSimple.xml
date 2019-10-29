@@ -1,0 +1,1547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<measure>
+    <measureDetails>
+        <uuid>40280381-3cc0-3e56-013c-cad5674602ad</uuid>
+        <title>Severe Sepsis/Septic Shock: Management Bundle</title>
+        <shortTitle>Severe Sepsis/Septic Shock</shortTitle>
+        <finalizedDate>02/12/2013 08:44 AM</finalizedDate>
+        <guid>6849754e-12dc-49f6-8273-76a482e6d8d6</guid>
+        <version>0.20</version>
+        <status>In Progress</status>
+        <nqfid extension="0500" root="2.16.840.1.113883.3.560.1"/>
+        <period uuid="fa2b523c-2f46-4f6d-9b85-95a659749cd8">
+            <startDate uuid="b851b375-60bc-4961-a153-fb6409fd1864">00000101</startDate>
+            <stopDate uuid="a501467e-ed32-4953-8b33-8acec4a993d5">00001231</stopDate>
+        </period>
+        <steward id="65e25b95-14f0-475e-a735-9fe2b8b26901">Henry Ford Hospital</steward>
+        <developers>
+            <developer id="2.16.840.1.113883">Oklahoma Foundation for Medical Quality</developer>
+        </developers>
+        <endorsement id="2.16.840.1.113883.3.560">National Quality Forum</endorsement>
+        <description>This measure will focus on patients aged 18 years and older who present with symptoms of severe
+            sepsis or septic shock. These patients will be eligible for the 3 hour (severe sepsis) and/or 6 hour (septic
+            shock) early management bundle.
+        </description>
+        <copyright>Performance measures and related data specifications developed by the Henry Ford Hospital in
+            collaboration with representatives from emergency medicine, critical care medicine (SCCM), and infectious
+            diseases (IDSA).
+        </copyright>
+        <disclaimer>These performance measures are not clinical guidelines and do not establish a standard of medical
+            care, and have not been tested for all potential applications. Neither the Henry Ford Hospital nor its
+            affiliates or agents shall be responsible for any use of the measures.
+        </disclaimer>
+        <scoring id="PROPOR">Proportion</scoring>
+        <types>
+            <type id="COMPOSITE">Composite</type>
+        </types>
+        <stratification>Henry Ford Hospital (HFH) encourages the results of this measure to be stratified by race,
+            ethnicity, gender, and primary language, illness severity and have included these variables as recommended
+            data elements to be collected.
+        </stratification>
+        <riskAdjustment>No risk adjustment or risk stratification</riskAdjustment>
+        <aggregation>None</aggregation>
+        <rationale>The purpose of Henry Ford Hospital´s severe sepsis and septic shock early management bundle is to
+            support the efficient, effective, and timely delivery of high quality sepsis care in support of the IOM´s
+            aims for improvement. This is consistent with the HHS National Quality Strategy´s priorities directed at one
+            of the leading causes of mortality. By providing timely patient-centered care, and making sepsis care more
+            affordable through early intervention, reduced resource use and complication rates can result. The Severe
+            Sepsis and Septic Shock Early Management Bundle provide a standard operating procedure for the early risk
+            stratification and management of a patient with severe infection. Through applying this standard operating
+            procedure a clinically and statistically significant decrease in organ failure, mortality, and the
+            utilization of health care resources has been demonstrated for over ten years. The current measure project
+            aimed to review and update the existing NQF #0500 Severe Sepsis and Septic Shock Management Bundle to ensure
+            it reflects the latest guideline recommendations, address areas most in need of performance improvement, and
+            incorporate results of worldwide data collection and quality improvement initiatives. Henry Ford Hospital
+            consulted with leadership and representatives from critical care medicine (Society of Critical Care
+            Medicine), infectious diseases (Infectious Diseases Society of America), and emergency physicians to review
+            and update the Severe Sepsis and Septic Shock Early Management Bundle.
+        </rationale>
+        <recommendations>The benefits of the improvement in quality of care delivered to patients with severe sepsis and
+            septic shock is improved mortality, decreased organ failure and decreases in the utilization of health care
+            resources such as hospital length of stay, total costs of hospitalization, mechanical ventilation,
+            hemodialysis and time spent in long term care facilities.
+        </recommendations>
+        <improvementNotations>Better quality = Higher score</improvementNotations>
+        <references>
+            <reference>Rivers E, Nguyen B, Havstad S, et al. Early goal-directed therapy in the treatment of severe
+                sepsis and septic shock. N Engl J
+                Med 2001;345:1368-77.
+            </reference>
+        </references>
+        <definitions>None</definitions>
+        <guidance>None</guidance>
+        <transmissionFormat>None</transmissionFormat>
+        <initialPatientPopDescription>Patients aged 18 years and older presenting with symptoms of severe sepsis or
+            septic shock.
+        </initialPatientPopDescription>
+        <denominatorDescription>Number of patients presenting with severe sepsis or septic shock.
+        </denominatorDescription>
+        <denominatorExclusionsDescription>A) Patients with advanced directives for comfort care are excluded.
+            B) Clinical conditions that preclude total measure completion should be excluded (e.g. mortality within the
+            first 6 hours of presentation).
+            C) Patients for whom a central line is clinically contraindicated (e.g. coagulopathy that cannot be
+            corrected, inadequate internal jugular or subclavian central venous access due to repeated cannulations).
+            D) Patients for whom a central line was attempted but could not be successfully inserted.
+            E) Patient or surrogate decision maker declined or is unwilling to consent to such therapies or central line
+            placement.
+        </denominatorExclusionsDescription>
+        <numeratorDescription>If:
+            A. measure lactate level
+            B. obtain blood cultures prior to antibiotics
+            C. administer broad spectrum antibiotics
+            D. administer 30 ml/kg crystalloid for hypotension or lactate &gt;=4 mmol/L
+            E. apply vasopressors (for hypotension that does not respond to initial fluid resuscitation to maintain a
+            mean arterial pressure &gt;= 65)
+            F. In the event of persistent arterial hypotension despite volume resuscitation (septic shock) or initial
+            lactate &gt;=4 mmol/L (36 mg/dl) measure central venous pressure and central venous oxygen saturation
+            G. remeasure lactate if initial lactate is elevated
+
+            represent processes of care:
+            Numerator statement: Patients from the denominator who received all the following: A, B, and C within 3
+            hours of time of presentation† AND IF septic shock is present (as either defined as hypotension* or lactate
+            &gt;=4 mmol/L) who also received D and E and F and G within 6 hours of time of presentation.
+
+            † ”time of presentation” is defined as the time of triage in the Emergency Department or, if presenting from
+            another care venue, from the earliest chart annotation consistent with all elements severe sepsis or septic
+            shock ascertained through chart review.
+
+            * “hypotension” is defined as systolic blood pressure (SBP) &lt;90 mm Hg or mean arterial pressure (MAP)
+            &lt;70 mm Hg or a SBP decrease &gt;40 mm Hg or &lt;2 SD below normal for age or known baseline.
+        </numeratorDescription>
+        <numeratorExclusionsDescription>Not applicable</numeratorExclusionsDescription>
+        <denominatorExceptionsDescription>None</denominatorExceptionsDescription>
+        <measurePopulationDescription>Not applicable</measurePopulationDescription>
+        <measureObservationsDescription>Not applicable</measureObservationsDescription>
+        <supplementalData>Report "ONC Administrative Sex" using "ONC Administrative Sex Value Set
+            (2.16.840.1.113762.1.4.1)"; Report "Patient Characteristic: Race" using "Race CDC Value Set
+            (2.16.840.1.114222.4.11.836)"; Report "Patient Characteristic: Ethnicity" using "Ethnicity CDC Value Set
+            (2.16.840.1.114222.4.11.837)"; Report "Patient Characteristic: Payer" using "Payer Source of Payment
+            Typology Value Set (2.16.840.1.114222.4.11.3591)".
+        </supplementalData>
+        <qualityMeasureSet uuid="50169d4b-363d-4994-a4ce-c99e246292cc">Sepsis Bundle</qualityMeasureSet>
+    </measureDetails>
+    <supplementalDataElements>
+        <elementRef id="40280381-3cc0-3e56-013c-cad5675602ae" name="ONC Administrative Sex"/>
+        <elementRef id="40280381-3cc0-3e56-013c-cad5675602af" name="Race"/>
+        <elementRef id="40280381-3cc0-3e56-013c-cad5675602b0" name="Ethnicity"/>
+        <elementRef id="40280381-3cc0-3e56-013c-cad5675702b1" name="Payer"/>
+    </supplementalDataElements>
+    <measureGrouping>
+        <group sequence="1">
+            <clause displayName="Initial Patient Population 1" type="initialPatientPopulation"
+                    uuid="1961C057-A1D6-4FF7-BA79-4AC9C0BFBD67">
+                <logicalOp displayName="AND" type="and">
+                    <logicalOp displayName="OR" type="or"/>
+                </logicalOp>
+            </clause>
+            <clause displayName="Denominator 1" type="denominator" uuid="EBAFB0F4-1CDC-4DB5-8A0D-3C4B54FA4F0C">
+                <logicalOp displayName="AND" type="and">
+                    <logicalOp displayName="OR" type="or">
+                        <relationalOp displayName="&lt;= 3 hours Starts After Start Of"
+                                      operatorType="Less Than or Equal To" quantity="3" type="SAS" unit="hours">
+                            <logicalOp displayName="OR" type="or">
+                                <elementRef displayName="Lactate : Laboratory Test, Order"
+                                            id="40280381-3cc0-3e56-013c-cad5675802c7" type="qdm">
+                                    <attribute mode="Check if Present" name="start datetime"/>
+                                </elementRef>
+                                <elementRef displayName="Blood Culture : Laboratory Test, Order"
+                                            id="40280381-3cc0-3e56-013c-cad5675802c8" type="qdm">
+                                    <attribute mode="Check if Present" name="start datetime"/>
+                                </elementRef>
+                                <elementRef displayName="Severe Sepsis : Diagnosis, Active"
+                                            id="40280381-3cc0-3e56-013c-cad5675802c5" type="qdm">
+                                    <attribute mode="Check if Present" name="start datetime"/>
+                                </elementRef>
+                            </logicalOp>
+                            <logicalOp displayName="OR" type="or">
+                                <relationalOp displayName="&gt;= 1 minutes Starts After Start Of"
+                                              operatorType="Greater Than or Equal To" quantity="1" type="SAS"
+                                              unit="minutes">
+                                    <elementRef displayName="Severe Sepsis : Diagnosis, Active"
+                                                id="40280381-3cc0-3e56-013c-cad5675802c5" type="qdm">
+                                        <attribute mode="Check if Present" name="start datetime"/>
+                                    </elementRef>
+                                    <logicalOp displayName="OR" type="or">
+                                        <elementRef displayName="Hospital Measures-Encounter ED : Encounter, Performed"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c3" type="qdm">
+                                            <attribute mode="Check if Present" name="admission datetime"/>
+                                        </elementRef>
+                                        <elementRef
+                                                displayName="Hospital Measures-Encounter Inpatient : Encounter, Performed"
+                                                id="40280381-3cc0-3e56-013c-cad5675802c4" type="qdm">
+                                            <attribute mode="Check if Present" name="admission datetime"/>
+                                        </elementRef>
+                                    </logicalOp>
+                                </relationalOp>
+                                <logicalOp displayName="AND" type="and">
+                                    <relationalOp displayName="&lt;= 1440 minutes Starts Before Or During"
+                                                  operatorType="Less Than or Equal To" quantity="1440" type="SBOD"
+                                                  unit="minutes">
+                                        <elementRef displayName="Hospital Measures - Any infection : Diagnosis, Active"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c2" type="qdm">
+                                            <attribute mode="Check if Present" name="start datetime"/>
+                                        </elementRef>
+                                        <logicalOp displayName="OR" type="or">
+                                            <elementRef
+                                                    displayName="Hospital Measures-Encounter ED : Encounter, Performed"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c3" type="qdm">
+                                                <attribute mode="Check if Present" name="admission datetime"/>
+                                            </elementRef>
+                                            <elementRef
+                                                    displayName="Hospital Measures-Encounter Inpatient : Encounter, Performed"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c4" type="qdm">
+                                                <attribute mode="Check if Present" name="admission datetime"/>
+                                            </elementRef>
+                                        </logicalOp>
+                                    </relationalOp>
+                                    <functionalOp displayName="NOT" type="NOT"
+                                                  uuid="22db7544-4a53-4aa2-9421-29b47521a2ca">
+                                        <relationalOp displayName="Ends Before Start Of" type="EBS">
+                                            <elementRef
+                                                    displayName="Hospital Measures - Any infection : Diagnosis, Active"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c2" type="qdm"/>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef
+                                                        displayName="Hospital Measures-Encounter ED : Encounter, Performed"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c3" type="qdm">
+                                                    <attribute mode="Check if Present" name="admission datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="Hospital Measures-Encounter Inpatient : Encounter, Performed"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c4" type="qdm">
+                                                    <attribute mode="Check if Present" name="admission datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                    </functionalOp>
+                                    <logicalOp displayName="OR" type="or">
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                    <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                           unit="bpm"/>
+                                                <attribute mode="Check if Present" name="start datetime"/>
+                                            </elementRef>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                    <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                           unit="bpm"/>
+                                                <attribute mode="Check if Present" name="start datetime"/>
+                                            </elementRef>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                    <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                    </logicalOp>
+                                    <logicalOp displayName="OR" type="or">
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef
+                                                        displayName="Systolic blood pressure : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b6" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Less Than" name="result"
+                                                               unit="mmHg"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="Mean arterial pressure : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b7" type="qdm">
+                                                    <attribute comparisonValue="70" mode="Less Than" name="result"
+                                                               unit="mmHg"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                            <logicalOp displayName="OR" type="or">
+                                                <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                              operatorType="Less Than or Equal To" quantity="6"
+                                                              type="SAS" unit="hours">
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b2"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="38.3" mode="Greater Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b3"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="36.0" mode="Less Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b4"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="90" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b5"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="20" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="12000" mode="Greater Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="4000" mode="Less Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                            <attribute comparisonValue="10" mode="Greater Than"
+                                                                       name="result" unit="%"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                </relationalOp>
+                                                <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                              operatorType="Less Than or Equal To" quantity="6"
+                                                              type="SAS" unit="hours">
+                                                    <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                        <attribute comparisonValue="90" mode="Greater Than"
+                                                                   name="result" unit="bpm"/>
+                                                        <attribute mode="Check if Present" name="start datetime"/>
+                                                    </elementRef>
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b2"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="38.3" mode="Greater Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b3"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="36.0" mode="Less Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b5"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="20" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="12000" mode="Greater Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="4000" mode="Less Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                            <attribute comparisonValue="10" mode="Greater Than"
+                                                                       name="result" unit="%"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                </relationalOp>
+                                                <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                              operatorType="Less Than or Equal To" quantity="6"
+                                                              type="SAS" unit="hours">
+                                                    <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                        <attribute comparisonValue="20" mode="Greater Than"
+                                                                   name="result" unit="bpm"/>
+                                                        <attribute mode="Check if Present" name="start datetime"/>
+                                                    </elementRef>
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b2"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="38.3" mode="Greater Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b3"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="36.0" mode="Less Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b4"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="90" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="12000" mode="Greater Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="4000" mode="Less Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                            <attribute comparisonValue="10" mode="Greater Than"
+                                                                       name="result" unit="%"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                </relationalOp>
+                                                <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                              operatorType="Less Than or Equal To" quantity="6"
+                                                              type="SAS" unit="hours">
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="12000" mode="Greater Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="4000" mode="Less Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                            <attribute comparisonValue="10" mode="Greater Than"
+                                                                       name="result" unit="%"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b2"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="38.3" mode="Greater Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b3"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="36.0" mode="Less Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b4"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="90" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b5"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="20" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                </relationalOp>
+                                            </logicalOp>
+                                        </relationalOp>
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Creatinine : Laboratory Test, Result"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702bb" type="qdm">
+                                                    <attribute comparisonValue="2" mode="Greater Than" name="result"
+                                                               unit="mg/dL"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Platelet count : Laboratory Test, Result"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702bc" type="qdm">
+                                                    <attribute comparisonValue="100000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="PaO2/FiO2 ratio : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b9" type="qdm">
+                                                    <attribute comparisonValue="300" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="aPTT : Laboratory Test, Result"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702bd" type="qdm">
+                                                    <attribute comparisonValue="60" mode="Greater Than" name="result"
+                                                               unit="seconds"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                    <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                    </logicalOp>
+                                </logicalOp>
+                            </logicalOp>
+                        </relationalOp>
+                        <relationalOp displayName="&lt;= 3 hours Starts After Start Of"
+                                      operatorType="Less Than or Equal To" quantity="3" type="SAS" unit="hours">
+                            <logicalOp displayName="OR" type="or">
+                                <elementRef displayName="Lactate : Laboratory Test, Order"
+                                            id="40280381-3cc0-3e56-013c-cad5675802c7" type="qdm">
+                                    <attribute mode="Check if Present" name="start datetime"/>
+                                </elementRef>
+                                <elementRef displayName="Blood Culture : Laboratory Test, Order"
+                                            id="40280381-3cc0-3e56-013c-cad5675802c8" type="qdm">
+                                    <attribute mode="Check if Present" name="start datetime"/>
+                                </elementRef>
+                                <elementRef displayName="Severe Sepsis : Diagnosis, Active"
+                                            id="40280381-3cc0-3e56-013c-cad5675802c5" type="qdm">
+                                    <attribute mode="Check if Present" name="start datetime"/>
+                                </elementRef>
+                            </logicalOp>
+                            <logicalOp displayName="OR" type="or">
+                                <relationalOp displayName="&gt;= 1 minutes Starts After Start Of"
+                                              operatorType="Greater Than or Equal To" quantity="1" type="SAS"
+                                              unit="minutes">
+                                    <elementRef displayName="Septic Shock : Diagnosis, Active"
+                                                id="40280381-3cc0-3e56-013c-cad5675802c6" type="qdm">
+                                        <attribute mode="Check if Present" name="start datetime"/>
+                                    </elementRef>
+                                    <logicalOp displayName="OR" type="or">
+                                        <elementRef displayName="Hospital Measures-Encounter ED : Encounter, Performed"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c3" type="qdm">
+                                            <attribute mode="Check if Present" name="admission datetime"/>
+                                        </elementRef>
+                                        <elementRef
+                                                displayName="Hospital Measures-Encounter Inpatient : Encounter, Performed"
+                                                id="40280381-3cc0-3e56-013c-cad5675802c4" type="qdm">
+                                            <attribute mode="Check if Present" name="admission datetime"/>
+                                        </elementRef>
+                                    </logicalOp>
+                                </relationalOp>
+                                <logicalOp displayName="AND" type="and">
+                                    <relationalOp displayName="&lt;= 1440 minutes Starts Before Or During"
+                                                  operatorType="Less Than or Equal To" quantity="1440" type="SBOD"
+                                                  unit="minutes">
+                                        <elementRef displayName="Hospital Measures - Any infection : Diagnosis, Active"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c2" type="qdm">
+                                            <attribute mode="Check if Present" name="start datetime"/>
+                                        </elementRef>
+                                        <logicalOp displayName="OR" type="or">
+                                            <elementRef
+                                                    displayName="Hospital Measures-Encounter ED : Encounter, Performed"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c3" type="qdm">
+                                                <attribute mode="Check if Present" name="admission datetime"/>
+                                            </elementRef>
+                                            <elementRef
+                                                    displayName="Hospital Measures-Encounter Inpatient : Encounter, Performed"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c4" type="qdm">
+                                                <attribute mode="Check if Present" name="admission datetime"/>
+                                            </elementRef>
+                                        </logicalOp>
+                                    </relationalOp>
+                                    <functionalOp displayName="NOT" type="NOT"
+                                                  uuid="37ad894e-97e1-4f59-ac81-49bb747eaa63">
+                                        <relationalOp displayName="Ends Before Start Of" type="EBS">
+                                            <elementRef
+                                                    displayName="Hospital Measures - Any infection : Diagnosis, Active"
+                                                    id="40280381-3cc0-3e56-013c-cad5675802c2" type="qdm"/>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef
+                                                        displayName="Hospital Measures-Encounter ED : Encounter, Performed"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c3" type="qdm">
+                                                    <attribute mode="Check if Present" name="admission datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="Hospital Measures-Encounter Inpatient : Encounter, Performed"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c4" type="qdm">
+                                                    <attribute mode="Check if Present" name="admission datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                    </functionalOp>
+                                    <logicalOp displayName="OR" type="or">
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                    <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                           unit="bpm"/>
+                                                <attribute mode="Check if Present" name="start datetime"/>
+                                            </elementRef>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                    <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                           unit="bpm"/>
+                                                <attribute mode="Check if Present" name="start datetime"/>
+                                            </elementRef>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                    <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                    </logicalOp>
+                                    <logicalOp displayName="OR" type="or">
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef
+                                                        displayName="Systolic blood pressure : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b6" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Less Than" name="result"
+                                                               unit="mmHg"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="Mean arterial pressure : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b7" type="qdm">
+                                                    <attribute comparisonValue="70" mode="Less Than" name="result"
+                                                               unit="mmHg"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                            <logicalOp displayName="OR" type="or">
+                                                <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                              operatorType="Less Than or Equal To" quantity="6"
+                                                              type="SAS" unit="hours">
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b2"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="38.3" mode="Greater Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b3"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="36.0" mode="Less Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b4"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="90" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b5"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="20" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="12000" mode="Greater Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="4000" mode="Less Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                            <attribute comparisonValue="10" mode="Greater Than"
+                                                                       name="result" unit="%"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                </relationalOp>
+                                                <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                              operatorType="Less Than or Equal To" quantity="6"
+                                                              type="SAS" unit="hours">
+                                                    <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                        <attribute comparisonValue="90" mode="Greater Than"
+                                                                   name="result" unit="bpm"/>
+                                                        <attribute mode="Check if Present" name="start datetime"/>
+                                                    </elementRef>
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b2"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="38.3" mode="Greater Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b3"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="36.0" mode="Less Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b5"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="20" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="12000" mode="Greater Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="4000" mode="Less Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                            <attribute comparisonValue="10" mode="Greater Than"
+                                                                       name="result" unit="%"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                </relationalOp>
+                                                <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                              operatorType="Less Than or Equal To" quantity="6"
+                                                              type="SAS" unit="hours">
+                                                    <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                        <attribute comparisonValue="20" mode="Greater Than"
+                                                                   name="result" unit="bpm"/>
+                                                        <attribute mode="Check if Present" name="start datetime"/>
+                                                    </elementRef>
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b2"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="38.3" mode="Greater Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b3"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="36.0" mode="Less Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b4"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="90" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="12000" mode="Greater Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="4000" mode="Less Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                            <attribute comparisonValue="10" mode="Greater Than"
+                                                                       name="result" unit="%"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                </relationalOp>
+                                                <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                              operatorType="Less Than or Equal To" quantity="6"
+                                                              type="SAS" unit="hours">
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="12000" mode="Greater Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                            <attribute comparisonValue="4000" mode="Less Than"
+                                                                       name="result" unit=""/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef
+                                                                displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                                id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                            <attribute comparisonValue="10" mode="Greater Than"
+                                                                       name="result" unit="%"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                    <logicalOp displayName="OR" type="or">
+                                                        <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b2"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="38.3" mode="Greater Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b3"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="36.0" mode="Less Than"
+                                                                       name="result" unit="celsius"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b4"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="90" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                        <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                                    id="40280381-3cc0-3e56-013c-cad5675702b5"
+                                                                    type="qdm">
+                                                            <attribute comparisonValue="20" mode="Greater Than"
+                                                                       name="result" unit="bpm"/>
+                                                            <attribute mode="Check if Present" name="start datetime"/>
+                                                        </elementRef>
+                                                    </logicalOp>
+                                                </relationalOp>
+                                            </logicalOp>
+                                        </relationalOp>
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Creatinine : Laboratory Test, Result"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702bb" type="qdm">
+                                                    <attribute comparisonValue="2" mode="Greater Than" name="result"
+                                                               unit="mg/dL"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Platelet count : Laboratory Test, Result"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702bc" type="qdm">
+                                                    <attribute comparisonValue="100000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="PaO2/FiO2 ratio : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b9" type="qdm">
+                                                    <attribute comparisonValue="300" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="aPTT : Laboratory Test, Result"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702bd" type="qdm">
+                                                    <attribute comparisonValue="60" mode="Greater Than" name="result"
+                                                               unit="seconds"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                    <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                    </logicalOp>
+                                    <logicalOp displayName="OR" type="or">
+                                        <relationalOp displayName="&lt;= 6 hours Starts After Start Of"
+                                                      operatorType="Less Than or Equal To" quantity="6" type="SAS"
+                                                      unit="hours">
+                                            <elementRef displayName="Lactate : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702be" type="qdm">
+                                                <attribute comparisonValue="4" mode="Greater Than" name="result"
+                                                           unit="mmol/L"/>
+                                                <attribute mode="Check if Present" name="start datetime"/>
+                                            </elementRef>
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef displayName="Hyperthermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b2" type="qdm">
+                                                    <attribute comparisonValue="38.3" mode="Greater Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Hypothermia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b3" type="qdm">
+                                                    <attribute comparisonValue="36.0" mode="Less Than" name="result"
+                                                               unit="celsius"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachycardia : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b4" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef displayName="Tachypnea : Physical Exam, Finding"
+                                                            id="40280381-3cc0-3e56-013c-cad5675702b5" type="qdm">
+                                                    <attribute comparisonValue="20" mode="Greater Than" name="result"
+                                                               unit="bpm"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="12000" mode="Greater Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702ba" type="qdm">
+                                                    <attribute comparisonValue="4000" mode="Less Than" name="result"
+                                                               unit=""/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="White blood cells count - bands : Laboratory Test, Result"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c1" type="qdm">
+                                                    <attribute comparisonValue="10" mode="Greater Than" name="result"
+                                                               unit="%"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                        </relationalOp>
+                                        <relationalOp displayName="&gt;= 1 minutes Starts After Start Of"
+                                                      operatorType="Greater Than or Equal To" quantity="1" type="SAS"
+                                                      unit="minutes">
+                                            <logicalOp displayName="OR" type="or">
+                                                <elementRef
+                                                        displayName="Systolic blood pressure : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b6" type="qdm">
+                                                    <attribute comparisonValue="90" mode="Less Than" name="result"
+                                                               unit="mmHg"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                                <elementRef
+                                                        displayName="Mean arterial pressure : Physical Exam, Finding"
+                                                        id="40280381-3cc0-3e56-013c-cad5675702b7" type="qdm">
+                                                    <attribute comparisonValue="70" mode="Less Than" name="result"
+                                                               unit="mmHg"/>
+                                                    <attribute mode="Check if Present" name="start datetime"/>
+                                                </elementRef>
+                                            </logicalOp>
+                                            <elementRef displayName="Sepsis-Crystalloids : Medication, Administered"
+                                                        id="40280381-3cc0-3e56-013c-cad5675802c9" type="qdm">
+                                                <attribute mode="Check if Present" name="stop datetime"/>
+                                            </elementRef>
+                                        </relationalOp>
+                                    </logicalOp>
+                                </logicalOp>
+                            </logicalOp>
+                        </relationalOp>
+                    </logicalOp>
+                </logicalOp>
+            </clause>
+            <clause displayName="Numerator 1" type="numerator" uuid="8DD7469D-4FDB-4E8C-BA44-786F89909C91">
+                <logicalOp displayName="AND" type="and"/>
+            </clause>
+        </group>
+    </measureGrouping>
+    <elementLookUp>
+        <qdm codeSystemName="National Library of Medicine" datatype="Patient Characteristic Sex"
+             id="40280381-3cc0-3e56-013c-cad5675602ae" name="ONC Administrative Sex" oid="2.16.840.1.113762.1.4.1"
+             suppDataElement="true" taxonomy="Administrative Sex" uuid="40280381-3cc0-3e56-013c-cad5675602ae"
+             version="1"/>
+        <qdm codeSystemName="CDC NCHS" datatype="Patient Characteristic Race" id="40280381-3cc0-3e56-013c-cad5675602af"
+             name="Race" oid="2.16.840.1.114222.4.11.836" suppDataElement="true" taxonomy="CDC"
+             uuid="40280381-3cc0-3e56-013c-cad5675602af" version="1"/>
+        <qdm codeSystemName="CDC NCHS" datatype="Patient Characteristic Ethnicity"
+             id="40280381-3cc0-3e56-013c-cad5675602b0" name="Ethnicity" oid="2.16.840.1.114222.4.11.837"
+             suppDataElement="true" taxonomy="CDC" uuid="40280381-3cc0-3e56-013c-cad5675602b0" version="1"/>
+        <qdm codeSystemName="PHDSC" datatype="Patient Characteristic Payer" id="40280381-3cc0-3e56-013c-cad5675702b1"
+             name="Payer" oid="2.16.840.1.114222.4.11.3591" suppDataElement="true" taxonomy="Source of Payment Typology"
+             uuid="40280381-3cc0-3e56-013c-cad5675702b1" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Physical Exam, Finding"
+             id="40280381-3cc0-3e56-013c-cad5675702b2" name="Hyperthermia" oid="2.16.840.1.113883.3.666.5.2084"
+             suppDataElement="false" taxonomy="SNOMED-CT" uuid="40280381-3cc0-3e56-013c-cad5675702b2" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Physical Exam, Finding"
+             id="40280381-3cc0-3e56-013c-cad5675702b3" name="Hypothermia" oid="2.16.840.1.113883.3.666.5.2085"
+             suppDataElement="false" taxonomy="SNOMED-CT" uuid="40280381-3cc0-3e56-013c-cad5675702b3" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Physical Exam, Finding"
+             id="40280381-3cc0-3e56-013c-cad5675702b4" name="Tachycardia" oid="2.16.840.1.113883.3.666.5.2086"
+             suppDataElement="false" taxonomy="SNOMED-CT" uuid="40280381-3cc0-3e56-013c-cad5675702b4" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Physical Exam, Finding"
+             id="40280381-3cc0-3e56-013c-cad5675702b5" name="Tachypnea" oid="2.16.840.1.113883.3.666.5.2087"
+             suppDataElement="false" taxonomy="SNOMED-CT" uuid="40280381-3cc0-3e56-013c-cad5675702b5" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Physical Exam, Finding"
+             id="40280381-3cc0-3e56-013c-cad5675702b6" name="Systolic blood pressure"
+             oid="2.16.840.1.113883.3.666.5.2088" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3cc0-3e56-013c-cad5675702b6" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Physical Exam, Finding"
+             id="40280381-3cc0-3e56-013c-cad5675702b7" name="Mean arterial pressure"
+             oid="2.16.840.1.113883.3.666.5.2089" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3cc0-3e56-013c-cad5675702b7" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Physical Exam, Finding"
+             id="40280381-3cc0-3e56-013c-cad5675702b9" name="PaO2/FiO2 ratio" oid="2.16.840.1.113883.3.666.5.2091"
+             suppDataElement="false" taxonomy="SNOMED-CT" uuid="40280381-3cc0-3e56-013c-cad5675702b9" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Laboratory Test, Result"
+             id="40280381-3cc0-3e56-013c-cad5675702ba" name="White blood cells count"
+             oid="2.16.840.1.113883.3.666.5.2092" suppDataElement="false" taxonomy="LOINC"
+             uuid="40280381-3cc0-3e56-013c-cad5675702ba" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Laboratory Test, Result"
+             id="40280381-3cc0-3e56-013c-cad5675702bb" name="Creatinine" oid="2.16.840.1.113883.3.666.5.2093"
+             suppDataElement="false" taxonomy="LOINC" uuid="40280381-3cc0-3e56-013c-cad5675702bb" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Laboratory Test, Result"
+             id="40280381-3cc0-3e56-013c-cad5675702bc" name="Platelet count" oid="2.16.840.1.113883.3.666.5.2094"
+             suppDataElement="false" taxonomy="LOINC" uuid="40280381-3cc0-3e56-013c-cad5675702bc" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Laboratory Test, Result"
+             id="40280381-3cc0-3e56-013c-cad5675702bd" name="aPTT" oid="2.16.840.1.113883.3.666.5.2095"
+             suppDataElement="false" taxonomy="LOINC" uuid="40280381-3cc0-3e56-013c-cad5675702bd" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Laboratory Test, Result"
+             id="40280381-3cc0-3e56-013c-cad5675702be" name="Lactate" oid="2.16.840.1.113883.3.666.5.2096"
+             suppDataElement="false" taxonomy="LOINC" uuid="40280381-3cc0-3e56-013c-cad5675702be" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Laboratory Test, Result"
+             id="40280381-3cc0-3e56-013c-cad5675802c1" name="White blood cells count - bands"
+             oid="2.16.840.1.113883.3.666.5.2098" suppDataElement="false" taxonomy="LOINC"
+             uuid="40280381-3cc0-3e56-013c-cad5675802c1" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Diagnosis, Active"
+             id="40280381-3cc0-3e56-013c-cad5675802c2" name="Hospital Measures - Any infection"
+             oid="2.16.840.1.113883.3.666.5.696" suppDataElement="false" taxonomy="Grouping"
+             uuid="40280381-3cc0-3e56-013c-cad5675802c2" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Encounter, Performed"
+             id="40280381-3cc0-3e56-013c-cad5675802c3" name="Hospital Measures-Encounter ED"
+             oid="2.16.840.1.113883.3.526.2.900" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3cc0-3e56-013c-cad5675802c3" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Encounter, Performed"
+             id="40280381-3cc0-3e56-013c-cad5675802c4" name="Hospital Measures-Encounter Inpatient"
+             oid="2.16.840.1.113883.3.666.5.625" suppDataElement="false" taxonomy="SNOMED-CT"
+             uuid="40280381-3cc0-3e56-013c-cad5675802c4" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Diagnosis, Active"
+             id="40280381-3cc0-3e56-013c-cad5675802c5" name="Severe Sepsis" oid="2.16.840.1.113883.3.666.5.2099"
+             suppDataElement="false" taxonomy="Grouping" uuid="40280381-3cc0-3e56-013c-cad5675802c5" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Diagnosis, Active"
+             id="40280381-3cc0-3e56-013c-cad5675802c6" name="Septic Shock" oid="2.16.840.1.113883.3.666.5.2100"
+             suppDataElement="false" taxonomy="Grouping" uuid="40280381-3cc0-3e56-013c-cad5675802c6" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Laboratory Test, Order"
+             id="40280381-3cc0-3e56-013c-cad5675802c7" name="Lactate" oid="2.16.840.1.113883.3.666.5.2096"
+             suppDataElement="false" taxonomy="LOINC" uuid="40280381-3cc0-3e56-013c-cad5675802c7" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Laboratory Test, Order"
+             id="40280381-3cc0-3e56-013c-cad5675802c8" name="Blood Culture" oid="2.16.840.1.113883.3.666.5.2097"
+             suppDataElement="false" taxonomy="LOINC" uuid="40280381-3cc0-3e56-013c-cad5675802c8" version="1"/>
+        <qdm codeSystemName="Oklahoma Foundation for Medical Quality" datatype="Medication, Administered"
+             id="40280381-3cc0-3e56-013c-cad5675802c9" name="Sepsis-Crystalloids" oid="2.16.840.1.113883.3.666.5.2101"
+             suppDataElement="false" taxonomy="RxNorm" uuid="40280381-3cc0-3e56-013c-cad5675802c9" version="1"/>
+    </elementLookUp>
+    <strata displayName="Stratification">
+        <clause displayName="Stratum 1" type="stratum" uuid="40280381-3cc0-3e56-013c-cad799ef037a">
+            <logicalOp displayName="AND" type="and"/>
+        </clause>
+    </strata>
+</measure>

@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.config;
 
 import gov.cms.mat.fhir.services.service.VsacService;
+import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -9,8 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -48,9 +48,11 @@ class VsacOperationTest {
         if (haveVsacCredentialsInEnvironmentAndFlag()) {
             CQLQualityDataSetDTO cqlQualityDataSetDTO = new CQLQualityDataSetDTO();
             cqlQualityDataSetDTO.setOid("2.16.840.1.113762.1.4.1195.291");
-            cqlQualityDataSetDTO.setVersion("20190129");
+            //  cqlQualityDataSetDTO.setVersion("20190129"); version and revision ignored
 
-            assertTrue(vsacService.getData(cqlQualityDataSetDTO));
+            VSACValueSetWrapper valueSetWrapper = vsacService.getData(cqlQualityDataSetDTO.getOid());
+
+            assertNotNull(valueSetWrapper);
         }
     }
 

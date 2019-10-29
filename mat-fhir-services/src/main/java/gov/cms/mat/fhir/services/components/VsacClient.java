@@ -9,6 +9,10 @@ import org.vsac.VSACResponseResult;
 
 @Component
 @Slf4j
+/**
+ * Supporting vsac api documents
+ * https://www.nlm.nih.gov/vsac/support/usingvsac/vsacsvsapiv2.html
+ */
 public class VsacClient {
     @Getter
     private final VSACGroovyClient vGroovyClient;
@@ -32,15 +36,12 @@ public class VsacClient {
         return vGroovyClient.getServiceTicket(grantingTicket);
     }
 
-    public VSACResponseResult getData(String oid, String version, String serviceTicket) {
+    public VSACResponseResult getDataFromProfile(String oid, String serviceTicket) {
         // this is what mat has by profile
         // mat.qdm.default.expansion.id=Most Recent Code System Versions in VSAC
 
-        VSACResponseResult vsacResponseResult =
-             vGroovyClient.getMultipleValueSetsResponseByOIDAndVersion(oid, version, serviceTicket);
-
-      //  VSACResponseResult vsacResponseResult = vGroovyClient.getProfileList(serviceTicket); // does work
-
+        VSACResponseResult vsacResponseResult = vGroovyClient.getMultipleValueSetsResponseByOID(
+                oid, serviceTicket, "Most Recent Code System Versions in VSAC");
 
         log.debug("vsacResponseResult: {}", vsacResponseResult);
 

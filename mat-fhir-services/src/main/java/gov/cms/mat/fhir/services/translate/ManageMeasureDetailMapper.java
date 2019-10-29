@@ -23,7 +23,7 @@ public class ManageMeasureDetailMapper {
         this.measure = measure;
     }
 
-    private ManageCompositeMeasureDetailModel convert() {
+    public ManageCompositeMeasureDetailModel convert() {
         ManageCompositeMeasureDetailModel model = getFromXml();
 
         processModel(model);
@@ -57,31 +57,68 @@ public class ManageMeasureDetailMapper {
         model.setId(measure.getId());
         model.setCalenderYear(model.getPeriodModel().isCalenderYear());
 
-        if (!model.getPeriodModel().isCalenderYear()) {
+        if (model.getPeriodModel() != null && !model.getPeriodModel().isCalenderYear()) {
             model.setMeasFromPeriod(model.getPeriodModel() != null
                     ? model.getPeriodModel().getStartDate() : null);
             model.setMeasToPeriod(model.getPeriodModel() != null
                     ? model.getPeriodModel().getStopDate() : null);
         }
-        model.setEndorseByNQF(StringUtils.isNotBlank(model.getEndorsement()));
-        model.setFormattedVersion(MeasureUtility.getVersionText(measure.getVersion().toString(), measure.getRevisionNumber().toString(), measure.getDraft()));
 
-        model.setOrgVersionNumber(MeasureUtility.formatVersionText(measure.getRevisionNumber().toString(), String.valueOf(measure.getVersionNumber())));
+        model.setEndorseByNQF(StringUtils.isNotBlank(model.getEndorsement()));
+
+        setFormattedVersion(model);
+
+        setOrgVersionNumber(model);
 
         model.setVersionNumber(MeasureUtility.getVersionText(model.getOrgVersionNumber(), measure.getDraft()));
+
         model.setFinalizedDate(DateUtility.convertDateToString(measure.getFinalizedDate()));
         model.setDraft(measure.getDraft());
         model.setValueSetDate(DateUtility.convertDateToStringNoTime(measure.getValueSetDate()));
         model.setNqfId(model.getNqfModel() != null
                 ? model.getNqfModel().getExtension() : null);
-        model.seteMeasureId(measure.getEmeasureId());
-        model.setMeasureOwnerId(measure.getMeasureOwnerId().getUserId());
+
+
+        if (measure.getEmeasureId() != null) {
+            model.seteMeasureId(measure.getEmeasureId());
+        }
+
+
+        if (measure.getMeasureOwnerId() != null) {
+            model.setMeasureOwnerId(measure.getMeasureOwnerId().getUserId());
+        }
 
         model.setMeasureName(measure.getDescription());
         model.setShortName(measure.getAbbrName());
         model.setMeasScoring(measure.getScoring());
 
-        model.setMeasureSetId(measure.getMeasureSetId().getId());
+        if (measure.getMeasureSetId() != null) {
+            model.setMeasureSetId(measure.getMeasureSetId().getId());
+        }
+
+
         model.setValueSetDate(DateUtility.convertDateToStringNoTime(measure.getValueSetDate()));
+    }
+
+    private void setOrgVersionNumber(ManageMeasureDetailModel model) {
+        if (measure.getVersion() == null || measure.getRevisionNumber() == null) {
+            log.debug("Cannot set formatted version revision: {}, version: {}",
+                    measure.getRevisionNumber(), measure.getVersion());
+        } else {
+            model.setOrgVersionNumber(MeasureUtility.formatVersionText(measure.getRevisionNumber().toString(),
+                    String.valueOf(measure.getVersionNumber())));
+        }
+    }
+
+    private void setFormattedVersion(ManageMeasureDetailModel model) {
+        if (measure.getVersion() == null || measure.getRevisionNumber() == null) {
+            log.debug("Cannot set formatted version revision: {}, version: {}",
+                    measure.getRevisionNumber(), measure.getVersion());
+        } else {
+            model.setFormattedVersion(
+                    MeasureUtility.getVersionText(measure.getVersion().toString(),
+                            measure.getRevisionNumber().toString(),
+                            measure.getDraft()));
+        }
     }
 }

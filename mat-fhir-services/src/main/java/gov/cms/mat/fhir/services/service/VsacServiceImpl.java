@@ -1,9 +1,10 @@
 package gov.cms.mat.fhir.services.service;
 
 import gov.cms.mat.fhir.services.components.VsacClient;
+import gov.cms.mat.fhir.services.components.VsacConverter;
 import gov.cms.mat.fhir.services.service.support.VsacTicket;
 import lombok.extern.slf4j.Slf4j;
-import mat.model.cql.CQLQualityDataSetDTO;
+import mat.model.VSACValueSetWrapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.vsac.VSACResponseResult;
@@ -12,25 +13,26 @@ import org.vsac.VSACResponseResult;
 @Slf4j
 public class VsacServiceImpl implements VsacService {
     private final VsacClient vsacClient;
+    private final VsacConverter vsacConverter;
 
     @Value("#{environment.VSAC_USER}")
     private String userName;
     @Value("#{environment.VSAC_PASS}")
     private String password;
-
     @Value("28795") // 8 hours - 5 secs
     private String grantedTicketTimeOutSeconds;
     @Value("485") // 8 hours - 5 secs
+
     private String serviceTicketTimeOutSeconds;
-
-
     private VsacGrantingTicket vsacGrantingTicket;
     private VsacServiceTicket vsacServiceTicket;
 
-    public VsacServiceImpl(VsacClient vsacClient) {
+    public VsacServiceImpl(VsacClient vsacClient, VsacConverter vsacConverter) {
         this.vsacClient = vsacClient;
+        this.vsacConverter = vsacConverter;
     }
 
+    @Override
     public boolean validateUser() {
         if (vsacGrantingTicket == null || vsacGrantingTicket.isInValid()) {
             return getGrantingTicket();
@@ -39,7 +41,7 @@ public class VsacServiceImpl implements VsacService {
         }
     }
 
-
+    @Override
     public boolean validateTicket() {
         if (!validateUser()) {
             return false;
@@ -53,15 +55,23 @@ public class VsacServiceImpl implements VsacService {
     }
 
     @Override
-    public boolean getData(CQLQualityDataSetDTO dto) {
+    public VSACValueSetWrapper getData(String oid) {
         if (!validateTicket()) {
-            return false;
-        } else {
-            VSACResponseResult vsacResponseResult =
-                    vsacClient.getData(dto.getOid(), dto.getVersion(), vsacServiceTicket.getTicket());
-
-            return isSuccessFull(vsacResponseResult);
+            return null;
         }
+
+        VSACResponseResult vsacResponseResult = vsacClient.getDataFromProfile(oid, vsacServiceTicket.getTicket());
+
+        if (isSuccessFull(vsacResponseResult)) {
+            return processResponse(vsacResponseResult);
+        } else {
+            log.warn("Error response from the vsac service, result: {}", vsacResponseResult);
+            return null;
+        }
+    }
+
+    private VSACValueSetWrapper processResponse(VSACResponseResult vsacResponseResult) {
+        return vsacConverter.toWrapper(vsacResponseResult.getXmlPayLoad());
     }
 
     private boolean isSuccessFull(VSACResponseResult vsacResponseResult) {

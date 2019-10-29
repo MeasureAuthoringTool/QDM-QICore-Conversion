@@ -1,11 +1,11 @@
 package gov.cms.mat.fhir.services.service;
 
-import mat.model.cql.CQLQualityDataSetDTO;
+import mat.model.VSACValueSetWrapper;
 
 public interface VsacService {
     boolean validateUser();
 
     boolean validateTicket();
 
-    boolean getData(CQLQualityDataSetDTO cqlQualityDataSetDTO);
+    VSACValueSetWrapper getData(String oid);
 }

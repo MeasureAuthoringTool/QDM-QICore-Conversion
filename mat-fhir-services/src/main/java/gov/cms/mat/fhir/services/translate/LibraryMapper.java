@@ -1,14 +1,9 @@
 package gov.cms.mat.fhir.services.translate;
 
 import lombok.extern.slf4j.Slf4j;
-import mat.client.measure.ManageCompositeMeasureDetailModel;
-import mat.server.MeasureLibraryService;
-import org.apache.commons.lang3.ArrayUtils;
 import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Library;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,18 +44,5 @@ public class LibraryMapper implements FhirCreator {
 
         return attachments;
     }
-
-    private ManageCompositeMeasureDetailModel getFromXml(byte[] xmlBytes) {
-        if (ArrayUtils.isNotEmpty(xmlBytes)) {
-            try {
-                return MeasureLibraryService.createModelFromXML(new String(xmlBytes));
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        } else {
-            throw new IllegalArgumentException("Xml bytes are null");
-        }
-    }
-
 
 }
