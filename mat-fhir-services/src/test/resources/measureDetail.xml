@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><measureDetails>
+    <uuid>40280382-603b-b178-0160-d790113926db</uuid>
+    <cqlUUID>E07433D2-F6FC-43FB-BF7C-B9429815369C</cqlUUID>
+    <title>AIS_HEDIS_2020</title>
+    <shortTitle>AIS</shortTitle>
+    <guid>53c1cf03-2883-4504-86e5-7513f04494c8</guid>
+    <version>1.0.000</version>
+    <nqfid root="2.16.840.1.113883.3.560.1"/>
+    <period calenderYear="true" uuid="f2447afa-bf26-4e76-9321-689c2f3668c7">
+        <startDate>00000101</startDate>
+        <stopDate>00001231</stopDate>
+    </period>
+    <steward id="2.16.840.1.113883.3.464">National Committee for Quality Assurance</steward>
+    <developers>
+        <developer id="2.16.840.1.113883.3.464">National Committee for Quality Assurance</developer>
+    </developers>
+    <description>The percentage of members 19 years of age and older who are up-to-date on recommended routine
+        vaccines for influenza, tetanus and diphtheria (Td) or tetanus, diphtheria and acellular pertussis (Tdap),
+        zoster and pneumococcal.
+    </description>
+    <copyright>HEDIS® is a registered trademark of the National Committee for Quality Assurance (“NCQA”). The HEDIS
+        measures and specifications were developed by and are owned by NCQA. NCQA holds a copyright in these
+        materials and may rescind or alter these materials at any time. Users of the HEDIS measures and
+        specifications shall not have the right to alter, enhance or otherwise modify the HEDIS measures and
+        specifications, and shall not disassemble, recompile or reverse engineer the HEDIS measures and
+        specifications. Anyone desiring to use or reproduce the materials without modification for an internal,
+        quality improvement non-commercial purpose may do so without obtaining any approval from NCQA. All other
+        uses, including a commercial use and/or external reproduction, distribution and publication must be approved
+        by NCQA and are subject to a license at the discretion of NCQA.
+        HEDIS measures and specifications are not clinical guidelines, do not establish a standard of medical care
+        and have not been tested for all potential applications. The measures and specifications are provided “as
+        is” without warranty of any kind. NCQA makes no representations, warranties or endorsements about the
+        quality of any product, test or protocol identified as numerator compliant or otherwise identified as
+        meeting the requirements of a HEDIS measure or specification. NCQA also makes no representations, warranties
+        or endorsements about the quality of any organization or clinician who uses or reports performance measures.
+        NCQA has no liability to anyone who relies on HEDIS measures and specifications or data reflective of
+        performance under such measures and specifications.
+        No calculated measure rate based on the HEDIS specifications may be called a HEDIS rate until it is audited
+        and designated reportable by an NCQA-Certified HEDIS Auditor. Henceforth in this publication and in any
+        other NCQA publication, “HEDIS measure” refers to the specifications and “HEDIS data” refers to and assumes
+        data audited by an NCQA-Certified HEDIS Auditor.
+        Limited proprietary coding is contained in the measure specifications for convenience. Users of the
+        proprietary code sets should obtain all necessary licenses from the owners of these code sets. NCQA
+        disclaims all liability for use or accuracy of any coding contained in the specifications.
+        The American Medical Association holds a copyright to the CPT® codes contained in the measures
+        specifications.
+        The American Hospital Association holds a copyright to the Uniform Biling Codes (“UB”) contained in the
+        measure specifications. The UB Codes in the HEDIS specifications are included with the permission of the
+        AHA. The UB Codes contained in the HEDIS specifications may be used by health plans and other health care
+        delivery organizations for the purpose of calculating and reporting HEDIS measure results or using HEDIS
+        measure results for their internal quality improvement purposes. All other uses of the UB Codes require a
+        license from the AHA. Anyone desiring to use the UB Codes in a commercial Product(s) to generate HEDIS
+        results, or for any other commercial use, must obtain a commercial use license directly from the AHA. To
+        inquire about licensing, contact ub04@aha.org.
+        Some measure specifications contain coding from LOINC® (http://loinc.org). The LOINC table, LOINC codes,
+        LOINC panels and form file, LOINC linguistic variants file, LOINC/RSNA Radiology Playbook, and LOINC/IEEE
+        Medical Device Code Mapping Table are copyright © 1995–2018, Regenstrief Institute, Inc. and the Logical
+        Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at
+        http://loinc.org/terms-of-use.
+        “SNOMED” and “SNOMED CT” are registered trademarks of the International Health Terminology Standards
+        Development Organisation (IHTSDO).
+        “HL7” is the registered trademark of Health Level Seven International.
+        © 2018 by the National Committee for Quality Assurance
+        1100 13th Street, NW, Third Floor
+        Washington, DC 20005
+        NCQA Customer Support: 888-275-7585
+        NCQA Fax: 202-955-3599
+        NCQA Website: www.ncqa.org
+        NCQA Policy Clarification Support at: http://my.ncqa.org
+    </copyright>
+    <scoring id="PROPOR">Proportion</scoring>
+    <patientBasedIndicator>true</patientBasedIndicator>
+    <types>
+        <type id="PROCESS">Process</type>
+    </types>
+    <componentMeasures/>
+    <stratification>1. Commercial: 19–65.
+        2. Medicaid: 19–65.
+        3. Medicare: 66+.
+
+        *Note?that “Commercial” plans?can be?identified via?the?“Private Health Insurance”?Direct?Reference?Code?
+    </stratification>
+    <riskAdjustment>None.</riskAdjustment>
+    <recommendations>The Advisory Committee on Immunization Practices recommends annual influenza vaccination; and
+        tetanus, diphtheria and acellular pertussis (Tdap) and/or tetanus and diphtheria (Td) vaccine; herpes zoster
+        vaccine; and the 13-valent pneumococcal conjugate vaccine (PCV13) and the 23-valent pneumococcal
+        polysaccharide vaccine (PPSV23) for adults at various ages.
+    </recommendations>
+    <improvementNotations>A higher score indicates better performance</improvementNotations>
+    <references>
+        <reference>Kim DK, Riley LE, Harriman KH, Hunter P, Bridges CB. Advisory Committee on Immunization Practices
+            Recommended Immunization Schedule for Adults Aged 19 Years or Older — United States, 2017. MMWR Morb
+            Mortal Wkly Rep 2017;66:136–138. DOI: http://dx.doi.org/10.15585/mmwr.mm6605e2
+        </reference>
+    </references>
+    <definitions>Participation: The identifiers and descriptors for each organization’s coverage used to define
+        members’ eligibility for measure reporting. Allocation for reporting is based on eligibility during the
+        Participation Period.
+
+        Participation Period: The Measurement Period.
+    </definitions>
+    <guidance>HEDIS ECDS technical specifications include both narrative specification language and expression of
+        the measure logic in Clinical Quality Language (CQL)-based Health Quality Measure Format (HQMF), Release 1.
+        At this time the measure logic is provided as a reference, complementing the narrative measure calculation.
+
+        Allocation: The member was enrolled with a medical benefit throughout the participation period.
+
+        Requirements: The composite is based on a model that looks at the number of immunizations that were
+        administered or contraindicated due to history of anaphylactic reaction or encephalopathy following
+        vaccination (numerator) out of the possible number of immunizations needed to be administered to members,
+        per clinical guideline recommendations for the age group (denominator).
+
+        For commercial and Medicaid plan members 19–65 years of age, Denominator 5 is determined by summing
+        Denominators 1–3. Numerator 5 is determined by summing Numerators 1–3.
+
+        For Medicare plan members 66 years of age and older, Denominator 5 is determined by summing Denominators
+        1–4. Numerator 5 is determined by summing Numerators 1–4.
+    </guidance>
+    <initialPopDescription>Initial Population 1: Members 19 years of age and older at the start of the Measurement
+        Period who also meet the criteria for Participation.
+
+        Initial Population 2: Same as the Initial Population 1.
+
+        Initial Population 3: Members 50 years and older at the start of Measurement Period who also meet the
+        criteria for Participation.
+
+        Initial Population 4: Members 66 years and older at the start of the Measurement Period who also meet the
+        criteria for Participation.
+    </initialPopDescription>
+    <denominatorDescription>Denominator 1: The Initial Population 1, minus Exclusions.
+
+        Denominator 2: Same as Denominator 1.
+
+        Denominator 3: The Initial Population 3, minus Exclusions.
+
+        Denominator 4: The Initial Population 4, minus Exclusions.
+    </denominatorDescription>
+    <denominatorExclusionsDescription>Exclude members with any of the following:
+        • Active chemotherapy any time during the Measurement Period.
+        • Bone marrow transplant any time during the Measurement Period.
+        • History of immunocompromising conditions, cochlear implants, anatomic or functional asplenia, sickle cell
+        anemia and HB-S disease or cerebrospinal fluid leaks any time during the member’s history through the end of
+        the Measurement Period.
+        • In hospice or using hospice services during the Measurement Period
+    </denominatorExclusionsDescription>
+    <numeratorDescription>Numerator 1: Members in Denominator 1 who received an influenza vaccine on or between July
+        1 of the year prior to the Measurement Period and June 30 of the Measurement Period, or who had a prior
+        influenza virus vaccine adverse reaction any time before or during the Measurement Period.
+
+
+        Numerator 2: Members in Denominator 2 who received at least one Td vaccine or one Tdap vaccine between nine
+        years prior to the start of the Measurement Period and the end of the Measurement Period, OR
+        Members in Denominator 2 with history of at least one of the following contraindications any time before or
+        during the Measurement Period:
+        • Anaphylaxis due to Tdap vaccine, anaphylaxis due to Td vaccine or its components.
+        • Encephalopathy due to Tdap or Td vaccination (post-tetanus vaccination encephalitis, post-diphtheria
+        vaccination encephalitis, post-pertussis vaccination encephalitis).
+
+
+        Numerator 3: Members in Denominator 3 who received at least one dose of the herpes zoster live vaccine or
+        two doses of the herpes zoster recombinant vaccine at least 28 days apart, any time on or after the member’s
+        50th birthday before or during the Measurement Period, or who had a prior adverse reaction caused by zoster
+        vaccine or its components any time before or during the Measurement Period.
+
+
+        Numerator 4: Members in Denominator 4 who were administered both the 13-valent pneumococcal conjugate
+        vaccine and the 23-valent pneumococcal polysaccharide vaccine at least 12 months apart, with the first
+        occurrence after the age of 60 before or during the Measurement Period, or prior pneumococcal vaccine
+        adverse reaction any time before or during the Measurement Period.
+    </numeratorDescription>
+    <finalizedDate value="201906301819-0500"/>
+</measureDetails>

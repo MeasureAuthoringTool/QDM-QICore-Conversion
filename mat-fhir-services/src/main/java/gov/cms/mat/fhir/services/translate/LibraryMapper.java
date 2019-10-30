@@ -44,5 +44,4 @@ public class LibraryMapper implements FhirCreator {
 
         return attachments;
     }
-
 }

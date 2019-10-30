@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.components;
+package gov.cms.mat.fhir.services.components.vsac;
 
 import gov.cms.mat.fhir.services.config.VsacConfig;
 import lombok.Getter;
