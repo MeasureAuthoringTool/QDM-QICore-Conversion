@@ -5,8 +5,8 @@ spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC
-    username: root
-    password: changeme
+    username: mat
+    password: mat
   jpa:
     hibernate.ddl-auto: none
     generate-ddl: false

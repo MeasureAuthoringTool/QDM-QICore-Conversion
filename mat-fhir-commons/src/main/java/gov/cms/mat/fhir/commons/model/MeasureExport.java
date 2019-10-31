@@ -56,9 +56,8 @@ public class MeasureExport implements Serializable {
     @Lob
     @Column(name = "JSON")
     private byte[] json;
-    @JoinColumn(name = "MEASURE_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private Measure measureId;
+    @Column(name = "MEASURE_ID")
+    private String measureId;
 
     public MeasureExport() {
     }
@@ -145,11 +144,11 @@ public class MeasureExport implements Serializable {
     }
 
     @XmlElement
-    public Measure getMeasureId() {
+    public String getMeasureId() {
         return measureId;
     }
 
-    public void setMeasureId(Measure measureId) {
+    public void setMeasureId(String measureId) {
         this.measureId = measureId;
     }
 

@@ -16,6 +16,7 @@ import gov.cms.mat.fhir.services.repository.MeasureDetailsReferenceRepository;
 import gov.cms.mat.fhir.services.repository.MeasureDetailsRepository;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
+import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
 import gov.cms.mat.fhir.services.translate.MeasureMapper;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import mat.client.measure.ManageCompositeMeasureDetailModel;
 
 
 /**
@@ -43,15 +45,17 @@ public class MeasureTranslationService {
     private final MeasureRepository measureRepo;
     private final MeasureDetailsRepository measureDetailsRepo;
     private final MeasureDetailsReferenceRepository measureDetailsReferenceRepo;
+    private final MeasureExportRepository measureExportRepo;
 
 
     @Value("${fhir.r4.baseurl}")
     private String baseURL = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
 
-    public MeasureTranslationService(MeasureRepository measureRepository, MeasureDetailsRepository measureDetailsRepository, MeasureDetailsReferenceRepository measureDetailsReferenceRepository) {
+    public MeasureTranslationService(MeasureRepository measureRepository, MeasureDetailsRepository measureDetailsRepository, MeasureDetailsReferenceRepository measureDetailsReferenceRepository, MeasureExportRepository measureExportRepository) {
         this.measureRepo = measureRepository;
         this.measureDetailsRepo = measureDetailsRepository;
         this.measureDetailsReferenceRepo = measureDetailsReferenceRepository;
+        this.measureExportRepo = measureExportRepository;
     }
 
     @GetMapping(path = "/translateMeasure")
@@ -63,12 +67,28 @@ public class MeasureTranslationService {
         try {
             Measure qdmMeasure = measureRepo.getMeasureById(id);
             res.setFhirIdentity("Measure/" + qdmMeasure.getId());
-            MeasureDetails qdmMeasureDetails = measureDetailsRepo.getMeasureDetailsByMeasureId(id);
-            Integer detailsId = qdmMeasureDetails.getId();
-            System.out.println("Measure Details ID "+ detailsId);
-            List<MeasureDetailsReference> qdmMeasureReferenceList = measureDetailsReferenceRepo.getMeasureDetailsReferenceByMeasureDetailsId(detailsId);
+//            Move to ManageMeasureDetailModel            
+//            MeasureDetails qdmMeasureDetails = measureDetailsRepo.getMeasureDetailsByMeasureId(id);
+//            Integer detailsId = qdmMeasureDetails.getId();
+//            System.out.println("Measure Details ID "+ detailsId);
+//            List<MeasureDetailsReference> qdmMeasureReferenceList = measureDetailsReferenceRepo.getMeasureDetailsReferenceByMeasureDetailsId(detailsId);
+            MeasureExport measureExport = measureExportRepo.getMeasureExportById(id);
+            byte[] xmlBytes = measureExport.getSimpleXml();
+            //humanreadible may exist not an error if it doesn't
+            String narrative = "";
+            try {
+                narrative = new String(measureExport.getHqmf());
+            }
+            catch (Exception ex) {
+                log.error("Narrative not found", ex.getMessage());
+            }
             
-            MeasureMapper fhirMapper = new MeasureMapper(qdmMeasure, qdmMeasureDetails, qdmMeasureReferenceList);
+            ManageMeasureDetailMapper manageMeasureDetailMapper = new ManageMeasureDetailMapper(xmlBytes, qdmMeasure);
+
+            ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert();
+            
+            
+            MeasureMapper fhirMapper = new MeasureMapper(model, narrative);
             org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
             Bundle bundle = new Bundle();
             bundle.setType(Bundle.BundleType.TRANSACTION);
@@ -154,6 +174,33 @@ public class MeasureTranslationService {
         
         return res;
     }
+    
+    @GetMapping(path = "/removeAllMeasures")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public TranslationOutcome removeAllMeasures() {
+        TranslationOutcome res = new TranslationOutcome();
+        try {
+            List<Measure> measureList = measureRepo.findAll();
+            Iterator iter = measureList.iterator();
+            while (iter.hasNext()) {
+                Measure measure = (Measure)iter.next();
+                String measureId = measure.getId().trim();
+                System.out.println("Removing Measure "+measureId);
+                
+                
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            res.setSuccessful(Boolean.FALSE);
+            res.setMessage("/qdmtofhir removeAllMeasures Failed " + ex.getMessage());
+            log.error("Failed Batch Translation of Measures ALL: {}", ex.getMessage());
+        }
+        
+        return res;
+    }
+    
 
 
 //    private void setConfigs() {

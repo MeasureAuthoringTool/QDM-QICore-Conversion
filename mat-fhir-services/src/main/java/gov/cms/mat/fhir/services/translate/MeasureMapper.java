@@ -14,10 +14,14 @@ import org.hl7.fhir.r4.model.Measure;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
+import gov.cms.mat.fhir.commons.model.MeasureExport;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
+import mat.client.measure.ManageCompositeMeasureDetailModel;
+import mat.client.measure.PeriodModel;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.ContactDetail;
 import org.hl7.fhir.r4.model.ContactPoint;
@@ -42,39 +46,48 @@ public class MeasureMapper implements FhirCreator {
     //this should be something that MAT provides but doesn't there are many possibilites
     public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-task";
     
-    private gov.cms.mat.fhir.commons.model.Measure qdmMeasure;
-    private gov.cms.mat.fhir.commons.model.MeasureDetails qdmMeasureDetails;
-    private List<gov.cms.mat.fhir.commons.model.MeasureDetailsReference> qdmCitations = new ArrayList();
+//    private gov.cms.mat.fhir.commons.model.Measure qdmMeasure;
+//    private gov.cms.mat.fhir.commons.model.MeasureDetails qdmMeasureDetails;
+//    private List<gov.cms.mat.fhir.commons.model.MeasureDetailsReference> qdmCitations = new ArrayList();
+//    private MeasureExport qdmMeasureExport;
+    private ManageCompositeMeasureDetailModel mModel;
     private String humanReadible;
     
     @Value("${fhir.r4.baseurl}")
     private String baseURL = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
     
-    public MeasureMapper(gov.cms.mat.fhir.commons.model.Measure qdmMeasure, gov.cms.mat.fhir.commons.model.MeasureDetails qdmMeasureDetails, List<MeasureDetailsReference> qdmCitations) {
-        this.qdmMeasure = qdmMeasure;
-        this.qdmMeasureDetails = qdmMeasureDetails;
-        this.qdmCitations = qdmCitations;
+//    public MeasureMapper(gov.cms.mat.fhir.commons.model.Measure qdmMeasure, gov.cms.mat.fhir.commons.model.MeasureDetails qdmMeasureDetails, List<MeasureDetailsReference> qdmCitations, MeasureExport qdmMeasureExport) {
+//        this.qdmMeasure = qdmMeasure;
+//        this.qdmMeasureDetails = qdmMeasureDetails;
+//        this.qdmCitations = qdmCitations;
+//        this.qdmMeasureExport = qdmMeasureExport;
+//    }
+    
+    public MeasureMapper(ManageCompositeMeasureDetailModel measureCompositeModel, String humanReadible) {
+        this.mModel = measureCompositeModel;
+        this.humanReadible = humanReadible;
     }
     
     public org.hl7.fhir.r4.model.Measure translateToFhir() {
         org.hl7.fhir.r4.model.Measure fhirMeasure = new org.hl7.fhir.r4.model.Measure();
         
             //set measure id
-            fhirMeasure.setId(qdmMeasure.getId());
+            fhirMeasure.setId(mModel.getId());
             //measure meta
             Meta measureMeta = new Meta();
             measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
-            measureMeta.setVersionId(qdmMeasure.getVersion().toString());
-            measureMeta.setLastUpdated(qdmMeasure.getLastModifiedOn());
+            measureMeta.setVersionId(mModel.getVersionNumber());
+            measureMeta.setLastUpdated(new Date());
             
             fhirMeasure.setMeta(measureMeta);
             
             //set narrative
-            Narrative measureText = new Narrative();
-            measureText.setStatusAsString("generated");
-            measureText.setDivAsString("");  //qdm human readible
-            
-            fhirMeasure.setText(measureText);
+            if (!humanReadible.isEmpty()) {
+                Narrative measureText = new Narrative();
+                measureText.setStatusAsString("generated");
+                measureText.setDivAsString(humanReadible);
+                fhirMeasure.setText(measureText);
+            }
             
             //set Extensions if any known, QICore Extension below
             //QICore Not Done Extension
@@ -92,44 +105,50 @@ public class MeasureMapper implements FhirCreator {
             List<Identifier> idList = new ArrayList();
             Identifier cms = null;
             Identifier nqf = null;
-            if (qdmMeasure.getEmeasureId() != null) {
-                cms = createIdentifier("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms", qdmMeasure.getEmeasureId().toString());
+            if (mModel.geteMeasureId() != 0) {
+                cms = createIdentifier("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms", new Integer(mModel.geteMeasureId()).toString());
+                idList.add(cms);
             }
-            if (qdmMeasure.getNqfNumber() != null) {
-                nqf = createIdentifier("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf", new String(qdmMeasure.getNqfNumber()));
-            }
-            if (cms != null) idList.add(cms);
-            if (nqf != null) idList.add(nqf);
-            
+            if (mModel.getEndorseByNQF()) {
+                nqf = createIdentifier("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf", new String(mModel.getNqfId()));
+                idList.add(nqf);
+            }            
             fhirMeasure.setIdentifier(idList);
             
-            fhirMeasure.setVersion(qdmMeasure.getVersion().toString());
+            fhirMeasure.setVersion(mModel.getVersionNumber());
             
-            fhirMeasure.setName(qdmMeasure.getAbbrName());
+            fhirMeasure.setName(mModel.getMeasureName());
             
-            fhirMeasure.setTitle(qdmMeasure.getAbbrName());  //measure title
+            fhirMeasure.setTitle(mModel.getShortName());  //measure title
             
             //set measure status mat qdm does not have all status types
-            String status = qdmMeasure.getMeasureStatus();
-            if (status != null) {
-                if (status.equals("In Progress")) fhirMeasure.setStatus(Enumerations.PublicationStatus.DRAFT);
-                if (status.equals("Complete"))fhirMeasure.setStatus(Enumerations.PublicationStatus.ACTIVE);
+            if (mModel.isDraft()) {
+                fhirMeasure.setStatus(Enumerations.PublicationStatus.DRAFT);
+            } 
+            else if(mModel.isDeleted()) {    
+                fhirMeasure.setStatus(Enumerations.PublicationStatus.RETIRED);
             }
-            //if measure experimental mat does not have concept
+            else {
+                fhirMeasure.setStatus(Enumerations.PublicationStatus.ACTIVE);
+            }
+            
+            //TODO measure experimental mat does not have concept
+
             boolean experimental = false;
             fhirMeasure.setExperimental(experimental);
             
-            fhirMeasure.setApprovalDate(qdmMeasure.getFinalizedDate());
+            fhirMeasure.setApprovalDate(convertDateTimeString(mModel.getFinalizedDate()));
             
             //set Publisher
-            fhirMeasure.setPublisher("Centers for Medicare & Medicaid Services");
+            fhirMeasure.setPublisher(mModel.getStewardValue());
+
             
-            
-            //set 
+            //TODO No  Contact Mapping 
             fhirMeasure.setContact(createContactDetailUrl("https://cms.gov"));
        
+            //Set Measure Description
+            fhirMeasure.setDescription(mModel.getDescription());
             
-            fhirMeasure.setDescription(qdmMeasure.getDescription());
             
             //set Use Context
             fhirMeasure.setUseContext(createUsageContext("purpose", "codesystem", "displayname"));
@@ -139,19 +158,20 @@ public class MeasureMapper implements FhirCreator {
             jurisdictionList.add(buildCodeableConcept("US", "urn:iso:std:iso:3166", ""));
             
             //purpose
-            fhirMeasure.setPurpose(qdmMeasure.getDescription());
+            fhirMeasure.setPurpose(mModel.getDescription());
             
             //copyright
-            fhirMeasure.setCopyright(qdmMeasureDetails.getCopyright());
+            fhirMeasure.setCopyright(mModel.getCopyright());
             
             //approval date
-            fhirMeasure.setApprovalDate(qdmMeasure.getFinalizedDate());
+            fhirMeasure.setApprovalDate(convertDateTimeString(mModel.getFinalizedDate()));
             
-            //last reviewed date
-            fhirMeasure.setLastReviewDate(qdmMeasure.getLockedOutDate());
+            //TODO No concept of last reviewed date
+            
             
             //set effective period
-            Period effectivePeriod = buildPeriod(qdmMeasure.getMeasurementPeriodFrom(), qdmMeasure.getMeasurementPeriodTo());
+            PeriodModel pModel = mModel.getPeriodModel();
+            Period effectivePeriod = buildPeriod(convertDateTimeString(pModel.getStartDate()), convertDateTimeString(pModel.getStopDate()));
             fhirMeasure.setEffectivePeriod(effectivePeriod);
             
             //topic
@@ -162,11 +182,12 @@ public class MeasureMapper implements FhirCreator {
             
             //related artifacts
             List<RelatedArtifact> relatedArtifacts = new ArrayList();
-            Iterator iter = qdmCitations.iterator();
+            List<String> referenceList = mModel.getReferencesList();
+            Iterator iter = referenceList.iterator();
             while (iter.hasNext()) {
-                MeasureDetailsReference ref = (MeasureDetailsReference)iter.next();
+                String ref = (String)iter.next();
                 RelatedArtifact art = new RelatedArtifact();
-                art.setCitation(ref.getReference());
+                art.setCitation(ref);
                 art.setType(RelatedArtifact.RelatedArtifactType.CITATION);
                 relatedArtifacts.add(art);
             }
@@ -174,82 +195,110 @@ public class MeasureMapper implements FhirCreator {
             
             
             //set disclaimer
-            fhirMeasure.setDisclaimer(qdmMeasureDetails.getDisclaimer());
+            fhirMeasure.setDisclaimer(mModel.getDisclaimer());
             
             //set scoring
-            CodeableConcept scoringConcept = buildCodeableConcept(qdmMeasure.getScoring(), "http://hl7.org/fhir/measure-scoring", "");
+            CodeableConcept scoringConcept = buildCodeableConcept(mModel.getCompositeScoringMethod(), "http://hl7.org/fhir/measure-scoring", "");
             fhirMeasure.setScoring(scoringConcept);
             
-            //set type no MAT reference
+            //Measure Type(s)
             List<CodeableConcept> typeList = new ArrayList();
-            CodeableConcept typeConcept = buildCodeableConcept("process", "http://hl7.org/fhir/measure-type", "");
-            typeList.add(typeConcept);
+            List<mat.model.MeasureType> matTypeList = mModel.getMeasureTypeSelectedList();
+            Iterator mIter = matTypeList.iterator();
+            while (mIter.hasNext()) {
+                mat.model.MeasureType mType = (mat.model.MeasureType)mIter.next();
+                String abbrName = mType.getAbbrName();
+                if (abbrName.equals("COMPOSITE")) {
+                    CodeableConcept compositeConcept = buildCodeableConcept("composite", "http://hl7.org/fhir/measure-type", "");
+                    typeList.add(compositeConcept);
+                }
+                else if(abbrName.equals("INTERM-OM") || abbrName.equals("OUTCOME")) {
+                    CodeableConcept outcomeConcept = buildCodeableConcept("outcome", "http://hl7.org/fhir/measure-type", "");
+                    typeList.add(outcomeConcept);
+                }
+                else if(abbrName.equals("PRO-PM")) {
+                    CodeableConcept patientConcept = buildCodeableConcept("patient-report-outcome", "http://hl7.org/fhir/measure-type", "");
+                    typeList.add(patientConcept);                    
+                }
+                else if(abbrName.equals("STRUCTURE") || abbrName.equals("RESOURCE")) {
+                    CodeableConcept structureConcept = buildCodeableConcept("structure", "http://hl7.org/fhir/measure-type", "");
+                    typeList.add(structureConcept);                                        
+                }
+                else if(abbrName.equals("APPROPRIATE") || abbrName.equals("EFFICIENCY") || abbrName.equals("PROCESS")) {
+                    CodeableConcept processConcept = buildCodeableConcept("process", "http://hl7.org/fhir/measure-type", "");
+                    typeList.add(processConcept);                                                            
+                }
+                else {
+                    CodeableConcept unk = buildCodeableConcept("unknown", "http://hl7.org/fhir/measure-type", "");
+                    typeList.add(unk);                                                                               
+                }
+            }
             fhirMeasure.setType(typeList);
             
             //set rationale
-            fhirMeasure.setRationale(qdmMeasureDetails.getRationale());
+            fhirMeasure.setRationale(mModel.getRationale());
             
             //set clinical recommendation
-            fhirMeasure.setClinicalRecommendationStatement(qdmMeasureDetails.getClinicalRecommendation());
+            fhirMeasure.setClinicalRecommendationStatement(mModel.getClinicalRecomms());
             
             //set guidance
-            fhirMeasure.setGuidance(qdmMeasureDetails.getGuidance());
+            fhirMeasure.setGuidance(mModel.getGuidance());
             
             //set group
             List<MeasureGroupComponent> listMGC = new ArrayList();
-            if (qdmMeasureDetails.getInitialPopulation() != null) {
+            if (mModel.getInitialPop() != null) {
                 MeasureGroupComponent initialPopulation = new MeasureGroupComponent();
                 initialPopulation.setCode(buildCodeableConcept("initial-population", "http://terminology.hl7.org/CodeSystem/measure-population", "Initial Population"));
-                initialPopulation.setDescription(qdmMeasureDetails.getInitialPopulation());
+                initialPopulation.setDescription(mModel.getInitialPop());
                 listMGC.add(initialPopulation);
             }
             
-            if (qdmMeasureDetails.getDenominator() != null) {
+            if (mModel.getDenominator() != null) {
                 MeasureGroupComponent denominator = new MeasureGroupComponent();
                 denominator.setCode(buildCodeableConcept("denominator", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator"));
-                denominator.setDescription(qdmMeasureDetails.getDenominator());
+                denominator.setDescription(mModel.getDenominator());
                 listMGC.add(denominator);
             }
             
-            if (qdmMeasureDetails.getDenominatorExclusions() != null) {
+            if (mModel.getDenominatorExclusions() != null) {
                 MeasureGroupComponent denominatorExclusions = new MeasureGroupComponent();
                 denominatorExclusions.setCode(buildCodeableConcept("denominator-exclusions", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator Exclusions"));
-                denominatorExclusions.setDescription(qdmMeasureDetails.getDenominatorExclusions());
+                denominatorExclusions.setDescription(mModel.getDenominatorExclusions());
                 listMGC.add(denominatorExclusions);
             }
             
-            if (qdmMeasureDetails.getDenominatorExceptions() != null) {
+            if (mModel.getDenominatorExceptions() != null) {
                 MeasureGroupComponent denominatorExceptions = new MeasureGroupComponent();
                 denominatorExceptions.setCode(buildCodeableConcept("denominator-exceptions", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator Exceptions"));
-                denominatorExceptions.setDescription(qdmMeasureDetails.getDenominatorExceptions());
+                denominatorExceptions.setDescription(mModel.getDenominatorExceptions());
                 listMGC.add(denominatorExceptions);
             }
             
-            if (qdmMeasureDetails.getNumerator() != null) {
+            if (mModel.getNumerator() != null) {
                 MeasureGroupComponent numerator = new MeasureGroupComponent();
                 numerator.setCode(buildCodeableConcept("numerator", "http://terminology.hl7.org/CodeSystem/measure-population", "Numerator"));
-                numerator.setDescription(qdmMeasureDetails.getNumerator());
+                numerator.setDescription(mModel.getNumerator());
                 listMGC.add(numerator);
             }
             
-            if (qdmMeasureDetails.getNumeratorExclusions() != null) {
+            if (mModel.getNumeratorExclusions() != null) {
                 MeasureGroupComponent numeratorExclusions = new MeasureGroupComponent();
                 numeratorExclusions.setCode(buildCodeableConcept("numerator-exclusions", "http://terminology.hl7.org/CodeSystem/measure-population", "Numerator Exclusions"));
-                numeratorExclusions.setDescription(qdmMeasureDetails.getNumerator());
+                numeratorExclusions.setDescription(mModel.getNumerator());
                 listMGC.add(numeratorExclusions);
             }
             
             fhirMeasure.setGroup(listMGC);
             
-            //supplemental data
-            List<MeasureSupplementalDataComponent> mSDC = new ArrayList();
-            if (qdmMeasureDetails.getSupplementalDataElements() != null) {
-                MeasureSupplementalDataComponent sComp =  new MeasureSupplementalDataComponent();
-                sComp.setCode(buildCodeableConcept("supplemental-data", "http://hl7.org/fhir/measure-data-usage", ""));
-                sComp.setDescription(qdmMeasureDetails.getSupplementalDataElements());
-                mSDC.add(sComp);
-            }
-            fhirMeasure.setSupplementalData(mSDC);
+            //TODO manage composite missing detail supplemental data
+//            List<MeasureSupplementalDataComponent> mSDC = new ArrayList();
+//            if (qdmMeasureDetails.getSupplementalDataElements() != null) {
+//                MeasureSupplementalDataComponent sComp =  new MeasureSupplementalDataComponent();
+//                sComp.setCode(buildCodeableConcept("supplemental-data", "http://hl7.org/fhir/measure-data-usage", ""));
+//                sComp.setDescription(qdmMeasureDetails.getSupplementalDataElements());
+//                mSDC.add(sComp);
+//            }
+//            fhirMeasure.setSupplementalData(mSDC);
 
         return fhirMeasure;
     }
@@ -313,5 +362,17 @@ public class MeasureMapper implements FhirCreator {
         p.setEnd(enddate);
         
         return p;
+    }
+    
+    private Date convertDateTimeString(String dString) {
+        Date dt = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dt = sdf.parse(dString);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return dt;
     }
 }
