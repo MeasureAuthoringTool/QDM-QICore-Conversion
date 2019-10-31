@@ -46,7 +46,4 @@ interface FhirCreator {
         narrative.setDivAsString(data);
         return narrative;
     }
-
-
-
 }

@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cqlLookUp>
+    <library>AIS_HEDIS_2020</library>
+    <version>1.0.000</version>
+    <usingModel>QDM</usingModel>
+    <usingModelVersion>5.4</usingModelVersion>
+    <cqlContext>Patient</cqlContext>
+    <codeSystems>
+        <codeSystem codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMEDCT" codeSystemVersion="2016-09" id="44d1b84bebe24a44be0804fbce4a4512"/>
+        <codeSystem codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMEDCT" codeSystemVersion="2018-03" id="17b2d3d2f64b4d38a348162b6530b35f"/>
+        <codeSystem codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMEDCT" codeSystemVersion="2017-03" id="b4b42d5317134edbb6a8fc7e45222930"/>
+        <codeSystem codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.52" id="d14840124d064631ae9644fa9aed7b00"/>
+    </codeSystems>
+    <valuesets>
+        <valueset id="59b8f4341180445f94fbfb2eba0f1481" name="Anatomic or Functional Asplenia" oid="2.16.840.1.113883.3.464.1004.1477" originalName="Anatomic or Functional Asplenia" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="06c37b01-4904-463a-8828-8c7b5bca9dbb" version=""/>
+        <valueset id="a065640840ad44578554ec29b9fb308f" name="Cerebrospinal Fluid Leak" oid="2.16.840.1.113883.3.464.1004.1448" originalName="Cerebrospinal Fluid Leak" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="619ce2fc-8ee3-45de-80cb-e1a6ac48836a" version=""/>
+        <valueset id="809f6d47d00846f0b3740ee8c7124096" name="Chemotherapy Procedure" oid="2.16.840.1.113883.3.464.1004.1500" originalName="Chemotherapy Procedure" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="989edbca-f62b-487e-aba4-3cac2bc00b01" version=""/>
+        <valueset id="36a2ce64fa364fb8a77ccf226efcab49" name="Immunocompromising Conditions" oid="2.16.840.1.113883.3.464.1004.1502" originalName="Immunocompromising Conditions" program="" release="" suppDataElement="false" taxonomy="ICD10CM" type="Extensional" uuid="f4fcfdc7-0042-45f4-b27d-ad3bbff248ce" version=""/>
+        <valueset id="c8342c9352cc4060ae7660cda84108c9" name="Sickle Cell Anemia and HB S Disease" oid="2.16.840.1.113883.3.464.1004.1373" originalName="Sickle Cell Anemia and HB S Disease" program="" release="" suppDataElement="false" taxonomy="ICD10CM" type="Extensional" uuid="83861180-018f-4b38-aa73-1473b6c9a737" version=""/>
+        <valueset id="627da3a3b5994b2daf02d9523d1aa911" name="Cochlear Implant Diagnosis" oid="2.16.840.1.113883.3.464.1004.1520" originalName="Cochlear Implant Diagnosis" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="4563db96-e520-459d-b3b5-19fdda423863" version=""/>
+        <valueset id="5787f45e080a4280933f5146ae42856f" name="Cochlear Implant Device" oid="2.16.840.1.113883.3.464.1004.1521" originalName="Cochlear Implant Device" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="e2fc7332-2a66-4101-a646-0565634fdd3f" version=""/>
+        <valueset id="62fd8b4d634849a48e3e92a89c4e035d" name="Chemotherapy Encounter" oid="2.16.840.1.113883.3.464.1004.1519" originalName="Chemotherapy Encounter" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="9e7eed6c-0d88-489f-9253-c923c927f7ed" version=""/>
+        <valueset id="5c0080b069dd4011b020b168116a5bfc" name="Adult Influenza Immunization" oid="2.16.840.1.113883.3.464.1004.1913" originalName="Adult Influenza Immunization" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="8cea7bf4-eca4-4b7b-aef9-d308dfe730af" version=""/>
+        <valueset id="6646bd01a16b429f864cadafd3b2cd56" name="Adult Influenza Vaccine Procedure" oid="2.16.840.1.113883.3.464.1004.1914" originalName="Adult Influenza Vaccine Procedure" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="525b6494-ac7e-42bf-b65e-684a3a345ea3" version=""/>
+        <valueset id="0288d3deceb84e40a11c47746a974283" name="Td Immunization" oid="2.16.840.1.113883.3.464.1004.1923" originalName="Td Immunization" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="01bf640d-19e7-4df5-82b5-22859c857e56" version=""/>
+        <valueset id="226c6ec36253480d8b33ae13c1f9936a" name="Herpes Zoster Live Immunization" oid="2.16.840.1.113883.3.464.1004.1915" originalName="Herpes Zoster Live Immunization" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="f3af66f1-6572-4595-9b94-40eca9ab7b88" version=""/>
+        <valueset id="09ec43cb412d4024b2d0fac318689219" name="Herpes Zoster Live Vaccine Procedure" oid="2.16.840.1.113883.3.464.1004.1917" originalName="Herpes Zoster Live Vaccine Procedure" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="bdee561d-5062-4593-984d-9d5298f6e5b4" version=""/>
+        <valueset id="062ae0cd698047519d6e1ad4f0584377" name="Herpes Zoster Recombinant Immunization" oid="2.16.840.1.113883.3.464.1004.1916" originalName="Herpes Zoster Recombinant Immunization" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="e0e34429-fa0c-4e76-91ff-b2c720317f03" version=""/>
+        <valueset id="5415168b67944b9cb8ac956c2a4ad5dc" name="Herpes Zoster Recombinant Vaccine Procedure" oid="2.16.840.1.113883.3.464.1004.1918" originalName="Herpes Zoster Recombinant Vaccine Procedure" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="9655778c-0eca-4003-a1da-f979a5e609b9" version=""/>
+        <valueset id="dd36e19af92d442caad93dbc380a2845" name="Pneumococcal Conjugate 13 Immunization" oid="2.16.840.1.113883.3.464.1004.1919" originalName="Pneumococcal Conjugate 13 Immunization" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="d3ff5cc6-7a3b-435b-bd9b-0794b840a30e" version=""/>
+        <valueset id="b454d0e8d374499eac21ae42fbbefe26" name="Pneumococcal Conjugate 13 Vaccine Procedure" oid="2.16.840.1.113883.3.464.1004.1920" originalName="Pneumococcal Conjugate 13 Vaccine Procedure" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="bb100942-5f76-4456-afe5-1c432a112931" version=""/>
+        <valueset id="448de9df1c434442988d6a3858311846" name="Pneumococcal Polysaccharide 23 Immunization" oid="2.16.840.1.113883.3.464.1004.1921" originalName="Pneumococcal Polysaccharide 23 Immunization" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="8b19ef98-babb-4742-b04c-4340ba6218a1" version=""/>
+        <valueset id="3f429d22b4354524b97d19212a56d72a" name="Td Vaccine Procedure" oid="2.16.840.1.113883.3.464.1004.1924" originalName="Td Vaccine Procedure" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="5625de8e-d666-4927-a3ce-84cfe1e3b331" version=""/>
+        <valueset id="60f6683d74fa4f788833454e867e41fa" name="Pneumococcal Polysaccharide 23 Vaccine Procedure" oid="2.16.840.1.113883.3.464.1004.1922" originalName="Pneumococcal Polysaccharide 23 Vaccine Procedure" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="37f7fbc5-a60b-485c-91d9-c892b88a0494" version=""/>
+        <valueset id="6db3120c59294e319259c8465e3fef9d" name="Tdap Immunization" oid="2.16.840.1.113883.3.464.1004.1791" originalName="Tdap Immunization" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="94fe249c-0aff-4a2c-9d9d-c0f97ce2eff0" version=""/>
+        <valueset id="815f552bfabd4bf296ac1d2b021cb914" name="Tdap Vaccine Procedure" oid="2.16.840.1.113883.3.464.1004.1792" originalName="Tdap Vaccine Procedure" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="e9ae696c-7cd3-4936-9102-1703b7137c22" version=""/>
+        <valueset id="31c6e2e27321433cb4bb5671138cb050" name="Bone Marrow Transplant" oid="2.16.840.1.113883.3.464.1004.1325" originalName="Bone Marrow Transplant" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="1885f9b2-8c27-4b45-a6ae-2947dfb2bd04" version=""/>
+        <valueset id="6f97a752d83d4537b1cd5e5682f28a07" name="Cochlear Implant" oid="2.16.840.1.113883.3.464.1004.1447" originalName="Cochlear Implant" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="4d3c24de-7917-4430-901c-ac5e05849da5" version=""/>
+        <valueset id="f9a4214b39b74f3baf601662570bd1c2" name="Influenza Virus LAIV Immunization" oid="2.16.840.1.113883.3.464.1004.1974" originalName="Influenza Virus LAIV Immunization" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="4b2187f1-ca78-485c-8231-5ed43d805a54" version=""/>
+        <valueset id="2e595341d1684654bab7b10e7c16773f" name="Influenza Virus LAIV Vaccine Procedure" oid="2.16.840.1.113883.3.464.1004.1973" originalName="Influenza Virus LAIV Vaccine Procedure" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="02d5d646-8f1d-4a72-bc58-0ad02ae81e26" version=""/>
+    </valuesets>
+    <codes>
+        <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2016-09/Code/451291000124104/Info" codeName="Adverse reaction caused by zoster vaccine (disorder)" codeOID="451291000124104" codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2016-09" displayName="Adverse reaction caused by zoster vaccine (disorder)" id="5782f8d5c8a642de8b6daf9beae048d9" isCodeSystemVersionIncluded="true" readOnly="false"/>
+        <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2018-03/Code/293116002/Info" codeName="Pneumococcal vaccine adverse reaction (disorder)" codeOID="293116002" codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2018-03" displayName="Pneumococcal vaccine adverse reaction (disorder)" id="a3b0ddd92dad46ee9ee71446b73adf77" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2018-03/Code/420113004/Info" codeName="Influenza virus vaccine adverse reaction (disorder)" codeOID="420113004" codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2018-03" displayName="Influenza virus vaccine adverse reaction (disorder)" id="d11e85c3c70f4188946f88e28062de4a" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2017-03/Code/428291000124105/Info" codeName="Anaphylaxis due to tetanus, diphtheria and acellular pertussis vaccine (disorder)" codeOID="428291000124105" codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2017-03" displayName="Anaphylaxis due to tetanus, diphtheria and acellular pertussis vaccine (disorder)" id="1ce63fab841b4b6496f89a4902fd9747" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2018-03/Code/428281000124107/Info" codeName="Anaphylaxis due to diphtheria and tetanus vaccine (disorder)" codeOID="428281000124107" codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2018-03" displayName="Anaphylaxis due to diphtheria and tetanus vaccine (disorder)" id="dd6cdaca91ba4b5090da009d856ab5e5" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2018-03/Code/192710009/Info" codeName="Post tetanus vaccination encephalitis (disorder)" codeOID="192710009" codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2018-03" displayName="Post tetanus vaccination encephalitis (disorder)" id="0c857e966b14473c8df1ccf10bb8fc1b" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2018-03/Code/192712001/Info" codeName="Post pertussis vaccination encephalitis (disorder)" codeOID="192712001" codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2018-03" displayName="Post pertussis vaccination encephalitis (disorder)" id="c53acd5bebe4441abad4f6df67709089" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2018-03/Code/192711008/Info" codeName="Post diphtheria vaccination encephalitis (disorder)" codeOID="192711008" codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2018-03" displayName="Post diphtheria vaccination encephalitis (disorder)" id="421708884abf47cda407438d4112e3f0" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        <code codeIdentifier="CODE:/CodeSystem/LOINC/Version/2.52/Code/21112-8/Info" codeName="Birth date" codeOID="21112-8" codeSystemName="LOINC" codeSystemOID="2.16.840.1.113883.6.1" codeSystemVersion="2.52" displayName="Birth date" id="913f3c37fb704785a4bef6f6420dc8ed" isCodeSystemVersionIncluded="false" readOnly="false"/>
+    </codes>
+    <parameters>
+        <parameter id="8ca17e10-9a5c-46ac-8fb9-34c48d838f1d" name="Measurement Period" readOnly="true">
+            <logic>Interval&lt;DateTime&gt;</logic>
+        </parameter>
+        <parameter id="c7992548-59a1-4546-9b0e-4a52ad5b5ee9" name="Product Line" readOnly="false">
+            <logic>String</logic>
+            <comment/>
+        </parameter>
+    </parameters>
+    <definitions>
+        <definition context="Patient" id="6f5f1609-2959-4ff8-b9f6-9a39241f7bb6" name="Stratification 1" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                where Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, start of "Measurement Period")between
+                19 and 65
+                )
+                and Common."Product Line"("Product Line",
+                end of "Measurement Period", "Measurement Period"
+                )= Common."Commercial Product"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="634fd916-a281-4bba-ac17-3de22219a32a" name="Stratification 3" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ["Patient Characteristic Birthdate": "Birth date"] Birthdate
+                where Common."CalendarAgeInYearsAt"(Birthdate.birthDatetime, start of "Measurement Period")&gt;= 66
+                )
+                and Common."Product Line"("Product Line",
+                end of "Measurement Period", "Measurement Period"
+                )= Common."Medicare Product"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="22b6d7c8-69cc-4f97-a810-f682690d9a6d" name="Stratification 2" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                where Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, start of "Measurement Period")between
+                19 and 65
+                )
+                and Common."Product Line"("Product Line",
+                end of "Measurement Period", "Measurement Period"
+                )= Common."Medicaid Product"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="7725331f-b54e-4902-95bc-8393d18c54ae" name="Enrolled During Participation Period" popDefinition="false" supplDataElement="false">
+            <logic>Common."Is Enrolled"("Product Line",
+                end of "Measurement Period", Interval[start of "Measurement Period",
+                end of "Measurement Period"], 45
+                )
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="19e6cf9d-310b-4422-bc32-909903cb224a" name="Herpes Zoster Live Vaccine After Age 50 Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ( ["Immunization, Administered": "Herpes Zoster Live Immunization"]
+                union ( ["Procedure, Performed": "Herpes Zoster Live Vaccine Procedure"] ZosterLiveProcedure
+                return "Immunization, Administered" { authorDatetime: start of ZosterLiveProcedure.relevantPeriod }
+                ) ) ZosterLive
+                with ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                such that Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, ZosterLive.authorDatetime)&gt;= 50
+                ) ZosterLiveAge50
+                where ZosterLiveAge50.authorDatetime on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="21aab9b4-c06e-47e9-8590-de01677ff673" name="Herpes Zoster Recombinant Vaccine After Age 50 Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>( ( ["Immunization, Administered": "Herpes Zoster Recombinant Immunization"]
+                union ( ["Procedure, Performed": "Herpes Zoster Recombinant Vaccine Procedure"]
+                ZosterRecombinantProcedure
+                return "Immunization, Administered" { authorDatetime: start of
+                ZosterRecombinantProcedure.relevantPeriod }
+                ) ) ZosterRecombinant
+                with ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                such that Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, ZosterRecombinant.authorDatetime)&gt;=
+                50 ) ZosterRecombinantAge50
+                where ZosterRecombinantAge50.authorDatetime on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="b91d8ef7-aa9b-4d1a-8ac1-53d9a581cc96" name="Numerator 1" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ( ["Immunization, Administered": "Adult Influenza Immunization"]
+                union ["Immunization, Administered": "Influenza Virus LAIV Immunization"]
+                union ( ["Procedure, Performed": "Adult Influenza Vaccine Procedure"] FluVaccineProcedure
+                return "Immunization, Administered" { authorDatetime: start of FluVaccineProcedure.relevantPeriod }
+                )
+                union ( ["Procedure, Performed": "Influenza Virus LAIV Vaccine Procedure"] FluLAIVVaccineProcedure
+                return "Immunization, Administered" { authorDatetime: start of
+                FluLAIVVaccineProcedure.relevantPeriod }
+                ) ) FluVaccine
+                where FluVaccine.authorDatetime during Interval[( start of "Measurement Period" - 6 months ), (
+                start of "Measurement Period" + 6 months ) )
+                )
+                or "Influenza Virus Vaccine Adverse Reaction Before End of Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="adceb61e-a814-477c-86eb-2c41bdfac5ec" name="Numerator 4" popDefinition="false" supplDataElement="false">
+            <logic>"Pneumococcal Vaccines Administered After Age 60 Before End of Measurement Period"
+                or "Pneumococcal Vaccine Adverse Reaction Before End of Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="b37449a5-586f-4809-87c1-b9828c4bd7b3" name="Numerator 3" popDefinition="false" supplDataElement="false">
+            <logic>"Herpes Zoster Live Vaccine After Age 50 Before End of Measurement Period"
+                or "Two Doses of Recombinant Zoster Vaccine 28 Days Apart After Age 50 Before End of Measurement
+                Period"
+                or "Adverse Reaction Caused by Zoster Vaccine Before End of Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="6229a9f3-8efc-4bbd-bc01-866da847d57e" name="Tdap or Td Vaccine Administered Within 9 Years prior to Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ["Immunization, Administered": "Tdap Immunization"]
+                union ["Immunization, Administered": "Td Immunization"]
+                union ( ["Procedure, Performed": "Tdap Vaccine Procedure"] TdapVaccine
+                return "Immunization, Administered" { authorDatetime: start of TdapVaccine.relevantPeriod }
+                )
+                union ( ["Procedure, Performed": "Td Vaccine Procedure"] TdVaccine
+                return "Immunization, Administered" { authorDatetime: start of TdVaccine.relevantPeriod }
+                ) ) TdapOrTdvaccine
+                where TdapOrTdvaccine.authorDatetime during Interval[( start of "Measurement Period" - 9 years ), (
+                end of "Measurement Period"
+                )]
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="af7dba41-4099-48f8-954e-01e7ba20cb0f" name="Numerator 2" popDefinition="false" supplDataElement="false">
+            <logic>"Tdap or Td Vaccine Administered Within 9 Years prior to Measurement Period"
+                or "Anaphylaxis Due to Td Vaccine Before End of Measurement Period"
+                or "Anaphylaxis Due to Tdap Vaccine Before End of Measurement Period"
+                or "Post Tetanus Vaccination Encephalitis Before End of Measurement Period"
+                or "Post Diphtheria Vaccination Encephalitis Before End of Measurement Period"
+                or "Post Pertussis Vaccination Encephalitis Before End of Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="6e0710d5-b290-45ab-b9bf-3bd268e0a0b6" name="Denominator 1" popDefinition="false" supplDataElement="false">
+            <logic>"Initial Population 1"</logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="5da2523e-5674-4902-b30e-2c83345c728c" name="Denominator 2" popDefinition="false" supplDataElement="false">
+            <logic>"Initial Population 2"</logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="29caeb40-6320-4968-bcc6-5235ff0af83c" name="Denominator 3" popDefinition="false" supplDataElement="false">
+            <logic>"Initial Population 3"</logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="4cc0b2af-fcff-4cbe-a7be-cbc19f6c9a1a" name="Denominator 4" popDefinition="false" supplDataElement="false">
+            <logic>"Initial Population 4"</logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="f24b3ae0-0838-495d-b3d2-6291784d0727" name="Exclusions" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ( ["Procedure, Performed": "Chemotherapy Procedure"]
+                union ["Encounter, Performed": "Chemotherapy Encounter"] ) Chemotherapy
+                where Chemotherapy.relevantPeriod overlaps "Measurement Period"
+                )
+                or exists ( ["Procedure, Performed": "Bone Marrow Transplant"] BoneMarrowTransplant
+                where BoneMarrowTransplant.relevantPeriod overlaps "Measurement Period"
+                )
+                or exists ( ( ["Diagnosis": "Immunocompromising Conditions"]
+                union ["Diagnosis": "Cochlear Implant Diagnosis"]
+                union ["Diagnosis": "Anatomic or Functional Asplenia"]
+                union ["Diagnosis": "Cerebrospinal Fluid Leak"]
+                union ["Diagnosis": "Sickle Cell Anemia and HB S Disease"] ) ExclusionDiagnoses
+                where ExclusionDiagnoses.prevalencePeriod starts on or before
+                end of "Measurement Period"
+                )
+                or exists ( ["Procedure, Performed": "Cochlear Implant"] CochlearImplantProcedure
+                where CochlearImplantProcedure.relevantPeriod starts on or before
+                end of "Measurement Period"
+                )
+                or exists ( ["Device, Applied": "Cochlear Implant Device"] CochlearImplantDevice
+                where CochlearImplantDevice.relevantPeriod starts on or before
+                end of "Measurement Period"
+                )
+                or exists Common."Hospice Intervention or Encounter"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="b731da07-ca35-46a4-8835-382aa8d522db" name="Pneumococcal Polysaccharide Vaccine 23 After Age 60 Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>( ( ["Immunization, Administered": "Pneumococcal Polysaccharide 23 Immunization"]
+                union ( ["Procedure, Performed": "Pneumococcal Polysaccharide 23 Vaccine Procedure"] PPSV23Procedure
+                return "Immunization, Administered" { authorDatetime: start of PPSV23Procedure.relevantPeriod }
+                ) ) PPSV23
+                with ["Patient Characteristic Birthdate"] BirthDate
+                such that Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, PPSV23.authorDatetime)&gt;= 60 )
+                PPSV2360
+                where PPSV2360.authorDatetime on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="9a9b72f5-7d1e-4175-a502-cc92fa1332d8" name="Pneumococcal Conjugate Vaccine 13 After Age 60 Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>( ( ["Immunization, Administered": "Pneumococcal Conjugate 13 Immunization"]
+                union ( ["Procedure, Performed": "Pneumococcal Conjugate 13 Vaccine Procedure"] PCV13Procedure
+                return "Immunization, Administered" { authorDatetime: start of PCV13Procedure.relevantPeriod }
+                ) ) PCV13
+                with ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                such that Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, PCV13.authorDatetime)&gt;= 60 )
+                PCV1360
+                where PCV1360.authorDatetime on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="31c827fe-b08e-4d0d-9d2a-27de329bfca7" name="Pneumococcal Vaccine Adverse Reaction Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ["Diagnosis": "Pneumococcal vaccine adverse reaction (disorder)"] PneumoAdverseRXN
+                where PneumoAdverseRXN.prevalencePeriod starts on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="f8426c44-cada-484b-8b90-70d14fa1629f" name="Pneumococcal Vaccines Administered After Age 60 Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists "Pneumococcal Conjugate Vaccine 13 After Age 60 Before End of Measurement Period" PCV13
+                with "Pneumococcal Polysaccharide Vaccine 23 After Age 60 Before End of Measurement Period" PPSV23
+                such that months between PCV13.authorDatetime and PPSV23.authorDatetime &gt;= 12
+                or months between PPSV23.authorDatetime and PCV13.authorDatetime &gt;= 12
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="8423b4f6-b2f9-40a4-95e4-4c3104ec5530" name="Post Diphtheria Vaccination Encephalitis Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ["Diagnosis": "Post diphtheria vaccination encephalitis (disorder)"]
+                DiphtheriaEncephalitis
+                where DiphtheriaEncephalitis.prevalencePeriod starts on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="4166b4bb-b6b3-41d3-bd35-92b425dcb10c" name="Post Pertussis Vaccination Encephalitis Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ["Diagnosis": "Post pertussis vaccination encephalitis (disorder)"] PertussisEncephalitis
+                where PertussisEncephalitis.prevalencePeriod starts on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="34e8f17e-8483-48c5-898c-c453b609361b" name="Post Tetanus Vaccination Encephalitis Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ["Diagnosis": "Post tetanus vaccination encephalitis (disorder)"] TetanusEncephalitis
+                where TetanusEncephalitis.prevalencePeriod starts on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="4e268814-85b0-4b1d-93a4-e9338b29c7a7" name="Two Doses of Recombinant Zoster Vaccine 28 Days Apart After Age 50 Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists "Herpes Zoster Recombinant Vaccine After Age 50 Before End of Measurement Period"
+                Recombinant1
+                with "Herpes Zoster Recombinant Vaccine After Age 50 Before End of Measurement Period" Recombinant2
+                such that days between Recombinant1.authorDatetime and Recombinant2.authorDatetime &gt;= 28
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="d94f2046-7eaa-44f0-be70-73e22d86f99b" name="Influenza Virus Vaccine Adverse Reaction Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ["Diagnosis": "Influenza virus vaccine adverse reaction (disorder)"] FluAdverseRXN
+                where FluAdverseRXN.prevalencePeriod starts on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="81941d71-c773-46ed-9e08-49231b9b364c" name="Anaphylaxis Due to Td Vaccine Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ["Diagnosis": "Anaphylaxis due to diphtheria and tetanus vaccine (disorder)"]
+                AnaphylaxisTd
+                where AnaphylaxisTd.prevalencePeriod starts on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="fc98899f-fa69-482e-b334-349451ea0632" name="Adverse Reaction Caused by Zoster Vaccine Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ["Diagnosis": "Adverse reaction caused by zoster vaccine (disorder)"] AdverseRXNZoster
+                where AdverseRXNZoster.prevalencePeriod starts on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="6fc73d74-cdc4-4066-a27c-3526f029d2da" name="Initial Population 1" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                where Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, start of "Measurement Period")&gt;= 19
+                )
+                and "Enrolled During Participation Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="da78cd58-2f47-439d-9ae8-bbb898d17f63" name="Initial Population 2" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                where Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, start of "Measurement Period")&gt;= 19
+                )
+                and "Enrolled During Participation Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="ec2718cc-8982-4061-8af8-acee9efbaf62" name="Initial Population 3" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                where Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, start of "Measurement Period")&gt;= 50
+                )
+                and "Enrolled During Participation Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="e89a1d93-6334-4623-98bc-33324b8c22d3" name="Initial Population 4" popDefinition="false" supplDataElement="false">
+            <logic>exists ( ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                where Common."CalendarAgeInYearsAt"(BirthDate.birthDatetime, start of "Measurement Period")&gt;= 66
+                )
+                and "Enrolled During Participation Period"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="b156c15d-64fe-4763-8b49-0a0a92a2433f" name="Anaphylaxis Due to Tdap Vaccine Before End of Measurement Period" popDefinition="false" supplDataElement="false">
+            <logic>exists ["Diagnosis": "Anaphylaxis due to tetanus, diphtheria and acellular pertussis vaccine
+                (disorder)"] AnaphylaxisTdap
+                where AnaphylaxisTdap.prevalencePeriod starts on or before
+                end of "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+    </definitions>
+    <functions/>
+    <includeLibrarys>
+        <includeLibrary cqlLibRefId="402803826adcd9dc016b0f2863d111df" cqlLibRefName="NCQA_Common" cqlVersion="5.0.000" id="514b3a77-b2b6-4b66-919f-5176f913a190" name="Common" qdmVersion="5.4"/>
+    </includeLibrarys>
+</cqlLookUp>

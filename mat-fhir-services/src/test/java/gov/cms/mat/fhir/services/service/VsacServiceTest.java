@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.service;
 
-import gov.cms.mat.fhir.services.components.VsacClient;
-import gov.cms.mat.fhir.services.components.VsacConverter;
+import gov.cms.mat.fhir.services.components.vsac.VsacClient;
+import gov.cms.mat.fhir.services.components.vsac.VsacConverter;
 import mat.model.VSACValueSetWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.service;
 
-import gov.cms.mat.fhir.services.components.VsacClient;
-import gov.cms.mat.fhir.services.components.VsacConverter;
+import gov.cms.mat.fhir.services.components.vsac.VsacClient;
+import gov.cms.mat.fhir.services.components.vsac.VsacConverter;
 import gov.cms.mat.fhir.services.service.support.VsacTicket;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.VSACValueSetWrapper;

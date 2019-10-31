@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.components;
+package gov.cms.mat.fhir.services.components.vsac;
 
 import mat.model.VSACValueSetWrapper;
 import org.junit.jupiter.api.BeforeEach;

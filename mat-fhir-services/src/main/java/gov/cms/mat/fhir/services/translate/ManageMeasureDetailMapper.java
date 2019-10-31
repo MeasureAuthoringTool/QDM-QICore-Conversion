@@ -1,76 +1,79 @@
 package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.commons.model.Measure;
+import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import gov.cms.mat.fhir.services.components.mat.MatXmlException;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.ManageMeasureDetailModel;
-import mat.server.MeasureLibraryService;
 import mat.server.util.MeasureUtility;
 import mat.shared.DateUtility;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
+@Component
 @Slf4j
 public class ManageMeasureDetailMapper {
-    private final byte[] xmlBytes;
-    private final Measure measure;
+    private final MatXmlConverter matXmlConverter;
 
-    public ManageMeasureDetailMapper(byte[] xmlBytes, Measure measure) {
-        this.xmlBytes = xmlBytes;
-        this.measure = measure;
+    public ManageMeasureDetailMapper(MatXmlConverter matXmlConverter) {
+        this.matXmlConverter = matXmlConverter;
     }
 
-    public ManageCompositeMeasureDetailModel convert() {
-        ManageCompositeMeasureDetailModel model = getFromXml();
+    public ManageCompositeMeasureDetailModel convert(byte[] xmlBytes, Measure measure) {
+        ManageCompositeMeasureDetailModel model = getFromXml(xmlBytes);
 
-        processModel(model);
+        if (model == null) {
+            log.trace("Cannot Convert to object xml: {}", new String(xmlBytes)); // never turn on in production
+            throw new MatXmlException("Cannot process xml bytes");
+        } else {
+            return processMeasureAndModel(measure, model);
+        }
+    }
+
+    private ManageCompositeMeasureDetailModel processMeasureAndModel(Measure measure,
+                                                                     ManageCompositeMeasureDetailModel model) {
+        processModel(model, measure);
 
         if (measure.getIsCompositeMeasure()) {
-            createMeasureDetailsModelForCompositeMeasure(model);
+            processCompositeMeasure(model, measure);
         }
 
         return model;
     }
 
-    private ManageCompositeMeasureDetailModel getFromXml() {
+    private ManageCompositeMeasureDetailModel getFromXml(byte[] xmlBytes) {
         if (ArrayUtils.isNotEmpty(xmlBytes)) {
-            try {
-                return MeasureLibraryService.createModelFromXML(new String(xmlBytes));
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+            return matXmlConverter.toCompositeMeasureDetail(new String(xmlBytes));
         } else {
             throw new IllegalArgumentException("Xml bytes are null");
         }
     }
 
-    private void createMeasureDetailsModelForCompositeMeasure(final ManageCompositeMeasureDetailModel model) {
+    private void processCompositeMeasure(final ManageCompositeMeasureDetailModel model,
+                                         Measure measure) {
         model.setCompositeScoringMethod(measure.getCompositeScoring());
         model.setQdmVersion(measure.getQdmVersion());
     }
 
 
-    private void processModel(ManageMeasureDetailModel model) {
+    private void processModel(ManageMeasureDetailModel model, Measure measure) {
         model.setId(measure.getId());
-        model.setCalenderYear(model.getPeriodModel().isCalenderYear());
 
-        if (model.getPeriodModel() != null && !model.getPeriodModel().isCalenderYear()) {
-            model.setMeasFromPeriod(model.getPeriodModel() != null
-                    ? model.getPeriodModel().getStartDate() : null);
-            model.setMeasToPeriod(model.getPeriodModel() != null
-                    ? model.getPeriodModel().getStopDate() : null);
+        if (model.getPeriodModel() != null) {
+            processPeriod(model);
         }
 
         model.setEndorseByNQF(StringUtils.isNotBlank(model.getEndorsement()));
 
-        setFormattedVersion(model);
+        setFormattedVersion(model, measure);
 
-        setOrgVersionNumber(model);
+        setOrgVersionNumber(model, measure);
 
-        model.setVersionNumber(MeasureUtility.getVersionText(model.getOrgVersionNumber(), measure.getDraft()));
+        if (model.getOrgVersionNumber() != null) {
+            model.setVersionNumber(MeasureUtility.getVersionText(model.getOrgVersionNumber(), measure.getDraft()));
+        }
 
         model.setFinalizedDate(DateUtility.convertDateToString(measure.getFinalizedDate()));
         model.setDraft(measure.getDraft());
@@ -100,7 +103,19 @@ public class ManageMeasureDetailMapper {
         model.setValueSetDate(DateUtility.convertDateToStringNoTime(measure.getValueSetDate()));
     }
 
-    private void setOrgVersionNumber(ManageMeasureDetailModel model) {
+    private void processPeriod(ManageMeasureDetailModel model) {
+        model.setCalenderYear(model.getPeriodModel().isCalenderYear());
+
+        if (model.getPeriodModel() != null && !model.getPeriodModel().isCalenderYear()) {
+            model.setMeasFromPeriod(model.getPeriodModel() != null
+                    ? model.getPeriodModel().getStartDate() : null);
+            model.setMeasToPeriod(model.getPeriodModel() != null
+                    ? model.getPeriodModel().getStopDate() : null);
+
+        }
+    }
+
+    private void setOrgVersionNumber(ManageMeasureDetailModel model, Measure measure) {
         if (measure.getVersion() == null || measure.getRevisionNumber() == null) {
             log.debug("Cannot set formatted version revision: {}, version: {}",
                     measure.getRevisionNumber(), measure.getVersion());
@@ -110,7 +125,7 @@ public class ManageMeasureDetailMapper {
         }
     }
 
-    private void setFormattedVersion(ManageMeasureDetailModel model) {
+    private void setFormattedVersion(ManageMeasureDetailModel model, Measure measure) {
         if (measure.getVersion() == null || measure.getRevisionNumber() == null) {
             log.debug("Cannot set formatted version revision: {}, version: {}",
                     measure.getRevisionNumber(), measure.getVersion());
