@@ -110,7 +110,7 @@ class ValueSetMapperTest {
         MatValueSet matValueSet = new MatValueSet();
         matValueSet.setID("2.16.840.1.113762.1.4.1195.291");
         matValueSet.setDisplayName("HEDIS Bone Mineral Density Tests Value Set");
-        matValueSet.setVersion("N?A");
+        matValueSet.setVersion("1.3");
         matValueSet.setSource("New Wakanda Innovation Institute");
         matValueSet.setDefinition("(2.16.840.1.113762.1.4.1195.288:Bone Mineral Density Tests\n" +
                 "            CPT),(2.16.840.1.113762.1.4.1195.289:Bone Mineral Density Tests HCPCS),(2.16.840.1.113762.1.4.1195.290:Bone\n" +

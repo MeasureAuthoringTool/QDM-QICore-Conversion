@@ -29,7 +29,7 @@ public interface FhirValueSetCreator extends FhirCreator {
         valueSet.setIdentifier(Collections.singletonList(createIdentifier(SYSTEM_IDENTIFIER, matValueSet.getID())));
         valueSet.setVersion(matValueSet.getVersion());
         valueSet.setName(matValueSet.getDisplayName());
-        // valueSet.setTitle()   //todo DU cannot find
+         // valueSet.setTitle()   //todo DU cannot find
 
         //todo DU can throw exception if not found
         valueSet.setStatus(Enumerations.PublicationStatus.fromCode(matValueSet.getStatus()));
