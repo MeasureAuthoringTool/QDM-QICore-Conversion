@@ -137,7 +137,9 @@ public class MeasureMapper implements FhirCreator {
             boolean experimental = false;
             fhirMeasure.setExperimental(experimental);
             
-            fhirMeasure.setApprovalDate(convertDateTimeString(mModel.getFinalizedDate()));
+            if (mModel.getFinalizedDate() != null) {
+                fhirMeasure.setApprovalDate(convertDateTimeString(mModel.getFinalizedDate()));
+            }
             
             //set Publisher
             fhirMeasure.setPublisher(mModel.getStewardValue());

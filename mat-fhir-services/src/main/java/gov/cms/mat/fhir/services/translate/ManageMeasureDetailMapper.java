@@ -20,6 +20,7 @@ public class ManageMeasureDetailMapper {
     public ManageMeasureDetailMapper(MatXmlConverter matXmlConverter) {
         this.matXmlConverter = matXmlConverter;
     }
+    
 
     public ManageCompositeMeasureDetailModel convert(byte[] xmlBytes, Measure measure) {
         ManageCompositeMeasureDetailModel model = getFromXml(xmlBytes);

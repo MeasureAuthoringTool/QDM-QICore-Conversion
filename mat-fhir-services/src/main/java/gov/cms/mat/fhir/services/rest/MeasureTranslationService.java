@@ -34,6 +34,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 
+import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 /**
  * @author duanedecouteau
@@ -46,6 +49,10 @@ public class MeasureTranslationService {
     private final MeasureDetailsRepository measureDetailsRepo;
     private final MeasureDetailsReferenceRepository measureDetailsReferenceRepo;
     private final MeasureExportRepository measureExportRepo;
+    
+    @Autowired
+    private MatXmlConverter matXmlConverter;
+
 
 
     @Value("${fhir.r4.baseurl}")
@@ -83,9 +90,10 @@ public class MeasureTranslationService {
                 log.error("Narrative not found", ex.getMessage());
             }
             
-            ManageMeasureDetailMapper manageMeasureDetailMapper = new ManageMeasureDetailMapper(xmlBytes, qdmMeasure);
+            
+            ManageMeasureDetailMapper manageMeasureDetailMapper = new ManageMeasureDetailMapper(matXmlConverter);
 
-            ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert();
+            ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);
             
             
             MeasureMapper fhirMapper = new MeasureMapper(model, narrative);
@@ -159,8 +167,14 @@ public class MeasureTranslationService {
                 Measure measure = (Measure)iter.next();
                 String measureId = measure.getId().trim();
                 System.out.println("Translating Measure "+measureId);
-                TranslationOutcome result = translateMeasureById(measureId);
-                res.add(result);
+                String version = measure.getReleaseVersion();
+
+                if (version != null) {
+                    if (version.equals("v5.5") || version.equals("v5.6") || version.equals("v5.7") || version.equals("v5.8")) {
+                        TranslationOutcome result = translateMeasureById(measureId);
+                        res.add(result);
+                    }
+                }
             }
         }
         catch (Exception ex) {
@@ -187,6 +201,7 @@ public class MeasureTranslationService {
                 Measure measure = (Measure)iter.next();
                 String measureId = measure.getId().trim();
                 System.out.println("Removing Measure "+measureId);
+                
                 
                 
             }
