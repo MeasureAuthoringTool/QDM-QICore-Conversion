@@ -5,38 +5,21 @@
  */
 package gov.cms.mat.fhir.services.translate;
 
-import java.util.Date;
-import java.util.logging.Logger;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.Measure;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
-import gov.cms.mat.fhir.commons.model.MeasureExport;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Level;
+import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.ContactDetail;
-import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
-import org.hl7.fhir.r4.model.Extension;
-import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Measure.MeasureGroupComponent;
-import org.hl7.fhir.r4.model.Measure.MeasureSupplementalDataComponent;
-import org.hl7.fhir.r4.model.Meta;
-import org.hl7.fhir.r4.model.Narrative;
-import org.hl7.fhir.r4.model.Period;
-import org.hl7.fhir.r4.model.RelatedArtifact;
-import org.hl7.fhir.r4.model.UsageContext;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
 /**
  *
  * @author duanedecouteau
@@ -106,11 +89,11 @@ public class MeasureMapper implements FhirCreator {
             Identifier cms = null;
             Identifier nqf = null;
             if (mModel.geteMeasureId() != 0) {
-                cms = createIdentifier("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms", new Integer(mModel.geteMeasureId()).toString());
+                cms = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms", new Integer(mModel.geteMeasureId()).toString());
                 idList.add(cms);
             }
             if (mModel.getEndorseByNQF()) {
-                nqf = createIdentifier("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf", new String(mModel.getNqfId()));
+                nqf = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf", new String(mModel.getNqfId()));
                 idList.add(nqf);
             }            
             fhirMeasure.setIdentifier(idList);
@@ -305,7 +288,7 @@ public class MeasureMapper implements FhirCreator {
         return fhirMeasure;
     }
     
-    private Identifier createIdentifier(String system, String code) {
+    private Identifier createIdentifierOfficial(String system, String code) {
         Identifier id = new Identifier();
         id.setSystem(system);
         IdentifierUse useId = IdentifierUse.OFFICIAL;
