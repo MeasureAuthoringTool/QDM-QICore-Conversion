@@ -21,8 +21,8 @@ class LibraryMapperTest {
     @BeforeEach
     void setUp() {
         measureExport = new MeasureExport();
-        measureExport.setMeasureId(new Measure());
-        measureExport.getMeasureId().setId(MEASURE_ID);
+        //measureExport.setMeasureId(new Measure());
+        measureExport.setMeasureId(MEASURE_ID);
         libraryMapper = new LibraryMapper(measureExport);
     }
 

@@ -20,5 +20,4 @@ public interface MeasureExportRepository extends JpaRepository<MeasureExport, St
     @Query("select a from MeasureExport a where a.measureId = :measureId")
     MeasureExport getMeasureExportById(@Param("measureId") String measureId); // does not work use below
 
-    MeasureExport findByMeasureId(Measure measure);
 }

@@ -24,7 +24,7 @@ public class LibraryMapper implements FhirCreator {
 
     public Library translateToFhir() {
         Library fhirLibrary = new Library();
-        fhirLibrary.setId("Library/" + qdmMeasureExport.getMeasureId().getId());
+        fhirLibrary.setId("Library/" + qdmMeasureExport.getMeasureId());
         fhirLibrary.setDate(new Date());
 
         fhirLibrary.setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
