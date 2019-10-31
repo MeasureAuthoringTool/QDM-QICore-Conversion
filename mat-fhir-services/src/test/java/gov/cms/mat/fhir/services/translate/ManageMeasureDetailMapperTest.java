@@ -5,16 +5,14 @@ import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mat.MatXmlException;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -27,12 +25,6 @@ class ManageMeasureDetailMapperTest {
     @InjectMocks
     private ManageMeasureDetailMapper manageMeasureDetailMapper;
 
-
-    @BeforeEach
-    void setUp() throws IOException {
-        //  File inputXmlFile = new File(this.getClass().getResource("/measureExportSimple.xml").getFile());
-        // xmlBytes = Files.readAllBytes(inputXmlFile.toPath());
-    }
 
     @Test
     void testConvert_SendEmptyBytes() {
@@ -51,9 +43,12 @@ class ManageMeasureDetailMapperTest {
     void testConvert_MatXmlConverter_ReturnsNull() {
         when(matXmlConverter.toCompositeMeasureDetail(anyString())).thenReturn(null);
 
-        Assertions.assertThrows(MatXmlException.class, () -> {
-            manageMeasureDetailMapper.convert(XML_DATA.getBytes(), new Measure());
-        });
+        MatXmlException thrown =
+                Assertions.assertThrows(MatXmlException.class, () -> {
+                    manageMeasureDetailMapper.convert(XML_DATA.getBytes(), new Measure());
+                });
+
+        assertTrue(thrown.getMessage().contains("Cannot process xml bytes"));
 
         verify(matXmlConverter).toCompositeMeasureDetail(XML_DATA);
     }

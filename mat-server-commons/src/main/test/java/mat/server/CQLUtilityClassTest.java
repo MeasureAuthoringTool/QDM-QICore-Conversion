@@ -14,6 +14,8 @@ public class CQLUtilityClassTest {
     public void getCQLModelFromXML_EnsureCanReadXML() throws IOException {
         File inputXmlFile = new File(this.getClass().getResource("/cqModel.xml").getFile());
         String xml = new String(Files.readAllBytes(inputXmlFile.toPath()));
+
+
         CQLModel model = CQLUtilityClass.getCQLModelFromXML(xml);
 
         assertEquals("junit", model.getLibraryName());

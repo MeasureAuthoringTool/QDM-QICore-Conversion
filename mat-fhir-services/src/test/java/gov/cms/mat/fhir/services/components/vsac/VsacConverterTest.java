@@ -1,25 +1,23 @@
 package gov.cms.mat.fhir.services.components.vsac;
 
+import gov.cms.mat.fhir.services.ResourceFileUtil;
 import mat.model.VSACValueSetWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class VsacConverterTest {
+class VsacConverterTest implements ResourceFileUtil {
     private String xml;
     private VsacConverter vsacConverter;
 
     @BeforeEach
     void setUp() throws IOException {
-        File inputXmlFile = new File(this.getClass().getResource("/vsacResponseResult.xml").getFile());
-        xml = new String(Files.readAllBytes(inputXmlFile.toPath()));
+        xml = getXml("/vsacResponseResult.xml");
 
         vsacConverter = new VsacConverter();
     }

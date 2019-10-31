@@ -1,19 +1,15 @@
 package gov.cms.mat.fhir.services.components.mat;
 
+import gov.cms.mat.fhir.services.ResourceFileUtil;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class MatXmlMarshallerTest {
+class MatXmlMarshallerTest implements ResourceFileUtil {
     private MatXmlMarshaller matXmlMarshaller;
 
     @BeforeEach
@@ -33,15 +29,5 @@ class MatXmlMarshallerTest {
         String xml = getXml("/cqlLookUp.xml");
         CQLQualityDataModelWrapper model = matXmlMarshaller.toQualityData(xml);
         assertFalse(model.getQualityDataDTO().isEmpty());
-    }
-
-    private String getXml(String resource) {
-        File inputXmlFile = new File(this.getClass().getResource(resource).getFile());
-
-        try {
-            return new String(Files.readAllBytes(inputXmlFile.toPath()));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 }

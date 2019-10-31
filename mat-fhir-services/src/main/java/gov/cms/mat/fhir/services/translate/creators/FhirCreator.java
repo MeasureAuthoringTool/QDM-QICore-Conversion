@@ -1,17 +1,14 @@
-package gov.cms.mat.fhir.services.translate;
+package gov.cms.mat.fhir.services.translate.creators;
 
 import org.apache.commons.io.IOUtils;
-import org.hl7.fhir.r4.model.Attachment;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Narrative;
+import org.hl7.fhir.r4.model.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Base64;
 import java.util.Collections;
 
-interface FhirCreator {
+public interface FhirCreator {
 
     default CodeableConcept createType(String type, String code) {
         return new CodeableConcept()
@@ -45,5 +42,11 @@ interface FhirCreator {
         Narrative narrative = new Narrative();
         narrative.setDivAsString(data);
         return narrative;
+    }
+
+    default Identifier createIdentifier(String system, String value) {
+        return new Identifier()
+                .setSystem(system)
+                .setValue(value);
     }
 }

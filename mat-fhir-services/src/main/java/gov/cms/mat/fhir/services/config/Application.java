@@ -21,11 +21,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-
-
-/**
- * @author duanedecouteau
- */
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "gov.cms.mat.fhir.services.repository")
 @ComponentScan(basePackages = "gov.cms.mat")
