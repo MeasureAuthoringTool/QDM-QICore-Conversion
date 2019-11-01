@@ -57,14 +57,21 @@ public class VsacServiceImpl implements VsacService {
 
     @Override
     public VSACValueSetWrapper getData(String oid) {
-        if (!validateTicket()) {
+        if (!validateUser()) {
             return null;
         }
+
+        getServiceTicket();
 
         VSACResponseResult vsacResponseResult = vsacClient.getDataFromProfile(oid, vsacServiceTicket.getTicket());
 
         if (isSuccessFull(vsacResponseResult)) {
-            return processResponse(vsacResponseResult);
+            try {
+                return processResponse(vsacResponseResult);
+            } catch (Exception e ) {
+                log.warn("Cannot get XMl from vsac oid: {}", oid);
+                return null;
+            }
         } else {
             log.warn("Error response from the vsac service, result: {}", vsacResponseResult);
             return null;

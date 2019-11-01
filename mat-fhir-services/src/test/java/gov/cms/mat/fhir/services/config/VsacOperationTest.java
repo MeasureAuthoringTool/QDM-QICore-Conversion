@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 class VsacOperationTest {
     // when the vsac connect timeout's the groovy client will retry, making testing impossible.
-    private final static boolean RUN_VSAC_INTEGRATION_TESTS = false;
+    private final static boolean RUN_VSAC_INTEGRATION_TESTS = true;
 
     @Autowired
     private VsacConfig vsacConfig;
@@ -50,9 +50,15 @@ class VsacOperationTest {
             cqlQualityDataSetDTO.setOid("2.16.840.1.113762.1.4.1195.291");
             //  cqlQualityDataSetDTO.setVersion("20190129"); version and revision ignored
 
-            VSACValueSetWrapper valueSetWrapper = vsacService.getData(cqlQualityDataSetDTO.getOid());
+            {
+                VSACValueSetWrapper valueSetWrapper = vsacService.getData(cqlQualityDataSetDTO.getOid());
+                assertNotNull(valueSetWrapper);
+            }
 
-            assertNotNull(valueSetWrapper);
+            { // must fetch the
+                VSACValueSetWrapper valueSetWrapper = vsacService.getData(cqlQualityDataSetDTO.getOid());
+                assertNotNull(valueSetWrapper);
+            }
         }
     }
 

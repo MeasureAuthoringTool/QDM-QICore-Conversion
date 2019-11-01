@@ -17,7 +17,7 @@ public class VsacConverter {
     public VSACValueSetWrapper toWrapper(String xml) {
         if (StringUtils.isBlank(xml)) {
             log.warn("Vsac Xml is blank");
-            throw new UncheckedIOException(new IOException("Xml is blank"));
+            throw new UncheckedIOException(new IOException("Xml is blank xml: " +  xml));
         } else {
             return convertXml(xml);
         }
