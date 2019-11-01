@@ -125,14 +125,14 @@ public class XmlProcessor {
 	 *            the original xml
 	 */
 	public XmlProcessor(String originalXml) {
-		LOG.info("In XmlProcessor() constructor");
+		//LOG.info("In XmlProcessor() constructor");
 		this.originalXml = originalXml;
 		try {
 			DocumentBuilderFactory documentBuilderFactory = XMLUtility.getInstance().buildDocumentBuilderFactory();
 			docBuilder = documentBuilderFactory.newDocumentBuilder();
 			InputSource oldXmlstream = new InputSource(new StringReader(originalXml));
 			originalDoc = docBuilder.parse(oldXmlstream);
-			LOG.info("Document Object created successfully for the XML String");
+			//LOG.info("Document Object created successfully for the XML String");
 		} catch (Exception e) {
 			LOG.info("Exception thrown on XmlProcessor() costructor");
 			caughtExceptions(e);
@@ -1018,7 +1018,7 @@ public class XmlProcessor {
 	 * @return the string
 	 */
 	public String transform(Node node, boolean isFormatted) {
-		LOG.info("In transform() method");
+		//LOG.info("In transform() method");
 		Transformer tf;
 		Writer out = null;
 		try {
@@ -1040,7 +1040,7 @@ public class XmlProcessor {
 		} catch (TransformerException e) {
 			e.printStackTrace();
 		}
-		LOG.info("Document object to ByteArray transformation complete");
+		//LOG.info("Document object to ByteArray transformation complete");
 		return out.toString();
 	}
 	

@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.commons.model.MeasureExport;
+import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
@@ -39,29 +40,33 @@ public class ValueSetController {
     @Transactional(readOnly = true)
     @GetMapping(path = "/translateAll")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<ValueSet> translateAll() {
+    public TranslationOutcome translateAll() {
+        TranslationOutcome res = new TranslationOutcome();
         List<ValueSet> outcomes = new ArrayList<>();
 
         List<MeasureVersionExportId> idsAndVersion = measureExportRepository.getAllExportIdsAndVersion(ALLOWED_VERSIONS);
 
         idsAndVersion.stream()
-                .peek(mv -> log.debug(mv.toString()))
+                .peek(mv -> log.debug("Processing  measureExport: {}", mv.toString()))
                 .map(mv -> measureExportRepository.findById(mv.getId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .forEach(me -> translate(me, outcomes));
 
-        return outcomes;
+        res.setMessage("" + outcomes.size());
+        res.setSuccessful(true);
+        return res;
+    }
+
+    @Transactional(readOnly = true)
+    @GetMapping(path = "/count")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public int countValueSets() {
+        return 0;
     }
 
     private void translate(MeasureExport measureExport, List<ValueSet> outcomes) {
-        if (outcomes.size() > 10) {
-            return;
-        }
-
         List<ValueSet> valueSets = valueSetMapper.translateToFhir(new String(measureExport.getSimpleXml()));
         outcomes.addAll(valueSets);
     }
-
-
 }

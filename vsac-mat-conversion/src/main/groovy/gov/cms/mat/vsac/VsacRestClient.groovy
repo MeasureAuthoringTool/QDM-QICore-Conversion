@@ -19,10 +19,10 @@ class VsacRestClient extends VSACGroovyClient {
 
         method.setQueryString(([new NameValuePair("id", oid), new NameValuePair("profile", profile)
                                 , new NameValuePair("ticket", serviceTicket)
-                              /*  new NameValuePair("includeDraft", "yes") */
+                                /*  new NameValuePair("includeDraft", "yes") */
         ].toArray(new NameValuePair[3])))
 
-        LOG.info "VSAC URL inside getMultipleValueSetsResponseByOID method : " + method.getURI()
+        LOG.info "Getting Vsac Data: " + method.getURI()
         def responseString = null
         try {
             client.executeMethod(method)
@@ -49,7 +49,9 @@ class VsacRestClient extends VSACGroovyClient {
                     break
             }
         } catch (Exception e) {
-            LOG.warning("EXCEPTION IN VSAC JAR: getTicketGrantingTicket..")
+            LOG.warning("Exception getting VSAC Data");
+            e.printStackTrace();
+
             if (e instanceof java.net.SocketTimeoutException) {
                 vsacResponseResult.setFailReason(REQUEST_TIMEDOUT);
             } else {

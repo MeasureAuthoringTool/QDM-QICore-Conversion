@@ -42,10 +42,10 @@ public class VsacClient {
     public VSACResponseResult getDataFromProfile(String oid, String serviceTicket) {
         VSACResponseResult vsacResponseResult = vGroovyClient.getVsacDataForConversion(oid, serviceTicket, PROFILE);
 
-        log.debug("vsacResponseResult: {}", vsacResponseResult.getFailReason());
+        if( vsacResponseResult.isIsFailResponse()) {
+            log.debug("vsacResponseResult failed with reason: {}", vsacResponseResult.getFailReason());
+        }
 
         return vsacResponseResult;
-
-
     }
 }

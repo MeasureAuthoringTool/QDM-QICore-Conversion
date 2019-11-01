@@ -3,7 +3,6 @@ package gov.cms.mat.fhir.services.translate.creators;
 import mat.model.MatConcept;
 import mat.model.MatConceptList;
 import mat.model.MatValueSet;
-import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,13 +16,6 @@ import java.util.stream.Collectors;
 public interface FhirValueSetCreator extends FhirCreator {
     String SYSTEM_IDENTIFIER = "urn:ietf:rfc:3986";
 
-    default List<ValueSet> createFhirValueSetList(CQLQualityDataSetDTO cqlQualityDataSetDTO, VSACValueSetWrapper vsacValueSet) {
-        return vsacValueSet.getValueSetList()
-                .stream()
-                .map(matValueSet -> createFhirValueSet(matValueSet, cqlQualityDataSetDTO))
-                .collect(Collectors.toList());
-    }
-
     default ValueSet createFhirValueSet(MatValueSet matValueSet, CQLQualityDataSetDTO cqlQualityDataSetDTO) {
         ValueSet valueSet = new ValueSet();
         valueSet.setId(matValueSet.getID());
@@ -34,7 +26,7 @@ public interface FhirValueSetCreator extends FhirCreator {
 
         //todo DU can throw exception if not found
 
-        if(StringUtils.isNotEmpty(matValueSet.getStatus())) {
+        if (StringUtils.isNotEmpty(matValueSet.getStatus())) {
             valueSet.setStatus(Enumerations.PublicationStatus.fromCode(matValueSet.getStatus().toLowerCase()));
         }
 
