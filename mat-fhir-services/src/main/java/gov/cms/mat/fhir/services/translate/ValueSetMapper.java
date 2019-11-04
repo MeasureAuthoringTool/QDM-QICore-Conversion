@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static org.hl7.fhir.instance.model.api.IBaseBundle.LINK_NEXT;
+
 @Component
 @Slf4j
 public class ValueSetMapper implements FhirValueSetCreator {
@@ -73,9 +75,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
         Bundle hapiBundle = isInHapi(oid);
 
         if (hapiBundle != null && hapiBundle.hasEntry()) {
-            //ValueSet valueSet = (ValueSet) hapiBundle.getEntry().get(0).getResource();
-            //valueSets.add(valueSet);
-            log.debug("VsacService returned null for oid: {}", oid);
+            log.debug("VsacService returned null (not found) for oid: {}", oid);
         } else {
             VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid);
 
@@ -103,18 +103,10 @@ public class ValueSetMapper implements FhirValueSetCreator {
         Bundle bundle = hapiFhirServer.createBundle(valueSet);
 
         if (bundle.isEmpty()) {
-            throw new IllegalArgumentException("oops");
+            throw new IllegalArgumentException("Could not create hapi value set with oid: " + matValueSet.getID());
         } else {
             return (ValueSet) bundle.getEntry().get(0).getResource();
         }
-
-//        MethodOutcome methodOutcome = hapiFhirServer.create(valueSet);
-//
-//        if (BooleanUtils.isTrue(methodOutcome.getCreated())) {
-//            return (ValueSet) methodOutcome.getResource();
-//        } else {
-//            throw new IllegalArgumentException("oops");
-//        }
     }
 
     private Bundle isInHapi(String oid) {
@@ -126,7 +118,6 @@ public class ValueSetMapper implements FhirValueSetCreator {
     }
 
     public int deleteAll() {
-
         Bundle bundle = hapiFhirServer.getHapiClient()
                 .search()
                 .forResource(ValueSet.class)
@@ -136,23 +127,23 @@ public class ValueSetMapper implements FhirValueSetCreator {
         AtomicInteger count = new AtomicInteger();
 
         while (bundle.hasEntry()) {
-            bundle.getEntry().stream().forEach(f -> {
+            bundle.getEntry().forEach(f -> {
                 count.getAndIncrement();
                 hapiFhirServer.delete(f.getResource());
             });
 
-            if (bundle.getLink(Bundle.LINK_NEXT) != null) {
+            if (bundle.getLink(LINK_NEXT) != null) {
                 // load next page
-                bundle = hapiFhirServer.getHapiClient().loadPage().next(bundle).execute();
+                bundle = hapiFhirServer.getHapiClient()
+                        .loadPage()
+                        .next(bundle)
+                        .execute();
             } else {
                 break;
             }
         }
 
-
         return count.get();
-
-
     }
 }
 

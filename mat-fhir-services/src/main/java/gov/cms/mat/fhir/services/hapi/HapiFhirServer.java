@@ -51,7 +51,7 @@ public class HapiFhirServer {
         bundle.setType(Bundle.BundleType.TRANSACTION);
         bundle.addEntry().setResource(resource)
                 .getRequest()
-                .setUrl(baseURL + "ValueSet/" + resource.getId())
+                .setUrl(baseURL + resource.getResourceType().name() + "/" + resource.getId())
                 .setMethod(Bundle.HTTPVerb.PUT);
 
         return getHapiClient().transaction().withBundle(bundle).execute();
