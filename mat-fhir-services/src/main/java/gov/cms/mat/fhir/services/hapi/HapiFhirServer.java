@@ -6,7 +6,10 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +46,18 @@ public class HapiFhirServer {
                 .execute();
     }
 
+    public Bundle createBundle(Resource resource) {
+        Bundle bundle = new Bundle();
+        bundle.setType(Bundle.BundleType.TRANSACTION);
+        bundle.addEntry().setResource(resource)
+                .getRequest()
+                .setUrl(baseURL + "ValueSet/" + resource.getId())
+                .setMethod(Bundle.HTTPVerb.PUT);
+
+        return getHapiClient().transaction().withBundle(bundle).execute();
+
+    }
+
     private LoggingInterceptor createLoggingInterceptor() {
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
 
@@ -51,5 +66,13 @@ public class HapiFhirServer {
         loggingInterceptor.setLogRequestSummary(true);
         loggingInterceptor.setLogRequestBody(true);
         return loggingInterceptor;
+    }
+
+    public IBaseOperationOutcome delete(IBaseResource resource) {
+        return hapiClient.delete()
+                .resource(resource)
+                .prettyPrint()
+                .encodedJson()
+                .execute();
     }
 }

@@ -9,12 +9,13 @@ import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,8 +25,8 @@ import java.util.Optional;
 @RequestMapping(path = "/valueSet")
 @Slf4j
 public class ValueSetController {
-    private final static List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
-
+    private static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
+    private static final String TRANSLATE_SUCCESS_MESSAGE = "Read %d Measure Export objects converted %d Value sets to fhir in %d seconds";
 
     private final MeasureRepository measureRepository;
     private final MeasureExportRepository measureExportRepository;
@@ -39,12 +40,26 @@ public class ValueSetController {
 
     @Transactional(readOnly = true)
     @GetMapping(path = "/translateAll")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public TranslationOutcome translateAll() {
-        TranslationOutcome res = new TranslationOutcome();
+        Instant startTime = Instant.now();
+        int startCount = valueSetMapper.count();
+
+        int measureExportCount = processMeasureExport();
+
+        int finishCount = valueSetMapper.count();
+        long duration = Duration.between(startTime, Instant.now()).toMillis() / 1000;
+        String successMessage =
+                String.format(TRANSLATE_SUCCESS_MESSAGE, measureExportCount, finishCount - startCount, duration);
+        log.info(successMessage);
+
+        return createOutcome(successMessage);
+    }
+
+    private int processMeasureExport() {
         List<ValueSet> outcomes = new ArrayList<>();
 
         List<MeasureVersionExportId> idsAndVersion = measureExportRepository.getAllExportIdsAndVersion(ALLOWED_VERSIONS);
+        int measureExportCount = idsAndVersion.size();
 
         idsAndVersion.stream()
                 .peek(mv -> log.debug("Processing  measureExport: {}", mv.toString()))
@@ -53,16 +68,24 @@ public class ValueSetController {
                 .map(Optional::get)
                 .forEach(me -> translate(me, outcomes));
 
-        res.setMessage("" + outcomes.size());
+        return measureExportCount;
+    }
+
+    private TranslationOutcome createOutcome(String successMessage) {
+        TranslationOutcome res = new TranslationOutcome();
+        res.setMessage(successMessage);
         res.setSuccessful(true);
         return res;
     }
 
-    @Transactional(readOnly = true)
     @GetMapping(path = "/count")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public int countValueSets() {
-        return 0;
+        return valueSetMapper.count();
+    }
+
+    @DeleteMapping(path = "/deleteAll")
+    public int deleteValueSets() {
+        return valueSetMapper.deleteAll();
     }
 
     private void translate(MeasureExport measureExport, List<ValueSet> outcomes) {

@@ -18,7 +18,10 @@ public interface FhirValueSetCreator extends FhirCreator {
 
     default ValueSet createFhirValueSet(MatValueSet matValueSet, CQLQualityDataSetDTO cqlQualityDataSetDTO) {
         ValueSet valueSet = new ValueSet();
-        valueSet.setId(matValueSet.getID());
+
+        valueSet.setId( matValueSet.getID());
+
+
         valueSet.setIdentifier(Collections.singletonList(createIdentifier(SYSTEM_IDENTIFIER, matValueSet.getID())));
         valueSet.setVersion(matValueSet.getVersion());
         valueSet.setName(matValueSet.getDisplayName());

@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
-import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
@@ -11,7 +11,6 @@ import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.ValueSet;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,6 +33,16 @@ public class ValueSetMapper implements FhirValueSetCreator {
         this.vsacService = vsacService;
         this.matXmlConverter = matXmlConverter;
         this.hapiFhirServer = hapiFhirServer;
+    }
+
+    public int count() {
+        return hapiFhirServer.getHapiClient()
+                .search()
+                .forResource(ValueSet.class)
+                .totalMode(SearchTotalModeEnum.ACCURATE)
+                .returnBundle(Bundle.class)
+                .execute()
+                .getTotal();
     }
 
     public List<ValueSet> translateToFhir(String xml) {
@@ -63,8 +73,9 @@ public class ValueSetMapper implements FhirValueSetCreator {
         Bundle hapiBundle = isInHapi(oid);
 
         if (hapiBundle != null && hapiBundle.hasEntry()) {
-            ValueSet valueSet = (ValueSet) hapiBundle.getEntry().get(0).getResource();
-            valueSets.add(valueSet);
+            //ValueSet valueSet = (ValueSet) hapiBundle.getEntry().get(0).getResource();
+            //valueSets.add(valueSet);
+            log.debug("VsacService returned null for oid: {}", oid);
         } else {
             VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid);
 
@@ -89,15 +100,22 @@ public class ValueSetMapper implements FhirValueSetCreator {
     private ValueSet createAndPersistFhirValueSet(MatValueSet matValueSet, CQLQualityDataSetDTO cqlQualityDataSetDTO) {
         ValueSet valueSet = createFhirValueSet(matValueSet, cqlQualityDataSetDTO);
 
-        MethodOutcome methodOutcome = hapiFhirServer.create(valueSet);
+        Bundle bundle = hapiFhirServer.createBundle(valueSet);
 
-        if (BooleanUtils.isTrue(methodOutcome.getCreated())) {
-            return (ValueSet) methodOutcome.getResource();
-        } else {
+        if (bundle.isEmpty()) {
             throw new IllegalArgumentException("oops");
+        } else {
+            return (ValueSet) bundle.getEntry().get(0).getResource();
         }
-    }
 
+//        MethodOutcome methodOutcome = hapiFhirServer.create(valueSet);
+//
+//        if (BooleanUtils.isTrue(methodOutcome.getCreated())) {
+//            return (ValueSet) methodOutcome.getResource();
+//        } else {
+//            throw new IllegalArgumentException("oops");
+//        }
+    }
 
     private Bundle isInHapi(String oid) {
         return hapiFhirServer.getHapiClient().search()
@@ -107,5 +125,34 @@ public class ValueSetMapper implements FhirValueSetCreator {
                 .execute();
     }
 
+    public int deleteAll() {
+
+        Bundle bundle = hapiFhirServer.getHapiClient()
+                .search()
+                .forResource(ValueSet.class)
+                .returnBundle(Bundle.class)
+                .execute();
+
+        AtomicInteger count = new AtomicInteger();
+
+        while (bundle.hasEntry()) {
+            bundle.getEntry().stream().forEach(f -> {
+                count.getAndIncrement();
+                hapiFhirServer.delete(f.getResource());
+            });
+
+            if (bundle.getLink(Bundle.LINK_NEXT) != null) {
+                // load next page
+                bundle = hapiFhirServer.getHapiClient().loadPage().next(bundle).execute();
+            } else {
+                break;
+            }
+        }
+
+
+        return count.get();
+
+
+    }
 }
 
