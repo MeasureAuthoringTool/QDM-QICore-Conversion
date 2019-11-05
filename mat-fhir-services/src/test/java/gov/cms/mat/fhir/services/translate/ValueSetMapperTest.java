@@ -184,7 +184,6 @@ class ValueSetMapperTest {
 
         bundle.addEntry(bundleEntryComponent);
 
-
         return bundle;
     }
 
