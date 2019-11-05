@@ -34,6 +34,13 @@ class VsacConverterTest implements ResourceFileUtil {
     }
 
     @Test
+    void toWrapper_MarshalError() {
+        assertThrows(UncheckedIOException.class, () -> {
+            vsacConverter.toWrapper("{Json:'isBetter'}");
+        });
+    }
+
+    @Test
     void toWrapper_Success() {
         VSACValueSetWrapper vsacValueSetWrapper = vsacConverter.toWrapper(xml);
         assertNotNull(vsacValueSetWrapper);

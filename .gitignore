@@ -25,5 +25,6 @@ hs_err_pid*
 /mat-fhir-commons/target/
 /mat-fhir-services/target/
 /mat-server-commons/target/
+/vsac-mat-conversion/target/
 
 .idea
