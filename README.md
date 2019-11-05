@@ -160,18 +160,24 @@ Method: **DELETE** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibrari
 The HAPI-FHIR UI, http://localhost:8080/hapi-fhir-jpaserver/ will provide you with examples of how it is querying the system.  For additional information refer to documentation at https://hapifhir.io.
 
 **Programmatically**
+```
 // Create a client (only needed once)
 FhirContext ctx = FhirContext.forR4();
 IGenericClient client = ctx.newRestfulGenericClient("http://localhost:8080/hapi-fhir-jpaserver/fhir");
+```
 
+```
 // Invoke the client and perform Measure search
 Bundle bundle = client.search().forResource(Measure.class)
 .prettyPrint()
 .execute();
+```
 
 **Using URL**
 In the form of GET http://localhost:8080/hapi-fhir-jpaserver/fhir/Measure/{mat uuid}
 
+```
 GET http://localhost:8080/hapi-fhir-jpaserver/fhir/Measure/402803826529d99f0165d33515622e23/
 
 Set Accept = application/xml or application/json depending on your preference.
+```
