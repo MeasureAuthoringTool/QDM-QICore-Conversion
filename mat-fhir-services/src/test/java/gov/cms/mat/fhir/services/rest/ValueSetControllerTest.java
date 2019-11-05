@@ -30,12 +30,12 @@ class ValueSetControllerTest {
     @Test
     void countValueSets() {
         when(valueSetMapper.count()).thenReturn(Integer.MAX_VALUE);
-        assertEquals(Integer.MAX_VALUE, valueSetMapper.count());
+        assertEquals(Integer.MAX_VALUE, valueSetController.countValueSets());
     }
 
     @Test
     void deleteValueSets() {
         when(valueSetMapper.deleteAll()).thenReturn(Integer.MIN_VALUE);
-        assertEquals(Integer.MIN_VALUE, valueSetMapper.deleteAll());
+        assertEquals(Integer.MIN_VALUE, valueSetController.deleteValueSets());
     }
 }
