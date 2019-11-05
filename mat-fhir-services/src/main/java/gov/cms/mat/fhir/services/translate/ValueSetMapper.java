@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.translate;
 
-import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
@@ -38,13 +37,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
     }
 
     public int count() {
-        return hapiFhirServer.getHapiClient()
-                .search()
-                .forResource(ValueSet.class)
-                .totalMode(SearchTotalModeEnum.ACCURATE)
-                .returnBundle(Bundle.class)
-                .execute()
-                .getTotal();
+        return hapiFhirServer.count(ValueSet.class);
     }
 
     public List<ValueSet> translateToFhir(String xml) {
@@ -72,7 +65,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
             oid = cqlQualityDataSetDTO.getOid();
         }
 
-        Bundle hapiBundle = isInHapi(oid);
+        Bundle hapiBundle = hapiFhirServer.isValueSetInHapi(oid);
 
         if (hapiBundle != null && hapiBundle.hasEntry()) {
             log.debug("VsacService returned null (not found) for oid: {}", oid);
@@ -109,20 +102,8 @@ public class ValueSetMapper implements FhirValueSetCreator {
         }
     }
 
-    private Bundle isInHapi(String oid) {
-        return hapiFhirServer.getHapiClient().search()
-                .forResource(ValueSet.class)
-                .where(ValueSet.IDENTIFIER.exactly().systemAndCode(SYSTEM_IDENTIFIER, oid))
-                .returnBundle(Bundle.class)
-                .execute();
-    }
-
     public int deleteAll() {
-        Bundle bundle = hapiFhirServer.getHapiClient()
-                .search()
-                .forResource(ValueSet.class)
-                .returnBundle(Bundle.class)
-                .execute();
+        Bundle bundle = hapiFhirServer.getAll(ValueSet.class);
 
         AtomicInteger count = new AtomicInteger();
 
@@ -134,10 +115,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
 
             if (bundle.getLink(LINK_NEXT) != null) {
                 // load next page
-                bundle = hapiFhirServer.getHapiClient()
-                        .loadPage()
-                        .next(bundle)
-                        .execute();
+                bundle = hapiFhirServer.getNextPage(bundle);
             } else {
                 break;
             }
