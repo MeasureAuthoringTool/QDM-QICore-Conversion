@@ -98,9 +98,9 @@ $ cd QDM-QICore-Conversion/mat-fhir-services
 
 2. Launch the application
 
-'''
+```
 $ mvn spring-boot:run
-'''
+```
 
 ## Converting to FHIR
 
@@ -134,7 +134,7 @@ Method: **DELETE** Endpoint: http://localhost:9080/valueSet/deleteAll.
 **NOTE:** This operation is used for development and demonstration purposes.
 
 ### Library Operations
-Creates FHIR Library resource from the Mat CQL_EXPORT table.  It is constrained by measures QDM release version **5.5 thru 5.8**
+Creates FHIR Library resource from the Mat CQL_EXPORT table.  It is constrained by measures QDM release version **5.5 thru 5.8**.
 
 Translate All Libraries:  Translates all applicable libraries to FHIR Resource.
 Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries.
