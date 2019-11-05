@@ -105,7 +105,7 @@ $ mvn spring-boot:run
 ## Converting to FHIR
 
 ### Measure Operations
-Measure operations are constrained by the measure's QDM release version, **5.5 thru 5.8**, and the presence of **SIMPLE_XML** with the MEASURE_EXPORT table.
+Measure operations are constrained by the measure's QDM release version, **5.5 thru 5.8**, and the presence of **SIMPLE_XML** within the MEASURE_EXPORT table.
 
 Translate All Measure - Translates all applicable measures.
 
