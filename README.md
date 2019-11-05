@@ -16,28 +16,29 @@ in the README.md file.
 ## Setting Up Your Local Development and Test Environment
 1.  Checkout this project
 
-'''
+```
 $ git clone https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion.git
-'''
+```
 
 2.  Navigate to project module parent directory
 
-'''
+```
 $ cd QDM-QICore-Conversion/qdm-qicore-parent
-'''
+```
 
 3.  Build the project
-'''
+```
 $ mvn clean install
-'''
+```
 or to skip testing
-'''
+```
 $ mvn clean install -DskipTests
+```
 
 ## Configuring Your Environment
 1. Using vi, your IDE, or some other editor modify the project configuration file 'application.yaml'.
 
-'''
+```
 server:
   port: 9080
 
@@ -70,7 +71,7 @@ vsac-client:
 fhir:
   r4:
     baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
-'''
+```
 
 Note:  You will most likely only need to change the datasource username and password.
 
@@ -78,10 +79,10 @@ Note:  You will most likely only need to change the datasource username and pass
 
 3. Update your .bash_profile file to include
 
-'''
+```
 export VSAC_USER={username}
 export VSAC_PASS={password}
-'''
+```
 
 5. Determine if you have write permissions to /opt directory, if not create the vsac cache directory /opt/vsac/cache
 
@@ -91,59 +92,92 @@ export VSAC_PASS={password}
 ## Running the project
 1.  Navigate to the MAT-FHIR-Services directory
 
-'''
+```
 $ cd QDM-QICore-Conversion/mat-fhir-services
-'''
+```
 
 2. Launch the application
 
-'''
+```
 $ mvn spring-boot:run
-'''
+```
 
 ## Converting to FHIR
 
 ### Measure Operations
-Measure operations are constrained by the measure's QDM release version, **5.5 thru 5.8**, and the presence of **SIMPLE_XML** with the MEASURE_EXPORT table.
+Measure operations are constrained by the measure's QDM release version, **5.5 thru 5.8**, and the presence of **SIMPLE_XML** within the MEASURE_EXPORT table.
+
 Translate All Measure - Translates all applicable measures.
+
 Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllMeasures
 
 Translate All Measures Based on Measure Status - Translates all measure with a specific status.
+
 Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateMeasuresByStatus?measureStatus={measure_status}  
 Currently MAT stores measure status as "In Progress" or "Complete".
 
 Translate A Single Measure - Translates a specific measure based on it's MAT UUID.
+
 Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateMeasure?id={uuid}
 
 Delete All Measures - Deletes all measures.
+
 Method: **DELETE** Endpoint: http://localhost:9080/qdmtofhir/removeAllMeasures
+
 **NOTE:** This operation is used for development and demonstration purposes.
 
 ### ValueSet Operations
 ValueSet operations are constrained by the measure's QDM release version, **5.5 thru 5.8**.
 
 Translate All ValueSets:  Translate all applicable valueSets.
+
 Method: **GET** Endpoint: http://localhost:9080/valueSet/translateAll
 
 Count All ValueSets:  Return count of all FHIR valueSet resources.
+
 Method: **GET** Endpoint: http://localhost:9080/valueSet/count
 
 Delete All ValueSets: Removes all valueSet resources.
+
 Method: **DELETE** Endpoint: http://localhost:9080/valueSet/deleteAll.
+
 **NOTE:** This operation is used for development and demonstration purposes.
 
 ### Library Operations
-Creates FHIR Library resource from the Mat CQL_EXPORT table.  It is constrained by measures QDM release version **5.5 thru 5.8**
+Creates FHIR Library resource from the Mat CQL_EXPORT table.  It is constrained by measures QDM release version **5.5 thru 5.8**.
 
 Translate All Libraries:  Translates all applicable libraries to FHIR Resource.
+
 Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries.
 
 Delete All Libraries:  Deletes all loaded FHIR Library resources.
+
 Method: **DELETE** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries
+
 **Note:** This operation is used for development and demonstration purposes.
 
+## Searching for FHIR Resources - Some Basics
+The HAPI-FHIR UI, http://localhost:8080/hapi-fhir-jpaserver/ will provide you with examples of how it is querying the system.  For additional information refer to documentation at https://hapifhir.io.
 
+**Programmatically**
+```
+// Create a client (only needed once)
+FhirContext ctx = FhirContext.forR4();
+IGenericClient client = ctx.newRestfulGenericClient("http://localhost:8080/hapi-fhir-jpaserver/fhir");
+```
 
+```
+// Invoke the client and perform Measure search
+Bundle bundle = client.search().forResource(Measure.class)
+.prettyPrint()
+.execute();
+```
 
+**Using URL**
+In the form of GET http://localhost:8080/hapi-fhir-jpaserver/fhir/Measure/{mat uuid}
 
+```
+GET http://localhost:8080/hapi-fhir-jpaserver/fhir/Measure/402803826529d99f0165d33515622e23/
 
+Set Accept = application/xml or application/json depending on your preference.
+```
