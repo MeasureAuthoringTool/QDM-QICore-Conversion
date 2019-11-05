@@ -16,20 +16,30 @@ public class LibraryMapper implements FhirCreator {
     static final String ELM_CONTENT_TYPE = "application/elm+xml";
     static final String CQL_CONTENT_TYPE = "text/cql";
 
-    private final gov.cms.mat.fhir.commons.model.MeasureExport qdmMeasureExport;
+    private final gov.cms.mat.fhir.commons.model.CqlLibrary cqlLibrary;
+    private final byte[] cql;
+    private final byte[] elm;
+    private final String baseURL;
 
-    public LibraryMapper(gov.cms.mat.fhir.commons.model.MeasureExport qdmMeasureExport) {
-        this.qdmMeasureExport = qdmMeasureExport;
+    public LibraryMapper(gov.cms.mat.fhir.commons.model.CqlLibrary cqlLibrary, byte[] cql, byte[] elm, String baseURL) {
+        this.cqlLibrary = cqlLibrary;
+        this.cql = cql;
+        this.elm = elm;
+        this.baseURL = baseURL;
     }
 
     public Library translateToFhir() {
         Library fhirLibrary = new Library();
-        fhirLibrary.setId("Library/" + qdmMeasureExport.getMeasureId());
+        fhirLibrary.setId(cqlLibrary.getId());
         fhirLibrary.setDate(new Date());
+        fhirLibrary.setApprovalDate(cqlLibrary.getFinalizedDate());
+        fhirLibrary.setVersion(cqlLibrary.getVersion().toString());
+        fhirLibrary.setName(cqlLibrary.getCqlName());
+        fhirLibrary.setUrl(baseURL+"Library/"+cqlLibrary.getId());
+
 
         fhirLibrary.setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
 
-        fhirLibrary.setText(createNarrative(convertBytes(qdmMeasureExport.getHumanReadable())));
         fhirLibrary.setContent(createContent());
 
         log.debug("Converted library: {}", fhirLibrary);
@@ -40,8 +50,8 @@ public class LibraryMapper implements FhirCreator {
     private List<Attachment> createContent() {
         List<Attachment> attachments = new ArrayList<>(2);
 
-        attachments.add(createAttachment(ELM_CONTENT_TYPE, qdmMeasureExport.getElm()));
-        attachments.add(createAttachment(CQL_CONTENT_TYPE, qdmMeasureExport.getCql()));
+        attachments.add(createAttachment(ELM_CONTENT_TYPE, elm));
+        attachments.add(createAttachment(CQL_CONTENT_TYPE, cql));
 
         return attachments;
     }

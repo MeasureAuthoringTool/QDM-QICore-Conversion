@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
+import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import org.hl7.fhir.r4.model.Library;
@@ -15,15 +16,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LibraryMapperTest {
     private final String MEASURE_ID = "ID";
-    private MeasureExport measureExport;
+    private final byte[] cql = null;
+    private final byte[] elm = null;
+    private CqlLibrary cqlLib;
+    private final String baseURL = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
     private LibraryMapper libraryMapper;
 
     @BeforeEach
     void setUp() {
-        measureExport = new MeasureExport();
-        //measureExport.setMeasureId(new Measure());
-        measureExport.setMeasureId(MEASURE_ID);
-        libraryMapper = new LibraryMapper(measureExport);
+        cqlLib = new CqlLibrary();
+        cqlLib.setMeasureId(MEASURE_ID);
+        libraryMapper = new LibraryMapper(cqlLib, cql, elm, baseURL);
     }
 
     @Test
@@ -38,22 +41,10 @@ class LibraryMapperTest {
         assertEquals(SYSTEM_CODE, library.getType().getCoding().get(0).getCode());
     }
 
-    @Test
-    void testTranslateToFhir_verifyNarrative() {
-        final String readable = "Readable";
-        measureExport.setHumanReadable(readable.getBytes());
-        Library library = libraryMapper.translateToFhir();
-
-        assertEquals(readable, library.getText().getDiv().getChildNodes().get(0).getContent());
-    }
 
     @Test
     void testTranslateToFhir_verifyAttachments() {
-        final String cql = "CQL";
-        final String elm = "ELM";
 
-        measureExport.setCql(cql.getBytes());
-        measureExport.setElm(elm.getBytes());
 
         Library library = libraryMapper.translateToFhir();
 

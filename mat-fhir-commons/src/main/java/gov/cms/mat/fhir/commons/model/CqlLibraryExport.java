@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -25,9 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "CQL_LIBRARY_EXPORT")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "CqlLibraryExport.findAll", query = "SELECT c FROM CqlLibraryExport c"),
-    @NamedQuery(name = "CqlLibraryExport.findById", query = "SELECT c FROM CqlLibraryExport c WHERE c.id = :id")})
 public class CqlLibraryExport implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,26 +33,29 @@ public class CqlLibraryExport implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID")
     private String id;
+    
     @Lob
     @Column(name = "CQL")
-    private String cql;
+    private byte[] cql;
+    
     @Lob
     @Column(name = "ELM")
-    private String elm;
+    private byte[] elm;
+    
     @Lob
     @Column(name = "JSON")
-    private String json;
-    @JoinColumn(name = "CQL_LIBRARY_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private CqlLibrary cqlLibraryId;
-
+    private byte[] json;
+    
+    @Column(name = "CQL_LIBRARY_ID")
+    private String cqlLibraryId;
     public CqlLibraryExport() {
     }
 
     public CqlLibraryExport(String id) {
         this.id = id;
     }
-
+    
+    @XmlElement
     public String getId() {
         return id;
     }
@@ -62,36 +63,36 @@ public class CqlLibraryExport implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-
-    public String getCql() {
+    @XmlElement
+    public byte[] getCql() {
         return cql;
     }
 
-    public void setCql(String cql) {
+    public void setCql(byte[] cql) {
         this.cql = cql;
     }
-
-    public String getElm() {
+    @XmlElement
+    public byte[] getElm() {
         return elm;
     }
 
-    public void setElm(String elm) {
+    public void setElm(byte[] elm) {
         this.elm = elm;
     }
-
-    public String getJson() {
+    @XmlElement
+    public byte[] getJson() {
         return json;
     }
 
-    public void setJson(String json) {
+    public void setJson(byte[] json) {
         this.json = json;
     }
-
-    public CqlLibrary getCqlLibraryId() {
+    @XmlElement
+    public String getCqlLibraryId() {
         return cqlLibraryId;
     }
 
-    public void setCqlLibraryId(CqlLibrary cqlLibraryId) {
+    public void setCqlLibraryId(String cqlLibraryId) {
         this.cqlLibraryId = cqlLibraryId;
     }
 

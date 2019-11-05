@@ -21,11 +21,11 @@ public interface FhirCreator {
                 .setContentType(contentType)
                 .setData(rawData == null ? null : encodeBase64(rawData));
     }
-
+    
     default byte[] encodeBase64(byte[] src) {
         return Base64.getEncoder().encode(src);
     }
-
+    
     default String convertBytes(byte[] data) {
         if (data == null) {
             return null;

@@ -9,6 +9,29 @@ import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
 import org.hl7.fhir.r4.model.*;
+import java.util.Date;
+import java.util.logging.Logger;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.Measure;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
+import gov.cms.mat.fhir.commons.model.MeasureExport;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.logging.Level;
+import mat.client.measure.ManageCompositeMeasureDetailModel;
+import mat.client.measure.PeriodModel;
+import org.apache.commons.lang.StringUtils;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.ContactDetail;
+import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Measure.MeasureGroupComponent;
@@ -20,6 +43,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+
+import java.util.Base64;
+
 /**
  *
  * @author duanedecouteau
@@ -36,8 +62,7 @@ public class MeasureMapper implements FhirCreator {
     private ManageCompositeMeasureDetailModel mModel;
     private String humanReadible;
     
-    @Value("${fhir.r4.baseurl}")
-    private String baseURL = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
+    private String baseURL;
     
 //    public MeasureMapper(gov.cms.mat.fhir.commons.model.Measure qdmMeasure, gov.cms.mat.fhir.commons.model.MeasureDetails qdmMeasureDetails, List<MeasureDetailsReference> qdmCitations, MeasureExport qdmMeasureExport) {
 //        this.qdmMeasure = qdmMeasure;
@@ -46,9 +71,10 @@ public class MeasureMapper implements FhirCreator {
 //        this.qdmMeasureExport = qdmMeasureExport;
 //    }
     
-    public MeasureMapper(ManageCompositeMeasureDetailModel measureCompositeModel, String humanReadible) {
+    public MeasureMapper(ManageCompositeMeasureDetailModel measureCompositeModel, String humanReadible, String baseURL) {
         this.mModel = measureCompositeModel;
         this.humanReadible = humanReadible;
+        this.baseURL = baseURL;
     }
     
     public org.hl7.fhir.r4.model.Measure translateToFhir() {
@@ -66,10 +92,20 @@ public class MeasureMapper implements FhirCreator {
             
             //set narrative
             if (!humanReadible.isEmpty()) {
-                Narrative measureText = new Narrative();
-                measureText.setStatusAsString("generated");
-                measureText.setDivAsString(humanReadible);
-                fhirMeasure.setText(measureText);
+                try {
+                    Narrative measureText = new Narrative();
+                    measureText.setStatusAsString("generated");
+                    //just encode it 
+                    byte[] encodedText = Base64.getEncoder().encode(humanReadible.getBytes());
+                    measureText.setDivAsString(new String(encodedText));
+                    fhirMeasure.setText(measureText);
+                }
+                catch (Exception ex) {
+//                    Narrative measureText = new Narrative();
+//                    measureText.setStatusAsString("generated");
+//                    measureText.setDivAsString("[<![CDATA["+humanReadible+"]]>");
+//                    fhirMeasure.setText(measureText);
+                }
             }
             
             //set Extensions if any known, QICore Extension below
@@ -356,7 +392,16 @@ public class MeasureMapper implements FhirCreator {
             dt = sdf.parse(dString);
         }
         catch (Exception ex) {
-            ex.printStackTrace();
+            try {
+                SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd/yyyy HH:mm a");
+                dString.replaceAll("AM", "A");
+                dString.replaceAll("PM", "P");
+                dt = sdf2.parse(dString);
+            } catch (Exception ex2) {
+                LocalDate epoch = LocalDate.ofEpochDay( 0L );
+                long epochLong = epoch.toEpochDay();
+                dt = new Date(epochLong);
+            }
         }
         return dt;
     }
