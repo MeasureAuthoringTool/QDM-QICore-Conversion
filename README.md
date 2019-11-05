@@ -106,39 +106,52 @@ $ mvn spring-boot:run
 
 ### Measure Operations
 Measure operations are constrained by the measure's QDM release version, **5.5 thru 5.8**, and the presence of **SIMPLE_XML** with the MEASURE_EXPORT table.
+
 Translate All Measure - Translates all applicable measures.
+
 Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllMeasures
 
 Translate All Measures Based on Measure Status - Translates all measure with a specific status.
+
 Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateMeasuresByStatus?measureStatus={measure_status}  
 Currently MAT stores measure status as "In Progress" or "Complete".
 
 Translate A Single Measure - Translates a specific measure based on it's MAT UUID.
+
 Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateMeasure?id={uuid}
 
 Delete All Measures - Deletes all measures.
+
 Method: **DELETE** Endpoint: http://localhost:9080/qdmtofhir/removeAllMeasures
+
 **NOTE:** This operation is used for development and demonstration purposes.
 
 ### ValueSet Operations
 ValueSet operations are constrained by the measure's QDM release version, **5.5 thru 5.8**.
 
 Translate All ValueSets:  Translate all applicable valueSets.
+
 Method: **GET** Endpoint: http://localhost:9080/valueSet/translateAll
 
 Count All ValueSets:  Return count of all FHIR valueSet resources.
+
 Method: **GET** Endpoint: http://localhost:9080/valueSet/count
 
 Delete All ValueSets: Removes all valueSet resources.
+
 Method: **DELETE** Endpoint: http://localhost:9080/valueSet/deleteAll.
+
 **NOTE:** This operation is used for development and demonstration purposes.
 
 ### Library Operations
 Creates FHIR Library resource from the Mat CQL_EXPORT table.  It is constrained by measures QDM release version **5.5 thru 5.8**.
 
 Translate All Libraries:  Translates all applicable libraries to FHIR Resource.
+
 Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries.
 
 Delete All Libraries:  Deletes all loaded FHIR Library resources.
+
 Method: **DELETE** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries
+
 **Note:** This operation is used for development and demonstration purposes.
