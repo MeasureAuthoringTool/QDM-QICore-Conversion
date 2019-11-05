@@ -16,28 +16,29 @@ in the README.md file.
 ## Setting Up Your Local Development and Test Environment
 1.  Checkout this project
 
-'''
+```
 $ git clone https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion.git
-'''
+```
 
 2.  Navigate to project module parent directory
 
-'''
+```
 $ cd QDM-QICore-Conversion/qdm-qicore-parent
-'''
+```
 
 3.  Build the project
-'''
+```
 $ mvn clean install
-'''
+```
 or to skip testing
-'''
+```
 $ mvn clean install -DskipTests
+```
 
 ## Configuring Your Environment
 1. Using vi, your IDE, or some other editor modify the project configuration file 'application.yaml'.
 
-'''
+```
 server:
   port: 9080
 
@@ -70,7 +71,7 @@ vsac-client:
 fhir:
   r4:
     baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
-'''
+```
 
 Note:  You will most likely only need to change the datasource username and password.
 
@@ -78,10 +79,10 @@ Note:  You will most likely only need to change the datasource username and pass
 
 3. Update your .bash_profile file to include
 
-'''
+```
 export VSAC_USER={username}
 export VSAC_PASS={password}
-'''
+```
 
 5. Determine if you have write permissions to /opt directory, if not create the vsac cache directory /opt/vsac/cache
 
@@ -91,9 +92,9 @@ export VSAC_PASS={password}
 ## Running the project
 1.  Navigate to the MAT-FHIR-Services directory
 
-'''
+```
 $ cd QDM-QICore-Conversion/mat-fhir-services
-'''
+```
 
 2. Launch the application
 
