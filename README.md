@@ -152,7 +152,7 @@ Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries.
 
 Delete All Libraries:  Deletes all loaded FHIR Library resources.
 
-Method: **DELETE** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries
+Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/deleteAllLibraries
 
 **Note:** This operation is used for development and demonstration purposes.
 
