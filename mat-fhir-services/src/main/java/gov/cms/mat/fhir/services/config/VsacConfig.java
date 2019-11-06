@@ -1,8 +1,11 @@
 package gov.cms.mat.fhir.services.config;
 
+import gov.cms.mat.vsac.VsacRestClient;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
 
 @Configuration
 
@@ -20,6 +23,24 @@ public class VsacConfig {
     private String versionService;
     private String vsacServerDrcUrl;
 
-    private boolean useCache;
+    private boolean useCache; // By saving the data will speed things up for testing.
     private String cacheDirectory;
+
+    private VsacRestClient vsacRestClient;
+
+    @PostConstruct
+    void postConstruct() {
+        buildClient();
+    }
+
+    private void buildClient() {
+        vsacRestClient = new VsacRestClient(getProxyHost(),
+                getProxyPort(),
+                getServer(),
+                getService(),
+                getRetrieveMultiOidsService(),
+                getProfileService(),
+                getVersionService(),
+                getVsacServerDrcUrl());
+    }
 }

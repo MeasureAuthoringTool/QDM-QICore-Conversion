@@ -3,7 +3,6 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
-import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +27,10 @@ public class ValueSetController {
     private static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
     private static final String TRANSLATE_SUCCESS_MESSAGE = "Read %d Measure Export objects converted %d Value sets to fhir in %d seconds";
 
-    private final MeasureRepository measureRepository;
     private final MeasureExportRepository measureExportRepository;
     private final ValueSetMapper valueSetMapper;
 
-    public ValueSetController(MeasureRepository measureRepository, MeasureExportRepository measureExportRepository, ValueSetMapper valueSetMapper) {
-        this.measureRepository = measureRepository;
+    public ValueSetController(MeasureExportRepository measureExportRepository, ValueSetMapper valueSetMapper) {
         this.measureExportRepository = measureExportRepository;
         this.valueSetMapper = valueSetMapper;
     }
@@ -62,7 +59,6 @@ public class ValueSetController {
         int measureExportCount = idsAndVersion.size();
 
         idsAndVersion.stream()
-                .peek(mv -> log.debug("Processing  measureExport: {}", mv.toString()))
                 .map(mv -> measureExportRepository.findById(mv.getId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)

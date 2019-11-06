@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.translate;
 
 import ca.uhn.fhir.context.FhirContext;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.MatConcept;
 import mat.model.MatConceptList;
@@ -9,8 +10,8 @@ import mat.model.MatValueSet;
 import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
-import org.hl7.fhir.r4.model.ValueSet;
-import org.junit.jupiter.api.BeforeEach;
+import org.hl7.fhir.r4.model.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,8 +20,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+import static org.hl7.fhir.r4.model.api.IBaseBundle.LINK_NEXT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -30,17 +33,53 @@ class ValueSetMapperTest {
     private static final String OID = "2.16.840.1.113762.1.4.1195.291";
     private static final String XML = "<xml>xml</xml>";
 
-    FhirContext ctx = FhirContext.forR4();
+    private final FhirContext ctx = FhirContext.forR4();
 
     @Mock
     private VsacService vsacService;
     @Mock
     private MatXmlConverter matXmlConverter;
+    @Mock
+    private HapiFhirServer hapiFhirServer;
     @InjectMocks
     private ValueSetMapper valueSetMapper;
 
-    @BeforeEach
-    void setUp() {
+    @Test
+    void count() {
+        when(hapiFhirServer.count(ValueSet.class)).thenReturn(Integer.MAX_VALUE);
+        assertEquals(Integer.MAX_VALUE, valueSetMapper.count());
+        verify(hapiFhirServer).count(ValueSet.class);
+    }
+
+    @Test
+    void deleteAll_LinkNextNull() {
+        ValueSet valueSet = new ValueSet();
+        Bundle bundle = createBundle(valueSet);
+
+        when(hapiFhirServer.getAll(ValueSet.class)).thenReturn(bundle);
+
+        assertEquals(1, valueSetMapper.deleteAll());
+
+        verify(hapiFhirServer).delete(valueSet);
+        verify(hapiFhirServer, never()).getNextPage(bundle);
+    }
+
+    @Test
+    void deleteAll_LinkNextNotNullOneTime() {
+        ValueSet valueSet = new ValueSet();
+
+        Bundle bundleAll = createBundle(valueSet);
+        bundleAll.setLink(Collections.singletonList(new Bundle.BundleLinkComponent().setUrl("http://elmer.fudd.com").setRelation(LINK_NEXT)));
+
+        when(hapiFhirServer.getAll(ValueSet.class)).thenReturn(bundleAll);
+
+        Bundle bundleNextPage = createBundle(valueSet);
+        when(hapiFhirServer.getNextPage(bundleAll)).thenReturn(bundleNextPage);
+
+        assertEquals(2, valueSetMapper.deleteAll());
+
+        verify(hapiFhirServer, times(2)).delete(valueSet);
+        verify(hapiFhirServer).getNextPage(bundleAll);
     }
 
     @Test
@@ -60,7 +99,7 @@ class ValueSetMapperTest {
         verifyNoInteractions(vsacService);
     }
 
-    // @Test
+    @Test
     void translateToFhir_VsacServiceReturnsNull() {
         CQLQualityDataModelWrapper wrapper = new CQLQualityDataModelWrapper();
         wrapper.setQualityDataDTO(Collections.singletonList(create()));
@@ -75,7 +114,7 @@ class ValueSetMapperTest {
     }
 
 
-    // @Test
+    @Test
     void translateToFhir_OK() {
         CQLQualityDataModelWrapper wrapper = new CQLQualityDataModelWrapper();
         wrapper.setQualityDataDTO(Collections.singletonList(create()));
@@ -86,17 +125,66 @@ class ValueSetMapperTest {
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
+        ValueSet valueSet = new ValueSet();
+        valueSet.setId("ID");
+        Bundle bundle = createBundle(valueSet);
+
+        when(hapiFhirServer.createBundle(any())).thenReturn(bundle);
+
         List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML);
         assertEquals(1, valueSets.size());
+        assertEquals(valueSet, valueSets.get(0));
 
         String encoded = ctx.newXmlParser().setPrettyPrint(true)
                 .encodeResourceToString(valueSets.get(0));
 
-        System.out.println(encoded);
-
-
+        assertTrue(encoded.contains("ValueSet"));
         verify(matXmlConverter).toQualityData(XML);
         verify(vsacService).getData(OID);
+    }
+
+    @Test
+    void translateToFhir_EmptyBundle() {
+        CQLQualityDataModelWrapper wrapper = new CQLQualityDataModelWrapper();
+        wrapper.setQualityDataDTO(Collections.singletonList(create()));
+
+        VSACValueSetWrapper vsacValueSetWrapper = new VSACValueSetWrapper();
+        vsacValueSetWrapper.setValueSetList(createValueSetList());
+        when(vsacService.getData(OID)).thenReturn(vsacValueSetWrapper);
+
+        when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
+
+        Bundle bundle = new Bundle();
+        when(hapiFhirServer.createBundle(any())).thenReturn(bundle);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            valueSetMapper.translateToFhir(XML);
+        });
+
+        verify(hapiFhirServer).createBundle(any());
+    }
+
+    /* Need all this data set to get past bundle.isEmpty() */
+    private Bundle createBundle(Resource value) {
+        Bundle bundle = new Bundle();
+        bundle.setIdentifier(new Identifier().setValue("value").setSystem("system"));
+        bundle.setType(Bundle.BundleType.TRANSACTION);
+        bundle.setTimestamp(new Date());
+        bundle.setTotal(1);
+        bundle.setLink(Collections.singletonList(new Bundle.BundleLinkComponent().setUrl("http://mickey.mouse.com")));
+        bundle.setSignature(new Signature());
+
+        Bundle.BundleEntryComponent bundleEntryComponent = new Bundle.BundleEntryComponent();
+        bundleEntryComponent.setResource(value);
+        bundleEntryComponent.setLink(Collections.singletonList(new Bundle.BundleLinkComponent().setUrl("http://donald.duck.com")));
+        bundleEntryComponent.setFullUrl("http://donald.duck.com" + "/login");
+        bundleEntryComponent.setSearch(new Bundle.BundleEntrySearchComponent());
+        bundleEntryComponent.setRequest(new Bundle.BundleEntryRequestComponent());
+        bundleEntryComponent.setResponse(new Bundle.BundleEntryResponseComponent());
+
+        bundle.addEntry(bundleEntryComponent);
+
+        return bundle;
     }
 
     private ArrayList<MatValueSet> createValueSetList() {

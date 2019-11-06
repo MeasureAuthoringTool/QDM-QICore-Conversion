@@ -33,9 +33,13 @@ public class LibraryMapper implements FhirCreator {
         fhirLibrary.setId(cqlLibrary.getId());
         fhirLibrary.setDate(new Date());
         fhirLibrary.setApprovalDate(cqlLibrary.getFinalizedDate());
-        fhirLibrary.setVersion(cqlLibrary.getVersion().toString());
+
+        if (cqlLibrary.getVersion() != null) {
+            fhirLibrary.setVersion(cqlLibrary.getVersion().toString());
+        }
+
         fhirLibrary.setName(cqlLibrary.getCqlName());
-        fhirLibrary.setUrl(baseURL+"Library/"+cqlLibrary.getId());
+        fhirLibrary.setUrl(baseURL + "Library/" + cqlLibrary.getId());
 
 
         fhirLibrary.setType(createType(SYSTEM_TYPE, SYSTEM_CODE));

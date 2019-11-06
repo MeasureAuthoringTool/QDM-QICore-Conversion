@@ -1,13 +1,12 @@
 package gov.cms.mat.fhir.services.components.vsac;
 
 import gov.cms.mat.fhir.services.config.VsacConfig;
-import gov.cms.mat.vsac.VsacRestClient;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import org.vsac.VSACResponseResult;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -16,60 +15,56 @@ import java.nio.file.Paths;
 
 @Component
 @Slf4j
-/**
+/*
  * Supporting vsac api documents
  * https://www.nlm.nih.gov/vsac/support/usingvsac/vsacsvsapiv2.html
  */
 public class VsacClient {
-    // this is what mat has by profile -- mat.qdm.default.expansion.id=Most Recent Code System Versions in VSAC
-    private static final String PROFILE = "Most Recent Code System Versions in VSAC";
+    // this is what MAT has by profile -- mat.qdm.default.expansion.id=Most Recent Code System Versions in VSAC
+ static final String PROFILE = "Most Recent Code System Versions in VSAC";
 
-    private final boolean useCache; // By saving the data will speed things up for testing.
-    private final String cacheDirectory;
+    private final VsacConfig vsacConfig;
 
-    @Getter
-    private final VsacRestClient vGroovyClient;
 
     public VsacClient(VsacConfig vsacConfig) {
-        vGroovyClient = new VsacRestClient(vsacConfig.getProxyHost(),
-                vsacConfig.getProxyPort(),
-                vsacConfig.getServer(),
-                vsacConfig.getService(),
-                vsacConfig.getRetrieveMultiOidsService(),
-                vsacConfig.getProfileService(),
-                vsacConfig.getVersionService(),
-                vsacConfig.getVsacServerDrcUrl());
+        this.vsacConfig = vsacConfig;
+    }
 
-        useCache = vsacConfig.isUseCache();
-        cacheDirectory = vsacConfig.getCacheDirectory();
-        if (useCache) {
-            checkCacheDir();
+    @PostConstruct
+    void checkCacheDir() {
+        if (vsacConfig.isUseCache()) {
+            verifyPath();
+            log.info("VsacClient has file caching turned on. cacheDirectory: {}", vsacConfig.getCacheDirectory());
+        } else {
+            log.info("VsacClient has file caching turned off.");
         }
     }
 
-    private void checkCacheDir() {
-        Path cachePath = Paths.get(cacheDirectory);
+    private void verifyPath() {
+        Path cachePath = Paths.get(vsacConfig.getCacheDirectory());
 
         if (!cachePath.toFile().isDirectory()) {
-            throw new IllegalArgumentException("Cannot find cache directory " + cacheDirectory);
+            throw new IllegalArgumentException("Cannot find cache directory " + vsacConfig.getCacheDirectory());
         } else {
             if (!cachePath.toFile().canWrite()) {
-                throw new IllegalArgumentException("Cannot write to  directory " + cacheDirectory);
+                throw new IllegalArgumentException("Cannot write to directory " + vsacConfig.getCacheDirectory());
             }
         }
     }
 
     public String getGrantingTicket(String userName, String password) {
-        return vGroovyClient.getTicketGrantingTicket(userName, password);
+        return vsacConfig.getVsacRestClient().getTicketGrantingTicket(userName, password);
     }
 
     public String getServiceTicket(String grantingTicket) {
-        return vGroovyClient.getServiceTicket(grantingTicket);
+        return vsacConfig.getVsacRestClient().getServiceTicket(grantingTicket);
     }
 
     public VSACResponseResult getDataFromProfile(String oid, String serviceTicket) {
-        if (useCache) {
-            Path cacheFilePath = createCacheFilePath(oid);
+        Path cacheFilePath = null;
+
+        if (vsacConfig.isUseCache()) {
+            cacheFilePath = createCacheFilePath(oid);
 
             if (cacheFilePath.toFile().exists()) {
                 log.info("Xml is in cache for oid: {}", oid);
@@ -79,13 +74,13 @@ public class VsacClient {
             }
         }
 
-        VSACResponseResult vsacResponseResult = vGroovyClient.getVsacDataForConversion(oid, serviceTicket, PROFILE);
+        VSACResponseResult vsacResponseResult =
+                vsacConfig.getVsacRestClient().getVsacDataForConversion(oid, serviceTicket, PROFILE);
 
         if (vsacResponseResult.isIsFailResponse()) {
             log.debug("vsacResponseResult failed with reason: {}", vsacResponseResult.getFailReason());
         } else {
-            if (useCache) {
-                Path cacheFilePath = createCacheFilePath(oid);
+            if (vsacConfig.isUseCache()) {
                 writeFileToCache(cacheFilePath, vsacResponseResult.getXmlPayLoad());
             }
         }
@@ -101,7 +96,7 @@ public class VsacClient {
                 log.warn("Did not write file {}, bytes are empty!", cacheFilePath);
             } else {
                 Files.write(cacheFilePath, bytes);
-                log.info("Created {} to the file cache, byte count: {}", cacheFilePath, bytes.length);
+                log.info("Created XML file {} and added to the file cache, byte count: {}", cacheFilePath, bytes.length);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -109,7 +104,7 @@ public class VsacClient {
     }
 
     private Path createCacheFilePath(String oid) {
-        return Paths.get(cacheDirectory, (oid + ".xml"));
+        return Paths.get(vsacConfig.getCacheDirectory(), (oid + ".xml"));
     }
 
     private VSACResponseResult getFromFileCache(Path cacheFilePath) {
