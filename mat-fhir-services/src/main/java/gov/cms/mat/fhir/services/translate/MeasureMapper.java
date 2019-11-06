@@ -6,36 +6,18 @@
 package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
-import mat.client.measure.ManageCompositeMeasureDetailModel;
-import mat.client.measure.PeriodModel;
 import org.hl7.fhir.r4.model.*;
-import java.util.Date;
-import java.util.logging.Logger;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.Measure;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
-import gov.cms.mat.fhir.commons.model.MeasureExport;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Level;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
-import org.apache.commons.lang.StringUtils;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.ContactDetail;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Measure.MeasureGroupComponent;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

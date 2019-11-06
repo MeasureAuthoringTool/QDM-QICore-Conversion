@@ -284,6 +284,31 @@ public class MeasureTranslationService {
         return res;
     }
     
+    @GetMapping(path = "/removeAllLibraries")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public TranslationOutcome removeAllLibraries() {
+        TranslationOutcome res = new TranslationOutcome();
+        try {
+            List<CqlLibraryExport> exportList = cqlLibraryExportRepo.findAll();
+            Iterator iter = exportList.iterator();
+            while (iter.hasNext()) {
+                CqlLibraryExport library = (CqlLibraryExport) iter.next();
+                String cqlId = library.getCqlLibraryId();
+                try {
+                    IGenericClient client = hapiFhirServer.getHapiClient();
+                    IBaseOperationOutcome resp = client.delete().resourceById(new IdDt("Library", cqlId)).execute();
+                } catch (Exception ex) {}
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            res.setSuccessful(Boolean.FALSE);
+            res.setMessage("/qdmtofhir removeAllLibraries Failed " + ex.getMessage());
+            log.error("Failed Batch Delete of Libraries ALL: {}", ex.getMessage());
+        }
+
+        return res;
+    }
     
     private int getMeasureCount() {
         return hapiFhirServer.getHapiClient()
