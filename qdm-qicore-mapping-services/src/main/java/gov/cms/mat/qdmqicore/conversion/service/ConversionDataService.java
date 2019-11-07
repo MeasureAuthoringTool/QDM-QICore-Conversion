@@ -25,6 +25,14 @@ public class ConversionDataService {
                 .collect(Collectors.toList());
     }
 
+    public List<ConversionMapping> find(SearchData searchData) {
+        return fhirQdmMappingData.getAll()
+                .stream()
+                .filter(c -> filter(c, searchData))
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     private ConversionMapping mapToDto(ConversionEntry entry) {
         return ConversionMapping.builder()
                 .title(entry.getTitleData())
@@ -35,14 +43,6 @@ public class ConversionDataService {
                 .fhirElement(entry.getFhirElementData())
                 .fhirType(entry.getFhirTypeData())
                 .build();
-    }
-
-    public List<ConversionMapping> find(SearchData searchData) {
-        return fhirQdmMappingData.getAll()
-                .stream()
-                .filter(c -> filter(c, searchData))
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
     }
 
     private boolean filter(ConversionEntry conversionEntry, SearchData searchData) {
