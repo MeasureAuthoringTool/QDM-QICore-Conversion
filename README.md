@@ -152,9 +152,9 @@ Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries.
 
 Delete All Libraries:  Deletes all loaded FHIR Library resources.
 
-Method: **DELETE** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries
+Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/removeAllLibraries
 
-**Note:** This operation is used for development and demonstration purposes.
+**Note:** This operation is used for development and demonstration purposes.  Library rows can be very large and may require you to increase the "max_allowed_packet" global variable in MySQL.  Ex.  SET GLOBAL max_allowed_packet=20971520.
 
 ## Searching for FHIR Resources - Some Basics
 The HAPI-FHIR UI, http://localhost:8080/hapi-fhir-jpaserver/ will provide you with examples of how it is querying the system.  For additional information refer to documentation at https://hapifhir.io.
