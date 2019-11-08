@@ -1,0 +1,13 @@
+server:
+  port: 9090
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+json:
+  data:
+    url: https://spreadsheets.google.com/feeds/list/1TzkQJXw742aArBhZZsK_wDH-jBL-3rLvHceyML7_oPM/o7a94yh/public/values?alt=json

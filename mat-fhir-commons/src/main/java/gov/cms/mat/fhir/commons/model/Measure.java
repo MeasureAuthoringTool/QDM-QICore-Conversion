@@ -5,26 +5,14 @@
  */
 package gov.cms.mat.fhir.commons.model;
 
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -33,32 +21,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "MEASURE")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Measure.findAll", query = "SELECT m FROM Measure m"),
-    @NamedQuery(name = "Measure.findById", query = "SELECT m FROM Measure m WHERE m.id = :id"),
-    @NamedQuery(name = "Measure.findByAbbrName", query = "SELECT m FROM Measure m WHERE m.abbrName = :abbrName"),
-    @NamedQuery(name = "Measure.findByDescription", query = "SELECT m FROM Measure m WHERE m.description = :description"),
-    @NamedQuery(name = "Measure.findByMeasureStatus", query = "SELECT m FROM Measure m WHERE m.measureStatus = :measureStatus"),
-    @NamedQuery(name = "Measure.findByExportTs", query = "SELECT m FROM Measure m WHERE m.exportTs = :exportTs"),
-    @NamedQuery(name = "Measure.findByLockedOutDate", query = "SELECT m FROM Measure m WHERE m.lockedOutDate = :lockedOutDate"),
-    @NamedQuery(name = "Measure.findByScoring", query = "SELECT m FROM Measure m WHERE m.scoring = :scoring"),
-    @NamedQuery(name = "Measure.findByFinalizedDate", query = "SELECT m FROM Measure m WHERE m.finalizedDate = :finalizedDate"),
-    @NamedQuery(name = "Measure.findByDraft", query = "SELECT m FROM Measure m WHERE m.draft = :draft"),
-    @NamedQuery(name = "Measure.findByVersion", query = "SELECT m FROM Measure m WHERE m.version = :version"),
-    @NamedQuery(name = "Measure.findByValueSetDate", query = "SELECT m FROM Measure m WHERE m.valueSetDate = :valueSetDate"),
-    @NamedQuery(name = "Measure.findByEmeasureId", query = "SELECT m FROM Measure m WHERE m.emeasureId = :emeasureId"),
-    @NamedQuery(name = "Measure.findByPrivate1", query = "SELECT m FROM Measure m WHERE m.private1 = :private1"),
-    @NamedQuery(name = "Measure.findByDeleted", query = "SELECT m FROM Measure m WHERE m.deleted = :deleted"),
-    @NamedQuery(name = "Measure.findByRevisionNumber", query = "SELECT m FROM Measure m WHERE m.revisionNumber = :revisionNumber"),
-    @NamedQuery(name = "Measure.findByReleaseVersion", query = "SELECT m FROM Measure m WHERE m.releaseVersion = :releaseVersion"),
-    @NamedQuery(name = "Measure.findByLastModifiedOn", query = "SELECT m FROM Measure m WHERE m.lastModifiedOn = :lastModifiedOn"),
-    @NamedQuery(name = "Measure.findByPatientBased", query = "SELECT m FROM Measure m WHERE m.patientBased = :patientBased"),
-    @NamedQuery(name = "Measure.findByQdmVersion", query = "SELECT m FROM Measure m WHERE m.qdmVersion = :qdmVersion"),
-    @NamedQuery(name = "Measure.findByIsCompositeMeasure", query = "SELECT m FROM Measure m WHERE m.isCompositeMeasure = :isCompositeMeasure"),
-    @NamedQuery(name = "Measure.findByCompositeScoring", query = "SELECT m FROM Measure m WHERE m.compositeScoring = :compositeScoring"),
-    @NamedQuery(name = "Measure.findByMeasurementPeriodFrom", query = "SELECT m FROM Measure m WHERE m.measurementPeriodFrom = :measurementPeriodFrom"),
-    @NamedQuery(name = "Measure.findByMeasurementPeriodTo", query = "SELECT m FROM Measure m WHERE m.measurementPeriodTo = :measurementPeriodTo"),
-    @NamedQuery(name = "Measure.findByCqlName", query = "SELECT m FROM Measure m WHERE m.cqlName = :cqlName")})
 public class Measure implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "measureId")
@@ -150,7 +112,7 @@ public class Measure implements Serializable {
     private String compositeScoring;
     @Lob
     @Column(name = "NQF_NUMBER")
-    private String nqfNumber;
+    private byte[] nqfNumber;
     @Column(name = "MEASUREMENT_PERIOD_FROM")
     @Temporal(TemporalType.TIMESTAMP)
     private Date measurementPeriodFrom;
@@ -193,6 +155,7 @@ public class Measure implements Serializable {
         this.isCompositeMeasure = isCompositeMeasure;
     }
 
+    @XmlElement
     public String getId() {
         return id;
     }
@@ -201,6 +164,7 @@ public class Measure implements Serializable {
         this.id = id;
     }
 
+    @XmlElement
     public String getAbbrName() {
         return abbrName;
     }
@@ -209,6 +173,7 @@ public class Measure implements Serializable {
         this.abbrName = abbrName;
     }
 
+    @XmlElement
     public String getDescription() {
         return description;
     }
@@ -217,6 +182,7 @@ public class Measure implements Serializable {
         this.description = description;
     }
 
+    @XmlElement
     public String getMeasureStatus() {
         return measureStatus;
     }
@@ -225,6 +191,7 @@ public class Measure implements Serializable {
         this.measureStatus = measureStatus;
     }
 
+    @XmlElement
     public Date getExportTs() {
         return exportTs;
     }
@@ -233,6 +200,7 @@ public class Measure implements Serializable {
         this.exportTs = exportTs;
     }
 
+    @XmlElement
     public Date getLockedOutDate() {
         return lockedOutDate;
     }
@@ -241,6 +209,7 @@ public class Measure implements Serializable {
         this.lockedOutDate = lockedOutDate;
     }
 
+    @XmlElement
     public String getScoring() {
         return scoring;
     }
@@ -249,6 +218,7 @@ public class Measure implements Serializable {
         this.scoring = scoring;
     }
 
+    @XmlElement
     public Date getFinalizedDate() {
         return finalizedDate;
     }
@@ -257,6 +227,7 @@ public class Measure implements Serializable {
         this.finalizedDate = finalizedDate;
     }
 
+    @XmlElement
     public boolean getDraft() {
         return draft;
     }
@@ -265,6 +236,7 @@ public class Measure implements Serializable {
         this.draft = draft;
     }
 
+    @XmlElement
     public BigDecimal getVersion() {
         return version;
     }
@@ -273,6 +245,7 @@ public class Measure implements Serializable {
         this.version = version;
     }
 
+    @XmlElement
     public Date getValueSetDate() {
         return valueSetDate;
     }
@@ -281,6 +254,7 @@ public class Measure implements Serializable {
         this.valueSetDate = valueSetDate;
     }
 
+    @XmlElement
     public Integer getEmeasureId() {
         return emeasureId;
     }
@@ -289,6 +263,7 @@ public class Measure implements Serializable {
         this.emeasureId = emeasureId;
     }
 
+    @XmlElement
     public boolean getPrivate1() {
         return private1;
     }
@@ -297,6 +272,7 @@ public class Measure implements Serializable {
         this.private1 = private1;
     }
 
+    @XmlElement
     public String getDeleted() {
         return deleted;
     }
@@ -305,6 +281,7 @@ public class Measure implements Serializable {
         this.deleted = deleted;
     }
 
+    @XmlElement
     public Integer getRevisionNumber() {
         return revisionNumber;
     }
@@ -313,6 +290,7 @@ public class Measure implements Serializable {
         this.revisionNumber = revisionNumber;
     }
 
+    @XmlElement
     public String getReleaseVersion() {
         return releaseVersion;
     }
@@ -321,6 +299,7 @@ public class Measure implements Serializable {
         this.releaseVersion = releaseVersion;
     }
 
+    @XmlElement
     public Date getLastModifiedOn() {
         return lastModifiedOn;
     }
@@ -329,6 +308,7 @@ public class Measure implements Serializable {
         this.lastModifiedOn = lastModifiedOn;
     }
 
+    @XmlElement
     public Boolean getPatientBased() {
         return patientBased;
     }
@@ -337,6 +317,7 @@ public class Measure implements Serializable {
         this.patientBased = patientBased;
     }
 
+    @XmlElement
     public String getQdmVersion() {
         return qdmVersion;
     }
@@ -345,14 +326,17 @@ public class Measure implements Serializable {
         this.qdmVersion = qdmVersion;
     }
 
+    @XmlElement
     public boolean getIsCompositeMeasure() {
         return isCompositeMeasure;
     }
 
+    
     public void setIsCompositeMeasure(boolean isCompositeMeasure) {
         this.isCompositeMeasure = isCompositeMeasure;
     }
 
+    @XmlElement
     public String getCompositeScoring() {
         return compositeScoring;
     }
@@ -361,14 +345,16 @@ public class Measure implements Serializable {
         this.compositeScoring = compositeScoring;
     }
 
-    public String getNqfNumber() {
+    @XmlElement
+    public byte[] getNqfNumber() {
         return nqfNumber;
     }
 
-    public void setNqfNumber(String nqfNumber) {
+    public void setNqfNumber(byte[] nqfNumber) {
         this.nqfNumber = nqfNumber;
     }
 
+    @XmlElement
     public Date getMeasurementPeriodFrom() {
         return measurementPeriodFrom;
     }
@@ -377,6 +363,7 @@ public class Measure implements Serializable {
         this.measurementPeriodFrom = measurementPeriodFrom;
     }
 
+    @XmlElement
     public Date getMeasurementPeriodTo() {
         return measurementPeriodTo;
     }
@@ -385,6 +372,7 @@ public class Measure implements Serializable {
         this.measurementPeriodTo = measurementPeriodTo;
     }
 
+    @XmlElement
     public String getCqlName() {
         return cqlName;
     }
@@ -393,6 +381,7 @@ public class Measure implements Serializable {
         this.cqlName = cqlName;
     }
 
+    @XmlElement
     public User getLockedUserId() {
         return lockedUserId;
     }
@@ -401,6 +390,7 @@ public class Measure implements Serializable {
         this.lockedUserId = lockedUserId;
     }
 
+    @XmlElement
     public User getMeasureOwnerId() {
         return measureOwnerId;
     }
@@ -409,6 +399,7 @@ public class Measure implements Serializable {
         this.measureOwnerId = measureOwnerId;
     }
 
+    @XmlElement
     public MeasureSet getMeasureSetId() {
         return measureSetId;
     }
@@ -417,6 +408,7 @@ public class Measure implements Serializable {
         this.measureSetId = measureSetId;
     }
 
+    @XmlElement
     public User getLastModifiedBy() {
         return lastModifiedBy;
     }
@@ -425,6 +417,7 @@ public class Measure implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    @XmlElement
     public Organization getMeasureStewardId() {
         return measureStewardId;
     }
@@ -600,6 +593,17 @@ public class Measure implements Serializable {
 
     public void setMetadataCollection(Collection<Metadata> metadataCollection) {
         this.metadataCollection = metadataCollection;
+    }
+
+    @Transient
+    public double getVersionNumber(){
+        if( version == null)  {
+            return 0.0;
+        } else {
+            return version.doubleValue();
+        }
+
+
     }
     
 }

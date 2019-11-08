@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:MAT_APP_BLANK;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL
+    platform: h2
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+    jpa:
+      database-platform: org.hibernate.dialect.H2Dialect
+      hibernate:
+        ddl-auto: update
+      properties:
+        hibernate:
+          show_sql: true
+          use_sql_comments: true
+          format_sql: true
+
+logging:
+  level:
+    root: INFO
+    gov.cms.mat: DEBUG
+
+vsac-client:
+  server: https://vsac.nlm.nih.gov/vsac/ws/Ticket
+  service: http://umlsks.nlm.nih.gov
+  retrieve-multi-oids-service: https://vsac.nlm.nih.gov/vsac/svs/RetrieveMultipleValueSets?
+  profile-service: https://vsac.nlm.nih.gov/vsac/profiles
+  version-service: https://vsac.nlm.nih.gov/vsac/oid/
+  vsac-server-drc-url: https://vsac.nlm.nih.gov/vsac
+  use-cache: true
+  cache-directory: /opt/vsac/cache
+
+fhir:
+  r4:
+    baseurl: http://localhost:8080/cqf-ruler-r4/

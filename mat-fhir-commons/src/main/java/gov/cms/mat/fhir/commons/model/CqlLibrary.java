@@ -23,6 +23,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -33,20 +34,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "CQL_LIBRARY")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "CqlLibrary.findAll", query = "SELECT c FROM CqlLibrary c"),
-    @NamedQuery(name = "CqlLibrary.findById", query = "SELECT c FROM CqlLibrary c WHERE c.id = :id"),
-    @NamedQuery(name = "CqlLibrary.findByMeasureId", query = "SELECT c FROM CqlLibrary c WHERE c.measureId = :measureId"),
-    @NamedQuery(name = "CqlLibrary.findBySetId", query = "SELECT c FROM CqlLibrary c WHERE c.setId = :setId"),
-    @NamedQuery(name = "CqlLibrary.findByCqlName", query = "SELECT c FROM CqlLibrary c WHERE c.cqlName = :cqlName"),
-    @NamedQuery(name = "CqlLibrary.findByDraft", query = "SELECT c FROM CqlLibrary c WHERE c.draft = :draft"),
-    @NamedQuery(name = "CqlLibrary.findByVersion", query = "SELECT c FROM CqlLibrary c WHERE c.version = :version"),
-    @NamedQuery(name = "CqlLibrary.findByFinalizedDate", query = "SELECT c FROM CqlLibrary c WHERE c.finalizedDate = :finalizedDate"),
-    @NamedQuery(name = "CqlLibrary.findByReleaseVersion", query = "SELECT c FROM CqlLibrary c WHERE c.releaseVersion = :releaseVersion"),
-    @NamedQuery(name = "CqlLibrary.findByLockedOutDate", query = "SELECT c FROM CqlLibrary c WHERE c.lockedOutDate = :lockedOutDate"),
-    @NamedQuery(name = "CqlLibrary.findByRevisionNumber", query = "SELECT c FROM CqlLibrary c WHERE c.revisionNumber = :revisionNumber"),
-    @NamedQuery(name = "CqlLibrary.findByQdmVersion", query = "SELECT c FROM CqlLibrary c WHERE c.qdmVersion = :qdmVersion"),
-    @NamedQuery(name = "CqlLibrary.findByLastModifiedOn", query = "SELECT c FROM CqlLibrary c WHERE c.lastModifiedOn = :lastModifiedOn")})
 public class CqlLibrary implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -116,6 +103,7 @@ public class CqlLibrary implements Serializable {
         this.qdmVersion = qdmVersion;
     }
 
+    @XmlElement
     public String getId() {
         return id;
     }
@@ -124,6 +112,7 @@ public class CqlLibrary implements Serializable {
         this.id = id;
     }
 
+    @XmlElement
     public String getMeasureId() {
         return measureId;
     }
@@ -132,6 +121,7 @@ public class CqlLibrary implements Serializable {
         this.measureId = measureId;
     }
 
+    @XmlElement
     public String getSetId() {
         return setId;
     }
@@ -140,6 +130,7 @@ public class CqlLibrary implements Serializable {
         this.setId = setId;
     }
 
+    @XmlElement
     public String getCqlName() {
         return cqlName;
     }
@@ -148,6 +139,7 @@ public class CqlLibrary implements Serializable {
         this.cqlName = cqlName;
     }
 
+    @XmlElement
     public Boolean getDraft() {
         return draft;
     }
@@ -156,6 +148,7 @@ public class CqlLibrary implements Serializable {
         this.draft = draft;
     }
 
+    @XmlElement
     public BigDecimal getVersion() {
         return version;
     }
@@ -164,6 +157,7 @@ public class CqlLibrary implements Serializable {
         this.version = version;
     }
 
+    @XmlElement
     public Date getFinalizedDate() {
         return finalizedDate;
     }
@@ -172,6 +166,7 @@ public class CqlLibrary implements Serializable {
         this.finalizedDate = finalizedDate;
     }
 
+    @XmlElement
     public String getReleaseVersion() {
         return releaseVersion;
     }
@@ -180,6 +175,7 @@ public class CqlLibrary implements Serializable {
         this.releaseVersion = releaseVersion;
     }
 
+    @XmlElement
     public Date getLockedOutDate() {
         return lockedOutDate;
     }
@@ -188,6 +184,7 @@ public class CqlLibrary implements Serializable {
         this.lockedOutDate = lockedOutDate;
     }
 
+    @XmlElement
     public byte[] getCqlXml() {
         return cqlXml;
     }
@@ -196,6 +193,7 @@ public class CqlLibrary implements Serializable {
         this.cqlXml = cqlXml;
     }
 
+    @XmlElement
     public Integer getRevisionNumber() {
         return revisionNumber;
     }
@@ -204,6 +202,7 @@ public class CqlLibrary implements Serializable {
         this.revisionNumber = revisionNumber;
     }
 
+    @XmlElement
     public String getQdmVersion() {
         return qdmVersion;
     }
@@ -212,6 +211,7 @@ public class CqlLibrary implements Serializable {
         this.qdmVersion = qdmVersion;
     }
 
+    @XmlElement
     public Date getLastModifiedOn() {
         return lastModifiedOn;
     }
@@ -229,6 +229,7 @@ public class CqlLibrary implements Serializable {
         this.cqlLibraryShareCollection = cqlLibraryShareCollection;
     }
 
+    @XmlElement
     public User getOwnerId() {
         return ownerId;
     }
@@ -237,6 +238,7 @@ public class CqlLibrary implements Serializable {
         this.ownerId = ownerId;
     }
 
+    @XmlElement
     public User getLockedUser() {
         return lockedUser;
     }
@@ -245,6 +247,7 @@ public class CqlLibrary implements Serializable {
         this.lockedUser = lockedUser;
     }
 
+    @XmlElement
     public User getLastModifiedBy() {
         return lastModifiedBy;
     }

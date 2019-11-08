@@ -15,30 +15,21 @@
  */
 package gov.cms.mat.fhir.services.config;
 
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
-//import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-/**
- *
- * @author duanedecouteau
- */
 @SpringBootApplication
+@EnableJpaRepositories(basePackages = "gov.cms.mat.fhir.services.repository")
+@EnableMongoRepositories(basePackageClasses = ConversionResultRepository.class)
 @ComponentScan(basePackages = "gov.cms.mat")
-public class Application extends SpringBootServletInitializer {
-    
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(Application.class);
-        
-    }
-
-    public static void main(String[] args) throws Exception {
+@EntityScan("gov.cms.mat.fhir.commons.model")
+public class Application {
+    public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-
-    
 }
