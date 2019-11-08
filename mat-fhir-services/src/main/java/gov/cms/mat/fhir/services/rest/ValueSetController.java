@@ -95,10 +95,6 @@ public class ValueSetController {
 
     private void translate(MeasureExport measureExport, List<ValueSet> outcomes) {
 
-        if (outcomes.size() > 100) {
-            return;
-        }
-
         ConversionReporter.setInThreadLocal(measureExport.getMeasureId(), conversionResultsService);
         ConversionReporter.resetValueSetResults();
 
