@@ -11,6 +11,10 @@ spring:
     hibernate.ddl-auto: none
     generate-ddl: false
     show-sql: false
+  data:
+    mongodb:
+      database: mat_conversion_results
+      uri: mongodb://localhost
 
 logging:
   level:

@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
 import gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator;
@@ -68,12 +69,13 @@ public class ValueSetMapper implements FhirValueSetCreator {
         Bundle hapiBundle = hapiFhirServer.isValueSetInHapi(oid);
 
         if (hapiBundle != null && hapiBundle.hasEntry()) {
-            log.debug("VsacService returned null (not found) for oid: {}", oid);
+            log.debug("Fhir valueSet already in hapi, oid: {}", oid);
         } else {
             VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid);
 
             if (vsacValueSetWrapper == null) {
                 log.debug("VsacService returned null for oid: {}", oid);
+                ConversionReporter.setValueSetResult(oid, "Not Found in VSAC");
                 return;
             }
 
