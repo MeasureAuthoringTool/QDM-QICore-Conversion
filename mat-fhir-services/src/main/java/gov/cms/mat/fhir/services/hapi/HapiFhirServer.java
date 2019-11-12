@@ -42,23 +42,34 @@ public class HapiFhirServer {
     }
 
     public Bundle createBundle(Resource resource) {
+        Bundle bundle = buildBundle(resource);
+
+        return hapiClient.transaction().withBundle(bundle).execute();
+    }
+
+    Bundle buildBundle(Resource resource) {
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.TRANSACTION);
         bundle.addEntry().setResource(resource)
                 .getRequest()
                 .setUrl(baseURL + resource.getResourceType().name() + "/" + resource.getId())
                 .setMethod(Bundle.HTTPVerb.PUT);
-
-        return getHapiClient().transaction().withBundle(bundle).execute();
+        return bundle;
     }
 
     private LoggingInterceptor createLoggingInterceptor() {
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
+        loggingInterceptor.setLogger(log);
 
-        // Optionally you may configure the interceptor (by default only
-        // summary info is logged)
-        loggingInterceptor.setLogRequestSummary(true);
+        // Optionally you may configure the interceptor (by default only summary info is logged)
         loggingInterceptor.setLogRequestBody(true);
+        loggingInterceptor.setLogRequestSummary(true);
+        loggingInterceptor.setLogRequestHeaders(true);
+
+        loggingInterceptor.setLogResponseBody(true);
+        loggingInterceptor.setLogResponseHeaders(true);
+        loggingInterceptor.setLogResponseSummary(true);
+
         return loggingInterceptor;
     }
 

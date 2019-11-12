@@ -26,7 +26,7 @@ import java.util.Optional;
 @RequestMapping(path = "/valueSet")
 @Slf4j
 public class ValueSetController {
-    private static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
+    static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
     private static final String TRANSLATE_SUCCESS_MESSAGE = "Read %d Measure Export objects converted %d " +
             "Value sets to fhir in %d seconds";
 
