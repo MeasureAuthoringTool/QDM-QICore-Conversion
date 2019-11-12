@@ -13,6 +13,7 @@
     <artifactId>qdm-qicore-mapping-services</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>qdm-qicore-mapping-services</name>
+    <packaging>war</packaging>
     <description>Spring Boot qdm-qicore-mapping-services</description>
 
     <properties>

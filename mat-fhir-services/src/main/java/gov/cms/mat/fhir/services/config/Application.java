@@ -29,7 +29,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableJpaRepositories(basePackages = "gov.cms.mat.fhir.services.repository")
 @EnableMongoRepositories(basePackageClasses = ConversionResultRepository.class)
 @ComponentScan(basePackages = "gov.cms.mat")
-
 @EntityScan("gov.cms.mat.fhir.commons.model")
 public class Application extends SpringBootServletInitializer {
     public static void main(String[] args) {
