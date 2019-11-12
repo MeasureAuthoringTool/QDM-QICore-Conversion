@@ -17,6 +17,7 @@ spring:
       uri: mongodb://localhost
 
 logging:
+  file: /tmp/f.log
   level:
     root: INFO
     gov.cms.mat: DEBUG

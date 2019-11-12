@@ -13,6 +13,7 @@
     <artifactId>mat-fhir-services</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mat-fhir-services</name>
+    <packaging>war</packaging>
     <description>Spring Boot MAT FHIR JAXRS endpoint</description>
 
     <properties>
