@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
@@ -45,6 +46,9 @@ class MeasureTranslationServiceTest {
     private CqlLibraryRepository cqlLibraryRepo;
     @Mock
     private CqlLibraryExportRepository cqlLibraryExportRepo;
+    @Mock
+    private ConversionResultsService conversionResultsService;
+
 
     @InjectMocks
     private MeasureTranslationService measureTranslationService;

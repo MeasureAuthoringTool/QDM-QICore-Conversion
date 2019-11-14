@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Attachment;
@@ -44,6 +45,9 @@ public class LibraryMapper implements FhirCreator {
         fhirLibrary.setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
 
         fhirLibrary.setContent(createContent());
+        if (fhirLibrary.getContent().isEmpty()) {
+            ConversionReporter.setLibraryResult("MAT.cql", "Library.content", "No CQL or ELM to process");
+        }
 
         log.debug("Converted library: {}", fhirLibrary);
 

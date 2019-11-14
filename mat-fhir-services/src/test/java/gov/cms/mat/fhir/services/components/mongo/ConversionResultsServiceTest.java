@@ -41,6 +41,25 @@ class ConversionResultsServiceTest {
     }
 
     @Test
+    void addLibraryResult_NotFoundInDb() {
+        when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
+        ConversionResult conversionResultToReturn = new ConversionResult();
+
+        when(conversionResultRepository.save(any(ConversionResult.class)))
+                .thenReturn(conversionResultToReturn);
+
+        ConversionResult.LibraryResult result = buildLibraryResult();
+
+        ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result);
+
+        assertEquals(conversionResultToReturn, conversionResultReturned);
+
+        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository).save(any(ConversionResult.class));
+    }
+    
+    
+    @Test
     void addMeasureResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
         when(conversionResultRepository.findByMeasureId(MEASURE_ID))
@@ -59,7 +78,25 @@ class ConversionResultsServiceTest {
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
 
+    @Test
+    void addLibraryResult_FoundInDb() {
+        ConversionResult conversionResultToReturn = new ConversionResult();
+        when(conversionResultRepository.findByMeasureId(MEASURE_ID))
+                .thenReturn(Optional.of(conversionResultToReturn));
 
+        when(conversionResultRepository.save(conversionResultToReturn))
+                .thenReturn(conversionResultToReturn);
+
+        ConversionResult.LibraryResult result = buildLibraryResult();
+
+        ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result);
+
+        assertEquals(conversionResultToReturn, conversionResultReturned);
+
+        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository).save(conversionResultToReturn);
+    }
+    
     @Test
     void addValueSetResult_NotFoundInDb() {
         when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
@@ -138,6 +175,18 @@ class ConversionResultsServiceTest {
     }
 
     @Test
+    void clearLibrary_NotFoundInDb() {
+
+        when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
+
+        assertNull(conversionResultsService.clearLibrary(MEASURE_ID));
+
+        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository, never()).save(any(ConversionResult.class));
+    }
+    
+    
+    @Test
     void clearMeasure_FoundInDb() {
 
         ConversionResult conversionResultToReturn = new ConversionResult();
@@ -148,7 +197,7 @@ class ConversionResultsServiceTest {
                 .thenReturn(conversionResultToReturn);
 
         ConversionResult conversionResultReturned =
-                conversionResultsService.clearMeasure(MEASURE_ID);
+                conversionResultsService.clearLibrary(MEASURE_ID);
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
@@ -156,9 +205,38 @@ class ConversionResultsServiceTest {
         verify(conversionResultRepository).save(conversionResultReturned);
     }
 
+    @Test
+    void clearLibrary_FoundInDb() {
+
+        ConversionResult conversionResultToReturn = new ConversionResult();
+        when(conversionResultRepository.findByMeasureId(MEASURE_ID))
+                .thenReturn(Optional.of(conversionResultToReturn));
+
+        when(conversionResultRepository.save(conversionResultToReturn))
+                .thenReturn(conversionResultToReturn);
+
+        ConversionResult conversionResultReturned =
+                conversionResultsService.clearLibrary(MEASURE_ID);
+
+        assertEquals(conversionResultToReturn, conversionResultReturned);
+
+        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository).save(conversionResultReturned);
+    }
+
+    
     private ConversionResult.MeasureResult buildMeasureResult() {
         return ConversionResult.MeasureResult.builder()
                 .field("FIELD")
+                .destination("DESTINATION")
+                .reason("REASON")
+                .build();
+    }
+    
+    private ConversionResult.LibraryResult buildLibraryResult() {
+        return ConversionResult.LibraryResult.builder()
+                .field("FIELD")
+                .destination("DESTINATION")
                 .reason("REASON")
                 .build();
     }

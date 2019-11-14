@@ -23,6 +23,12 @@ public class ConversionResultsService {
         conversionResult.getMeasureResults().add(result);
         return conversionResultRepository.save(conversionResult);
     }
+    
+    ConversionResult addLibraryResult(String measureId, ConversionResult.LibraryResult result) {
+        ConversionResult conversionResult = findOrCreate(measureId);
+        conversionResult.getLibraryResults().add(result);
+        return conversionResultRepository.save(conversionResult);
+    }
 
     private Optional<ConversionResult> findByMeasureId(String measureId) {
         return conversionResultRepository.findByMeasureId(measureId);
@@ -63,4 +69,17 @@ public class ConversionResultsService {
             return null;
         }
     }
+    
+    ConversionResult clearLibrary(String measureId) {
+        Optional<ConversionResult> optional = findByMeasureId(measureId);
+
+        if (optional.isPresent()) {
+            ConversionResult conversionResult = optional.get();
+            conversionResult.getLibraryResults().clear();
+            return conversionResultRepository.save(conversionResult);
+        } else {
+            return null;
+        }
+    }
+    
 }

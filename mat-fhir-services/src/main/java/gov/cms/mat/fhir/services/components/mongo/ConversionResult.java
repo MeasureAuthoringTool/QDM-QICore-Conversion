@@ -29,6 +29,8 @@ public class ConversionResult {
     private List<ValueSetResult> valueSetResults = new ArrayList<>();
 
     private List<MeasureResult> measureResults = new ArrayList<>();
+    
+    private List<LibraryResult> libraryResults = new ArrayList<>();
 
     @NotBlank
     @Indexed(unique = true)
@@ -38,6 +40,7 @@ public class ConversionResult {
     @Builder
     public static class MeasureResult {
         String field;
+        String destination;
         String reason;
     }
 
@@ -45,6 +48,14 @@ public class ConversionResult {
     @Builder
     public static class ValueSetResult {
         String oid;
+        String reason;
+    }
+    
+    @Data
+    @Builder
+    public static class LibraryResult {
+        String field;
+        String destination;
         String reason;
     }
 }

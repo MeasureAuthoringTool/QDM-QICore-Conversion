@@ -27,6 +27,9 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -46,13 +49,15 @@ public class MeasureTranslationService {
     private final HapiFhirServer hapiFhirServer;
     private final CqlLibraryRepository cqlLibraryRepo;
     private final CqlLibraryExportRepository cqlLibraryExportRepo;
+    private final ConversionResultsService conversionResultsService;
 
     public MeasureTranslationService(MeasureRepository measureRepository,
                                      MeasureExportRepository measureExportRepository,
                                      ManageMeasureDetailMapper manageMeasureDetailMapper,
                                      HapiFhirServer hapiFhirServer,
                                      CqlLibraryRepository cqlLibraryRepo,
-                                     CqlLibraryExportRepository cqlLibraryExportRepo) {
+                                     CqlLibraryExportRepository cqlLibraryExportRepo,
+                                     ConversionResultsService conversionResultsService) {
         this.measureRepo = measureRepository;
 
         this.measureExportRepo = measureExportRepository;
@@ -60,6 +65,7 @@ public class MeasureTranslationService {
         this.hapiFhirServer = hapiFhirServer;
         this.cqlLibraryExportRepo = cqlLibraryExportRepo;
         this.cqlLibraryRepo = cqlLibraryRepo;
+        this.conversionResultsService = conversionResultsService;
     }
 
 
@@ -68,6 +74,8 @@ public class MeasureTranslationService {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public TranslationOutcome translateMeasureById(@QueryParam("id") String id) {
         TranslationOutcome res = new TranslationOutcome();
+        ConversionReporter.setInThreadLocal(id, conversionResultsService);
+        ConversionReporter.resetMeasure();
 
         try {
             Measure qdmMeasure = measureRepo.getMeasureById(id);
@@ -125,7 +133,7 @@ public class MeasureTranslationService {
             res.add(tOut);
             log.error("Failed Batch Translation of Measures: ", ex);
         }
-
+        ConversionReporter.removeInThreadLocal();
         return res;
     }
 
@@ -157,7 +165,7 @@ public class MeasureTranslationService {
             res.add(tOut);
             log.error("Failed Batch Translation of Measures ALL:", ex);
         }
-
+        ConversionReporter.removeInThreadLocal();
         return res;
     }
 
@@ -193,6 +201,8 @@ public class MeasureTranslationService {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public TranslationOutcome translateLibraryByMeasureId(@QueryParam("id") String id) {
         TranslationOutcome res = new TranslationOutcome();
+        ConversionReporter.setInThreadLocal(id, conversionResultsService);
+        ConversionReporter.resetLibrary();
 
         try {
             List<CqlLibrary> cqlLibs = cqlLibraryRepo.getCqlLibraryByMeasureId(id);
@@ -256,7 +266,7 @@ public class MeasureTranslationService {
             res.add(tOut);
             log.error("Failed Batch Translation of Libraries ALL: {}", ex.getMessage());
         }
-
+        ConversionReporter.removeInThreadLocal();
         return res;
     }
 
