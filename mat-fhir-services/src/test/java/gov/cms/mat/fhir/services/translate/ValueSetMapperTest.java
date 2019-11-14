@@ -129,7 +129,7 @@ class ValueSetMapperTest {
         valueSet.setId("ID");
         Bundle bundle = createBundle(valueSet);
 
-        when(hapiFhirServer.createBundle(any())).thenReturn(bundle);
+        when(hapiFhirServer.createAndExecuteBundle(any())).thenReturn(bundle);
 
         List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML);
         assertEquals(1, valueSets.size());
@@ -155,13 +155,13 @@ class ValueSetMapperTest {
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
         Bundle bundle = new Bundle();
-        when(hapiFhirServer.createBundle(any())).thenReturn(bundle);
+        when(hapiFhirServer.createAndExecuteBundle(any())).thenReturn(bundle);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             valueSetMapper.translateToFhir(XML);
         });
 
-        verify(hapiFhirServer).createBundle(any());
+        verify(hapiFhirServer).createAndExecuteBundle(any());
     }
 
     /* Need all this data set to get past bundle.isEmpty() */

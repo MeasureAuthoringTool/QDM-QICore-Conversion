@@ -42,7 +42,7 @@ public class HapiFhirServer {
         log.info("Created hapi client for server: {} ", baseURL);
     }
 
-    public Bundle createBundle(Resource resource) {
+    public Bundle createAndExecuteBundle(Resource resource) {
         Bundle bundle = buildBundle(resource);
 
         return hapiClient.transaction().withBundle(bundle).execute();

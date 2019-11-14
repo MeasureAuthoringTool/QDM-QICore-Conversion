@@ -87,7 +87,7 @@ public class MeasureTranslationService {
             MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());
             org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
 
-            Bundle bundle = hapiFhirServer.createBundle(fhirMeasure);
+            Bundle bundle = hapiFhirServer.createAndExecuteBundle(fhirMeasure);
             log.debug("bundle: {}", bundle);
 
         } catch (Exception ex) {
@@ -206,7 +206,7 @@ public class MeasureTranslationService {
                 LibraryMapper fhirMapper = new LibraryMapper(cqlLib, cql, elm, hapiFhirServer.getBaseURL());
                 org.hl7.fhir.r4.model.Library fhirLibrary = fhirMapper.translateToFhir();
 
-                Bundle bundle = hapiFhirServer.createBundle(fhirLibrary);
+                Bundle bundle = hapiFhirServer.createAndExecuteBundle(fhirLibrary);
 
                 IGenericClient client = hapiFhirServer.getHapiClient();
                 Bundle resp = client.transaction().withBundle(bundle).execute();

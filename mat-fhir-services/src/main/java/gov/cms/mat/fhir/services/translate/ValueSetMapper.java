@@ -95,7 +95,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
     private ValueSet createAndPersistFhirValueSet(MatValueSet matValueSet, CQLQualityDataSetDTO cqlQualityDataSetDTO) {
         ValueSet valueSet = createFhirValueSet(matValueSet, cqlQualityDataSetDTO);
 
-        Bundle bundle = hapiFhirServer.createBundle(valueSet);
+        Bundle bundle = hapiFhirServer.createAndExecuteBundle(valueSet);
 
         if (bundle.isEmpty()) {
             throw new IllegalArgumentException("Could not create hapi value set with oid: " + matValueSet.getID());

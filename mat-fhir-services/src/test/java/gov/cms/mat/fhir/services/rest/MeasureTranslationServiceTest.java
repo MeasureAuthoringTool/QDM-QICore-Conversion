@@ -109,7 +109,7 @@ class MeasureTranslationServiceTest {
         when(manageMeasureDetailMapper.convert(null, measure))
                 .thenReturn(manageCompositeMeasureDetailModel);
 
-        when(hapiFhirServer.createBundle(any(Resource.class))).thenReturn(new Bundle());
+        when(hapiFhirServer.createAndExecuteBundle(any(Resource.class))).thenReturn(new Bundle());
 
         TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID);
 
@@ -119,7 +119,7 @@ class MeasureTranslationServiceTest {
         verify(measureRepo).getMeasureById(ID);
         verify(measureExportRepo).getMeasureExportById(ID);
         verify(manageMeasureDetailMapper).convert(null, measure);
-        verify(hapiFhirServer).createBundle(any(Resource.class));
+        verify(hapiFhirServer).createAndExecuteBundle(any(Resource.class));
     }
 
 

@@ -60,7 +60,7 @@ class HapiFhirServerTest {
         when(iTransaction.withBundle(any(Bundle.class))).thenReturn(bundleITransactionTyped);
         when(bundleITransactionTyped.execute()).thenReturn(bundleToReturn);
 
-        Bundle bundleReturned = hapiFhirServer.createBundle(new ValueSet());
+        Bundle bundleReturned = hapiFhirServer.createAndExecuteBundle(new ValueSet());
         assertEquals(bundleToReturn, bundleReturned);
 
         verify(hapiClient).transaction();
