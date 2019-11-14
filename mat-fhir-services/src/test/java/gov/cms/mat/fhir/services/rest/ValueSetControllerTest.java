@@ -44,6 +44,8 @@ class ValueSetControllerTest {
         verify(valueSetMapper, times(2)).count();
         verify(measureExportRepository).getAllExportIdsAndVersion(ALLOWED_VERSIONS);
         verify(measureExportRepository, never()).findById(anyString());
+
+        verifyNoInteractions(conversionResultsService);
     }
 
     @Test
@@ -56,14 +58,14 @@ class ValueSetControllerTest {
                 Arrays.asList(new MeasureVersionExportId(idGood, ALLOWED_VERSIONS.get(0)),
                         new MeasureVersionExportId(idBad, ALLOWED_VERSIONS.get(0)));
 
-        MeasureExport measureExport = new MeasureExport();
-        measureExport.setSimpleXml(xml.getBytes());
-
         when(valueSetMapper.translateToFhir(xml)).thenReturn(Collections.singletonList(new ValueSet()));
 
         when(measureExportRepository.getAllExportIdsAndVersion(ALLOWED_VERSIONS)).thenReturn(idsAndVersion);
 
+        MeasureExport measureExport = new MeasureExport();
+        measureExport.setSimpleXml(xml.getBytes());
         when(measureExportRepository.findById(idGood)).thenReturn(Optional.of(measureExport));
+
         when(measureExportRepository.findById(idBad)).thenReturn(Optional.empty());
 
         when(valueSetMapper.count())
@@ -79,7 +81,6 @@ class ValueSetControllerTest {
         verify(measureExportRepository).getAllExportIdsAndVersion(ALLOWED_VERSIONS);
         verify(measureExportRepository, times(2)).findById(anyString());
         verify(valueSetMapper).translateToFhir(xml);
-
     }
 
     @Test

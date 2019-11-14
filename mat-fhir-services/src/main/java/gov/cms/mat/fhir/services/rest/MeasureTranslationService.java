@@ -6,44 +6,36 @@
 package gov.cms.mat.fhir.services.rest;
 
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
+import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
+import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
+import gov.cms.mat.fhir.services.translate.LibraryMapper;
 import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
 import gov.cms.mat.fhir.services.translate.MeasureMapper;
 import lombok.extern.slf4j.Slf4j;
+import mat.client.measure.ManageCompositeMeasureDetailModel;
+import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.r4.model.Bundle;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import mat.client.measure.ManageCompositeMeasureDetailModel;
-
-import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
-import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.translate.LibraryMapper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 
-
-/**
- * @author duanedecouteau
- */
 @RestController
 @RequestMapping(path = "/qdmtofhir")
 @Slf4j
@@ -54,9 +46,6 @@ public class MeasureTranslationService {
     private final HapiFhirServer hapiFhirServer;
     private final CqlLibraryRepository cqlLibraryRepo;
     private final CqlLibraryExportRepository cqlLibraryExportRepo;
-
-    @Value("${fhir.r4.baseurl}")
-    private String baseURL;
 
     public MeasureTranslationService(MeasureRepository measureRepository,
                                      MeasureExportRepository measureExportRepository,
@@ -73,10 +62,6 @@ public class MeasureTranslationService {
         this.cqlLibraryRepo = cqlLibraryRepo;
     }
 
-    @PostConstruct
-    public void postConstruct() {
-        log.info("baseURL: {}", baseURL); //todo remove once we solve
-    }
 
     @GetMapping(path = "/translateMeasure")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
@@ -93,32 +78,26 @@ public class MeasureTranslationService {
             String narrative = "";
             try {
                 narrative = new String(measureExport.getHumanReadable());
-            }
-            catch (Exception ex) {
-                log.error("Narrative not found", ex.getMessage());
+            } catch (Exception ex) {
+                log.error("Narrative not found: {}", ex.getMessage());
             }
 
             ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);
 
-            MeasureMapper fhirMapper = new MeasureMapper(model, narrative, baseURL);
+            MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());
             org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
-            
-            Bundle bundle = hapiFhirServer.createBundle(fhirMeasure);
 
-            IGenericClient client = hapiFhirServer.getHapiClient();
-            Bundle resp = client.transaction().withBundle(bundle).execute();
-            
-            // Log the response
-            log.info(hapiFhirServer.getCtx().newXmlParser().setPrettyPrint(true).encodeResourceToString(resp));
+            Bundle bundle = hapiFhirServer.createBundle(fhirMeasure);
+            log.debug("bundle: {}", bundle);
+
         } catch (Exception ex) {
             res.setSuccessful(Boolean.FALSE);
             if (ex.getMessage() == null) {
-                res.setMessage("/qdmtofhir/translateMeasure Failed " + id + "No SimpleXML Available");
-            }
-            else {
+                res.setMessage("/qdmtofhir/translateMeasure Failed " + id + " No SimpleXML Available");
+            } else {
                 res.setMessage("/qdmtofhir/translateMeasure Failed " + id + " " + ex.getMessage());
             }
-            log.error("Failed to Translate Measure: {}", ex.getMessage());
+            log.error("Failed to Translate Measure", ex);
         }
         return res;
     }
@@ -128,25 +107,23 @@ public class MeasureTranslationService {
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<TranslationOutcome> translateMeasuresByStatus(@QueryParam("measureStatus") String measureStatus) {
-        List<TranslationOutcome> res = new ArrayList();
+        List<TranslationOutcome> res = new ArrayList<>();
         try {
             List<Measure> measureList = measureRepo.getMeasuresByStatus(measureStatus);
-            measureRepo.flush();
             Iterator iter = measureList.iterator();
             while (iter.hasNext()) {
                 Measure measure = (Measure) iter.next();
                 String measureId = measure.getId().trim();
-                System.out.println("Translating Measure " + measureId);
+                log.debug("Translating Measure measureId: {}", measureId);
                 TranslationOutcome result = translateMeasureById(measureId);
                 res.add(result);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             TranslationOutcome tOut = new TranslationOutcome();
             tOut.setSuccessful(Boolean.FALSE);
             tOut.setMessage("/qdmtofhir/translateMeasuresByStatus Failed " + ex.getMessage());
             res.add(tOut);
-            log.error("Failed Batch Translation of Measures: {}", ex.getMessage());
+            log.error("Failed Batch Translation of Measures: ", ex);
         }
 
         return res;
@@ -156,7 +133,7 @@ public class MeasureTranslationService {
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<TranslationOutcome> translateAllMeasures() {
-        List<TranslationOutcome> res = new ArrayList();
+        List<TranslationOutcome> res = new ArrayList<>();
         try {
             List<Measure> measureList = measureRepo.findAll();
             Iterator iter = measureList.iterator();
@@ -167,19 +144,18 @@ public class MeasureTranslationService {
 
                 if (version != null) {
                     if (version.equals("v5.5") || version.equals("v5.6") || version.equals("v5.7") || version.equals("v5.8")) {
-                        System.out.println("Translating Measure "+measureId);
+                        log.debug("Translating Measure: {} ", measureId);
                         TranslationOutcome result = translateMeasureById(measureId);
                         res.add(result);
                     }
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             TranslationOutcome tOut = new TranslationOutcome();
             tOut.setSuccessful(Boolean.FALSE);
             tOut.setMessage("/qdmtofhir/translateAllMeasures Failed " + ex.getMessage());
             res.add(tOut);
-            log.error("Failed Batch Translation of Measures ALL: {}", ex.getMessage());
+            log.error("Failed Batch Translation of Measures ALL:", ex);
         }
 
         return res;
@@ -199,7 +175,8 @@ public class MeasureTranslationService {
                 try {
                     IGenericClient client = hapiFhirServer.getHapiClient();
                     IBaseOperationOutcome resp = client.delete().resourceById(new IdDt("Measure", measureId)).execute();
-                } catch (Exception ex) {}
+                } catch (Exception ex) {
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -210,7 +187,7 @@ public class MeasureTranslationService {
 
         return res;
     }
-    
+
     @GetMapping(path = "/translateLibraryByMeasureId")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -221,19 +198,19 @@ public class MeasureTranslationService {
             List<CqlLibrary> cqlLibs = cqlLibraryRepo.getCqlLibraryByMeasureId(id);
             Iterator iter = cqlLibs.iterator();
             while (iter.hasNext()) {
-                CqlLibrary cqlLib = (CqlLibrary)iter.next();
+                CqlLibrary cqlLib = (CqlLibrary) iter.next();
                 //go get the associated cql and elm
                 CqlLibraryExport cqlExp = cqlLibraryExportRepo.getCqlLibraryExportByCqlLibraryId(cqlLib.getId());
                 byte[] cql = cqlExp.getCql();
                 byte[] elm = cqlExp.getElm();
-                LibraryMapper fhirMapper = new LibraryMapper(cqlLib, cql, elm, baseURL);
+                LibraryMapper fhirMapper = new LibraryMapper(cqlLib, cql, elm, hapiFhirServer.getBaseURL());
                 org.hl7.fhir.r4.model.Library fhirLibrary = fhirMapper.translateToFhir();
-            
+
                 Bundle bundle = hapiFhirServer.createBundle(fhirLibrary);
 
                 IGenericClient client = hapiFhirServer.getHapiClient();
                 Bundle resp = client.transaction().withBundle(bundle).execute();
-            
+
                 // Log the response
                 log.info(hapiFhirServer.getCtx().newXmlParser().setPrettyPrint(true).encodeResourceToString(resp));
             }
@@ -241,8 +218,7 @@ public class MeasureTranslationService {
             res.setSuccessful(Boolean.FALSE);
             if (ex.getMessage() == null) {
                 res.setMessage("/qdmtofhir/translateLibrary Failed " + id + "Missing");
-            }
-            else {
+            } else {
                 res.setMessage("/qdmtofhir/translateLibrary Failed " + id + " " + ex.getMessage());
             }
             log.error("Failed to Translate Library: {}", ex.getMessage());
@@ -250,7 +226,7 @@ public class MeasureTranslationService {
         return res;
     }
 
-    
+
     @GetMapping(path = "/translateAllLibraries")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -266,7 +242,7 @@ public class MeasureTranslationService {
 
                 if (version != null) {
                     if (version.equals("v5.5") || version.equals("v5.6") || version.equals("v5.7") || version.equals("v5.8")) {
-                        System.out.println("Translating Libraries for "+measureId);
+                        System.out.println("Translating Libraries for " + measureId);
                         TranslationOutcome result = translateLibraryByMeasureId(measureId);
                         res.add(result);
                     }
@@ -283,7 +259,7 @@ public class MeasureTranslationService {
 
         return res;
     }
-    
+
     @GetMapping(path = "/removeAllLibraries")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -298,7 +274,8 @@ public class MeasureTranslationService {
                 try {
                     IGenericClient client = hapiFhirServer.getHapiClient();
                     IBaseOperationOutcome resp = client.delete().resourceById(new IdDt("Library", cqlId)).execute();
-                } catch (Exception ex) {}
+                } catch (Exception ex) {
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -309,26 +286,4 @@ public class MeasureTranslationService {
 
         return res;
     }
-    
-    private int getMeasureCount() {
-        return hapiFhirServer.getHapiClient()
-                .search()
-                .forResource(org.hl7.fhir.r4.model.Measure.class)
-                .totalMode(SearchTotalModeEnum.ACCURATE)
-                .returnBundle(Bundle.class)
-                .execute()
-                .getTotal();        
-    }
-    
-    private int getLibraryCount() {
-        return hapiFhirServer.getHapiClient()
-                .search()
-                .forResource(org.hl7.fhir.r4.model.Library.class)
-                .totalMode(SearchTotalModeEnum.ACCURATE)
-                .returnBundle(Bundle.class)
-                .execute()
-                .getTotal();        
-        
-    }
-
 }

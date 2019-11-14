@@ -12,7 +12,7 @@ public class ConversionReporter {
     private final ConversionResultsService conversionResultsService;
 
 
-    public ConversionReporter(String measureId, ConversionResultsService conversionResultsService) {
+    private ConversionReporter(String measureId, ConversionResultsService conversionResultsService) {
         this.measureId = measureId;
         this.conversionResultsService = conversionResultsService;
     }
@@ -62,7 +62,7 @@ public class ConversionReporter {
         threadLocal.set(new ConversionReporter(measureId, conversionResultsService));
     }
 
-    private static ConversionReporter getFromThreadLocal() {
+    static ConversionReporter getFromThreadLocal() {
         ConversionReporter conversionReporter = threadLocal.get();
 
         if (conversionReporter == null) {
@@ -71,7 +71,7 @@ public class ConversionReporter {
         return conversionReporter;
     }
 
-    public ConversionResult addValueSetResult(String oid, String reason) {
+    private ConversionResult addValueSetResult(String oid, String reason) {
         ConversionResult.ValueSetResult result = ConversionResult.ValueSetResult.builder()
                 .oid(oid)
                 .reason(reason)
@@ -80,7 +80,7 @@ public class ConversionReporter {
         return conversionResultsService.addValueSetResult(measureId, result);
     }
 
-    public ConversionResult addMeasureResult(String field, String reason) {
+    private ConversionResult addMeasureResult(String field, String reason) {
 
         ConversionResult.MeasureResult result = ConversionResult.MeasureResult.builder()
                 .field(field)
@@ -90,11 +90,11 @@ public class ConversionReporter {
         return conversionResultsService.addMeasureResult(measureId, result);
     }
 
-    public ConversionResult clearValueSetResults() {
+    private ConversionResult clearValueSetResults() {
         return conversionResultsService.clearValueSetResults(measureId);
     }
 
-    public ConversionResult clearMeasure() {
+    private ConversionResult clearMeasure() {
         return conversionResultsService.clearMeasure(measureId);
     }
 }
