@@ -78,9 +78,9 @@ class MeasureMapperTest {
         compositeModel.setSupplementalData("this is supplementaldata");
         compositeModel.setTransmissionFormat("zip");
         compositeModel.setVersionNumber("0.0001");
-        List<String> refList = new ArrayList();
+        List<String> refList = new ArrayList<>();
         compositeModel.setReferencesList(refList);
-        List<mat.model.MeasureType> matTypeList = new ArrayList();
+        List<mat.model.MeasureType> matTypeList = new ArrayList<>();
         compositeModel.setMeasureTypeSelectedList(matTypeList);
         PeriodModel pModel = new PeriodModel();
         pModel.setStartDate("2019-11-05 00:00:00");

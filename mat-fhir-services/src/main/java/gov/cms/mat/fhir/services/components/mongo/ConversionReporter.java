@@ -17,13 +17,21 @@ public class ConversionReporter {
         this.conversionResultsService = conversionResultsService;
     }
 
-    public static void setMeasureResult(String field, String reason) {
+    public static void setMeasureResult(String field, String destination, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter != null) {
-            conversionReporter.addMeasureResult(field, reason);
+            conversionReporter.addMeasureResult(field, destination, reason);
         }
     }
+    
+    public static void setLibraryResult(String field, String destination, String reason) {
+        ConversionReporter conversionReporter = getFromThreadLocal();
+
+        if (conversionReporter != null) {
+            conversionReporter.addLibraryResult(field, destination, reason);
+        }
+    }    
 
     public static void resetValueSetResults() {
         ConversionReporter conversionReporter = getFromThreadLocal();
@@ -45,6 +53,17 @@ public class ConversionReporter {
         conversionReporter.clearMeasure();
     }
 
+    public static void resetLibrary() {
+        ConversionReporter conversionReporter = getFromThreadLocal();
+
+        if (conversionReporter == null) {
+            throw new ThreadLocalNotFoundException(NOT_FOUND_THREAD_LOCAL_MESSAGE);
+        }
+
+        conversionReporter.clearLibrary();
+    }
+
+    
     public static void setValueSetResult(String oid, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
@@ -80,15 +99,28 @@ public class ConversionReporter {
         return conversionResultsService.addValueSetResult(measureId, result);
     }
 
-    private ConversionResult addMeasureResult(String field, String reason) {
+    private ConversionResult addMeasureResult(String field, String destination, String reason) {
 
         ConversionResult.MeasureResult result = ConversionResult.MeasureResult.builder()
                 .field(field)
+                .destination(destination)
                 .reason(reason)
                 .build();
 
         return conversionResultsService.addMeasureResult(measureId, result);
     }
+    
+    private ConversionResult addLibraryResult(String field, String destination, String reason) {
+
+        ConversionResult.LibraryResult result = ConversionResult.LibraryResult.builder()
+                .field(field)
+                .destination(destination)
+                .reason(reason)
+                .build();
+
+        return conversionResultsService.addLibraryResult(measureId, result);
+    }
+    
 
     private ConversionResult clearValueSetResults() {
         return conversionResultsService.clearValueSetResults(measureId);
@@ -96,5 +128,9 @@ public class ConversionReporter {
 
     private ConversionResult clearMeasure() {
         return conversionResultsService.clearMeasure(measureId);
+    }
+    
+    private ConversionResult clearLibrary() {
+        return conversionResultsService.clearLibrary(measureId);
     }
 }

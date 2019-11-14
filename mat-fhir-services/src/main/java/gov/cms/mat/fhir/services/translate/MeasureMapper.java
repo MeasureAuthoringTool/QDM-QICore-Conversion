@@ -18,6 +18,7 @@ import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Measure.MeasureGroupComponent;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import java.util.Base64;
+import org.hl7.fhir.r4.model.Measure.MeasureSupplementalDataComponent;
 
 /**
  *
@@ -81,6 +83,7 @@ public class MeasureMapper implements FhirCreator {
                     byte[] encodedText = Base64.getEncoder().encode(humanReadible.getBytes());
                     measureText.setDivAsString(new String(encodedText));
                     fhirMeasure.setText(measureText);
+                    ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.narrative", "Base64 Encoded Due to Format Issues");
                 }
                 catch (Exception ex) {
 //                    Narrative measureText = new Narrative();
@@ -89,21 +92,26 @@ public class MeasureMapper implements FhirCreator {
 //                    fhirMeasure.setText(measureText);
                 }
             }
+            else {
+                ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.narrative", "Is Empty");
+            }
             
             //set Extensions if any known, QICore Extension below
             //QICore Not Done Extension
             //EncounterProcedureExtension
             //Military Service Extension
             //RAND Appropriateness Score Extension            
-            List<Extension> extensionList = new ArrayList();
+            List<Extension> extensionList = new ArrayList<>();
             fhirMeasure.setExtension(extensionList);
+            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.extension", "No mapping available");
             
             
             //set the URL
             fhirMeasure.setUrl(baseURL+"Measure/"+fhirMeasure.getId());
+            ConversionReporter.setMeasureResult("MAT.Id", "Measure.url", "Generated From MAT Measure id (UUID)");
             
             //set identifiers cms and nqf if available
-            List<Identifier> idList = new ArrayList();
+            List<Identifier> idList = new ArrayList<>();
             Identifier cms = null;
             Identifier nqf = null;
             if (mModel.geteMeasureId() != 0) {
@@ -115,6 +123,10 @@ public class MeasureMapper implements FhirCreator {
                 idList.add(nqf);
             }            
             fhirMeasure.setIdentifier(idList);
+            if (idList.isEmpty()) {
+                ConversionReporter.setMeasureResult("MAT.eMeasureId", "Measure.identifier", "Not Available");
+                ConversionReporter.setMeasureResult("MAT.nqfId", "Measure.identifier", "Not Available");
+            }
             
             fhirMeasure.setVersion(mModel.getVersionNumber());
             
@@ -131,15 +143,19 @@ public class MeasureMapper implements FhirCreator {
             }
             else {
                 fhirMeasure.setStatus(Enumerations.PublicationStatus.ACTIVE);
+                ConversionReporter.setMeasureResult("MAT.isDraft", "Measure.status", "Defaulting to ACTIVE neither draft or deleted");
             }
             
             //TODO measure experimental mat does not have concept
 
             boolean experimental = false;
             fhirMeasure.setExperimental(experimental);
+            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.experimental", "Default to false");
             
             if (mModel.getFinalizedDate() != null) {
                 fhirMeasure.setApprovalDate(convertDateTimeString(mModel.getFinalizedDate()));
+            } else {
+              ConversionReporter.setMeasureResult("MAT.FinalizedDate", "Measure.approvalDate", "Finalized Date is NULL");
             }
             
             //set Publisher
@@ -148,6 +164,7 @@ public class MeasureMapper implements FhirCreator {
             
             //TODO No  Contact Mapping 
             fhirMeasure.setContact(createContactDetailUrl("https://cms.gov"));
+            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.contact", "No Mapping default to cms.gov");
        
             //Set Measure Description
             fhirMeasure.setDescription(mModel.getDescription());
@@ -157,8 +174,10 @@ public class MeasureMapper implements FhirCreator {
             fhirMeasure.setUseContext(createUsageContext("purpose", "codesystem", "displayname"));
             
             //juridiction
-            List<CodeableConcept> jurisdictionList = new ArrayList();
+            List<CodeableConcept> jurisdictionList = new ArrayList<>();
             jurisdictionList.add(buildCodeableConcept("US", "urn:iso:std:iso:3166", ""));
+            fhirMeasure.setJurisdiction(jurisdictionList);
+            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.Jurisdiction", "No Mapping defaulting to US");
             
             //purpose
             fhirMeasure.setPurpose(mModel.getDescription());
@@ -178,13 +197,14 @@ public class MeasureMapper implements FhirCreator {
             fhirMeasure.setEffectivePeriod(effectivePeriod);
             
             //topic
-            List<CodeableConcept> topicList = new ArrayList();
+            List<CodeableConcept> topicList = new ArrayList<>();
             CodeableConcept topicCC = buildCodeableConcept("57024-2", "http://loinc.org", "Health Quality Measure Document");
             topicList.add(topicCC);
             fhirMeasure.setTopic(topicList);
+            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.Topic", "No Mapping default Health Quality Measure Document");
             
             //related artifacts
-            List<RelatedArtifact> relatedArtifacts = new ArrayList();
+            List<RelatedArtifact> relatedArtifacts = new ArrayList<>();
             List<String> referenceList = mModel.getReferencesList();
             Iterator iter = referenceList.iterator();
             while (iter.hasNext()) {
@@ -195,6 +215,9 @@ public class MeasureMapper implements FhirCreator {
                 relatedArtifacts.add(art);
             }
             fhirMeasure.setRelatedArtifact(relatedArtifacts);
+            if (relatedArtifacts.isEmpty()) {
+                ConversionReporter.setMeasureResult("MAT.referenceList", "Measure.relatedArtifacts", "NO Citations");
+            }
             
             
             //set disclaimer
@@ -205,7 +228,7 @@ public class MeasureMapper implements FhirCreator {
             fhirMeasure.setScoring(scoringConcept);
             
             //Measure Type(s)
-            List<CodeableConcept> typeList = new ArrayList();
+            List<CodeableConcept> typeList = new ArrayList<>();
             List<mat.model.MeasureType> matTypeList = mModel.getMeasureTypeSelectedList();
             Iterator mIter = matTypeList.iterator();
             while (mIter.hasNext()) {
@@ -233,7 +256,8 @@ public class MeasureMapper implements FhirCreator {
                 }
                 else {
                     CodeableConcept unk = buildCodeableConcept("unknown", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(unk);                                                                               
+                    typeList.add(unk); 
+                    ConversionReporter.setMeasureResult("MeasureType.abbrName", "Measure.type", "Default to unknown not matching Abbr name");
                 }
             }
             fhirMeasure.setType(typeList);
@@ -248,7 +272,7 @@ public class MeasureMapper implements FhirCreator {
             fhirMeasure.setGuidance(mModel.getGuidance());
             
             //set group
-            List<MeasureGroupComponent> listMGC = new ArrayList();
+            List<MeasureGroupComponent> listMGC = new ArrayList<>();
             if (mModel.getInitialPop() != null) {
                 MeasureGroupComponent initialPopulation = new MeasureGroupComponent();
                 initialPopulation.setCode(buildCodeableConcept("initial-population", "http://terminology.hl7.org/CodeSystem/measure-population", "Initial Population"));
@@ -292,16 +316,23 @@ public class MeasureMapper implements FhirCreator {
             }
             
             fhirMeasure.setGroup(listMGC);
+            if (listMGC.isEmpty()) {
+                ConversionReporter.setMeasureResult("MAT.manyfields", "Measure.group", "FAIL There are no MeasureGroupComponents for this measure");
+            }
+            
             
             //TODO manage composite missing detail supplemental data
-//            List<MeasureSupplementalDataComponent> mSDC = new ArrayList();
-//            if (qdmMeasureDetails.getSupplementalDataElements() != null) {
-//                MeasureSupplementalDataComponent sComp =  new MeasureSupplementalDataComponent();
-//                sComp.setCode(buildCodeableConcept("supplemental-data", "http://hl7.org/fhir/measure-data-usage", ""));
-//                sComp.setDescription(qdmMeasureDetails.getSupplementalDataElements());
-//                mSDC.add(sComp);
-//            }
-//            fhirMeasure.setSupplementalData(mSDC);
+            List<MeasureSupplementalDataComponent> mSDC = new ArrayList<>();
+            if (mModel.getSupplementalData() != null) {
+                MeasureSupplementalDataComponent sComp =  new MeasureSupplementalDataComponent();
+                sComp.setCode(buildCodeableConcept("supplemental-data", "http://hl7.org/fhir/measure-data-usage", ""));
+                sComp.setDescription(mModel.getSupplementalData());
+                mSDC.add(sComp);
+            }
+            fhirMeasure.setSupplementalData(mSDC);
+            if (mSDC.isEmpty()) {
+                ConversionReporter.setMeasureResult("MAT.supplementalData", "Measure.supplementalData", "No SupplementalData");
+            }
 
         return fhirMeasure;
     }
@@ -340,7 +371,7 @@ public class MeasureMapper implements FhirCreator {
         coding.setDisplay(display);
         uC.setCode(coding);
         
-        List<UsageContext> lUC = new ArrayList();
+        List<UsageContext> lUC = new ArrayList<>();
         lUC.add(uC);
         
         return lUC;
@@ -348,7 +379,7 @@ public class MeasureMapper implements FhirCreator {
     
     private CodeableConcept buildCodeableConcept(String code, String system, String display) {
         CodeableConcept cp = new CodeableConcept();
-        List<Coding> lC = new ArrayList();
+        List<Coding> lC = new ArrayList<>();
         Coding cd = new Coding();
         cd.setCode(code);
         cd.setSystem(system);

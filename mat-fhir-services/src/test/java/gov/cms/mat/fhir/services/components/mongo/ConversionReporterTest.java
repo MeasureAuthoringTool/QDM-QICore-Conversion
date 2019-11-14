@@ -13,6 +13,7 @@ import static org.mockito.Mockito.*;
 class ConversionReporterTest {
     private static final String MEASURE_ID = "measureId";
     private static final String FIELD = "field";
+    private static final String DESTINATION = "destination";
     private static final String REASON = "reason";
 
     ConversionResultsService conversionResultsService;
@@ -25,7 +26,7 @@ class ConversionReporterTest {
 
     @Test
     void setMeasureResult_NoThreadLocal() {
-        ConversionReporter.setMeasureResult(FIELD, REASON);
+        ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 
         assertNull(ConversionReporter.getFromThreadLocal());
 
@@ -39,10 +40,33 @@ class ConversionReporterTest {
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
         ConversionReporter.resetMeasure();
-        ConversionReporter.setMeasureResult(FIELD, REASON);
+        ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 
         verify(conversionResultsService).addMeasureResult(anyString(), any(ConversionResult.MeasureResult.class));
     }
+    
+    @Test
+    void setLibraryResult_NoThreadLocal() {
+        ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON);
+
+        assertNull(ConversionReporter.getFromThreadLocal());
+
+        verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
+    }
+
+    @Test
+    void setLibraryResult_Success() {
+        when(conversionResultsService.addLibraryResult(anyString(), any(ConversionResult.LibraryResult.class)))
+                .thenReturn(new ConversionResult());
+
+        ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
+        ConversionReporter.resetLibrary();
+        ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON);
+
+        verify(conversionResultsService).addLibraryResult(anyString(), any(ConversionResult.LibraryResult.class));
+    }
+
+    
 
     @Test
     void resetValueSetResults_NoThreadLocal() {
@@ -55,4 +79,11 @@ class ConversionReporterTest {
         Assertions.assertThrows(ThreadLocalNotFoundException.class, ConversionReporter::resetMeasure);
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
+    
+    @Test
+    void resetLibrary_NoThreadLocal() {
+        Assertions.assertThrows(ThreadLocalNotFoundException.class, ConversionReporter::resetLibrary);
+        verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
+    }
+    
 }
