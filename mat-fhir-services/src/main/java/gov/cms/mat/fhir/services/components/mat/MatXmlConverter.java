@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.mat;
 
 import mat.client.measure.ManageCompositeMeasureDetailModel;
+import mat.model.cql.CQLDefinitionsWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import org.springframework.stereotype.Component;
 
@@ -30,5 +31,13 @@ public class MatXmlConverter {
         } catch (Exception e) {
             throw new MatXmlException(e);
         }
+    }
+
+    /* supplementalDataElements */
+    public CQLDefinitionsWrapper toCQLDefinitions(String xml) {
+        String xpathXml = matXpath.toCQLDefinitions(xml);
+        return matXmlMarshaller.toCQLDefinitions(xpathXml);
+
+
     }
 }

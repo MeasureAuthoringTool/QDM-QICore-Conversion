@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
-                         " http://castor.codehaus.org/mapping.dtd ">
+		"http://castor.codehaus.org/mapping.dtd">
 <mapping>
 	<class name="mat.model.VSACValueSetWrapper">
 		<map-to xml="RetrieveMultipleValueSetsResponse" ns-uri="urn:ihe:iti:svs:2008" />

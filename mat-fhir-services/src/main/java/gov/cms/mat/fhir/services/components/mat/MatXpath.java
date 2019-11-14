@@ -13,6 +13,8 @@ import javax.xml.xpath.XPathFactory;
 @Component
 class MatXpath {
     private static final String CQL_LOOKUP = "cqlLookUp";
+    private static final String SUPPLEMENTAL_DATA_LOOKUP = "supplementalDataElements";
+
     private final XPath xPath = XPathFactory.newInstance().newXPath();
 
     String toCompositeMeasureDetail(String xml) throws XPathExpressionException {
@@ -29,5 +31,9 @@ class MatXpath {
 
     String toQualityData(String xml) {
         return new XmlProcessor(xml).getXmlByTagName(CQL_LOOKUP);
+    }
+
+    String toCQLDefinitions(String xml) {
+        return new XmlProcessor(xml).getXmlByTagName(SUPPLEMENTAL_DATA_LOOKUP);
     }
 }

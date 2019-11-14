@@ -46,7 +46,7 @@ public class XMLMarshalUtil {
 		unmarshaller.setMapping(mapping);
 		unmarshaller.setClass(objectClass);
 		unmarshaller.setWhitespacePreserve(true);
-		unmarshaller.setValidation(false);
+		unmarshaller.setValidation(true);
 		
 		return unmarshaller.unmarshal(new InputSource(new StringReader(cqlLookUpXMLString)));
 	}

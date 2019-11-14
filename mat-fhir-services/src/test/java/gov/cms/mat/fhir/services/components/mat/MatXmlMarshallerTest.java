@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.components.mat;
 
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
+import mat.model.cql.CQLDefinitionsWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.UncheckedIOException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MatXmlMarshallerTest implements ResourceFileUtil {
     private MatXmlMarshaller matXmlMarshaller;
@@ -19,6 +19,14 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
     void setUp() {
         matXmlMarshaller = new MatXmlMarshaller();
     }
+
+    @Test
+    void toCQLDefinitions_Success() {
+        String xml = getXml("/supplementalDataElements.xml");
+        CQLDefinitionsWrapper model = matXmlMarshaller.toCQLDefinitions(xml);
+        assertEquals(5, model.getCqlDefinitions().size());
+    }
+
 
     @Test
     void toCompositeMeasureDetail_Success() {
