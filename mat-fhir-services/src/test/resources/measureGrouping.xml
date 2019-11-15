@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<measureGrouping>
+    <group sequence="1">
+        <clause displayName="Initial Population 1" isInGrouping="true" type="initialPopulation"
+                uuid="85FD8AC0-CC98-4EBE-832E-4E50272E328B">
+            <cqldefinition displayName="Initial Population" uuid="43e561c0-6c88-4769-95ce-e1d629e48976"/>
+        </clause>
+        <clause displayName="Denominator 1" isInGrouping="true" type="denominator"
+                uuid="07F801A6-30C3-49B2-825D-E1565915271B">
+            <cqldefinition displayName="Denominator" uuid="2857b813-618e-4f87-854d-83955a463292"/>
+        </clause>
+        <clause displayName="Numerator 1" isInGrouping="true" type="numerator"
+                uuid="E05E6E7D-79F6-4C98-8967-1D2BC0515FA6">
+            <cqldefinition displayName="Numerator" uuid="4f662d4e-81bb-417d-964c-50e9bdeccf93"/>
+        </clause>
+        <clause displayName="denominatorExclusions" isInGrouping="false" type="denominatorExclusions"
+                uuid="f7e32bd7-91f7-4a69-ada8-232ac3491aff"/>
+        <clause displayName="numeratorExclusions" isInGrouping="false" type="numeratorExclusions"
+                uuid="c7aeb325-58cf-4613-8650-35fc2c9dbc2b"/>
+        <clause displayName="denominatorExceptions" isInGrouping="false" type="denominatorExceptions"
+                uuid="0a152512-b383-41e4-af0a-9f67998fbb18"/>
+        <clause displayName="stratum" isInGrouping="false" type="stratum"
+                uuid="58407406-b364-4a64-b198-db858e832d21"/>
+    </group>
+</measureGrouping>

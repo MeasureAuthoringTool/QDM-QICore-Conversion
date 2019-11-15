@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.components.mat;
 
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
+import mat.client.measurepackage.MeasurePackageDetail;
 import mat.model.cql.CQLDefinitionsWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import org.junit.jupiter.api.Assertions;
@@ -21,12 +22,25 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
     }
 
     @Test
-    void toCQLDefinitions_Success() {
-        String xml = getXml("/supplementalDataElements.xml");
-        CQLDefinitionsWrapper model = matXmlMarshaller.toCQLDefinitions(xml);
-        assertEquals(5, model.getCqlDefinitions().size());
+    void toCQLDefinitions_ErrorIsBlankCheck() {
+        Assertions.assertThrows(UncheckedIOException.class, () -> {
+            matXmlMarshaller.toCQLDefinitionsSupplementalData(null);
+        });
     }
 
+    @Test
+    void toCQLDefinitions_ErrorIsInvalidXML() {
+        Assertions.assertThrows(UncheckedIOException.class, () -> {
+            matXmlMarshaller.toCQLDefinitionsSupplementalData("Bozo|T|Clown");
+        });
+    }
+
+    @Test
+    void toCQLDefinitions_Success() {
+        String xml = getXml("/supplementalDataElements.xml");
+        CQLDefinitionsWrapper model = matXmlMarshaller.toCQLDefinitionsSupplementalData(xml);
+        assertEquals(5, model.getCqlDefinitions().size());
+    }
 
     @Test
     void toCompositeMeasureDetail_Success() {
@@ -68,5 +82,20 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
         Assertions.assertThrows(UncheckedIOException.class, () -> {
             matXmlMarshaller.toQualityData("BR-549 x234");
         });
+    }
+
+    @Test
+    void toCQLDefinitionsRiskAdjustments() {
+        String xml = getXml("/riskAdjustmentElements.xml");
+        CQLDefinitionsWrapper model = matXmlMarshaller.toCQLDefinitionsRiskAdjustments(xml);
+        assertEquals(2, model.getRiskAdjVarDTOList().size());
+    }
+
+    @Test
+    void toMeasureGrouping() {
+        String xml = getXml("/measureGrouping.xml");
+        MeasurePackageDetail model = matXmlMarshaller.toMeasureGrouping(xml);
+        assertEquals("1", model.getSequence());
+        assertEquals(7, model.getPackageClauses().size());
     }
 }
