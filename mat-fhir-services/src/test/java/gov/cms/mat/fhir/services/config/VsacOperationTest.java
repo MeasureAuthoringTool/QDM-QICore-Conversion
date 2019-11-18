@@ -27,6 +27,8 @@ class VsacOperationTest {
 
     @Test
     void testConfigProperties() {
+
+
         assertEquals("https://vsac.nlm.nih.gov/vsac/ws/Ticket", vsacConfig.getServer());
         assertEquals("http://umlsks.nlm.nih.gov", vsacConfig.getService());
         assertEquals("https://vsac.nlm.nih.gov/vsac/svs/RetrieveMultipleValueSets?", vsacConfig.getRetrieveMultiOidsService());

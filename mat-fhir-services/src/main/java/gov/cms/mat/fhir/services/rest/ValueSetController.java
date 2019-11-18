@@ -10,10 +10,7 @@ import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -43,7 +40,7 @@ public class ValueSetController {
     }
 
     @Transactional(readOnly = true)
-    @GetMapping(path = "/translateAll")
+    @PutMapping(path = "/translateAll")
     public TranslationOutcome translateAll() {
         Instant startTime = Instant.now();
         int startCount = valueSetMapper.count();
@@ -59,6 +56,16 @@ public class ValueSetController {
         return createOutcome(successMessage);
     }
 
+    @GetMapping(path = "/count")
+    public int countValueSets() {
+        return valueSetMapper.count();
+    }
+
+    @DeleteMapping(path = "/deleteAll")
+    public int deleteValueSets() {
+        return valueSetMapper.deleteAll();
+    }
+
     private int processMeasureExport() {
         List<ValueSet> outcomes = new ArrayList<>();
 
@@ -71,8 +78,6 @@ public class ValueSetController {
                 .map(Optional::get)
                 .forEach(me -> translate(me, outcomes));
 
-        ConversionReporter.removeInThreadLocal();
-
         return measureExportCount;
     }
 
@@ -83,26 +88,12 @@ public class ValueSetController {
         return res;
     }
 
-    @GetMapping(path = "/count")
-    public int countValueSets() {
-        return valueSetMapper.count();
-    }
-
-    @DeleteMapping(path = "/deleteAll")
-    public int deleteValueSets() {
-        return valueSetMapper.deleteAll();
-    }
-
     private void translate(MeasureExport measureExport, List<ValueSet> outcomes) {
-
-        if (outcomes.size() > 10) {
-            return;
-        }
-
         ConversionReporter.setInThreadLocal(measureExport.getMeasureId(), conversionResultsService);
         ConversionReporter.resetValueSetResults();
 
         List<ValueSet> valueSets = valueSetMapper.translateToFhir(new String(measureExport.getSimpleXml()));
         outcomes.addAll(valueSets);
+        ConversionReporter.removeInThreadLocal();
     }
 }

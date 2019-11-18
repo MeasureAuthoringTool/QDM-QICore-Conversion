@@ -12,6 +12,8 @@ import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
@@ -24,12 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.r4.model.Bundle;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-
+import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -69,7 +66,7 @@ public class MeasureTranslationService {
     }
 
 
-    @GetMapping(path = "/translateMeasure")
+    @PutMapping(path = "/translateMeasure")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public TranslationOutcome translateMeasureById(@QueryParam("id") String id) {
@@ -111,7 +108,7 @@ public class MeasureTranslationService {
     }
 
 
-    @GetMapping(path = "/translateMeasuresByStatus")
+    @PutMapping(path = "/translateMeasuresByStatus")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<TranslationOutcome> translateMeasuresByStatus(@QueryParam("measureStatus") String measureStatus) {
@@ -137,7 +134,7 @@ public class MeasureTranslationService {
         return res;
     }
 
-    @GetMapping(path = "/translateAllMeasures")
+    @PutMapping(path = "/translateAllMeasures")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<TranslationOutcome> translateAllMeasures() {
@@ -169,7 +166,7 @@ public class MeasureTranslationService {
         return res;
     }
 
-    @GetMapping(path = "/removeAllMeasures")
+    @DeleteMapping(path = "/removeAllMeasures")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public TranslationOutcome removeAllMeasures() {
@@ -270,7 +267,7 @@ public class MeasureTranslationService {
         return res;
     }
 
-    @GetMapping(path = "/removeAllLibraries")
+    @DeleteMapping(path = "/removeAllLibraries")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public TranslationOutcome removeAllLibraries() {

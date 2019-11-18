@@ -1,7 +1,9 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,8 +32,12 @@ public class ConversionResultsService {
         return conversionResultRepository.save(conversionResult);
     }
 
-    private Optional<ConversionResult> findByMeasureId(String measureId) {
+    public Optional<ConversionResult> findByMeasureId(String measureId) {
         return conversionResultRepository.findByMeasureId(measureId);
+    }
+
+    public List<ConversionResult> findAll() {
+        return conversionResultRepository.findAll(Sort.by(Sort.Direction.DESC, "modified"));
     }
 
     private ConversionResult findOrCreate(String measureId) {
