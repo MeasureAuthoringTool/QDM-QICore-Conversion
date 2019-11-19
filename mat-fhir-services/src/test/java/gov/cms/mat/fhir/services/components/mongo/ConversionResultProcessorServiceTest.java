@@ -10,10 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -21,7 +18,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ConversionResultProcessorServiceTest {
-
     private static final String MEASURE_ID = "measure_id";
 
     @Mock
@@ -46,6 +42,17 @@ class ConversionResultProcessorServiceTest {
         verify(conversionResultsService).findAll();
         verify(qdmQiCoreDataService, times(2))
                 .findByFhirR4QiCoreMapping(anyString(), anyString());
+    }
+
+    @Test
+    void findMissingValueSets() {
+        when(conversionResultsService.findAll())
+                .thenReturn(Collections.singletonList(createConversionResult()));
+
+        Set<String> set = conversionResultProcessorService.findMissingValueSets();
+
+        assertEquals(1, set.size());
+        assertEquals("OID", set.iterator().next());
     }
 
 

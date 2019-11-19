@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,5 +63,14 @@ public class ConversionResultProcessorService {
         } catch (Exception e) {
             return new MeasureResultMappingDto(measureResult, e.getMessage());
         }
+    }
+
+    public Set<String> findMissingValueSets() {
+        return conversionResultsService.findAll()
+                .stream()
+                .map(ConversionResult::getValueSetResults)
+                .flatMap(List::stream)
+                .map(ConversionResult.ValueSetResult::getOid)
+                .collect(Collectors.toSet());
     }
 }

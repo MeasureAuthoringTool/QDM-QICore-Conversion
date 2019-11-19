@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "/report")
@@ -17,6 +18,11 @@ public class TranslationReportController {
 
     public TranslationReportController(ConversionResultProcessorService conversionResultProcessorService) {
         this.conversionResultProcessorService = conversionResultProcessorService;
+    }
+
+    @GetMapping(path = "/missingValueSets")
+    public Set<String> findMissingValueSets() {
+        return conversionResultProcessorService.findMissingValueSets();
     }
 
     @GetMapping(path = "/find")
