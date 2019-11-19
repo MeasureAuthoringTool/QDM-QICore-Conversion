@@ -17,6 +17,7 @@ import java.net.URI;
 @Slf4j
 public class QdmQiCoreDataServiceImpl implements QdmQiCoreDataService {
     private final RestTemplate restTemplate;
+
     @Value("${qdmqicore.conversion.baseurl}")
     private String baseURL;
 

@@ -10,12 +10,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ConversionResultService {
+public class ConversionResultProcessorService {
     private final QdmQiCoreDataService qdmQiCoreDataService;
     private final ConversionResultsService conversionResultsService;
 
-    public ConversionResultService(QdmQiCoreDataService qdmQiCoreDataService,
-                                   ConversionResultsService conversionResultsService) {
+    public ConversionResultProcessorService(QdmQiCoreDataService qdmQiCoreDataService,
+                                            ConversionResultsService conversionResultsService) {
         this.qdmQiCoreDataService = qdmQiCoreDataService;
         this.conversionResultsService = conversionResultsService;
     }
@@ -27,7 +27,7 @@ public class ConversionResultService {
                 .collect(Collectors.toList());
     }
 
-    public ConversionResultDto processSearchData(String measureId) {
+    public ConversionResultDto process(String measureId) {
         Optional<ConversionResult> optional = conversionResultsService.findByMeasureId(measureId);
 
         if (optional.isPresent()) {
@@ -42,7 +42,7 @@ public class ConversionResultService {
                 .measureId(conversionResult.getMeasureId())
                 .libraryResults(conversionResult.getLibraryResults())
                 .valueSetResults(conversionResult.getValueSetResults())
-                .measureResultMappingDtos(processMeasureResults(conversionResult))
+                .measureResults(processMeasureResults(conversionResult))
                 .build();
     }
 

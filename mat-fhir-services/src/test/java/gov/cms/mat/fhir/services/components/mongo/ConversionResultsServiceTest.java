@@ -1,11 +1,15 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,6 +25,21 @@ class ConversionResultsServiceTest {
     private ConversionResultRepository conversionResultRepository;
     @InjectMocks
     private ConversionResultsService conversionResultsService;
+
+    @Test
+    void findAll() {
+        ConversionResult conversionResult = new ConversionResult();
+
+        when(conversionResultRepository.findAll(any(Sort.class)))
+                .thenReturn(Collections.singletonList(conversionResult));
+
+        List<ConversionResult> conversionResults = conversionResultsService.findAll();
+
+        assertEquals(1, conversionResults.size());
+        assertEquals(conversionResult, conversionResults.get(0));
+
+        verify(conversionResultRepository).findAll(any(Sort.class));
+    }
 
     @Test
     void addMeasureResult_NotFoundInDb() {
@@ -57,8 +76,8 @@ class ConversionResultsServiceTest {
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
-    
-    
+
+
     @Test
     void addMeasureResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
@@ -96,7 +115,7 @@ class ConversionResultsServiceTest {
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
-    
+
     @Test
     void addValueSetResult_NotFoundInDb() {
         when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
@@ -184,8 +203,8 @@ class ConversionResultsServiceTest {
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository, never()).save(any(ConversionResult.class));
     }
-    
-    
+
+
     @Test
     void clearMeasure_FoundInDb() {
 
@@ -197,7 +216,7 @@ class ConversionResultsServiceTest {
                 .thenReturn(conversionResultToReturn);
 
         ConversionResult conversionResultReturned =
-                conversionResultsService.clearLibrary(MEASURE_ID);
+                conversionResultsService.clearMeasure(MEASURE_ID);
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
@@ -224,7 +243,7 @@ class ConversionResultsServiceTest {
         verify(conversionResultRepository).save(conversionResultReturned);
     }
 
-    
+
     private ConversionResult.MeasureResult buildMeasureResult() {
         return ConversionResult.MeasureResult.builder()
                 .field("FIELD")
@@ -232,7 +251,7 @@ class ConversionResultsServiceTest {
                 .reason("REASON")
                 .build();
     }
-    
+
     private ConversionResult.LibraryResult buildLibraryResult() {
         return ConversionResult.LibraryResult.builder()
                 .field("FIELD")

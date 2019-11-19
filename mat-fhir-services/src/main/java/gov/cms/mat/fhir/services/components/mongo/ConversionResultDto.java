@@ -12,7 +12,7 @@ public class ConversionResultDto {
 
     private List<ConversionResult.ValueSetResult> valueSetResults;
 
-    private List<MeasureResultMappingDto> measureResultMappingDtos;
+    private List<MeasureResultMappingDto> measureResults;
 
     private List<ConversionResult.LibraryResult> libraryResults;
 }
