@@ -74,6 +74,8 @@ public class MeasureMapper implements FhirCreator {
             
             fhirMeasure.setMeta(measureMeta);
             
+            
+            
             //set narrative
             if (!humanReadible.isEmpty()) {
                 try {
@@ -93,7 +95,7 @@ public class MeasureMapper implements FhirCreator {
                 }
             }
             else {
-                ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.narrative", "Is Empty");
+                ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Is Empty");
             }
             
             //set Extensions if any known, QICore Extension below
@@ -143,7 +145,7 @@ public class MeasureMapper implements FhirCreator {
             }
             else {
                 fhirMeasure.setStatus(Enumerations.PublicationStatus.ACTIVE);
-                ConversionReporter.setMeasureResult("MAT.isDraft", "Measure.status", "Defaulting to ACTIVE neither draft or deleted");
+                ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.status", "Defaulting to ACTIVE neither draft or deleted");
             }
             
             //TODO measure experimental mat does not have concept
@@ -160,7 +162,7 @@ public class MeasureMapper implements FhirCreator {
             
             //set Publisher
             fhirMeasure.setPublisher(mModel.getStewardValue());
-
+            
             
             //TODO No  Contact Mapping 
             fhirMeasure.setContact(createContactDetailUrl("https://cms.gov"));
@@ -180,7 +182,10 @@ public class MeasureMapper implements FhirCreator {
             ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.Jurisdiction", "No Mapping defaulting to US");
             
             //purpose
-            fhirMeasure.setPurpose(mModel.getDescription());
+            fhirMeasure.setPurpose("Unknown");
+            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.purpose", "No Mapping defaulting to Unknown");
+            
+
             
             //copyright
             fhirMeasure.setCopyright(mModel.getCopyright());
@@ -311,7 +316,7 @@ public class MeasureMapper implements FhirCreator {
             if (mModel.getNumeratorExclusions() != null) {
                 MeasureGroupComponent numeratorExclusions = new MeasureGroupComponent();
                 numeratorExclusions.setCode(buildCodeableConcept("numerator-exclusions", "http://terminology.hl7.org/CodeSystem/measure-population", "Numerator Exclusions"));
-                numeratorExclusions.setDescription(mModel.getNumerator());
+                numeratorExclusions.setDescription(mModel.getNumeratorExclusions());
                 listMGC.add(numeratorExclusions);
             }
             
