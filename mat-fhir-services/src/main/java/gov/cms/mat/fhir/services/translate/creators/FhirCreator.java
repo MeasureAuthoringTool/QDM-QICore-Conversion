@@ -5,8 +5,10 @@ import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.List;
 
 public interface FhirCreator {
 
@@ -26,27 +28,23 @@ public interface FhirCreator {
         return Base64.getEncoder().encode(src);
     }
 
-//    default String convertBytes(byte[] data) {
-//        if (data == null) {
-//            return null;
-//        } else {
-//            try {
-//                return IOUtils.toString(data, null);
-//            } catch (IOException e) {
-//                throw new UncheckedIOException(e);
-//            }
-//        }
-//    }
-
-//    default Narrative createNarrative(String data) {
-//        Narrative narrative = new Narrative();
-//        narrative.setDivAsString(data);
-//        return narrative;
-//    }
 
     default Identifier createIdentifier(String system, String value) {
         return new Identifier()
                 .setSystem(system)
                 .setValue(value);
+    }
+
+    default CodeableConcept buildCodeableConcept(String code, String system, String display) {
+        CodeableConcept cp = new CodeableConcept();
+        List<Coding> lC = new ArrayList<>();
+        Coding cd = new Coding();
+        cd.setCode(code);
+        cd.setSystem(system);
+        cd.setDisplay(display);
+        lC.add(cd);
+        cp.setCoding(lC);
+
+        return cp;
     }
 }

@@ -21,7 +21,7 @@ import java.nio.file.Paths;
  */
 public class VsacClient {
     // this is what MAT has by profile -- mat.qdm.default.expansion.id=Most Recent Code System Versions in VSAC
- static final String PROFILE = "Most Recent Code System Versions in VSAC";
+    static final String PROFILE = "Most Recent Code System Versions in VSAC";
 
     private final VsacConfig vsacConfig;
 
@@ -57,6 +57,10 @@ public class VsacClient {
     }
 
     public String getServiceTicket(String grantingTicket) {
+        if (vsacConfig.isUseCacheOnly()) {
+            return "isUseCacheOnly==true";
+        }
+
         return vsacConfig.getVsacRestClient().getServiceTicket(grantingTicket);
     }
 
@@ -71,6 +75,10 @@ public class VsacClient {
                 return getFromFileCache(cacheFilePath);
             } else {
                 log.trace("Xml is not in cache for path: {}", cacheFilePath);
+
+                if (vsacConfig.isUseCacheOnly()) {
+                    return createFailureResponse();
+                }
             }
         }
 
@@ -119,6 +127,12 @@ public class VsacClient {
     private VSACResponseResult createResponseResultFromCacheData(String xml) {
         VSACResponseResult vsacResponseResult = new VSACResponseResult();
         vsacResponseResult.setXmlPayLoad(xml);
+        vsacResponseResult.setIsFailResponse(false);
+        return vsacResponseResult;
+    }
+
+    private VSACResponseResult createFailureResponse() {
+        VSACResponseResult vsacResponseResult = new VSACResponseResult();
         vsacResponseResult.setIsFailResponse(false);
         return vsacResponseResult;
     }

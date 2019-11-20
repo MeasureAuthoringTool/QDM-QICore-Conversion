@@ -12,6 +12,7 @@ import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
+import gov.cms.mat.fhir.services.components.fhir.SupplementalDataProcessor;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -24,6 +25,7 @@ import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
 import gov.cms.mat.fhir.services.translate.MeasureMapper;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
+import org.apache.commons.lang3.ArrayUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +49,7 @@ public class MeasureTranslationService {
     private final CqlLibraryRepository cqlLibraryRepo;
     private final CqlLibraryExportRepository cqlLibraryExportRepo;
     private final ConversionResultsService conversionResultsService;
+    private final SupplementalDataProcessor supplementalDataProcessor;
 
     public MeasureTranslationService(MeasureRepository measureRepository,
                                      MeasureExportRepository measureExportRepository,
@@ -54,7 +57,8 @@ public class MeasureTranslationService {
                                      HapiFhirServer hapiFhirServer,
                                      CqlLibraryRepository cqlLibraryRepo,
                                      CqlLibraryExportRepository cqlLibraryExportRepo,
-                                     ConversionResultsService conversionResultsService) {
+                                     ConversionResultsService conversionResultsService,
+                                     SupplementalDataProcessor supplementalDataProcessor) {
         this.measureRepo = measureRepository;
 
         this.measureExportRepo = measureExportRepository;
@@ -63,6 +67,7 @@ public class MeasureTranslationService {
         this.cqlLibraryExportRepo = cqlLibraryExportRepo;
         this.cqlLibraryRepo = cqlLibraryRepo;
         this.conversionResultsService = conversionResultsService;
+        this.supplementalDataProcessor = supplementalDataProcessor;
     }
 
 
@@ -91,6 +96,10 @@ public class MeasureTranslationService {
 
             MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());
             org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
+
+            if (ArrayUtils.isNotEmpty(xmlBytes)) {
+                fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(new String(xmlBytes)));
+            }
 
             Bundle bundle = hapiFhirServer.createAndExecuteBundle(fhirMeasure);
             log.debug("bundle: {}", bundle);

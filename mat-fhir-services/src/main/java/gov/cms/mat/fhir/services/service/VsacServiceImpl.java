@@ -61,6 +61,7 @@ public class VsacServiceImpl implements VsacService {
             return null;
         }
 
+
         getServiceTicket();
 
         VSACResponseResult vsacResponseResult = vsacClient.getDataFromProfile(oid, vsacServiceTicket.getTicket());

@@ -27,7 +27,7 @@ class MatXmlMarshaller {
         return convertQualityXml(xml);
     }
 
-    CQLDefinitionsWrapper toCQLDefinitionsSupplementalData(String xml) {
+    public CQLDefinitionsWrapper toCQLDefinitionsSupplementalData(String xml) {
         checkXML(xml, "Mat supplementalDataElements Xml is blank");
         return convertCQLDefinitionsSupplementalData(xml);
     }

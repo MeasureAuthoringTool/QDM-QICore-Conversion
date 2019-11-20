@@ -5,30 +5,19 @@
  */
 package gov.cms.mat.fhir.services.translate;
 
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
-import org.hl7.fhir.r4.model.*;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Enumerations;
-import java.time.LocalDate;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
-import org.hl7.fhir.r4.model.ContactDetail;
-import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Measure.MeasureGroupComponent;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.logging.Logger;
-
-import java.util.Base64;
-import org.hl7.fhir.r4.model.Measure.MeasureSupplementalDataComponent;
 
 /**
  *
@@ -324,20 +313,20 @@ public class MeasureMapper implements FhirCreator {
             if (listMGC.isEmpty()) {
                 ConversionReporter.setMeasureResult("MAT.manyfields", "Measure.group", "FAIL There are no MeasureGroupComponents for this measure");
             }
-            
-            
-            //TODO manage composite missing detail supplemental data
-            List<MeasureSupplementalDataComponent> mSDC = new ArrayList<>();
-            if (mModel.getSupplementalData() != null) {
-                MeasureSupplementalDataComponent sComp =  new MeasureSupplementalDataComponent();
-                sComp.setCode(buildCodeableConcept("supplemental-data", "http://hl7.org/fhir/measure-data-usage", ""));
-                sComp.setDescription(mModel.getSupplementalData());
-                mSDC.add(sComp);
-            }
-            fhirMeasure.setSupplementalData(mSDC);
-            if (mSDC.isEmpty()) {
-                ConversionReporter.setMeasureResult("MAT.supplementalData", "Measure.supplementalData", "No SupplementalData");
-            }
+
+
+        //TODO manage composite missing detail supplemental data
+        // List<MeasureSupplementalDataComponent> mSDC = new ArrayList<>();
+//            if (mModel.getSupplementalData() != null) {
+//                MeasureSupplementalDataComponent sComp =  new MeasureSupplementalDataComponent();
+//                sComp.setCode(buildCodeableConcept("supplemental-data", "http://hl7.org/fhir/measure-data-usage", ""));
+//                sComp.setDescription(mModel.getSupplementalData());
+//                mSDC.add(sComp);
+//            }
+        //fhirMeasure.setSupplementalData(mSDC);
+//            if (mSDC.isEmpty()) {
+//                ConversionReporter.setMeasureResult("MAT.supplementalData", "Measure.supplementalData", "No SupplementalData");
+//            }
 
         return fhirMeasure;
     }
@@ -381,20 +370,8 @@ public class MeasureMapper implements FhirCreator {
         
         return lUC;
     }
-    
-    private CodeableConcept buildCodeableConcept(String code, String system, String display) {
-        CodeableConcept cp = new CodeableConcept();
-        List<Coding> lC = new ArrayList<>();
-        Coding cd = new Coding();
-        cd.setCode(code);
-        cd.setSystem(system);
-        cd.setDisplay(display);
-        lC.add(cd);
-        cp.setCoding(lC);
-        
-        return cp;
-    }
-    
+
+
     private Period buildPeriod(Date startdate, Date enddate) {
         Period p = new Period();
         p.setStart(startdate);
