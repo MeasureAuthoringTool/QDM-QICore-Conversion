@@ -12,6 +12,7 @@ import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
+import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.SupplementalDataProcessor;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
@@ -50,6 +51,7 @@ public class MeasureTranslationService {
     private final CqlLibraryExportRepository cqlLibraryExportRepo;
     private final ConversionResultsService conversionResultsService;
     private final SupplementalDataProcessor supplementalDataProcessor;
+    private final RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor;
 
     public MeasureTranslationService(MeasureRepository measureRepository,
                                      MeasureExportRepository measureExportRepository,
@@ -58,7 +60,8 @@ public class MeasureTranslationService {
                                      CqlLibraryRepository cqlLibraryRepo,
                                      CqlLibraryExportRepository cqlLibraryExportRepo,
                                      ConversionResultsService conversionResultsService,
-                                     SupplementalDataProcessor supplementalDataProcessor) {
+                                     SupplementalDataProcessor supplementalDataProcessor,
+                                     RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor) {
         this.measureRepo = measureRepository;
 
         this.measureExportRepo = measureExportRepository;
@@ -68,6 +71,7 @@ public class MeasureTranslationService {
         this.cqlLibraryRepo = cqlLibraryRepo;
         this.conversionResultsService = conversionResultsService;
         this.supplementalDataProcessor = supplementalDataProcessor;
+        this.riskAdjustmentsDataProcessor = riskAdjustmentsDataProcessor;
     }
 
 
@@ -98,7 +102,10 @@ public class MeasureTranslationService {
             org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
 
             if (ArrayUtils.isNotEmpty(xmlBytes)) {
-                fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(new String(xmlBytes)));
+                String xml = new String(xmlBytes);
+
+                fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(xml));
+                fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
             }
 
             Bundle bundle = hapiFhirServer.createAndExecuteBundle(fhirMeasure);

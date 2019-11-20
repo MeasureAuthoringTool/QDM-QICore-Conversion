@@ -53,7 +53,7 @@ public class MatXmlConverter {
         }
     }
 
-    CQLDefinitionsWrapper toCQLDefinitionsRiskAdjustments(String xml) {
+    public CQLDefinitionsWrapper toCQLDefinitionsRiskAdjustments(String xml) {
         try {
             String xpathXml = matXpath.toCQLDefinitionsRiskAdjustments(xml);
             return matXmlMarshaller.toCQLDefinitionsRiskAdjustments(xpathXml);
@@ -61,6 +61,4 @@ public class MatXmlConverter {
             throw new MatXmlException(e);
         }
     }
-
-
 }
