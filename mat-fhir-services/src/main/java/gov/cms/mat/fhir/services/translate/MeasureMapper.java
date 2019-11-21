@@ -12,7 +12,6 @@ import mat.client.measure.PeriodModel;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
-import org.hl7.fhir.r4.model.Measure.MeasureGroupComponent;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -266,53 +265,53 @@ public class MeasureMapper implements FhirCreator {
             fhirMeasure.setGuidance(mModel.getGuidance());
             
             //set group
-            List<MeasureGroupComponent> listMGC = new ArrayList<>();
-            if (mModel.getInitialPop() != null) {
-                MeasureGroupComponent initialPopulation = new MeasureGroupComponent();
-                initialPopulation.setCode(buildCodeableConcept("initial-population", "http://terminology.hl7.org/CodeSystem/measure-population", "Initial Population"));
-                initialPopulation.setDescription(mModel.getInitialPop());
-                listMGC.add(initialPopulation);
-            }
-            
-            if (mModel.getDenominator() != null) {
-                MeasureGroupComponent denominator = new MeasureGroupComponent();
-                denominator.setCode(buildCodeableConcept("denominator", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator"));
-                denominator.setDescription(mModel.getDenominator());
-                listMGC.add(denominator);
-            }
-            
-            if (mModel.getDenominatorExclusions() != null) {
-                MeasureGroupComponent denominatorExclusions = new MeasureGroupComponent();
-                denominatorExclusions.setCode(buildCodeableConcept("denominator-exclusions", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator Exclusions"));
-                denominatorExclusions.setDescription(mModel.getDenominatorExclusions());
-                listMGC.add(denominatorExclusions);
-            }
-            
-            if (mModel.getDenominatorExceptions() != null) {
-                MeasureGroupComponent denominatorExceptions = new MeasureGroupComponent();
-                denominatorExceptions.setCode(buildCodeableConcept("denominator-exceptions", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator Exceptions"));
-                denominatorExceptions.setDescription(mModel.getDenominatorExceptions());
-                listMGC.add(denominatorExceptions);
-            }
-            
-            if (mModel.getNumerator() != null) {
-                MeasureGroupComponent numerator = new MeasureGroupComponent();
-                numerator.setCode(buildCodeableConcept("numerator", "http://terminology.hl7.org/CodeSystem/measure-population", "Numerator"));
-                numerator.setDescription(mModel.getNumerator());
-                listMGC.add(numerator);
-            }
-            
-            if (mModel.getNumeratorExclusions() != null) {
-                MeasureGroupComponent numeratorExclusions = new MeasureGroupComponent();
-                numeratorExclusions.setCode(buildCodeableConcept("numerator-exclusions", "http://terminology.hl7.org/CodeSystem/measure-population", "Numerator Exclusions"));
-                numeratorExclusions.setDescription(mModel.getNumeratorExclusions());
-                listMGC.add(numeratorExclusions);
-            }
-            
-            fhirMeasure.setGroup(listMGC);
-            if (listMGC.isEmpty()) {
-                ConversionReporter.setMeasureResult("MAT.manyfields", "Measure.group", "FAIL There are no MeasureGroupComponents for this measure");
-            }
+        // List<MeasureGroupComponent> listMGC = new ArrayList<>();
+//            if (mModel.getInitialPop() != null) {
+//                MeasureGroupComponent initialPopulation = new MeasureGroupComponent();
+//                initialPopulation.setCode(buildCodeableConcept("initial-population", "http://terminology.hl7.org/CodeSystem/measure-population", "Initial Population"));
+//                initialPopulation.setDescription(mModel.getInitialPop());
+//                listMGC.add(initialPopulation);
+//            }
+//
+//            if (mModel.getDenominator() != null) {
+//                MeasureGroupComponent denominator = new MeasureGroupComponent();
+//                denominator.setCode(buildCodeableConcept("denominator", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator"));
+//                denominator.setDescription(mModel.getDenominator());
+//                listMGC.add(denominator);
+//            }
+//
+//            if (mModel.getDenominatorExclusions() != null) {
+//                MeasureGroupComponent denominatorExclusions = new MeasureGroupComponent();
+//                denominatorExclusions.setCode(buildCodeableConcept("denominator-exclusions", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator Exclusions"));
+//                denominatorExclusions.setDescription(mModel.getDenominatorExclusions());
+//                listMGC.add(denominatorExclusions);
+//            }
+//
+//            if (mModel.getDenominatorExceptions() != null) {
+//                MeasureGroupComponent denominatorExceptions = new MeasureGroupComponent();
+//                denominatorExceptions.setCode(buildCodeableConcept("denominator-exceptions", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator Exceptions"));
+//                denominatorExceptions.setDescription(mModel.getDenominatorExceptions());
+//                listMGC.add(denominatorExceptions);
+//            }
+//
+//            if (mModel.getNumerator() != null) {
+//                MeasureGroupComponent numerator = new MeasureGroupComponent();
+//                numerator.setCode(buildCodeableConcept("numerator", "http://terminology.hl7.org/CodeSystem/measure-population", "Numerator"));
+//                numerator.setDescription(mModel.getNumerator());
+//                listMGC.add(numerator);
+//            }
+//
+//            if (mModel.getNumeratorExclusions() != null) {
+//                MeasureGroupComponent numeratorExclusions = new MeasureGroupComponent();
+//                numeratorExclusions.setCode(buildCodeableConcept("numerator-exclusions", "http://terminology.hl7.org/CodeSystem/measure-population", "Numerator Exclusions"));
+//                numeratorExclusions.setDescription(mModel.getNumeratorExclusions());
+//                listMGC.add(numeratorExclusions);
+//            }
+//
+//            fhirMeasure.setGroup(listMGC);
+//            if (listMGC.isEmpty()) {
+//                ConversionReporter.setMeasureResult("MAT.manyfields", "Measure.group", "FAIL There are no MeasureGroupComponents for this measure");
+//            }
 
 
         //TODO manage composite missing detail supplemental data

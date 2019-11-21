@@ -35,6 +35,10 @@
                         <bind-xml name="isInGrouping" node="attribute"/>
                     </field>
 
+                    <field name="displayName" type="java.lang.String">
+                        <bind-xml name="displayName" node="attribute"/>
+                    </field>
+
                     <!-- 					<field name="itemCountList" type="mat.model.QualityDataSetDTO" -->
                     <!-- 						collection="arraylist"> -->
                     <!-- 						<bind-xml name="elementRef" location="itemCount"> -->

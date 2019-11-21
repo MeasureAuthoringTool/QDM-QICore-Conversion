@@ -12,6 +12,7 @@ import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
+import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.SupplementalDataProcessor;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
@@ -52,6 +53,7 @@ public class MeasureTranslationService {
     private final ConversionResultsService conversionResultsService;
     private final SupplementalDataProcessor supplementalDataProcessor;
     private final RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor;
+    private final MeasureGroupingDataProcessor measureGroupingDataProcessor;
 
     public MeasureTranslationService(MeasureRepository measureRepository,
                                      MeasureExportRepository measureExportRepository,
@@ -61,7 +63,8 @@ public class MeasureTranslationService {
                                      CqlLibraryExportRepository cqlLibraryExportRepo,
                                      ConversionResultsService conversionResultsService,
                                      SupplementalDataProcessor supplementalDataProcessor,
-                                     RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor) {
+                                     RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor,
+                                     MeasureGroupingDataProcessor measureGroupingDataProcessor) {
         this.measureRepo = measureRepository;
 
         this.measureExportRepo = measureExportRepository;
@@ -72,6 +75,7 @@ public class MeasureTranslationService {
         this.conversionResultsService = conversionResultsService;
         this.supplementalDataProcessor = supplementalDataProcessor;
         this.riskAdjustmentsDataProcessor = riskAdjustmentsDataProcessor;
+        this.measureGroupingDataProcessor = measureGroupingDataProcessor;
     }
 
 
@@ -106,6 +110,9 @@ public class MeasureTranslationService {
 
                 fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(xml));
                 fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
+
+                fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
+                log.debug("Processed");
             }
 
             Bundle bundle = hapiFhirServer.createAndExecuteBundle(fhirMeasure);
