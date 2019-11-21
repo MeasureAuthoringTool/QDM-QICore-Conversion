@@ -47,6 +47,7 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
         String xml = getXml("/measureDetail.xml");
         ManageCompositeMeasureDetailModel model = matXmlMarshaller.toCompositeMeasureDetail(xml);
         assertNotNull(model.getId());
+        assertEquals("Proportion", model.getMeasScoring());
     }
 
     @Test

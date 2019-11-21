@@ -218,7 +218,7 @@ public class MeasureMapper implements FhirCreator {
             fhirMeasure.setDisclaimer(mModel.getDisclaimer());
             
             //set scoring
-            CodeableConcept scoringConcept = buildCodeableConcept(mModel.getCompositeScoringMethod(), "http://hl7.org/fhir/measure-scoring", "");
+        CodeableConcept scoringConcept = buildCodeableConcept(mModel.getMeasScoring(), "http://hl7.org/fhir/measure-scoring", "");
             fhirMeasure.setScoring(scoringConcept);
             
             //Measure Type(s)
