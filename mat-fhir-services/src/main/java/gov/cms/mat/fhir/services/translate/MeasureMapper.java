@@ -73,7 +73,7 @@ public class MeasureMapper implements FhirCreator {
                     byte[] encodedText = Base64.getEncoder().encode(humanReadible.getBytes());
                     measureText.setDivAsString(new String(encodedText));
                     fhirMeasure.setText(measureText);
-                    ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.narrative", "Base64 Encoded Due to Format Issues");
+                    ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Base64 Encoded Due to Format Issues");
                 }
                 catch (Exception ex) {
 //                    Narrative measureText = new Narrative();
@@ -93,7 +93,7 @@ public class MeasureMapper implements FhirCreator {
             //RAND Appropriateness Score Extension            
             List<Extension> extensionList = new ArrayList<>();
             fhirMeasure.setExtension(extensionList);
-            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.extension", "No mapping available");
+            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.meta.extension", "No mapping available");
             
             
             //set the URL
@@ -145,7 +145,7 @@ public class MeasureMapper implements FhirCreator {
             if (mModel.getFinalizedDate() != null) {
                 fhirMeasure.setApprovalDate(convertDateTimeString(mModel.getFinalizedDate()));
             } else {
-              ConversionReporter.setMeasureResult("MAT.FinalizedDate", "Measure.approvalDate", "Finalized Date is NULL");
+              ConversionReporter.setMeasureResult("MAT.finalizedDate", "Measure.approvalDate", "Finalized Date is NULL");
             }
             
             //set Publisher
@@ -167,7 +167,7 @@ public class MeasureMapper implements FhirCreator {
             List<CodeableConcept> jurisdictionList = new ArrayList<>();
             jurisdictionList.add(buildCodeableConcept("US", "urn:iso:std:iso:3166", ""));
             fhirMeasure.setJurisdiction(jurisdictionList);
-            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.Jurisdiction", "No Mapping defaulting to US");
+            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.jurisdiction", "No Mapping defaulting to US");
             
             //purpose
             fhirMeasure.setPurpose("Unknown");
@@ -194,22 +194,24 @@ public class MeasureMapper implements FhirCreator {
             CodeableConcept topicCC = buildCodeableConcept("57024-2", "http://loinc.org", "Health Quality Measure Document");
             topicList.add(topicCC);
             fhirMeasure.setTopic(topicList);
-            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.Topic", "No Mapping default Health Quality Measure Document");
+            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.topic", "No Mapping default Health Quality Measure Document");
             
             //related artifacts
             List<RelatedArtifact> relatedArtifacts = new ArrayList<>();
             List<String> referenceList = mModel.getReferencesList();
-            Iterator iter = referenceList.iterator();
-            while (iter.hasNext()) {
-                String ref = (String)iter.next();
-                RelatedArtifact art = new RelatedArtifact();
-                art.setCitation(ref);
-                art.setType(RelatedArtifact.RelatedArtifactType.CITATION);
-                relatedArtifacts.add(art);
+            if (referenceList != null) {
+                Iterator iter = referenceList.iterator();
+                while (iter.hasNext()) {
+                    String ref = (String)iter.next();
+                    RelatedArtifact art = new RelatedArtifact();
+                    art.setCitation(ref);
+                    art.setType(RelatedArtifact.RelatedArtifactType.CITATION);
+                    relatedArtifacts.add(art);
+                }
+                fhirMeasure.setRelatedArtifact(relatedArtifacts);
             }
-            fhirMeasure.setRelatedArtifact(relatedArtifacts);
             if (relatedArtifacts.isEmpty()) {
-                ConversionReporter.setMeasureResult("MAT.referenceList", "Measure.relatedArtifacts", "NO Citations");
+                ConversionReporter.setMeasureResult("MAT.referencesList", "Measure.relatedArtifact", "NO Citations");
             }
             
             
@@ -222,38 +224,43 @@ public class MeasureMapper implements FhirCreator {
             
             //Measure Type(s)
             List<CodeableConcept> typeList = new ArrayList<>();
-            List<mat.model.MeasureType> matTypeList = mModel.getMeasureTypeSelectedList();
-            Iterator mIter = matTypeList.iterator();
-            while (mIter.hasNext()) {
-                mat.model.MeasureType mType = (mat.model.MeasureType)mIter.next();
-                String abbrName = mType.getAbbrName();
-                if (abbrName.equals("COMPOSITE")) {
-                    CodeableConcept compositeConcept = buildCodeableConcept("composite", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(compositeConcept);
+            List<mat.model.MeasureType> matTypeList = mModel.getMeasureTypeSelectedList();           
+            if (matTypeList != null) {
+                Iterator mIter = matTypeList.iterator();
+                while (mIter.hasNext()) {
+                    mat.model.MeasureType mType = (mat.model.MeasureType)mIter.next();
+                    String abbrName = mType.getAbbrName();
+                    if (abbrName.equals("COMPOSITE")) {
+                        CodeableConcept compositeConcept = buildCodeableConcept("composite", "http://hl7.org/fhir/measure-type", "");
+                        typeList.add(compositeConcept);
+                    }
+                    else if(abbrName.equals("INTERM-OM") || abbrName.equals("OUTCOME")) {
+                        CodeableConcept outcomeConcept = buildCodeableConcept("outcome", "http://hl7.org/fhir/measure-type", "");
+                        typeList.add(outcomeConcept);
+                    }
+                    else if(abbrName.equals("PRO-PM")) {
+                        CodeableConcept patientConcept = buildCodeableConcept("patient-report-outcome", "http://hl7.org/fhir/measure-type", "");
+                        typeList.add(patientConcept);                    
+                    }
+                    else if(abbrName.equals("STRUCTURE") || abbrName.equals("RESOURCE")) {
+                        CodeableConcept structureConcept = buildCodeableConcept("structure", "http://hl7.org/fhir/measure-type", "");
+                        typeList.add(structureConcept);                                        
+                    }
+                    else if(abbrName.equals("APPROPRIATE") || abbrName.equals("EFFICIENCY") || abbrName.equals("PROCESS")) {
+                        CodeableConcept processConcept = buildCodeableConcept("process", "http://hl7.org/fhir/measure-type", "");
+                        typeList.add(processConcept);                                                            
+                    }
+                    else {
+                        CodeableConcept unk = buildCodeableConcept("unknown", "http://hl7.org/fhir/measure-type", "");
+                        typeList.add(unk); 
+                        ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "Default to unknown not matching Abbr name");
+                    }
                 }
-                else if(abbrName.equals("INTERM-OM") || abbrName.equals("OUTCOME")) {
-                    CodeableConcept outcomeConcept = buildCodeableConcept("outcome", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(outcomeConcept);
-                }
-                else if(abbrName.equals("PRO-PM")) {
-                    CodeableConcept patientConcept = buildCodeableConcept("patient-report-outcome", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(patientConcept);                    
-                }
-                else if(abbrName.equals("STRUCTURE") || abbrName.equals("RESOURCE")) {
-                    CodeableConcept structureConcept = buildCodeableConcept("structure", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(structureConcept);                                        
-                }
-                else if(abbrName.equals("APPROPRIATE") || abbrName.equals("EFFICIENCY") || abbrName.equals("PROCESS")) {
-                    CodeableConcept processConcept = buildCodeableConcept("process", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(processConcept);                                                            
-                }
-                else {
-                    CodeableConcept unk = buildCodeableConcept("unknown", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(unk); 
-                    ConversionReporter.setMeasureResult("MeasureType.abbrName", "Measure.type", "Default to unknown not matching Abbr name");
-                }
+                fhirMeasure.setType(typeList);
             }
-            fhirMeasure.setType(typeList);
+            else {
+                ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "No Measure Types Found");
+            }
             
             //set rationale
             fhirMeasure.setRationale(mModel.getRationale());
@@ -264,68 +271,8 @@ public class MeasureMapper implements FhirCreator {
             //set guidance
             fhirMeasure.setGuidance(mModel.getGuidance());
             
-            //set group
-        // List<MeasureGroupComponent> listMGC = new ArrayList<>();
-//            if (mModel.getInitialPop() != null) {
-//                MeasureGroupComponent initialPopulation = new MeasureGroupComponent();
-//                initialPopulation.setCode(buildCodeableConcept("initial-population", "http://terminology.hl7.org/CodeSystem/measure-population", "Initial Population"));
-//                initialPopulation.setDescription(mModel.getInitialPop());
-//                listMGC.add(initialPopulation);
-//            }
-//
-//            if (mModel.getDenominator() != null) {
-//                MeasureGroupComponent denominator = new MeasureGroupComponent();
-//                denominator.setCode(buildCodeableConcept("denominator", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator"));
-//                denominator.setDescription(mModel.getDenominator());
-//                listMGC.add(denominator);
-//            }
-//
-//            if (mModel.getDenominatorExclusions() != null) {
-//                MeasureGroupComponent denominatorExclusions = new MeasureGroupComponent();
-//                denominatorExclusions.setCode(buildCodeableConcept("denominator-exclusions", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator Exclusions"));
-//                denominatorExclusions.setDescription(mModel.getDenominatorExclusions());
-//                listMGC.add(denominatorExclusions);
-//            }
-//
-//            if (mModel.getDenominatorExceptions() != null) {
-//                MeasureGroupComponent denominatorExceptions = new MeasureGroupComponent();
-//                denominatorExceptions.setCode(buildCodeableConcept("denominator-exceptions", "http://terminology.hl7.org/CodeSystem/measure-population", "Denominator Exceptions"));
-//                denominatorExceptions.setDescription(mModel.getDenominatorExceptions());
-//                listMGC.add(denominatorExceptions);
-//            }
-//
-//            if (mModel.getNumerator() != null) {
-//                MeasureGroupComponent numerator = new MeasureGroupComponent();
-//                numerator.setCode(buildCodeableConcept("numerator", "http://terminology.hl7.org/CodeSystem/measure-population", "Numerator"));
-//                numerator.setDescription(mModel.getNumerator());
-//                listMGC.add(numerator);
-//            }
-//
-//            if (mModel.getNumeratorExclusions() != null) {
-//                MeasureGroupComponent numeratorExclusions = new MeasureGroupComponent();
-//                numeratorExclusions.setCode(buildCodeableConcept("numerator-exclusions", "http://terminology.hl7.org/CodeSystem/measure-population", "Numerator Exclusions"));
-//                numeratorExclusions.setDescription(mModel.getNumeratorExclusions());
-//                listMGC.add(numeratorExclusions);
-//            }
-//
-//            fhirMeasure.setGroup(listMGC);
-//            if (listMGC.isEmpty()) {
-//                ConversionReporter.setMeasureResult("MAT.manyfields", "Measure.group", "FAIL There are no MeasureGroupComponents for this measure");
-//            }
+            
 
-
-        //TODO manage composite missing detail supplemental data
-        // List<MeasureSupplementalDataComponent> mSDC = new ArrayList<>();
-//            if (mModel.getSupplementalData() != null) {
-//                MeasureSupplementalDataComponent sComp =  new MeasureSupplementalDataComponent();
-//                sComp.setCode(buildCodeableConcept("supplemental-data", "http://hl7.org/fhir/measure-data-usage", ""));
-//                sComp.setDescription(mModel.getSupplementalData());
-//                mSDC.add(sComp);
-//            }
-        //fhirMeasure.setSupplementalData(mSDC);
-//            if (mSDC.isEmpty()) {
-//                ConversionReporter.setMeasureResult("MAT.supplementalData", "Measure.supplementalData", "No SupplementalData");
-//            }
 
         return fhirMeasure;
     }
