@@ -96,11 +96,24 @@ export VSAC_PASS={password}
 $ cd QDM-QICore-Conversion/mat-fhir-services
 ```
 
-2. Launch the application
+2. Launch the micro service
 
 ```
 $ mvn spring-boot:run
 ```
+
+3. Navigate to the QDM-QICORE-Mapping-Services directory
+
+```
+$ cd ../qdm-qicore-mapping-services
+```
+
+4. Launch the micro service
+
+```
+$ mvn spring-boot:run
+```
+
 
 ## Converting to FHIR
 
