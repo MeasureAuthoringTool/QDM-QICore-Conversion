@@ -11,6 +11,7 @@ import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
+import gov.cms.mat.fhir.commons.objects.CQLSourceForTranslation;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.*;
+import java.util.Base64;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -255,6 +257,31 @@ public class MeasureTranslationService {
         }
         return res;
     }
+    
+    @GetMapping(path = "/getLibrariesByMeasureId")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<CQLSourceForTranslation> getLibrariesByMeasureId(@QueryParam("id") String id) {
+        List<CQLSourceForTranslation> res = new ArrayList<>();
+        try {
+            List<CqlLibrary> libraries = cqlLibraryRepo.getCqlLibraryByMeasureId(id);
+            Iterator iter = libraries.iterator();
+            while (iter.hasNext()) {
+                CqlLibrary lib = (CqlLibrary)iter.next();
+                CQLSourceForTranslation dest = new CQLSourceForTranslation();
+                dest.setId(lib.getId());
+                dest.setMeasureId(lib.getMeasureId());
+                dest.setCql(Base64.getEncoder().encodeToString(lib.getCqlXml().getBytes()));
+                dest.setQdmVersion(lib.getQdmVersion());
+                dest.setReleaseVersion(lib.getReleaseVersion());
+                res.add(dest);
+            }
+        } catch (Exception ex) {
+            log.error("Error in Library search for this measure: {}", ex.getMessage());
+        }
+        return res;
+    }
+
 
 
     @GetMapping(path = "/translateAllLibraries")
