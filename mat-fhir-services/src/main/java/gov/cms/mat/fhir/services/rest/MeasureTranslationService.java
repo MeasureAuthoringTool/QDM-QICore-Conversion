@@ -282,7 +282,23 @@ public class MeasureTranslationService {
         return res;
     }
 
-
+    @GetMapping(path = "/getLibraryById")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public CQLSourceForTranslation getLibraryById(@QueryParam("id") String id) {
+        CQLSourceForTranslation dest = new CQLSourceForTranslation();
+        try {
+            CqlLibrary lib = cqlLibraryRepo.getCqlLibraryById(id);
+            dest.setId(lib.getId());
+            dest.setMeasureId(lib.getMeasureId());
+            dest.setCql(Base64.getEncoder().encodeToString(lib.getCqlXml().getBytes()));
+            dest.setQdmVersion(lib.getQdmVersion());
+            dest.setReleaseVersion(lib.getReleaseVersion());
+        } catch (Exception ex) {
+            log.error("Error in Library search for this measure: {}", ex.getMessage());
+        }
+        return dest;
+    }
 
     @GetMapping(path = "/translateAllLibraries")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})

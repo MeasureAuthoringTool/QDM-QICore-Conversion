@@ -18,6 +18,9 @@ import java.util.List;
  * @author duanedecouteau
  */
 public interface CqlLibraryRepository extends JpaRepository<CqlLibrary, String> {
+    @Query("select a from CqlLibrary a where a.id = :id")
+    CqlLibrary getCqlLibraryById(@Param("id") String id);
+    
     @Query("select a from CqlLibrary a where a.measureId = :measureId")
     List<CqlLibrary> getCqlLibraryByMeasureId(@Param("measureId") String measureId);
 
