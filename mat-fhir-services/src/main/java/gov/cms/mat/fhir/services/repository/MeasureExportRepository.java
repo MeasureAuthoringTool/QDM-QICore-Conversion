@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.repository;
 
+import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,7 @@ public interface MeasureExportRepository extends JpaRepository<MeasureExport, St
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     Optional<MeasureExport> findById(String id);
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    Optional<MeasureExport> findByMeasureId(Measure measure);
 }
