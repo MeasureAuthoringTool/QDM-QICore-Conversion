@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * /**
@@ -21,4 +22,7 @@ public interface MeasureRepository extends JpaRepository<Measure, String> {
 
     @Query("select a.version from Measure a where a.id = :id")
     String findVersion(String id);
+
+
+    Optional<Measure> findById(String id);
 }

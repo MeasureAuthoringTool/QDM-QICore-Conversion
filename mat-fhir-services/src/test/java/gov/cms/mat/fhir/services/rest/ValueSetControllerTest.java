@@ -3,6 +3,8 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
@@ -31,13 +33,15 @@ class ValueSetControllerTest {
     private ValueSetMapper valueSetMapper;
     @Mock
     private ConversionResultsService conversionResultsService;
+    @Mock
+    private MatXmlProcessor matXmlProcessor;
 
     @InjectMocks
     private ValueSetController valueSetController;
 
     @Test
     void translateAll_NoneToTranslate() {
-        TranslationOutcome translationOutcome = valueSetController.translateAll();
+        TranslationOutcome translationOutcome = valueSetController.translateAll(null);
         assertTrue(translationOutcome.getMessage()
                 .startsWith("Read 0 Measure Export objects converted 0 Value sets to fhir in"));
 
@@ -53,6 +57,7 @@ class ValueSetControllerTest {
         String idGood = "good";
         String idBad = "bad";
         String xml = "XML";
+        String id = "ID";
 
         List<MeasureVersionExportId> idsAndVersion =
                 Arrays.asList(new MeasureVersionExportId(idGood, ALLOWED_VERSIONS.get(0)),
@@ -63,16 +68,18 @@ class ValueSetControllerTest {
         when(measureExportRepository.getAllExportIdsAndVersion(ALLOWED_VERSIONS)).thenReturn(idsAndVersion);
 
         MeasureExport measureExport = new MeasureExport();
-        measureExport.setSimpleXml(xml.getBytes());
-        when(measureExportRepository.findById(idGood)).thenReturn(Optional.of(measureExport));
+        measureExport.setMeasureId(id);
 
+        when(matXmlProcessor.getXmlById(id, XmlSource.SIMPLE)).thenReturn(xml.getBytes());
+
+        when(measureExportRepository.findById(idGood)).thenReturn(Optional.of(measureExport));
         when(measureExportRepository.findById(idBad)).thenReturn(Optional.empty());
 
         when(valueSetMapper.count())
                 .thenReturn(0)
                 .thenReturn(1);
 
-        TranslationOutcome translationOutcome = valueSetController.translateAll();
+        TranslationOutcome translationOutcome = valueSetController.translateAll(null);
 
         assertTrue(translationOutcome.getMessage()
                 .startsWith("Read 2 Measure Export objects converted 1 Value sets to fhir in"));
@@ -81,6 +88,7 @@ class ValueSetControllerTest {
         verify(measureExportRepository).getAllExportIdsAndVersion(ALLOWED_VERSIONS);
         verify(measureExportRepository, times(2)).findById(anyString());
         verify(valueSetMapper).translateToFhir(xml);
+        verify(matXmlProcessor).getXmlById(id, XmlSource.SIMPLE);
     }
 
     @Test
