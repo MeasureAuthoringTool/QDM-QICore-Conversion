@@ -5,8 +5,6 @@ import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
-import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
@@ -30,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MeasureTranslationServiceTest {
+class MeasureControllerTest {
     private static final String ID = "id";
     private static final String STATUS = "status";
 
@@ -43,15 +41,11 @@ class MeasureTranslationServiceTest {
     @Mock
     private HapiFhirServer hapiFhirServer;
     @Mock
-    private CqlLibraryRepository cqlLibraryRepo;
-    @Mock
-    private CqlLibraryExportRepository cqlLibraryExportRepo;
-    @Mock
     private ConversionResultsService conversionResultsService;
 
 
     @InjectMocks
-    private MeasureTranslationService measureTranslationService;
+    private MeasureController measureTranslationService;
 
     @Test
     void translateMeasureById_NotFoundMeasureRepo() {
