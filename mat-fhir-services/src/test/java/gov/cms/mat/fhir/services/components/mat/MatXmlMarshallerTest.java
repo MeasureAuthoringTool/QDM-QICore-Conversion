@@ -97,6 +97,6 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
         String xml = getXml("/measureGrouping.xml");
         MeasurePackageDetail model = matXmlMarshaller.toMeasureGrouping(xml);
         assertEquals("1", model.getSequence());
-        assertEquals(7, model.getPackageClauses().size());
+        assertEquals(9, model.getPackageClauses().size());
     }
 }
