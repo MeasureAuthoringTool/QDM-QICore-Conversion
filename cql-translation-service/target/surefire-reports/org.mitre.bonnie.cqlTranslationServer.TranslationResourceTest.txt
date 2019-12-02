@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.mitre.bonnie.cqlTranslationServer.TranslationResourceTest
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.949 sec
