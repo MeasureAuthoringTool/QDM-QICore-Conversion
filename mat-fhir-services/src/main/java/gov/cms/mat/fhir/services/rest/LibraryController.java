@@ -24,13 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.*;
-import java.util.Base64;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,11 +41,11 @@ public class LibraryController {
     private final ConversionResultsService conversionResultsService;
 
     public LibraryController(MeasureRepository measureRepository,
-                                     ManageMeasureDetailMapper manageMeasureDetailMapper,
-                                     HapiFhirServer hapiFhirServer,
-                                     CqlLibraryRepository cqlLibraryRepo,
-                                     CqlLibraryExportRepository cqlLibraryExportRepo,
-                                     ConversionResultsService conversionResultsService) {
+                             ManageMeasureDetailMapper manageMeasureDetailMapper,
+                             HapiFhirServer hapiFhirServer,
+                             CqlLibraryRepository cqlLibraryRepo,
+                             CqlLibraryExportRepository cqlLibraryExportRepo,
+                             ConversionResultsService conversionResultsService) {
         this.measureRepo = measureRepository;
         this.hapiFhirServer = hapiFhirServer;
         this.cqlLibraryExportRepo = cqlLibraryExportRepo;
@@ -59,11 +55,10 @@ public class LibraryController {
     }
 
 
-
     @GetMapping(path = "/translateLibraryByMeasureId")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public TranslationOutcome translateLibraryByMeasureId(@QueryParam("id") String id) {
+    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public TranslationOutcome translateLibraryByMeasureId(@RequestParam("id") String id) {
         TranslationOutcome res = new TranslationOutcome();
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
         ConversionReporter.resetLibrary();
@@ -99,17 +94,17 @@ public class LibraryController {
         }
         return res;
     }
-    
+
     @GetMapping(path = "/getLibrariesByMeasureId")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<CQLSourceForTranslation> getLibrariesByMeasureId(@QueryParam("id") String id) {
+    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<CQLSourceForTranslation> getLibrariesByMeasureId(@RequestParam("id") String id) {
         List<CQLSourceForTranslation> res = new ArrayList<>();
         try {
             List<CqlLibrary> libraries = cqlLibraryRepo.getCqlLibraryByMeasureId(id);
             Iterator iter = libraries.iterator();
             while (iter.hasNext()) {
-                CqlLibrary lib = (CqlLibrary)iter.next();
+                CqlLibrary lib = (CqlLibrary) iter.next();
                 CQLSourceForTranslation dest = new CQLSourceForTranslation();
                 dest.setId(lib.getId());
                 dest.setMeasureId(lib.getMeasureId());
@@ -125,9 +120,9 @@ public class LibraryController {
     }
 
     @GetMapping(path = "/getLibraryById")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public CQLSourceForTranslation getLibraryById(@QueryParam("id") String id) {
+    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public CQLSourceForTranslation getLibraryById(@RequestParam("id") String id) {
         CQLSourceForTranslation dest = new CQLSourceForTranslation();
         try {
             CqlLibrary lib = cqlLibraryRepo.getCqlLibraryById(id);
@@ -143,8 +138,8 @@ public class LibraryController {
     }
 
     @GetMapping(path = "/translateAllLibraries")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<TranslationOutcome> translateAllLibraries() {
         List<TranslationOutcome> res = new ArrayList();
         try {
@@ -176,8 +171,8 @@ public class LibraryController {
     }
 
     @DeleteMapping(path = "/removeAllLibraries")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public TranslationOutcome removeAllLibraries() {
         TranslationOutcome res = new TranslationOutcome();
         try {

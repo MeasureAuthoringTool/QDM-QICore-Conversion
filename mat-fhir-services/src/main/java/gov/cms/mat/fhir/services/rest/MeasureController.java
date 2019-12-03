@@ -27,10 +27,6 @@ import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,13 +45,13 @@ public class MeasureController {
     private final MeasureGroupingDataProcessor measureGroupingDataProcessor;
 
     public MeasureController(MeasureRepository measureRepository,
-                                     MeasureExportRepository measureExportRepository,
-                                     ManageMeasureDetailMapper manageMeasureDetailMapper,
-                                     HapiFhirServer hapiFhirServer,
-                                     ConversionResultsService conversionResultsService,
-                                     SupplementalDataProcessor supplementalDataProcessor,
-                                     RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor,
-                                     MeasureGroupingDataProcessor measureGroupingDataProcessor) {
+                             MeasureExportRepository measureExportRepository,
+                             ManageMeasureDetailMapper manageMeasureDetailMapper,
+                             HapiFhirServer hapiFhirServer,
+                             ConversionResultsService conversionResultsService,
+                             SupplementalDataProcessor supplementalDataProcessor,
+                             RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor,
+                             MeasureGroupingDataProcessor measureGroupingDataProcessor) {
         this.measureRepo = measureRepository;
 
         this.measureExportRepo = measureExportRepository;
@@ -69,9 +65,9 @@ public class MeasureController {
 
 
     @PutMapping(path = "/translateMeasure")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public TranslationOutcome translateMeasureById(@QueryParam("id") String id) {
+    //@Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public TranslationOutcome translateMeasureById(@RequestParam("id") String id) {
         TranslationOutcome res = new TranslationOutcome();
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
         ConversionReporter.resetMeasure();
@@ -121,9 +117,9 @@ public class MeasureController {
 
 
     @PutMapping(path = "/translateMeasuresByStatus")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<TranslationOutcome> translateMeasuresByStatus(@QueryParam("measureStatus") String measureStatus) {
+    //@Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    //@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<TranslationOutcome> translateMeasuresByStatus(@RequestParam("measureStatus") String measureStatus) {
         List<TranslationOutcome> res = new ArrayList<>();
         try {
             List<Measure> measureList = measureRepo.getMeasuresByStatus(measureStatus);
@@ -147,8 +143,8 @@ public class MeasureController {
     }
 
     @PutMapping(path = "/translateAllMeasures")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<TranslationOutcome> translateAllMeasures() {
         List<TranslationOutcome> res = new ArrayList<>();
         try {
@@ -179,8 +175,8 @@ public class MeasureController {
     }
 
     @DeleteMapping(path = "/removeAllMeasures")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    //@Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
+    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public TranslationOutcome removeAllMeasures() {
         TranslationOutcome res = new TranslationOutcome();
         try {
