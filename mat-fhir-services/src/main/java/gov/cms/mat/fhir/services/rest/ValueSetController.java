@@ -26,7 +26,7 @@ import java.util.Optional;
 @Slf4j
 public class ValueSetController {
     static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
-    private static final XmlSource DEFAULT_XML_SOURCE = XmlSource.SIMPLE;
+
     private static final String TRANSLATE_SUCCESS_MESSAGE = "Read %d Measure Export objects converted %d " +
             "Value sets to fhir in %d seconds";
 
@@ -47,11 +47,7 @@ public class ValueSetController {
 
     @Transactional(readOnly = true)
     @PutMapping(path = "/translateAll")
-    public TranslationOutcome translateAll(@RequestParam(required = false) XmlSource xmlSource) {
-
-        if (xmlSource == null) {
-            xmlSource = DEFAULT_XML_SOURCE;
-        }
+    public TranslationOutcome translateAll(@RequestParam(required = false, value = "SIMPLE") XmlSource xmlSource) {
 
         Instant startTime = Instant.now();
         int startCount = valueSetMapper.count();

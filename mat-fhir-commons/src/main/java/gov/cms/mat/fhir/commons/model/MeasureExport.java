@@ -5,19 +5,10 @@
  */
 package gov.cms.mat.fhir.commons.model;
 
-import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
  *
@@ -26,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "MEASURE_EXPORT")
 @XmlRootElement
-public class MeasureExport implements Serializable {
+public class MeasureExport implements Serializable, MatXmlBytes {
 
     @Lob
     @Column(name = "CODE_LIST")
@@ -176,5 +167,9 @@ public class MeasureExport implements Serializable {
     public String toString() {
         return "gov.cms.mat.qdm.qicore.commons.model.MeasureExport[ measureExportId=" + measureExportId + " ]";
     }
-    
+
+    @Override
+    public byte[] getXmlBytes() {
+        return simpleXml;
+    }
 }

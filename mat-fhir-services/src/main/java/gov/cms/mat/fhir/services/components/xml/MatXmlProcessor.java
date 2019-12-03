@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.xml;
 
+import gov.cms.mat.fhir.commons.model.MatXmlBytes;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.model.MeasureXml;
@@ -25,9 +26,9 @@ public class MatXmlProcessor {
     }
 
     public byte[] getXmlById(String measureId, XmlSource xmlSource) {
-        Optional<Measure> optional = measureRepository.findById(measureId);
+        Optional<Measure> optionalMeasure = measureRepository.findById(measureId);
 
-        return optional
+        return optionalMeasure
                 .map(measure -> getXml(measure, xmlSource))
                 .orElse(null);
     }
@@ -40,23 +41,24 @@ public class MatXmlProcessor {
             case MEASURE:
                 return getMeasureXml(measure);
             default:
-                throw new IllegalArgumentException("No source for " + xmlSource);
+                throw new IllegalArgumentException("No source for " + xmlSource); // should never-ever get here
         }
     }
 
     public byte[] getSimpleXml(Measure measure) {
-        Optional<MeasureExport> optional = measureExportRepo.findByMeasureId(measure);
-
-        return optional
-                .map(MeasureExport::getSimpleXml)
-                .orElse(null);
+        Optional<MeasureExport> optionalMeasureExport = measureExportRepo.findByMeasureId(measure);
+        return processBytes(optionalMeasureExport);
     }
 
     public byte[] getMeasureXml(Measure measure) {
-        Optional<MeasureXml> optional = measureXmlRepository.findByMeasureId(measure);
+        Optional<MeasureXml> optionalMeasureXml = measureXmlRepository.findByMeasureId(measure);
+        return processBytes(optionalMeasureXml);
+    }
 
-        return optional
-                .map(MeasureXml::getMeasureXml)
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private byte[] processBytes(Optional<? extends MatXmlBytes> optionalMatXmlBytes) {
+        return optionalMatXmlBytes
+                .map(MatXmlBytes::getXmlBytes)
                 .orElse(null);
     }
 }

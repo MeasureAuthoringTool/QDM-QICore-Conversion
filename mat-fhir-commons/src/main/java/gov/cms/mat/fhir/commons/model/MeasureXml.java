@@ -5,18 +5,9 @@
  */
 package gov.cms.mat.fhir.commons.model;
 
-import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
  *
@@ -28,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "MeasureXml.findAll", query = "SELECT m FROM MeasureXml m"),
     @NamedQuery(name = "MeasureXml.findById", query = "SELECT m FROM MeasureXml m WHERE m.id = :id")})
-public class MeasureXml implements Serializable {
+public class MeasureXml implements Serializable, MatXmlBytes {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -97,5 +88,9 @@ public class MeasureXml implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.MeasureXml[ id=" + id + " ]";
     }
-    
+
+    @Override
+    public byte[] getXmlBytes() {
+        return measureXml;
+    }
 }
