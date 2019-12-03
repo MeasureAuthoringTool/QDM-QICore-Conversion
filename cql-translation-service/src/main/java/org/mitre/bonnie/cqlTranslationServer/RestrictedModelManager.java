@@ -10,15 +10,16 @@ public class RestrictedModelManager extends ModelManager {
 	private ModelManager coreManager; 
 	private boolean disabled = false;
 	private HashSet<String> allowedModels = new HashSet<>();
-	
 	RestrictedModelManager(ModelManager parentManager)
 	{
 		coreManager = parentManager;
+		allowedModels.add("System");
 	}
 	
 	RestrictedModelManager(ModelManager parentManager,String singleModelName)
 	{
 		coreManager = parentManager;
+		allowedModels.add("System");
 		allowedModels.add(singleModelName);
 	}
 	
@@ -43,19 +44,16 @@ public class RestrictedModelManager extends ModelManager {
 	}
 	
 	public Model resolveModel(String modelName) {
-		System.out.println("Resolving Model: "+modelName);
         return resolveModel(modelName, null);
     }
 
     public Model resolveModel(String modelName, String version) {
-    	System.out.println("Resolving Model: "+modelName+" - Version: "+version);
     	
         return resolveModel(new VersionedIdentifier().withId(modelName).withVersion(version));
     }
 
     public Model resolveModel(VersionedIdentifier modelIdentifier) {
 
-    	System.out.println("Resolving: "+modelIdentifier.toString());
     	
     	if (!allowedModels.contains(modelIdentifier.getId())&&!disabled)
     	{
