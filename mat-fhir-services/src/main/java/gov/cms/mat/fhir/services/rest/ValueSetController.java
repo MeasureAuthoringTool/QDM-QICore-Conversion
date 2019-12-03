@@ -9,6 +9,8 @@ import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/valueSet")
+@Tag(name = "ValueSet-Controller", description = "API for converting MAT ValueSets to FHIR.")
 @Slf4j
 public class ValueSetController {
     static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
@@ -45,9 +48,11 @@ public class ValueSetController {
         this.matXmlProcessor = matXmlProcessor;
     }
 
+    @Operation(summary = "Translate all ValueSets in MAT to FHIR.",
+            description = "Translate all the ValueSets in the MAT Database and persist to the HAPI FHIR Database.")
     @Transactional(readOnly = true)
     @PutMapping(path = "/translateAll")
-    public TranslationOutcome translateAll(@RequestParam(required = false, value = "SIMPLE") XmlSource xmlSource) {
+    public TranslationOutcome translateAll(@RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
 
         Instant startTime = Instant.now();
         int startCount = valueSetMapper.count();
@@ -63,11 +68,15 @@ public class ValueSetController {
         return createOutcome(successMessage);
     }
 
+    @Operation(summary = "Count of persisted FHIR ValueSets.",
+            description = "The count of all the ValueSets in the HAPI FHIR Database.")
     @GetMapping(path = "/count")
     public int countValueSets() {
         return valueSetMapper.count();
     }
 
+    @Operation(summary = "Delete all persisted FHIR ValueSets.",
+            description = "Delete all the ValueSets in the HAPI FHIR Database.")
     @DeleteMapping(path = "/deleteAll")
     public int deleteValueSets() {
         return valueSetMapper.deleteAll();

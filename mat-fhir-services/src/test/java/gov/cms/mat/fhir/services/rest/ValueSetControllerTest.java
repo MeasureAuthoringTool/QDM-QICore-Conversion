@@ -79,7 +79,7 @@ class ValueSetControllerTest {
                 .thenReturn(0)
                 .thenReturn(1);
 
-        TranslationOutcome translationOutcome = valueSetController.translateAll(null);
+        TranslationOutcome translationOutcome = valueSetController.translateAll(XmlSource.SIMPLE);
 
         assertTrue(translationOutcome.getMessage()
                 .startsWith("Read 2 Measure Export objects converted 1 Value sets to fhir in"));

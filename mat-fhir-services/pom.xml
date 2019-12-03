@@ -66,38 +66,11 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
-
-        <!-- SpringDoc -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.2.12</version>
+            <version>1.2.15</version>
         </dependency>
-
-
-        <!-- DevTools -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-
-        <!--        <dependency>-->
-        <!--            <groupId>io.swagger</groupId>-->
-        <!--            <artifactId>swagger-jaxrs</artifactId>-->
-        <!--            <version>1.5.23</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.webjars</groupId>-->
-        <!--            <artifactId>swagger-ui</artifactId>-->
-        <!--            <version>3.23.8</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.socraticgrid</groupId>-->
-        <!--            <artifactId>config-utils</artifactId>-->
-        <!--            <version>1.0.4</version>-->
-        <!--        </dependency>-->
 
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>

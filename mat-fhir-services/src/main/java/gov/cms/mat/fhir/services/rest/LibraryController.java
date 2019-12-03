@@ -19,9 +19,9 @@ import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.translate.LibraryMapper;
-import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +32,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/library")
+@Tag(name = "Library-Controller", description = "API for converting MAT Libraries to FHIR")
 @Slf4j
 public class LibraryController {
     private final MeasureRepository measureRepo;
@@ -41,7 +42,6 @@ public class LibraryController {
     private final ConversionResultsService conversionResultsService;
 
     public LibraryController(MeasureRepository measureRepository,
-                             ManageMeasureDetailMapper manageMeasureDetailMapper,
                              HapiFhirServer hapiFhirServer,
                              CqlLibraryRepository cqlLibraryRepo,
                              CqlLibraryExportRepository cqlLibraryExportRepo,
@@ -51,13 +51,12 @@ public class LibraryController {
         this.cqlLibraryExportRepo = cqlLibraryExportRepo;
         this.cqlLibraryRepo = cqlLibraryRepo;
         this.conversionResultsService = conversionResultsService;
-
     }
 
 
-    @GetMapping(path = "/translateLibraryByMeasureId")
-    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Translate Library in MAT to FHIR.",
+            description = "Translate one Library in the MAT Database and persist to the HAPI FHIR Database.")
+    @PutMapping(path = "/translateLibraryByMeasureId")
     public TranslationOutcome translateLibraryByMeasureId(@RequestParam("id") String id) {
         TranslationOutcome res = new TranslationOutcome();
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
@@ -86,7 +85,7 @@ public class LibraryController {
         } catch (Exception ex) {
             res.setSuccessful(Boolean.FALSE);
             if (ex.getMessage() == null) {
-                res.setMessage("/libary/translateLibrary Failed " + id + "Missing");
+                res.setMessage("/library/translateLibrary Failed " + id + " Missing");
             } else {
                 res.setMessage("/library/translateLibrary Failed " + id + " " + ex.getMessage());
             }
@@ -95,9 +94,9 @@ public class LibraryController {
         return res;
     }
 
+    @Operation(summary = "Find a list of CQLSourceForTranslation.",
+            description = "Find a list of CQLSourceForTranslation identified by the id.")
     @GetMapping(path = "/getLibrariesByMeasureId")
-    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<CQLSourceForTranslation> getLibrariesByMeasureId(@RequestParam("id") String id) {
         List<CQLSourceForTranslation> res = new ArrayList<>();
         try {
@@ -119,9 +118,9 @@ public class LibraryController {
         return res;
     }
 
+    @Operation(summary = "Find a CQLSourceForTranslation.",
+            description = "Find a CQLSourceForTranslation identified by the id.")
     @GetMapping(path = "/getLibraryById")
-    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public CQLSourceForTranslation getLibraryById(@RequestParam("id") String id) {
         CQLSourceForTranslation dest = new CQLSourceForTranslation();
         try {
@@ -137,11 +136,11 @@ public class LibraryController {
         return dest;
     }
 
-    @GetMapping(path = "/translateAllLibraries")
-    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Translate all Libraries in MAT to FHIR.",
+            description = "Translate all the Libraries in the MAT Database and persist to the HAPI FHIR Database.")
+    @PutMapping(path = "/translateAllLibraries")
     public List<TranslationOutcome> translateAllLibraries() {
-        List<TranslationOutcome> res = new ArrayList();
+        List<TranslationOutcome> res = new ArrayList<>();
         try {
             List<Measure> measureList = measureRepo.findAll();
             Iterator iter = measureList.iterator();
@@ -170,9 +169,9 @@ public class LibraryController {
         return res;
     }
 
+    @Operation(summary = "Delete all persisted FHIR Libraries.",
+            description = "Delete all the Libraries in the HAPI FHIR Database.")
     @DeleteMapping(path = "/removeAllLibraries")
-    // @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_JSON})
-    // @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public TranslationOutcome removeAllLibraries() {
         TranslationOutcome res = new TranslationOutcome();
         try {
@@ -183,7 +182,7 @@ public class LibraryController {
                 String cqlId = library.getCqlLibraryId();
                 try {
                     IGenericClient client = hapiFhirServer.getHapiClient();
-                    IBaseOperationOutcome resp = client.delete().resourceById(new IdDt("Library", cqlId)).execute();
+                    client.delete().resourceById(new IdDt("Library", cqlId)).execute();
                 } catch (Exception ex) {
                 }
             }
