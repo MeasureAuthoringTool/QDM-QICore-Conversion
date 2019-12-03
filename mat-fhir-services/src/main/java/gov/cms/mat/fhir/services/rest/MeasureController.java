@@ -15,6 +15,8 @@ import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.SupplementalDataProcessor;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
@@ -46,6 +48,8 @@ public class MeasureController {
     private final RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor;
     private final MeasureGroupingDataProcessor measureGroupingDataProcessor;
 
+    private final MatXmlProcessor matXmlProcessor;
+
     public MeasureController(MeasureRepository measureRepository,
                              MeasureExportRepository measureExportRepository,
                              ManageMeasureDetailMapper manageMeasureDetailMapper,
@@ -53,7 +57,8 @@ public class MeasureController {
                              ConversionResultsService conversionResultsService,
                              SupplementalDataProcessor supplementalDataProcessor,
                              RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor,
-                             MeasureGroupingDataProcessor measureGroupingDataProcessor) {
+                             MeasureGroupingDataProcessor measureGroupingDataProcessor,
+                             MatXmlProcessor matXmlProcessor) {
         this.measureRepo = measureRepository;
 
         this.measureExportRepo = measureExportRepository;
@@ -63,13 +68,17 @@ public class MeasureController {
         this.supplementalDataProcessor = supplementalDataProcessor;
         this.riskAdjustmentsDataProcessor = riskAdjustmentsDataProcessor;
         this.measureGroupingDataProcessor = measureGroupingDataProcessor;
+        this.matXmlProcessor = matXmlProcessor;
     }
 
 
     @Operation(summary = "Translate Measure in MAT to FHIR.",
             description = "Translate one Measure in the MAT Database and persist to the HAPI FHIR Database.")
     @PutMapping(path = "/translateMeasure")
-    public TranslationOutcome translateMeasureById(@RequestParam("id") String id) {
+    public TranslationOutcome translateMeasureById(
+            @RequestParam("id") String id,
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
+
         TranslationOutcome res = new TranslationOutcome();
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
         ConversionReporter.resetMeasure();
@@ -77,8 +86,11 @@ public class MeasureController {
         try {
             Measure qdmMeasure = measureRepo.getMeasureById(id);
             res.setFhirIdentity("Measure/" + qdmMeasure.getId());
+
             MeasureExport measureExport = measureExportRepo.getMeasureExportById(id);
-            byte[] xmlBytes = measureExport.getSimpleXml();
+
+            byte[] xmlBytes = findXml(qdmMeasure, xmlSource);
+
             //human-readable may exist not an error if it doesn't
             String narrative = "";
             try {
@@ -120,7 +132,10 @@ public class MeasureController {
     @Operation(summary = "Translate all Measures in MAT by status to FHIR.",
             description = "Translate all the Measures in the MAT Database by status and persist to the HAPI FHIR Database.")
     @PutMapping(path = "/translateMeasuresByStatus")
-    public List<TranslationOutcome> translateMeasuresByStatus(@RequestParam("measureStatus") String measureStatus) {
+    public List<TranslationOutcome> translateMeasuresByStatus(
+            @RequestParam("measureStatus") String measureStatus,
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
+
         List<TranslationOutcome> res = new ArrayList<>();
         try {
             List<Measure> measureList = measureRepo.getMeasuresByStatus(measureStatus);
@@ -129,7 +144,7 @@ public class MeasureController {
                 Measure measure = (Measure) iter.next();
                 String measureId = measure.getId().trim();
                 log.debug("Translating Measure measureId: {}", measureId);
-                TranslationOutcome result = translateMeasureById(measureId);
+                TranslationOutcome result = translateMeasureById(measureId, xmlSource);
                 res.add(result);
             }
         } catch (Exception ex) {
@@ -146,7 +161,9 @@ public class MeasureController {
     @Operation(summary = "Translate all Measures in MAT to FHIR.",
             description = "Translate all the Measures in the MAT Database and persist to the HAPI FHIR Database.")
     @PutMapping(path = "/translateAllMeasures")
-    public List<TranslationOutcome> translateAllMeasures() {
+    public List<TranslationOutcome> translateAllMeasures(
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
+
         List<TranslationOutcome> res = new ArrayList<>();
         try {
             List<Measure> measureList = measureRepo.findAll();
@@ -159,7 +176,7 @@ public class MeasureController {
                 if (version != null) {
                     if (version.equals("v5.5") || version.equals("v5.6") || version.equals("v5.7") || version.equals("v5.8")) {
                         log.debug("Translating Measure: {} ", measureId);
-                        TranslationOutcome result = translateMeasureById(measureId);
+                        TranslationOutcome result = translateMeasureById(measureId, xmlSource);
                         res.add(result);
                     }
                 }
@@ -193,12 +210,15 @@ public class MeasureController {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             res.setSuccessful(Boolean.FALSE);
             res.setMessage("/measure/removeAllMeasures Failed " + ex.getMessage());
-            log.error("Failed Batch Delete of Measures ALL: {}", ex.getMessage());
+            log.error("Failed Batch Delete of Measures ALL:", ex);
         }
 
         return res;
+    }
+
+    private byte[] findXml(Measure qdmMeasure, XmlSource xmlSource) {
+        return matXmlProcessor.getXml(qdmMeasure, xmlSource);
     }
 }

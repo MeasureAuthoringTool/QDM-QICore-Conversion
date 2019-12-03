@@ -4,6 +4,8 @@ import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
@@ -42,6 +44,8 @@ class MeasureControllerTest {
     private HapiFhirServer hapiFhirServer;
     @Mock
     private ConversionResultsService conversionResultsService;
+    @Mock
+    private MatXmlProcessor matXmlProcessor;
 
 
     @InjectMocks
@@ -51,7 +55,7 @@ class MeasureControllerTest {
     void translateMeasureById_NotFoundMeasureRepo() {
         when(measureRepo.getMeasureById(ID)).thenReturn(null);
 
-        TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID);
+        TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID, XmlSource.SIMPLE);
 
         assertTrue(translationOutcome.getMessage().contains("No SimpleXML Available"));
         assertFalse(translationOutcome.getSuccessful());
@@ -66,12 +70,11 @@ class MeasureControllerTest {
         when(measureRepo.getMeasureById(ID)).thenReturn(new Measure());
         when(measureExportRepo.getMeasureExportById(ID)).thenReturn(null);
 
-        TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID);
+        TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID, XmlSource.SIMPLE);
 
         assertTrue(translationOutcome.getMessage().contains("No SimpleXML Available"));
         assertFalse(translationOutcome.getSuccessful());
 
-        verifyNoInteractions(hapiFhirServer);
         verify(measureRepo).getMeasureById(ID);
         verify(measureExportRepo).getMeasureExportById(ID);
     }
@@ -86,7 +89,7 @@ class MeasureControllerTest {
         when(manageMeasureDetailMapper.convert(null, measure))
                 .thenThrow(new IllegalArgumentException(message));
 
-        TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID);
+        TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID, XmlSource.SIMPLE);
 
         assertTrue(translationOutcome.getMessage().contains(message));
         assertFalse(translationOutcome.getSuccessful());
@@ -109,7 +112,7 @@ class MeasureControllerTest {
 
         when(hapiFhirServer.createAndExecuteBundle(any(Resource.class))).thenReturn(new Bundle());
 
-        TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID);
+        TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID, XmlSource.SIMPLE);
 
         assertTrue(translationOutcome.getMessage().isEmpty());
         assertTrue(translationOutcome.getSuccessful());
@@ -125,7 +128,8 @@ class MeasureControllerTest {
     void translateMeasuresByStatus_NotFoundInDb() {
         when(measureRepo.getMeasuresByStatus(STATUS)).thenReturn(Collections.emptyList());
 
-        List<TranslationOutcome> translationOutcomes = measureTranslationService.translateMeasuresByStatus(STATUS);
+        List<TranslationOutcome> translationOutcomes =
+                measureTranslationService.translateMeasuresByStatus(STATUS, XmlSource.SIMPLE);
 
         assertTrue(translationOutcomes.isEmpty());
 
@@ -136,7 +140,8 @@ class MeasureControllerTest {
     void translateMeasuresByStatus_Exception() {
         when(measureRepo.getMeasuresByStatus(STATUS)).thenThrow(new IllegalArgumentException("oops"));
 
-        List<TranslationOutcome> translationOutcomes = measureTranslationService.translateMeasuresByStatus(STATUS);
+        List<TranslationOutcome> translationOutcomes =
+                measureTranslationService.translateMeasuresByStatus(STATUS, XmlSource.SIMPLE);
 
         assertEquals(1, translationOutcomes.size());
         assertFalse(translationOutcomes.get(0).getSuccessful());
@@ -154,7 +159,8 @@ class MeasureControllerTest {
         when(manageMeasureDetailMapper.convert(null, measure))
                 .thenReturn(createManageCompositeMeasureDetailModel());
 
-        List<TranslationOutcome> translationOutcomes = measureTranslationService.translateMeasuresByStatus(STATUS);
+        List<TranslationOutcome> translationOutcomes =
+                measureTranslationService.translateMeasuresByStatus(STATUS, XmlSource.SIMPLE);
 
         assertEquals(1, translationOutcomes.size());
         assertTrue(translationOutcomes.get(0).getSuccessful());
@@ -169,7 +175,7 @@ class MeasureControllerTest {
     void translateAllMeasures_NotFoundInDb() {
         when(measureRepo.findAll()).thenReturn(Collections.emptyList());
 
-        List<TranslationOutcome> translationOutcomes = measureTranslationService.translateAllMeasures();
+        List<TranslationOutcome> translationOutcomes = measureTranslationService.translateAllMeasures(XmlSource.SIMPLE);
         assertTrue(translationOutcomes.isEmpty());
 
         verify(measureRepo).findAll();
@@ -179,7 +185,7 @@ class MeasureControllerTest {
     void translateAllMeasures_Exception() {
         when(measureRepo.findAll()).thenThrow(new IllegalArgumentException("bad things happened"));
 
-        List<TranslationOutcome> translationOutcomes = measureTranslationService.translateAllMeasures();
+        List<TranslationOutcome> translationOutcomes = measureTranslationService.translateAllMeasures(XmlSource.SIMPLE);
         assertEquals(1, translationOutcomes.size());
         assertFalse(translationOutcomes.get(0).getSuccessful());
 
@@ -199,7 +205,7 @@ class MeasureControllerTest {
                 .thenReturn(createManageCompositeMeasureDetailModel());
 
 
-        List<TranslationOutcome> translationOutcomes = measureTranslationService.translateAllMeasures();
+        List<TranslationOutcome> translationOutcomes = measureTranslationService.translateAllMeasures(XmlSource.SIMPLE);
 
         assertEquals(1, translationOutcomes.size());
         assertTrue(translationOutcomes.get(0).getSuccessful());
