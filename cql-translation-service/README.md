@@ -167,6 +167,9 @@ The CQL-to-ELM translator supports many options to control the output.  These op
 |strict|true\|false|false|
 |debug|true\|false|false|
 |validate-units|true\|false|false|
+|restrict-data-model|Empty\|List of modles (QDM,FHIR)||
+|MAT|true\|false|false|
+|library-resolution|Empty\|MAT\|URL|empty
 
 For more information on each of these options, see the [CQL-to-ELM Overview](https://github.com/cqframework/clinical_quality_language/blob/master/Src/java/cql-to-elm/OVERVIEW.md#usage).
 
