@@ -114,6 +114,13 @@ $ cd ../qdm-qicore-mapping-services
 $ mvn spring-boot:run
 ```
 
+## Viewing API and Testing Via Swagger
+Swagger provides a mechanism to view(and test) available service endpoints, their input criteria, and results.  You can
+access this at;
+
+```
+http://localhost:9080/swagger-ui.html
+```
 
 ## Converting to FHIR
 
