@@ -21,6 +21,7 @@ import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.translate.LibraryMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.*;
@@ -135,6 +136,25 @@ public class LibraryController {
         }
         return dest;
     }
+    
+        @Operation(summary = "Find a CQLSourceForTranslation.",
+            description = "Find a CQLSourceForTranslation identified by the name and version.")
+    @GetMapping(path = "/getLibraryByNameAndVersion")
+    public CQLSourceForTranslation getLibraryByNameAndVersion(@RequestParam("cqlName") String cqlName, @RequestParam("version") String version) {
+        CQLSourceForTranslation dest = new CQLSourceForTranslation();
+        try {
+            CqlLibrary lib = cqlLibraryRepo.getCqlLibraryByNameAndVersion(cqlName, new BigDecimal(version));
+            dest.setId(lib.getId());
+            dest.setMeasureId(lib.getMeasureId());
+            dest.setCql(Base64.getEncoder().encodeToString(lib.getCqlXml().getBytes()));
+            dest.setQdmVersion(lib.getQdmVersion());
+            dest.setReleaseVersion(lib.getReleaseVersion());
+        } catch (Exception ex) {
+            log.error("Error in Library search for this measure: {}", ex.getMessage());
+        }
+        return dest;
+    }
+
 
     @Operation(summary = "Translate all Libraries in MAT to FHIR.",
             description = "Translate all the Libraries in the MAT Database and persist to the HAPI FHIR Database.")
