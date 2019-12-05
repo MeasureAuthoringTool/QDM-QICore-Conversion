@@ -13,9 +13,9 @@ import java.util.Optional;
 
 @Component
 public class MatXmlProcessor {
-    private final MeasureXmlRepository measureXmlRepository;
     private final MeasureExportRepository measureExportRepo;
     private final MeasureRepository measureRepository;
+    private MeasureXmlRepository measureXmlRepository;
 
     public MatXmlProcessor(MeasureXmlRepository measureXmlRepository,
                            MeasureExportRepository measureExportRepo,
