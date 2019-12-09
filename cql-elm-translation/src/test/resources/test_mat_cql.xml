@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cqlLookUp>
+    <library>THKR</library>
+    <version>1.13.000</version>
+    <usingModel>QDM</usingModel>
+    <usingModelVersion>5.3</usingModelVersion>
+    <cqlContext>Patient</cqlContext>
+    <codeSystems>
+        <codeSystem codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.46"
+                    id="038ab8c1-c252-4967-b3dd-8a88af9cefca"/>
+        <codeSystem codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMEDCT" codeSystemVersion="2016-03"
+                    id="fa526634-cc9f-4783-af84-9eacdb9564e4"/>
+    </codeSystems>
+    <valuesets>
+        <valueset id="5a1c1934065c4be0a09158ac62cbd7b8" name="Encounter Inpatient" oid="2.16.840.1.113883.3.666.5.307"
+                  originalName="Encounter Inpatient" program="" release="" suppDataElement="false" taxonomy="SNOMEDCT"
+                  type="Extensional" uuid="68878ba7-62e3-482d-8ebd-25cb0023b834" version="1.0"/>
+        <valueset id="b6f52efbf2c54d70b7055d1e9aaa2d8a" name="Total Hip, Total Knee Replacement"
+                  oid="2.16.840.1.113762.1.4.1029.96" originalName="Total Hip, Total Knee Replacement" program=""
+                  release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                  uuid="b7d7aac4-d96a-457c-b395-81402e8ae0c4" version="1.0"/>
+        <valueset id="2f632aad57eb49e29a220a866bc34203" name="Principal" oid="2.16.840.1.113883.3.117.1.7.1.14"
+                  originalName="Principal" program="" release="" suppDataElement="false" taxonomy="SNOMEDCT"
+                  type="Extensional" uuid="c74b287b-ae64-4d51-9fb5-564d0d1ea5a9" version="1.0"/>
+        <valueset id="9b7519624f0d400baed57ccafe23978c" name="Removal of implanted device/prostheses from hip/knee"
+                  oid="2.16.840.1.113762.1.4.1029.83"
+                  originalName="Removal of implanted device/prostheses from hip/knee" program="" release=""
+                  suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                  uuid="4a374b41-c3f3-46d2-aa68-f4e474b2ff42" version="1.0"/>
+        <valueset id="68038928d2054f4d98cfed30fc6b252e" name="Partial hip and partial knee replacements"
+                  oid="2.16.840.1.113762.1.4.1029.79" originalName="Partial hip and partial knee replacements"
+                  program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                  uuid="100f2c07-3c53-411f-a9f6-8e2453fa43cf" version="1.0"/>
+        <valueset id="6d929672e3ea40c697e904ce89912a06" name="Revision and Resurfacing Procedures of Hip &amp; Knee"
+                  oid="2.16.840.1.113762.1.4.1029.87"
+                  originalName="Revision and Resurfacing Procedures of Hip &amp; Knee" program="" release=""
+                  suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                  uuid="9e9fbdb0-ff8c-48d3-b2f7-62c8ec388094" version="1.0"/>
+        <valueset id="29a9c33c57a141eba9779d656e6685a6"
+                  name="Malignant Neoplasm of bone of lower Limb, pelvis, sacrum, coccyx"
+                  oid="2.16.840.1.113762.1.4.1029.72"
+                  originalName="Malignant Neoplasm of bone of lower Limb, pelvis, sacrum, coccyx" program="" release=""
+                  suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                  uuid="14d5b688-4ec9-4e98-b238-95163c214096" version="1.0"/>
+        <valueset id="3ce08a0eba2e4174a1ac001496c5ec15"
+                  name="Mechanical Complications of hip and knee prosthetic devices" oid="2.16.840.1.113762.1.4.1029.75"
+                  originalName="Mechanical Complications of hip and knee prosthetic devices" program="" release=""
+                  suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                  uuid="fd3173ea-972a-4875-afdb-13607f28feda" version="1.0"/>
+        <valueset id="aae4c7bfdbdb40c187473ddb7d4fe3cc" name="Hip Fracture" oid="2.16.840.1.113762.1.4.1029.103"
+                  originalName="Hip Fracture" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                  type="Grouping" uuid="e5023d9a-a5f9-4449-935a-3a95944a3c94" version="1.0"/>
+        <valueset id="b2d1e4f88ed347d7b4d7efb47e229495" name="Left Against Medical Advice"
+                  oid="2.16.840.1.113883.3.117.1.7.1.308" originalName="Left Against Medical Advice" program=""
+                  release="" suppDataElement="false" taxonomy="SNOMEDCT" type="Extensional"
+                  uuid="5a79075d-11ef-4c2e-ae54-e61b3e2359b1" version="1.0"/>
+        <valueset id="14c8a7dbe859469d83fa8ffa35b2f85c" name="Patient Expired" oid="2.16.840.1.113883.3.117.1.7.1.309"
+                  originalName="Patient Expired" program="" release="" suppDataElement="false" taxonomy="SNOMEDCT"
+                  type="Extensional" uuid="ac9bbb12-0985-4693-be42-7266944017e3" version="1.0"/>
+        <valueset id="9f055ab3b5964520bab57c3f77615d75" name="Post Anesthesia Care Unit"
+                  oid="2.16.840.1.113762.1.4.1029.107" originalName="Post Anesthesia Care Unit" program="" release=""
+                  suppDataElement="false" taxonomy="SNOMEDCT" type="Extensional"
+                  uuid="190169c4-6251-4c99-a10b-f97332ae00bb" version="1.0"/>
+    </valuesets>
+    <codes>
+        <code codeIdentifier="CODE:/CodeSystem/LOINC/Version/2.46/Code/21112-8/Info" codeName="Birthdate"
+              codeOID="21112-8" codeSystemName="LOINC" codeSystemOID="2.16.840.1.113883.6.1" codeSystemVersion="2.46"
+              displayName="Birthdate" id="066d53a4-caaf-4db2-aae3-a8eee1507f44" isCodeSystemVersionIncluded="false"
+              readOnly="true"/>
+        <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2016-03/Code/419099009/Info" codeName="Dead"
+              codeOID="419099009" codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96"
+              codeSystemVersion="2016-03" displayName="Dead" id="c25852f4-69c2-4d5d-9f22-427d2d8b1de1"
+              isCodeSystemVersionIncluded="false" readOnly="true"/>
+    </codes>
+    <parameters>
+        <parameter id="5a3f856a-d257-4376-bd56-7a006fa50c85" name="Measurement Period" readOnly="true">
+            <logic>Interval&lt;DateTime&gt;</logic>
+        </parameter>
+    </parameters>
+    <definitions>
+        <definition context="Patient" id="f272c3ae-8dbf-47be-b23b-3cdd8b7b7b8c"
+                    name="Encounter Without Concurrent Procedure" popDefinition="false" supplDataElement="false">
+            <logic>"Encounter With Ages 18 or Older" EncounterWithAge
+                without ( ["Procedure, Performed": "Partial hip and partial knee replacements"]
+                union ["Procedure, Performed": "Removal of implanted device/prostheses from hip/knee"]
+                union ["Procedure, Performed": "Revision and Resurfacing Procedures of Hip &amp; Knee"] )
+                PartialOrRemovalProcedure
+                such that PartialOrRemovalProcedure.relevantPeriod starts during Interval[start of
+                EncounterWithAge.relevantPeriod - 48 hours, end of EncounterWithAge.relevantPeriod]
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="64b7e4ae-6af7-4576-bb68-12271d89d5f8"
+                    name="Encounter without Malignancy And Mechanical Complications" popDefinition="false"
+                    supplDataElement="false">
+            <logic>"Encounter With Ages 18 or Older" EncounterWithAge
+                where not ( exists ( EncounterWithAge.diagnoses EncountersDiagnosis
+                where EncountersDiagnosis in "Malignant Neoplasm of bone of lower Limb, pelvis, sacrum, coccyx"
+                or EncountersDiagnosis in "Mechanical Complications of hip and knee prosthetic devices"
+                )
+                )
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="d814c52a-1d44-4918-a3d5-b4c3d5ed7dd9"
+                    name="Total Hip Total Knee Replacements Without Concurrent Procedures or Malignancy or Mechanical Complications"
+                    popDefinition="false" supplDataElement="false">
+            <logic>"Encounter With Age and Total Hip Total Knee Principal Procedure"
+                intersect "Encounter Without Concurrent Procedure"
+                intersect "Encounter without Malignancy And Mechanical Complications"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="bca006bd-0112-4c50-bb03-9c6032375e10" name="Encounter with Hip Fracture"
+                    popDefinition="false" supplDataElement="false">
+            <logic>"Total Hip Total Knee Replacements Without Concurrent Procedures or Malignancy or Mechanical
+                Complications" QualifyingEncounter
+                where exists ( QualifyingEncounter.diagnoses EncounterDiagnoses
+                where EncounterDiagnoses in "Hip Fracture"
+                )
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="3c66a87e-39ea-4bad-a44b-4630c231f546"
+                    name="Encounter with Left Against Medical Advice or Expired" popDefinition="false"
+                    supplDataElement="false">
+            <logic>"Total Hip Total Knee Replacements Without Concurrent Procedures or Malignancy or Mechanical
+                Complications" QualifyingEncounter
+                where QualifyingEncounter.dischargeDisposition in "Left Against Medical Advice"
+                or QualifyingEncounter.dischargeDisposition in "Patient Expired"
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="b8fd10c6-53d7-418a-b16c-433db09f71ff"
+                    name="Encounter With Postoperative Anesthesia Care Unit Stay" popDefinition="false"
+                    supplDataElement="false">
+            <logic>"Total Hip Total Knee Replacements Without Concurrent Procedures or Malignancy or Mechanical
+                Complications" QualifyingEncounter
+                where exists ( QualifyingEncounter.facilityLocations Location
+                with ( "Total Hip Total Knee Principal Procedure"(QualifyingEncounter)) Procedure
+                such that Location.code in "Post Anesthesia Care Unit"
+                and Location.locationPeriod starts on or after
+                end of Procedure.relevantPeriod
+                and Location.locationPeriod during QualifyingEncounter.relevantPeriod
+                )
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="c2d236aa-7297-4263-bb15-c8b05b122e5e" name="Encounter With Ages 18 or Older"
+                    popDefinition="false" supplDataElement="false">
+            <logic>Global."Inpatient Encounter" InpatientEncounter
+                with ["Patient Characteristic Birthdate"] BirthDate
+                such that Global."CalendarAgeInYearsAt"(BirthDate.birthDatetime, start of
+                InpatientEncounter.relevantPeriod)&gt;= 18
+            </logic>
+            <comment/>
+        </definition>
+        <definition context="Patient" id="c59c4086-a42a-467d-9d0d-479bc4d078b4"
+                    name="Encounter With Age and Total Hip Total Knee Principal Procedure" popDefinition="false"
+                    supplDataElement="false">
+            <logic>"Encounter With Ages 18 or Older" EncounterWithAge
+                where "Total Hip Total Knee Principal Procedure"(EncounterWithAge)is not null
+            </logic>
+            <comment/>
+        </definition>
+    </definitions>
+    <functions>
+        <function context="Patient" id="476ba019-3079-4997-a728-36ce42635437" name="End of First PACU Stay">
+            <logic>end of "First Postoperative Anesthesia Care Unit After Total Hip and Total Knee
+                Procedure"(Encounter).locationPeriod
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="Encounter" id="S6heTk9t3Uw0vQIj" qdmDataType="Encounter, Performed"
+                          type="QDM Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="d75e58f3-b801-44c5-8244-55323a8b42b9"
+                  name="Total Hip Total Knee Principal Procedure">
+            <logic>Last(["Procedure, Performed": "Total Hip, Total Knee Replacement"] TotalHipTotalKneeProcedure
+                with Encounter QualifyingEncounter
+                such that TotalHipTotalKneeProcedure.ordinality in "Principal"
+                and TotalHipTotalKneeProcedure.relevantPeriod starts during Interval[start of
+                QualifyingEncounter.relevantPeriod - 48 hours,
+                end of QualifyingEncounter.relevantPeriod]
+                sort by start of relevantPeriod
+                )
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="Encounter" id="QljMN2UOIOika905" qdmDataType="Encounter, Performed"
+                          type="QDM Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="4c741a00-d5a9-47aa-b888-a7a0aef2b9ae"
+                  name="First Postoperative Anesthesia Care Unit After Total Hip and Total Knee Procedure">
+            <logic>First((Encounter.facilityLocations)HospitalLocation
+                where HospitalLocation.code in "Post Anesthesia Care Unit"
+                and HospitalLocation.locationPeriod starts on or after
+                end of "Total Hip Total Knee Principal Procedure"(Encounter).relevantPeriod
+                and HospitalLocation.locationPeriod starts 1 day or less after or on day of
+                end of "Total Hip Total Knee Principal Procedure"(Encounter).relevantPeriod
+                and HospitalLocation.locationPeriod during Encounter.relevantPeriod
+                sort by start of locationPeriod
+                )
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="Encounter" id="uSvNGYG7u8g7dixG" qdmDataType="Encounter, Performed"
+                          type="QDM Datatype"/>
+            </arguments>
+        </function>
+    </functions>
+    <includeLibrarys>
+        <includeLibrary cqlLibRefId="40280382603bb1780160e4c3f7052c06" cqlLibRefName="MATGlobalCommonFunctions"
+                        cqlVersion="2.0.000" id="e196d44c-1e80-42cf-b887-73bdb86d3640" name="Global" qdmVersion="5.3"/>
+    </includeLibrarys>
+</cqlLookUp>

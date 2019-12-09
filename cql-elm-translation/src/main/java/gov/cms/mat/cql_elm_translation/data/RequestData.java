@@ -1,7 +1,6 @@
 package gov.cms.mat.cql_elm_translation.data;
 
 import lombok.Builder;
-import org.apache.commons.lang3.StringUtils;
 import org.cqframework.cql.cql2elm.LibraryBuilder;
 
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -13,7 +12,6 @@ import java.io.InputStream;
 public class RequestData {
     String cqlData;
     LibraryBuilder.SignatureLevel signatures;
-    String restrictDataModel;
     Boolean annotations;
     Boolean locators;
     Boolean disableListDemotion;
@@ -35,12 +33,11 @@ public class RequestData {
         map.add("disable-method-invocation", disableMethodInvocation.toString());
         map.add("validate-units", validateUnits.toString());
 
+        map.add("detailed-errors", Boolean.TRUE.toString());
+
+
         if (signatures != null) {
             map.add("signatures", signatures.name());
-        }
-
-        if (StringUtils.isNotBlank(restrictDataModel)) {
-            map.add("restrict-data-model", restrictDataModel);
         }
 
         return map;

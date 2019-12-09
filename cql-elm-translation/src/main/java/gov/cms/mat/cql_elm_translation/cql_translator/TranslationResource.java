@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TranslationResource {
-    public static final String ELM_JSON_TYPE = "application/elm+json";
 
     private static final MultivaluedMap<String, CqlTranslator.Options> PARAMS_TO_OPTIONS_MAP = new MultivaluedHashMap<String, CqlTranslator.Options>() {{
         putSingle("date-range-optimization", CqlTranslator.Options.EnableDateRangeOptimization);
@@ -56,8 +55,6 @@ public class TranslationResource {
     public TranslationResource() {
         this.modelManager = new ModelManager();
         this.libraryManager = new LibraryManager(modelManager);
-
-
     }
 
     public CqlTranslator buildTranslator(InputStream cqlStream, MultivaluedMap<String, String> params) {
@@ -65,24 +62,21 @@ public class TranslationResource {
             UcumService ucumService = null;
             LibraryBuilder.SignatureLevel signatureLevel = LibraryBuilder.SignatureLevel.None;
             List<CqlTranslator.Options> optionsList = new ArrayList<>();
+
             for (String key : params.keySet()) {
                 if (PARAMS_TO_OPTIONS_MAP.containsKey(key) && Boolean.parseBoolean(params.getFirst(key))) {
                     optionsList.addAll(PARAMS_TO_OPTIONS_MAP.get(key));
                 } else if (key.equals("validate-units") && Boolean.parseBoolean(params.getFirst(key))) {
-                    try {
-                        ucumService = new UcumEssenceService(UcumEssenceService.class.getResourceAsStream("/ucum-essence.xml"));
-                    } catch (UcumException e) {
-                        throw new TranslationFailureException("Cannot load UCUM service to validate units");
-                    }
+                    ucumService = getUcumService();
                 } else if (key.equals("signatures")) {
                     signatureLevel = LibraryBuilder.SignatureLevel.valueOf(params.getFirst("signatures"));
                 }
             }
 
-            CqlTranslator.Options[] options = optionsList.toArray(new CqlTranslator.Options[optionsList.size()]);
-
+            CqlTranslator.Options[] options = optionsList.toArray(new CqlTranslator.Options[0]);
 
             libraryManager.getLibrarySourceLoader().registerProvider(new FhirLibrarySourceProvider());
+
             return CqlTranslator.fromStream(cqlStream,
                     modelManager,
                     libraryManager,
@@ -93,6 +87,14 @@ public class TranslationResource {
 
         } catch (IOException e) {
             throw new TranslationFailureException("Unable to read request");
+        }
+    }
+
+    public UcumService getUcumService() {
+        try {
+            return new UcumEssenceService(UcumEssenceService.class.getResourceAsStream("/ucum-essence.xml"));
+        } catch (UcumException e) {
+            throw new TranslationFailureException("Cannot load UCUM service to validate units");
         }
     }
 }
