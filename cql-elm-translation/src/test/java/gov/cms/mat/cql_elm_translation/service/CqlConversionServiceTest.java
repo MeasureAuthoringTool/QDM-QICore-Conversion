@@ -143,8 +143,7 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     }
 
     private String getJson() {
-        RequestData requestData = buildRequestData();
-        CqlTranslator cqlTranslator = cqlConversionService.processCqlData(requestData);
+        CqlTranslator cqlTranslator = buildCqlTranslator();
 
         assertTrue(cqlTranslator.getErrors().isEmpty());
 
