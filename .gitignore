@@ -27,6 +27,7 @@ hs_err_pid*
 /mat-server-commons/target/
 /vsac-mat-conversion/target/
 /qdm-qicore-mapping-services/target/
+/cql-translation-service/target/
 
 .idea
 /cql-elm-translation/.mvn/
