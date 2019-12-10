@@ -46,7 +46,7 @@ public class MatXmlProcessor {
     }
 
     byte[] getSimpleXml(Measure measure) {
-        Optional<MeasureExport> optionalMeasureExport = measureExportRepo.findByMeasureId(measure);
+        Optional<MeasureExport> optionalMeasureExport = measureExportRepo.findByMeasureId(measure.getId());
         return processBytes(optionalMeasureExport);
     }
 

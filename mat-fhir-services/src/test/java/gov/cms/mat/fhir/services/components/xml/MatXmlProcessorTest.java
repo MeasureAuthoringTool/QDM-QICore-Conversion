@@ -39,6 +39,7 @@ class MatXmlProcessorTest {
     @BeforeEach
     void setUP() {
         measure = new Measure();
+        measure.setId(ID);
     }
 
     @Test
@@ -57,13 +58,13 @@ class MatXmlProcessorTest {
         MeasureExport measureExport = new MeasureExport();
         measureExport.setSimpleXml(XML_BYTES);
 
-        when(measureExportRepo.findByMeasureId(measure)).thenReturn(Optional.of(measureExport));
+        when(measureExportRepo.findByMeasureId(measure.getId())).thenReturn(Optional.of(measureExport));
 
         byte[] xmlBytes = matXmlProcessor.getXmlById(ID, XmlSource.SIMPLE);
         assertEquals(XML_BYTES, xmlBytes);
 
         verify(measureRepository).findById(ID);
-        verify(measureExportRepo).findByMeasureId(measure);
+        verify(measureExportRepo).findByMeasureId(measure.getId());
         verifyNoInteractions(measureXmlRepository);
     }
 
@@ -86,11 +87,11 @@ class MatXmlProcessorTest {
 
     @Test
     void getSimpleXml_Empty() {
-        when(measureExportRepo.findByMeasureId(measure)).thenReturn(Optional.empty());
+        when(measureExportRepo.findByMeasureId(measure.getId())).thenReturn(Optional.empty());
 
         assertNull(matXmlProcessor.getSimpleXml(measure));
 
-        verify(measureExportRepo).findByMeasureId(measure);
+        verify(measureExportRepo).findByMeasureId(measure.getId());
         verifyNoInteractions(measureXmlRepository, measureRepository);
     }
 
@@ -99,12 +100,12 @@ class MatXmlProcessorTest {
         MeasureExport measureExport = new MeasureExport();
         measureExport.setSimpleXml(XML_BYTES);
 
-        when(measureExportRepo.findByMeasureId(measure)).thenReturn(Optional.of(measureExport));
+        when(measureExportRepo.findByMeasureId(measure.getId())).thenReturn(Optional.of(measureExport));
 
         byte[] xmlBytes = matXmlProcessor.getSimpleXml(measure);
         assertEquals(XML_BYTES, xmlBytes);
 
-        verify(measureExportRepo).findByMeasureId(measure);
+        verify(measureExportRepo).findByMeasureId(measure.getId());
         verifyNoInteractions(measureXmlRepository, measureRepository);
     }
 
