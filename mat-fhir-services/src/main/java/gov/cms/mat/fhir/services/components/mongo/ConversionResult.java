@@ -29,8 +29,11 @@ public class ConversionResult {
     private List<ValueSetResult> valueSetResults = new ArrayList<>();
 
     private List<MeasureResult> measureResults = new ArrayList<>();
-    
+
     private List<LibraryResult> libraryResults = new ArrayList<>();
+
+    private CqlConversionResult cqlConversionResult;
+
 
     @NotBlank
     @Indexed(unique = true)
@@ -50,12 +53,18 @@ public class ConversionResult {
         String oid;
         String reason;
     }
-    
+
     @Data
     @Builder
     public static class LibraryResult {
         String field;
         String destination;
         String reason;
+    }
+
+    @Data
+    public static class CqlConversionResult {
+        Boolean result;
+        List<String> errors;
     }
 }

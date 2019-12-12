@@ -75,7 +75,7 @@ public class TranslationResource {
 
             CqlTranslator.Options[] options = optionsList.toArray(new CqlTranslator.Options[0]);
 
-            libraryManager.getLibrarySourceLoader().registerProvider(new FhirLibrarySourceProvider());
+            libraryManager.getLibrarySourceLoader().registerProvider(new MatLibrarySourceProvider());
 
             return CqlTranslator.fromStream(cqlStream,
                     modelManager,

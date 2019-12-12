@@ -40,3 +40,11 @@ qdmqicore:
   conversion:
     baseurl: http://localhost:9090
 
+cql:
+  conversion:
+    baseurl: http://localhost:7070
+
+measures:
+  allowed:
+    versions: v5.5,v5.6,v5.7,v5.8
+

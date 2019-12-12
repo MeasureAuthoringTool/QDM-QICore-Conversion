@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFound;
+import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import gov.cms.mat.fhir.services.service.support.ConversionMapping;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class ConversionResultProcessorService {
         if (optional.isPresent()) {
             return buildDto(optional.get());
         } else {
-            throw new ConversionResultsNotFound(measureId);
+            throw new ConversionResultsNotFoundException(measureId);
         }
     }
 

@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFound;
+import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.QdmQiCoreDataException;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.junit.jupiter.api.Assertions;
@@ -81,8 +81,8 @@ class ConversionResultProcessorServiceTest {
     void processSearchData_NotFound() {
         when(conversionResultsService.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
 
-        ConversionResultsNotFound thrown =
-                Assertions.assertThrows(ConversionResultsNotFound.class, () -> {
+        ConversionResultsNotFoundException thrown =
+                Assertions.assertThrows(ConversionResultsNotFoundException.class, () -> {
                     conversionResultProcessorService.process(MEASURE_ID);
                 });
 

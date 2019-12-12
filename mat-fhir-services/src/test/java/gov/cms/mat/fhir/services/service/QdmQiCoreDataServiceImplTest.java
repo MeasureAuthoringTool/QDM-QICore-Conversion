@@ -24,7 +24,7 @@ class QdmQiCoreDataServiceImplTest {
     private RestTemplate restTemplate;
 
     @InjectMocks
-    private QdmQiCoreDataServiceImpl qdmQiCoreDataService;
+    private QdmQiCoreDataService qdmQiCoreDataService;
 
     @BeforeEach
     void setUp() {

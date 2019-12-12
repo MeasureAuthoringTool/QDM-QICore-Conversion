@@ -13,13 +13,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.ValueSet;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +28,9 @@ import java.util.Optional;
 @Tag(name = "ValueSet-Controller", description = "API for converting MAT ValueSets to FHIR.")
 @Slf4j
 public class ValueSetController {
-    static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
+
+    @Value("#{'${measures.allowed.versions}'.split(',')}")
+    private List<String> allowedVersions;
 
     private static final String TRANSLATE_SUCCESS_MESSAGE = "Read %d Measure Export objects converted %d " +
             "Value sets to fhir in %d seconds";
@@ -85,7 +87,7 @@ public class ValueSetController {
     private int processMeasureExport(XmlSource xmlSource) {
         List<ValueSet> outcomes = new ArrayList<>();
 
-        List<MeasureVersionExportId> idsAndVersion = measureExportRepository.getAllExportIdsAndVersion(ALLOWED_VERSIONS);
+        List<MeasureVersionExportId> idsAndVersion = measureExportRepository.getAllExportIdsAndVersion(allowedVersions);
         int measureExportCount = idsAndVersion.size();
 
         idsAndVersion.stream()

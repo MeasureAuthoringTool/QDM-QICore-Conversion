@@ -23,7 +23,7 @@ public class CqlConversionController {
         this.matXmlConversionService = matXmlConversionService;
     }
 
-    @PostMapping(path = "/cql", consumes = "text/plain", produces = "application/elm+json")
+    @PutMapping(path = "/cql", consumes = "text/plain", produces = "application/elm+json")
     public String cqlToElmJson(
             @RequestBody String cqlData,
             @RequestParam(required = false) LibraryBuilder.SignatureLevel signatures,
@@ -49,7 +49,7 @@ public class CqlConversionController {
         return cqlTranslator.toJson();
     }
 
-    @PostMapping(path = "/xml", consumes = "text/plain", produces = "application/elm+json")
+    @PutMapping(path = "/xml", consumes = "text/plain", produces = "application/elm+json")
     public String xmlToElmJson(
             @RequestBody String xml,
             @RequestParam(required = false) LibraryBuilder.SignatureLevel signatures,

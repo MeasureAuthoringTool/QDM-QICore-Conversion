@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.components.mongo;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class ConversionResultsService {
         conversionResult.getMeasureResults().add(result);
         return conversionResultRepository.save(conversionResult);
     }
-    
+
     ConversionResult addLibraryResult(String measureId, ConversionResult.LibraryResult result) {
         ConversionResult conversionResult = findOrCreate(measureId);
         conversionResult.getLibraryResults().add(result);
@@ -40,7 +41,7 @@ public class ConversionResultsService {
         return conversionResultRepository.findAll(Sort.by(Sort.Direction.DESC, "modified"));
     }
 
-    private ConversionResult findOrCreate(String measureId) {
+    private synchronized ConversionResult findOrCreate(String measureId) {
         Optional<ConversionResult> optional = findByMeasureId(measureId);
 
         if (optional.isPresent()) {
@@ -75,7 +76,7 @@ public class ConversionResultsService {
             return null;
         }
     }
-    
+
     ConversionResult clearLibrary(String measureId) {
         Optional<ConversionResult> optional = findByMeasureId(measureId);
 
@@ -87,5 +88,48 @@ public class ConversionResultsService {
             return null;
         }
     }
-    
+
+    ConversionResult clearCqlConversionResult(String measureId) {
+        Optional<ConversionResult> optional = findByMeasureId(measureId);
+
+        if (optional.isPresent()) {
+            ConversionResult conversionResult = optional.get();
+
+            conversionResult.setCqlConversionResult(null);
+
+            return conversionResultRepository.save(conversionResult);
+        } else {
+            return null;
+        }
+    }
+
+    public ConversionResult addCqlConversionResultSuccess(String measureId) {
+        ConversionResult conversionResult = findOrCreate(measureId);
+
+        if (conversionResult.getCqlConversionResult() == null) {
+            conversionResult.setCqlConversionResult(new ConversionResult.CqlConversionResult());
+        }
+
+        conversionResult.getCqlConversionResult().setResult(Boolean.TRUE);
+
+        return conversionResultRepository.save(conversionResult);
+
+    }
+
+    public ConversionResult addCqlConversionError(String measureId, String error) {
+        ConversionResult conversionResult = findOrCreate(measureId);
+
+        if (conversionResult.getCqlConversionResult() == null) {
+            conversionResult.setCqlConversionResult(new ConversionResult.CqlConversionResult());
+        }
+
+        if (conversionResult.getCqlConversionResult().getErrors() == null) {
+            conversionResult.getCqlConversionResult().setErrors(new ArrayList<>());
+        }
+
+        conversionResult.getCqlConversionResult().getErrors().add(error);
+        conversionResult.getCqlConversionResult().setResult(Boolean.FALSE);
+
+        return conversionResultRepository.save(conversionResult);
+    }
 }

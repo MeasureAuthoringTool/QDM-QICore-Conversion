@@ -32,7 +32,7 @@ class VsacServiceTest {
     @Mock
     private VsacClient vsacClient;
     @InjectMocks
-    private VsacServiceImpl vsacService;
+    private VsacService vsacService;
 
     @BeforeEach
     void setUp() {
@@ -176,6 +176,4 @@ class VsacServiceTest {
         assertTrue(vsacService.validateUser());
         verify(vsacClient, times(2)).getGrantingTicket(USER_NAME, PASS); // token expired call again
     }
-
-
 }

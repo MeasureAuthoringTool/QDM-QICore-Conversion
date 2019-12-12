@@ -24,43 +24,60 @@ public class ConversionReporter {
             conversionReporter.addMeasureResult(field, destination, reason);
         }
     }
-    
+
     public static void setLibraryResult(String field, String destination, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter != null) {
             conversionReporter.addLibraryResult(field, destination, reason);
         }
-    }    
+    }
+
+    public static void setCqlConversionResultSuccess() {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        conversionReporter.addCqlConversionResultSuccess();
+    }
+
+    public static void setCqlConversionError(String error) {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        conversionReporter.addCqlConversionError(error);
+    }
+
+
+    public static void resetCqlConversionResult() {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        conversionReporter.clearCqlConversionResult();
+    }
 
     public static void resetValueSetResults() {
-        ConversionReporter conversionReporter = getFromThreadLocal();
-
-        if (conversionReporter == null) {
-            throw new ThreadLocalNotFoundException(NOT_FOUND_THREAD_LOCAL_MESSAGE);
-        }
+        ConversionReporter conversionReporter = getConversionReporter();
 
         conversionReporter.clearValueSetResults();
     }
 
     public static void resetMeasure() {
-        ConversionReporter conversionReporter = getFromThreadLocal();
-
-        if (conversionReporter == null) {
-            throw new ThreadLocalNotFoundException(NOT_FOUND_THREAD_LOCAL_MESSAGE);
-        }
+        ConversionReporter conversionReporter = getConversionReporter();
 
         conversionReporter.clearMeasure();
     }
 
     public static void resetLibrary() {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        conversionReporter.clearLibrary();
+    }
+
+    public static ConversionReporter getConversionReporter() {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter == null) {
             throw new ThreadLocalNotFoundException(NOT_FOUND_THREAD_LOCAL_MESSAGE);
         }
 
-        conversionReporter.clearLibrary();
+        return conversionReporter;
     }
 
     
@@ -89,6 +106,7 @@ public class ConversionReporter {
         }
         return conversionReporter;
     }
+
 
     private ConversionResult addValueSetResult(String oid, String reason) {
         ConversionResult.ValueSetResult result = ConversionResult.ValueSetResult.builder()
@@ -129,8 +147,21 @@ public class ConversionReporter {
     private ConversionResult clearMeasure() {
         return conversionResultsService.clearMeasure(measureId);
     }
-    
+
     private ConversionResult clearLibrary() {
         return conversionResultsService.clearLibrary(measureId);
     }
+
+    private ConversionResult clearCqlConversionResult() {
+        return conversionResultsService.clearCqlConversionResult(measureId);
+    }
+
+    private ConversionResult addCqlConversionResultSuccess() {
+        return conversionResultsService.addCqlConversionResultSuccess(measureId);
+    }
+
+    private ConversionResult addCqlConversionError(String error) {
+        return conversionResultsService.addCqlConversionError(measureId, error);
+    }
+
 }
