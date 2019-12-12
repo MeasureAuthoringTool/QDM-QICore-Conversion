@@ -457,7 +457,7 @@ public class Measure implements Serializable {
 
     @Override
     public String toString() {
-        return "gov.cms.mat.qdm.qicore.commons.model.Measure[ id=" + id + " ]";
+        return "gov.cms.mat.fhir.commons.model.Measure[ id=" +id+ " ]";
     }
 
     @XmlTransient

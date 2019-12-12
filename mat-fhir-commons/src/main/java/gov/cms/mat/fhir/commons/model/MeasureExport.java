@@ -165,7 +165,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
 
     @Override
     public String toString() {
-        return "gov.cms.mat.qdm.qicore.commons.model.MeasureExport[ measureExportId=" + measureExportId + " ]";
+        return "gov.cms.mat.fhir.commons.model.MeasureExport[ measureExportId=" +measureExportId + " ]";
     }
 
     @Override

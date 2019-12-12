@@ -5,10 +5,16 @@
  */
 package gov.cms.mat.fhir.services.rest;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.validation.FhirValidator;
+import ca.uhn.fhir.validation.SingleValidationMessage;
+import ca.uhn.fhir.validation.ValidationResult;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
+import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
+import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
@@ -33,6 +39,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
+import org.hl7.fhir.r4.model.OperationOutcome;
 
 @RestController
 @RequestMapping(path = "/measure")
@@ -217,7 +225,72 @@ public class MeasureController {
 
         return res;
     }
+    
+    @Operation(summary = "Validate Measure",
+            description ="Validate a Measure for conformance prior to persisting it to FHIR Resource Server")
+    @PostMapping(path ="/validateMeasure")
+    public FhirResourceValidationResult validateMeasure(
+            @RequestParam("id") String id, 
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
+        OperationOutcome outcome = new OperationOutcome();
+        FhirResourceValidationResult res = new FhirResourceValidationResult();
+        //Don't do conversion reporting
+        try {
+            Measure qdmMeasure = measureRepo.getMeasureById(id);
 
+
+            MeasureExport measureExport = measureExportRepo.getMeasureExportById(id);
+
+            byte[] xmlBytes = findXml(qdmMeasure, xmlSource);
+
+            //human-readable may exist not an error if it doesn't
+            String narrative = "";
+            try {
+                narrative = new String(measureExport.getHumanReadable());
+            } catch (Exception ex) {
+                log.error("Narrative not found: {}", ex.getMessage());
+            }
+
+            ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);
+
+            MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());
+            org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
+
+            if (ArrayUtils.isNotEmpty(xmlBytes)) {
+                String xml = new String(xmlBytes);
+
+                fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(xml));
+                fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
+
+                fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
+                log.debug("Processed");
+            }
+
+            //validate the Measure Resource
+            FhirContext ctx = hapiFhirServer.getCtx();
+            
+            FhirValidator validator = ctx.newValidator();
+            FhirInstanceValidator instanceValidator = new FhirInstanceValidator();
+            validator.registerValidatorModule(instanceValidator);         
+            
+            ValidationResult result = validator.validateWithResult(fhirMeasure);
+            
+            res.setId(id);
+            res.setType("Measure");
+            
+            for (SingleValidationMessage next : result.getMessages()) {
+                FhirResourceValidationError error = new FhirResourceValidationError(next.getSeverity().name(), next.getLocationString(), next.getMessage());
+                res.getErrorList().add(error);
+            }            
+            log.debug("Validated");
+            
+        } catch (Exception ex) {
+            log.debug("Validation of Fhir Measure Failed: {}", ex.getMessage());
+            ex.printStackTrace();
+        }
+        return res;
+    }
+       
     private byte[] findXml(Measure qdmMeasure, XmlSource xmlSource) {
         return matXmlProcessor.getXml(qdmMeasure, xmlSource);
     }
