@@ -39,7 +39,6 @@ public class CqlLibraryVerifyController {
         return cqlLibraryTranslationService.processOne(measureId);
     }
 
-
 }
 
 

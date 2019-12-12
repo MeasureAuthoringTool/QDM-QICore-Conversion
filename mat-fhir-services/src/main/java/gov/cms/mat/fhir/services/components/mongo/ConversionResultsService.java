@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import gov.cms.mat.fhir.services.service.support.CqlConversionError;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -104,11 +105,7 @@ public class ConversionResultsService {
     }
 
     public ConversionResult addCqlConversionResultSuccess(String measureId) {
-        ConversionResult conversionResult = findOrCreate(measureId);
-
-        if (conversionResult.getCqlConversionResult() == null) {
-            conversionResult.setCqlConversionResult(new ConversionResult.CqlConversionResult());
-        }
+        ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
 
         conversionResult.getCqlConversionResult().setResult(Boolean.TRUE);
 
@@ -116,12 +113,17 @@ public class ConversionResultsService {
 
     }
 
-    public ConversionResult addCqlConversionError(String measureId, String error) {
+    public ConversionResult findOrCreateCqlConversionResult(String measureId) {
         ConversionResult conversionResult = findOrCreate(measureId);
 
         if (conversionResult.getCqlConversionResult() == null) {
             conversionResult.setCqlConversionResult(new ConversionResult.CqlConversionResult());
         }
+        return conversionResult;
+    }
+
+    public ConversionResult addCqlConversionErrorMessage(String measureId, String error) {
+        ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
 
         if (conversionResult.getCqlConversionResult().getErrors() == null) {
             conversionResult.getCqlConversionResult().setErrors(new ArrayList<>());
@@ -130,6 +132,21 @@ public class ConversionResultsService {
         conversionResult.getCqlConversionResult().getErrors().add(error);
         conversionResult.getCqlConversionResult().setResult(Boolean.FALSE);
 
+        return conversionResultRepository.save(conversionResult);
+    }
+
+    public ConversionResult addCql(String measureId, String cql) {
+        ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
+
+        conversionResult.getCqlConversionResult().setCql(cql);
+
+        return conversionResultRepository.save(conversionResult);
+    }
+
+    public ConversionResult addCqlConversionErrors(String measureId, List<CqlConversionError> errors) {
+        ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
+        conversionResult.getCqlConversionResult().setCqlConversionErrors(errors);
+        conversionResult.getCqlConversionResult().setResult(Boolean.FALSE);
         return conversionResultRepository.save(conversionResult);
     }
 }

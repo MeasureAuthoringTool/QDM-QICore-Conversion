@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.config;
 
-import gov.cms.mat.fhir.services.service.VsacService;
+import gov.cms.mat.fhir.services.summary.VsacService;
 import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.lang3.StringUtils;

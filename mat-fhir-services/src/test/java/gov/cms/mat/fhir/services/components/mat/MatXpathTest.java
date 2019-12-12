@@ -18,7 +18,7 @@ class MatXpathTest implements ResourceFileUtil {
     @BeforeEach
     void setUp() {
         matXpath = new MatXpath();
-        xml = getXml("/measureExportSimple.xml");
+        xml = getStringFromResource("/measureExportSimple.xml");
 
         String expectedBaseXmlBeforeXpath = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<measure>";
         assertTrue(xml.startsWith(expectedBaseXmlBeforeXpath));

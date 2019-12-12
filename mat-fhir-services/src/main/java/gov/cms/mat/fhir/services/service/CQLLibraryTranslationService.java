@@ -8,13 +8,12 @@ import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.service.support.MessageExtractor;
+import gov.cms.mat.fhir.services.service.support.CqlConversionError;
+import gov.cms.mat.fhir.services.service.support.ElmErrorExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
@@ -67,60 +66,71 @@ public class CQLLibraryTranslationService {
         List<CqlLibrary> cqlLibraries = cqlLibraryRepository.getCqlLibraryByMeasureId(id);
 
         if (cqlLibraries.isEmpty()) {
-            ConversionReporter.setCqlConversionError(NO_LIBRARIES_FOUND);
+            ConversionReporter.setCqlConversionErrorMessage(NO_LIBRARIES_FOUND);
             throw new CqlConversionException(NO_LIBRARIES_FOUND);
         } else {
             if (cqlLibraries.size() > 1) {
                 String message = String.format(TOO_MANY_LIBRARIES_FOUND_TEMPLATE, cqlLibraries.size());
-                ConversionReporter.setCqlConversionError(message);
+                ConversionReporter.setCqlConversionErrorMessage(message);
                 throw new CqlConversionException(message);
             } else {
-                ResponseEntity<String> responseEntity = processCqlLibrary(cqlLibraries.get(0));
+                String cql = convertMatXmlToCql(cqlLibraries.get(0).getCqlXml());
+                ConversionReporter.setCql(cql);
 
-                if (responseEntity != null) {
-                    ConversionReporter.setCqlConversionResultSuccess();
-                    return responseEntity.getBody();
-                } else {
-                    throw new CqlConversionException("Response entity is null");
-                }
+                String json = convertCqlToJson(cql);
+
+                processJsonForError(json);
+                ConversionReporter.setCqlConversionResultSuccess();
+
+                return json;
             }
         }
     }
 
-    private ResponseEntity<String> processCqlLibrary(CqlLibrary c) {
-        if (StringUtils.isEmpty(c.getCqlXml())) {
-            ConversionReporter.setCqlConversionError("CqlXml is missing");
-            return null;
+    private void processJsonForError(String json) {
+        ElmErrorExtractor extractor = new ElmErrorExtractor(json);
+        List<CqlConversionError> errors = extractor.parse();
+
+        if (errors.isEmpty()) {
+            ConversionReporter.setCqlConversionResultSuccess();
         } else {
-            return convertCqlLibrary(c.getCqlXml());
+            ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + errors.size() + " errors.");
+            ConversionReporter.setCqlConversionErrors(errors);
         }
     }
 
-
-    //"{"timestamp":"2019-12-11T19:32:47.511+0000","status":422,"error":"Unprocessable Entity","message":"ErrorSeverity: Error, Message: Could not load source for library MATGlobalCommonFunctions, version 4.0.000.,/nErrorSeverity: Error, Message: Could not resolve library name Global.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.GreaterOrEqual.,/nErrorSeverity: Error, Message: Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.,/nErrorSeverity: Error, Message: org.hl7.elm.r1.Null cannot be cast to org.hl7.elm.r1.RelationshipClause,/nErrorSeverity: Error, Message: Could not validate reference to expression Hospital Based Encounter with Age Greater than or Equal to 18 because its definition contains errors.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.IncludedIn.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Overlaps.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Or.,/nErrorSeverity: Error, Message: Could not validate reference to expression Hospital Based Encounter with Age Greater than or Equal to 18 because its definition contains errors.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.IncludedIn.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Overlaps.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Or.,/nErrorSeverity: Error, Message: Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.,/nErrorSeverity: Error, Message: org.hl7.elm.r1.Null cannot be cast to org.hl7.elm.r1.RelationshipClause,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Exists.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Or.,/nErrorSeverity: Error, Message: Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.,/nErrorSeverity: Error, Message: org.hl7.elm.r1.Null cannot be cast to org.hl7.elm.r1.RelationshipClause,/nErrorSeverity: Error, Message: Could not validate reference to expression Encounters with Active Opioids or Benzodiazepines because its definition contains errors.,/nErrorSeverity: Error, Message: Could not validate reference to expression Hospital Based Encounter with Age Greater than or Equal to 18 because its definition contains errors.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.IncludedIn.,/nErrorSeverity: Error, Message: Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.,/nErrorSeverity: Error, Message: org.hl7.elm.r1.Null cannot be cast to org.hl7.elm.r1.RelationshipClause,/nErrorSeverity: Error, Message: Could not validate reference to expression Hospital Based Encounter with Age Greater than or Equal to 18 because its definition contains errors.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.IncludedIn.,/nErrorSeverity: Error, Message: Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.,/nErrorSeverity: Error, Message: org.hl7.elm.r1.Null cannot be cast to org.hl7.elm.r1.RelationshipClause,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Union.,/nErrorSeverity: Error, Message: Could not validate reference to expression Encounter Discharges with Opioids or Benzodiazepines because its definition contains errors.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Union.,/nErrorSeverity: Error, Message: Could not validate reference to expression Initial Population because its definition contains errors.,/nErrorSeverity: Error, Message: Could not validate reference to expression Hospital Based Encounter with Age Greater than or Equal to 18 because its definition contains errors.,/nErrorSeverity: Error, Message: Could not validate reference to expression Hospital Based Encounter with Age Greater than or Equal to 18 because its definition contains errors.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.OverlapsAfter.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.OverlapsAfter.,/nErrorSeverity: Error, Message: Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.And.,/nErrorSeverity: Error, Message: Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.,/nErrorSeverity: Error, Message: org.hl7.elm.r1.Null cannot be cast to org.hl7.elm.r1.RelationshipClause,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Union.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Union.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Union.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Union.,/nErrorSeverity: Error, Message: Could not validate reference to expression Combination of Opiates and Benzodiazepines at Discharge because its definition contains errors.,/nErrorSeverity: Error, Message: Member authorDatetime not found for type null.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.IncludedIn.,/nErrorSeverity: Error, Message: Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.,/nErrorSeverity: Error, Message: org.hl7.elm.r1.Null cannot be cast to org.hl7.elm.r1.RelationshipClause,/nErrorSeverity: Error, Message: Could not validate reference to expression Hospital Based Encounter with Age Greater than or Equal to 18 because its definition contains errors.,/nErrorSeverity: Error, Message: Could not validate reference to expression Combination of Opiates and Benzodiazepines at Discharge because its definition contains errors.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Overlaps.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Member relevantPeriod not found for type null.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.OverlapsAfter.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Or.,/nErrorSeverity: Error, Message: Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.,/nErrorSeverity: Error, Message: org.hl7.elm.r1.Null cannot be cast to org.hl7.elm.r1.RelationshipClause,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Union.,/nErrorSeverity: Error, Message: Could not validate reference to expression Opiates and Benzodiazepines at Discharge because its definition contains errors.,/nErrorSeverity: Error, Message: Could not determine signature for invocation of operator System.Union.","path":"/cql/translator/xml"}"
-
-    private ResponseEntity<String> convertCqlLibrary(String cqlXml) {
-        try {
-            return cqlConversionClient.getData(cqlXml);
-        } catch (HttpClientErrorException e) {
-            String body = e.getResponseBodyAsString();
-            String message = new MessageExtractor(body).parse();
-
-            if (StringUtils.isEmpty(body)) {
-                ConversionReporter.setCqlConversionError("Error did not contain a body");
-            } else {
-                if (e.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
-                    List<String> messages = new MessageExtractor(body).parseMany();
-                    messages.forEach(ConversionReporter::setCqlConversionError);
-                } else {
-
-                    ConversionReporter.setCqlConversionError(e.getStatusCode() + " - " + message);
-                }
-            }
-
+    private String convertMatXmlToCql(String cqlXml) {
+        if (StringUtils.isEmpty(cqlXml)) {
+            String message = "CqlXml is missing";
+            ConversionReporter.setCqlConversionErrorMessage(message);
             throw new CqlConversionException(message);
+        } else {
+            return convertToCql(cqlXml);
         }
     }
+
+
+    private String convertToCql(String xml) {
+        try {
+            ResponseEntity<String> entity = cqlConversionClient.getCql(xml);
+            return entity.getBody();
+        } catch (Exception e) {
+            log.trace(xml);
+            throw new CqlConversionException("Cannot convert xml to cql.", e);
+        }
+    }
+
+
+    private String convertCqlToJson(String cql) {
+        try {
+            ResponseEntity<String> entity = cqlConversionClient.getJson(cql);
+            return entity.getBody();
+        } catch (Exception e) {
+            log.trace(cql);
+            throw new CqlConversionException("Cannot convert cql to json.", e);
+        }
+    }
+
 
     public String processOne(String measureId) {
         Measure measure = measureService.findOneValid(measureId);

@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.service;
+package gov.cms.mat.fhir.services.summary;
 
 import gov.cms.mat.fhir.services.components.vsac.VsacClient;
 import gov.cms.mat.fhir.services.components.vsac.VsacConverter;

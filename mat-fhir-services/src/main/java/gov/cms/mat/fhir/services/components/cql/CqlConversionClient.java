@@ -17,30 +17,49 @@ public class CqlConversionClient {
     @Value("${cql.conversion.baseurl}")
     private String baseURL;
 
-
     public CqlConversionClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    public ResponseEntity<String> getData(String xml) {
-        RequestEntity<String> requestEntity = buildRequestEntity(xml);
-        log.debug("requestEntity: {}", requestEntity.getUrl());
+    public ResponseEntity<String> getJson(String cql) {
+        RequestEntity<String> requestEntity = buildConvertCqlToJsonRequestEntity(cql);
+        log.trace("PUT-JSON requestEntity: {}", requestEntity.getUrl());
 
         return restTemplate.exchange(requestEntity, String.class);
     }
 
-    public RequestEntity<String> buildRequestEntity(String xml) {
+    public ResponseEntity<String> getCql(String cqlXml) {
+        RequestEntity<String> requestEntity = buildConvertXmlRequestEntity(cqlXml);
+        log.debug("PUT-CQL requestEntity: {}", requestEntity.getUrl());
+
+        return restTemplate.exchange(requestEntity, String.class);
+    }
+
+    public RequestEntity<String> buildConvertCqlToJsonRequestEntity(String xml) {
         return RequestEntity
-                .put(buildUri())
-                //.accept(MediaType.TEXT_PLAIN)
+                .put(buildUriJson())
                 .body(xml);
     }
 
-    private URI buildUri() {
+    private URI buildUriJson() {
         return UriComponentsBuilder
-                .fromHttpUrl(baseURL + "/cql/translator/xml")
+                .fromHttpUrl(baseURL + "/cql/translator/cql")
                 .build()
                 .encode()
                 .toUri();
+    }
+
+    private URI buildUriCql() {
+        return UriComponentsBuilder
+                .fromHttpUrl(baseURL + "/cql/marshaller")
+                .build()
+                .encode()
+                .toUri();
+    }
+
+    public RequestEntity<String> buildConvertXmlRequestEntity(String cqlXml) {
+        return RequestEntity
+                .put(buildUriCql())
+                .body(cqlXml);
     }
 }

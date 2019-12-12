@@ -6,7 +6,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 
 public interface ResourceFileUtil {
-    default String getXml(String resource) {
+    default String getStringFromResource(String resource) {
         File inputXmlFile = new File(this.getClass().getResource(resource).getFile());
 
         try {

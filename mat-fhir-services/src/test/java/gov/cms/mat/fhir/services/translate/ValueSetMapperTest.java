@@ -3,7 +3,7 @@ package gov.cms.mat.fhir.services.translate;
 import ca.uhn.fhir.context.FhirContext;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import gov.cms.mat.fhir.services.service.VsacService;
+import gov.cms.mat.fhir.services.summary.VsacService;
 import mat.model.MatConcept;
 import mat.model.MatConceptList;
 import mat.model.MatValueSet;

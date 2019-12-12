@@ -1,0 +1,3373 @@
+{
+  "library": {
+    "annotation": [
+      {
+        "startLine": 5,
+        "startChar": 1,
+        "endLine": 5,
+        "endChar": 51,
+        "message": "Could not load source for library NCQA_Common, version 5.1.000.",
+        "errorType": "include",
+        "errorSeverity": "error",
+        "targetIncludeLibraryId": "NCQA_Common",
+        "targetIncludeLibraryVersionId": "5.1.000",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 114,
+        "startChar": 22,
+        "endLine": 115,
+        "endChar": 37,
+        "message": "Could not resolve library name Common.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 114,
+        "startChar": 15,
+        "endLine": 115,
+        "endChar": 43,
+        "message": "Could not determine signature for invocation of operator System.GreaterOrEqual.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 114,
+        "startChar": 9,
+        "endLine": 115,
+        "endChar": 43,
+        "message": "Expected an expression of type 'System.Boolean', but found an expression of type '<unknown>'.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 60,
+        "startChar": 10,
+        "endLine": 61,
+        "endChar": 57,
+        "message": "Could not resolve library name Common.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 117,
+        "startChar": 9,
+        "endLine": 117,
+        "endChar": 46,
+        "message": "Could not validate reference to expression Enrolled During Participation Period because its definition contains errors.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 112,
+        "startChar": 3,
+        "endLine": 117,
+        "endChar": 46,
+        "message": "Could not determine signature for invocation of operator System.And.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 51,
+        "startChar": 3,
+        "endLine": 51,
+        "endChar": 22,
+        "message": "Could not validate reference to expression Initial Population because its definition contains errors.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 120,
+        "startChar": 17,
+        "endLine": 120,
+        "endChar": 51,
+        "message": "Could not resolve library name Common.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 120,
+        "startChar": 3,
+        "endLine": 120,
+        "endChar": 51,
+        "message": "Could not determine signature for invocation of operator System.Exists.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 120,
+        "startChar": 3,
+        "endLine": 121,
+        "endChar": 34,
+        "message": "Could not determine signature for invocation of operator System.Or.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 120,
+        "startChar": 3,
+        "endLine": 122,
+        "endChar": 30,
+        "message": "Could not determine signature for invocation of operator System.Or.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 120,
+        "startChar": 3,
+        "endLine": 123,
+        "endChar": 37,
+        "message": "Could not determine signature for invocation of operator System.Or.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 120,
+        "startChar": 3,
+        "endLine": 124,
+        "endChar": 51,
+        "message": "Could not determine signature for invocation of operator System.Or.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      },
+      {
+        "startLine": 120,
+        "startChar": 3,
+        "endLine": 125,
+        "endChar": 27,
+        "message": "Could not determine signature for invocation of operator System.Or.",
+        "errorType": "semantic",
+        "errorSeverity": "error",
+        "type": "CqlToElmError"
+      }
+    ],
+    "identifier": {
+      "id": "PSA_HEDIS_2020",
+      "version": "1.1.000"
+    },
+    "schemaIdentifier": {
+      "id": "urn:hl7-org:elm",
+      "version": "r1"
+    },
+    "usings": {
+      "def": [
+        {
+          "localIdentifier": "System",
+          "uri": "urn:hl7-org:elm-types:r1"
+        },
+        {
+          "localId": "1",
+          "locator": "3:1-3:23",
+          "localIdentifier": "QDM",
+          "uri": "urn:healthit-gov:qdm:v5_5",
+          "version": "5.5"
+        }
+      ]
+    },
+    "includes": {
+      "def": [
+        {
+          "localIdentifier": "Common",
+          "path": "NCQA_Common",
+          "version": "5.1.000"
+        }
+      ]
+    },
+    "parameters": {
+      "def": [
+        {
+          "localId": "23",
+          "locator": "27:1-27:49",
+          "name": "Measurement Period",
+          "accessLevel": "Public",
+          "parameterTypeSpecifier": {
+            "localId": "22",
+            "locator": "27:32-27:49",
+            "type": "IntervalTypeSpecifier",
+            "pointType": {
+              "localId": "21",
+              "locator": "27:41-27:48",
+              "name": "{urn:hl7-org:elm-types:r1}DateTime",
+              "type": "NamedTypeSpecifier"
+            }
+          }
+        },
+        {
+          "localId": "25",
+          "locator": "28:1-28:31",
+          "name": "Product Line",
+          "accessLevel": "Public",
+          "parameterTypeSpecifier": {
+            "localId": "24",
+            "locator": "28:26-28:31",
+            "name": "{urn:hl7-org:elm-types:r1}String",
+            "type": "NamedTypeSpecifier"
+          }
+        }
+      ]
+    },
+    "codeSystems": {
+      "def": [
+        {
+          "localId": "2",
+          "locator": "7:1-7:51",
+          "name": "LOINC",
+          "id": "urn:oid:2.16.840.1.113883.6.1",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "3",
+          "locator": "8:1-8:66",
+          "name": "AdministrativeGender",
+          "id": "urn:oid:2.16.840.1.113883.5.1",
+          "accessLevel": "Public"
+        }
+      ]
+    },
+    "valueSets": {
+      "def": [
+        {
+          "localId": "4",
+          "locator": "10:1-10:73",
+          "name": "5 ARI Medications",
+          "id": "urn:oid:2.16.840.1.113883.3.464.1004.1739",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "5",
+          "locator": "11:1-11:91",
+          "name": "Abnormal PSA Test Result or Finding",
+          "id": "urn:oid:2.16.840.1.113883.3.464.1004.1962",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "6",
+          "locator": "12:1-12:58",
+          "name": "Ethnicity",
+          "id": "urn:oid:2.16.840.1.114222.4.11.837",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "7",
+          "locator": "13:1-13:73",
+          "name": "Hospice Encounter",
+          "id": "urn:oid:2.16.840.1.113883.3.464.1004.1761",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "8",
+          "locator": "14:1-14:76",
+          "name": "Hospice Intervention",
+          "id": "urn:oid:2.16.840.1.113883.3.464.1004.1762",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "9",
+          "locator": "15:1-15:68",
+          "name": "ONC Administrative Sex",
+          "id": "urn:oid:2.16.840.1.113762.1.4.1",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "10",
+          "locator": "16:1-16:55",
+          "name": "Payer",
+          "id": "urn:oid:2.16.840.1.114222.4.11.3591",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "11",
+          "locator": "17:1-17:71",
+          "name": "Prostate Cancer",
+          "id": "urn:oid:2.16.840.1.113883.3.464.1004.1312",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "12",
+          "locator": "18:1-18:74",
+          "name": "Prostate Dysplasia",
+          "id": "urn:oid:2.16.840.1.113883.3.464.1004.1313",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "13",
+          "locator": "19:1-19:68",
+          "name": "PSA Lab Test",
+          "id": "urn:oid:2.16.840.1.113883.3.464.1004.1783",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "14",
+          "locator": "20:1-20:78",
+          "name": "PSA Lab Test Exclusion",
+          "id": "urn:oid:2.16.840.1.113883.3.464.1004.1963",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "15",
+          "locator": "21:1-21:82",
+          "name": "PSA Test Result or Finding",
+          "id": "urn:oid:2.16.840.1.113883.3.464.1004.1784",
+          "accessLevel": "Public"
+        },
+        {
+          "localId": "16",
+          "locator": "22:1-22:53",
+          "name": "Race",
+          "id": "urn:oid:2.16.840.1.114222.4.11.836",
+          "accessLevel": "Public"
+        }
+      ]
+    },
+    "codes": {
+      "def": [
+        {
+          "localId": "18",
+          "locator": "24:1-24:62",
+          "name": "Birth date",
+          "id": "21112-8",
+          "display": "Birth date",
+          "accessLevel": "Public",
+          "codeSystem": {
+            "localId": "17",
+            "locator": "24:35-24:41",
+            "name": "LOINC"
+          }
+        },
+        {
+          "localId": "20",
+          "locator": "25:1-25:59",
+          "name": "Male",
+          "id": "M",
+          "display": "Male",
+          "accessLevel": "Public",
+          "codeSystem": {
+            "localId": "19",
+            "locator": "25:23-25:44",
+            "name": "AdministrativeGender"
+          }
+        }
+      ]
+    },
+    "statements": {
+      "def": [
+        {
+          "locator": "30:1-30:15",
+          "name": "Patient",
+          "context": "Patient",
+          "expression": {
+            "type": "SingletonFrom",
+            "operand": {
+              "locator": "30:1-30:15",
+              "dataType": "{urn:healthit-gov:qdm:v5_5}Patient",
+              "templateId": "Patient",
+              "type": "Retrieve"
+            }
+          }
+        },
+        {
+          "localId": "27",
+          "locator": "32:1-33:51",
+          "name": "SDE Ethnicity",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "27",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"SDE Ethnicity\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "26",
+                    "s": [
+                      {
+                        "value": [
+                          "[",
+                          "\"Patient Characteristic Ethnicity\"",
+                          ": "
+                        ]
+                      },
+                      {
+                        "s": [
+                          {
+                            "value": [
+                              "\"Ethnicity\""
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "value": [
+                          "]"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "26",
+            "locator": "33:3-33:51",
+            "dataType": "{urn:healthit-gov:qdm:v5_5}PatientCharacteristicEthnicity",
+            "codeProperty": "code",
+            "type": "Retrieve",
+            "codes": {
+              "locator": "33:40-33:50",
+              "name": "Ethnicity",
+              "type": "ValueSetRef"
+            }
+          }
+        },
+        {
+          "localId": "29",
+          "locator": "35:1-36:43",
+          "name": "SDE Payer",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "29",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"SDE Payer\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "28",
+                    "s": [
+                      {
+                        "value": [
+                          "[",
+                          "\"Patient Characteristic Payer\"",
+                          ": "
+                        ]
+                      },
+                      {
+                        "s": [
+                          {
+                            "value": [
+                              "\"Payer\""
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "value": [
+                          "]"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "28",
+            "locator": "36:3-36:43",
+            "dataType": "{urn:healthit-gov:qdm:v5_5}PatientCharacteristicPayer",
+            "codeProperty": "code",
+            "type": "Retrieve",
+            "codes": {
+              "locator": "36:36-36:42",
+              "name": "Payer",
+              "type": "ValueSetRef"
+            }
+          }
+        },
+        {
+          "localId": "31",
+          "locator": "38:1-39:41",
+          "name": "SDE Race",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "31",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"SDE Race\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "30",
+                    "s": [
+                      {
+                        "value": [
+                          "[",
+                          "\"Patient Characteristic Race\"",
+                          ": "
+                        ]
+                      },
+                      {
+                        "s": [
+                          {
+                            "value": [
+                              "\"Race\""
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "value": [
+                          "]"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "30",
+            "locator": "39:3-39:41",
+            "dataType": "{urn:healthit-gov:qdm:v5_5}PatientCharacteristicRace",
+            "codeProperty": "code",
+            "type": "Retrieve",
+            "codes": {
+              "locator": "39:35-39:40",
+              "name": "Race",
+              "type": "ValueSetRef"
+            }
+          }
+        },
+        {
+          "localId": "33",
+          "locator": "41:1-42:58",
+          "name": "SDE Sex",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "33",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"SDE Sex\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "32",
+                    "s": [
+                      {
+                        "value": [
+                          "[",
+                          "\"Patient Characteristic Sex\"",
+                          ": "
+                        ]
+                      },
+                      {
+                        "s": [
+                          {
+                            "value": [
+                              "\"ONC Administrative Sex\""
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "value": [
+                          "]"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "32",
+            "locator": "42:3-42:58",
+            "dataType": "{urn:healthit-gov:qdm:v5_5}PatientCharacteristicSex",
+            "codeProperty": "code",
+            "type": "Retrieve",
+            "codes": {
+              "locator": "42:34-42:57",
+              "name": "ONC Administrative Sex",
+              "type": "ValueSetRef"
+            }
+          }
+        },
+        {
+          "localId": "43",
+          "locator": "44:1-48:3",
+          "name": "Prostate Cancer Diagnosis",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "43",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"Prostate Cancer Diagnosis\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "42",
+                    "s": [
+                      {
+                        "value": [
+                          "exists "
+                        ]
+                      },
+                      {
+                        "r": "41",
+                        "s": [
+                          {
+                            "value": [
+                              "( "
+                            ]
+                          },
+                          {
+                            "r": "41",
+                            "s": [
+                              {
+                                "s": [
+                                  {
+                                    "r": "35",
+                                    "s": [
+                                      {
+                                        "r": "34",
+                                        "s": [
+                                          {
+                                            "r": "34",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "[",
+                                                  "\"Diagnosis\"",
+                                                  ": "
+                                                ]
+                                              },
+                                              {
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "\"Prostate Cancer\""
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "]"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "value": [
+                                          " ",
+                                          "ProstateCancer"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "value": [
+                                  "\n      "
+                                ]
+                              },
+                              {
+                                "r": "40",
+                                "s": [
+                                  {
+                                    "value": [
+                                      "where "
+                                    ]
+                                  },
+                                  {
+                                    "r": "40",
+                                    "s": [
+                                      {
+                                        "r": "37",
+                                        "s": [
+                                          {
+                                            "r": "36",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "ProstateCancer"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              "."
+                                            ]
+                                          },
+                                          {
+                                            "r": "37",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "prevalencePeriod"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "r": "40",
+                                        "value": [
+                                          " ",
+                                          "starts on or before",
+                                          " \n      "
+                                        ]
+                                      },
+                                      {
+                                        "r": "39",
+                                        "s": [
+                                          {
+                                            "value": [
+                                              "end of "
+                                            ]
+                                          },
+                                          {
+                                            "r": "38",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "\"Measurement Period\""
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "value": [
+                              "\n  )"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "42",
+            "locator": "45:3-48:3",
+            "type": "Exists",
+            "operand": {
+              "localId": "41",
+              "locator": "45:10-48:3",
+              "type": "Query",
+              "source": [
+                {
+                  "localId": "35",
+                  "locator": "45:12-45:58",
+                  "alias": "ProstateCancer",
+                  "expression": {
+                    "localId": "34",
+                    "locator": "45:12-45:43",
+                    "dataType": "{urn:healthit-gov:qdm:v5_5}Diagnosis",
+                    "codeProperty": "code",
+                    "type": "Retrieve",
+                    "codes": {
+                      "locator": "45:26-45:42",
+                      "name": "Prostate Cancer",
+                      "type": "ValueSetRef"
+                    }
+                  }
+                }
+              ],
+              "relationship": [],
+              "where": {
+                "localId": "40",
+                "locator": "46:7-47:33",
+                "type": "SameOrBefore",
+                "operand": [
+                  {
+                    "locator": "46:45-46:50",
+                    "type": "Start",
+                    "operand": {
+                      "localId": "37",
+                      "locator": "46:13-46:43",
+                      "path": "prevalencePeriod",
+                      "scope": "ProstateCancer",
+                      "type": "Property"
+                    }
+                  },
+                  {
+                    "localId": "39",
+                    "locator": "47:7-47:33",
+                    "type": "End",
+                    "operand": {
+                      "localId": "38",
+                      "locator": "47:14-47:33",
+                      "name": "Measurement Period",
+                      "type": "ParameterRef"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "localId": "67",
+          "locator": "59:1-61:57",
+          "name": "Enrolled During Participation Period",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "67",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"Enrolled During Participation Period\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "66",
+                    "s": [
+                      {
+                        "r": "60",
+                        "s": [
+                          {
+                            "value": [
+                              "Common"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "value": [
+                          "."
+                        ]
+                      },
+                      {
+                        "r": "66",
+                        "s": [
+                          {
+                            "value": [
+                              "\"Is Enrolled\"",
+                              " ( "
+                            ]
+                          },
+                          {
+                            "r": "61",
+                            "s": [
+                              {
+                                "value": [
+                                  "\"Product Line\""
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "value": [
+                              ", \n  "
+                            ]
+                          },
+                          {
+                            "r": "63",
+                            "s": [
+                              {
+                                "value": [
+                                  "end of "
+                                ]
+                              },
+                              {
+                                "r": "62",
+                                "s": [
+                                  {
+                                    "value": [
+                                      "\"Measurement Period\""
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "value": [
+                              ", "
+                            ]
+                          },
+                          {
+                            "r": "64",
+                            "s": [
+                              {
+                                "value": [
+                                  "\"Measurement Period\""
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "r": "65",
+                            "value": [
+                              ", ",
+                              "45",
+                              " )"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "66",
+            "locator": "60:3-61:57",
+            "type": "Null"
+          }
+        },
+        {
+          "localId": "70",
+          "locator": "111:1-117:46",
+          "name": "Initial Population",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "70",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"Initial Population\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "69",
+                    "s": [
+                      {
+                        "r": "59",
+                        "s": [
+                          {
+                            "r": "45",
+                            "s": [
+                              {
+                                "value": [
+                                  "exists "
+                                ]
+                              },
+                              {
+                                "r": "44",
+                                "s": [
+                                  {
+                                    "value": [
+                                      "[",
+                                      "\"Patient Characteristic Sex\"",
+                                      ": "
+                                    ]
+                                  },
+                                  {
+                                    "s": [
+                                      {
+                                        "value": [
+                                          "\"Male\""
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "value": [
+                                      "]"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "value": [
+                              "\n    and "
+                            ]
+                          },
+                          {
+                            "r": "58",
+                            "s": [
+                              {
+                                "value": [
+                                  "exists "
+                                ]
+                              },
+                              {
+                                "r": "57",
+                                "s": [
+                                  {
+                                    "value": [
+                                      "( "
+                                    ]
+                                  },
+                                  {
+                                    "r": "57",
+                                    "s": [
+                                      {
+                                        "s": [
+                                          {
+                                            "r": "47",
+                                            "s": [
+                                              {
+                                                "r": "46",
+                                                "s": [
+                                                  {
+                                                    "r": "46",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "[",
+                                                          "\"Patient Characteristic Birthdate\"",
+                                                          ": "
+                                                        ]
+                                                      },
+                                                      {
+                                                        "s": [
+                                                          {
+                                                            "value": [
+                                                              "\"Birth date\""
+                                                            ]
+                                                          }
+                                                        ]
+                                                      },
+                                                      {
+                                                        "value": [
+                                                          "]"
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  " ",
+                                                  "BirthDate"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "value": [
+                                          "\n        "
+                                        ]
+                                      },
+                                      {
+                                        "r": "56",
+                                        "s": [
+                                          {
+                                            "value": [
+                                              "where "
+                                            ]
+                                          },
+                                          {
+                                            "r": "55",
+                                            "s": [
+                                              {
+                                                "r": "53",
+                                                "s": [
+                                                  {
+                                                    "r": "48",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "Common"
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "value": [
+                                                      "."
+                                                    ]
+                                                  },
+                                                  {
+                                                    "r": "53",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "\"CalendarAgeInYearsAt\"",
+                                                          " ( "
+                                                        ]
+                                                      },
+                                                      {
+                                                        "r": "50",
+                                                        "s": [
+                                                          {
+                                                            "r": "49",
+                                                            "s": [
+                                                              {
+                                                                "value": [
+                                                                  "BirthDate"
+                                                                ]
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "value": [
+                                                              "."
+                                                            ]
+                                                          },
+                                                          {
+                                                            "r": "50",
+                                                            "s": [
+                                                              {
+                                                                "value": [
+                                                                  "birthDatetime"
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      },
+                                                      {
+                                                        "value": [
+                                                          ", \n        "
+                                                        ]
+                                                      },
+                                                      {
+                                                        "r": "52",
+                                                        "s": [
+                                                          {
+                                                            "value": [
+                                                              "end of "
+                                                            ]
+                                                          },
+                                                          {
+                                                            "r": "51",
+                                                            "s": [
+                                                              {
+                                                                "value": [
+                                                                  "\"Measurement Period\""
+                                                                ]
+                                                              }
+                                                            ]
+                                                          }
+                                                        ]
+                                                      },
+                                                      {
+                                                        "value": [
+                                                          " )"
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "r": "54",
+                                                "value": [
+                                                  " ",
+                                                  ">=",
+                                                  " ",
+                                                  "70"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "value": [
+                                      "\n    )"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "value": [
+                          "\n    and "
+                        ]
+                      },
+                      {
+                        "r": "68",
+                        "s": [
+                          {
+                            "value": [
+                              "\"Enrolled During Participation Period\""
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "69",
+            "locator": "112:3-117:46",
+            "type": "Null"
+          }
+        },
+        {
+          "localId": "72",
+          "locator": "50:1-51:22",
+          "name": "Denominator",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "72",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"Denominator\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "71",
+                    "s": [
+                      {
+                        "value": [
+                          "\"Initial Population\""
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "71",
+            "locator": "51:3-51:22",
+            "type": "Null"
+          }
+        },
+        {
+          "localId": "87",
+          "locator": "53:1-57:3",
+          "name": "Dysplasia of Prostate",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "87",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"Dysplasia of Prostate\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "86",
+                    "s": [
+                      {
+                        "value": [
+                          "exists "
+                        ]
+                      },
+                      {
+                        "r": "85",
+                        "s": [
+                          {
+                            "value": [
+                              "( "
+                            ]
+                          },
+                          {
+                            "r": "85",
+                            "s": [
+                              {
+                                "s": [
+                                  {
+                                    "r": "74",
+                                    "s": [
+                                      {
+                                        "r": "73",
+                                        "s": [
+                                          {
+                                            "r": "73",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "[",
+                                                  "\"Diagnosis\"",
+                                                  ": "
+                                                ]
+                                              },
+                                              {
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "\"Prostate Dysplasia\""
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "]"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "value": [
+                                          " ",
+                                          "DysplasiaProstate"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "value": [
+                                  "\n      "
+                                ]
+                              },
+                              {
+                                "r": "84",
+                                "s": [
+                                  {
+                                    "value": [
+                                      "where "
+                                    ]
+                                  },
+                                  {
+                                    "r": "84",
+                                    "s": [
+                                      {
+                                        "r": "76",
+                                        "s": [
+                                          {
+                                            "r": "75",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "DysplasiaProstate"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              "."
+                                            ]
+                                          },
+                                          {
+                                            "r": "76",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "prevalencePeriod"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "r": "84",
+                                        "value": [
+                                          " ",
+                                          "overlaps",
+                                          " "
+                                        ]
+                                      },
+                                      {
+                                        "r": "83",
+                                        "s": [
+                                          {
+                                            "value": [
+                                              "Interval["
+                                            ]
+                                          },
+                                          {
+                                            "r": "80",
+                                            "s": [
+                                              {
+                                                "r": "78",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "start of "
+                                                    ]
+                                                  },
+                                                  {
+                                                    "r": "77",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "\"Measurement Period\""
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  " - "
+                                                ]
+                                              },
+                                              {
+                                                "r": "79",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "1 ",
+                                                      "year"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              ", \n      "
+                                            ]
+                                          },
+                                          {
+                                            "r": "82",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "end of "
+                                                ]
+                                              },
+                                              {
+                                                "r": "81",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "\"Measurement Period\""
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              "]"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "value": [
+                              "\n  )"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "86",
+            "locator": "54:3-57:3",
+            "type": "Exists",
+            "operand": {
+              "localId": "85",
+              "locator": "54:10-57:3",
+              "type": "Query",
+              "source": [
+                {
+                  "localId": "74",
+                  "locator": "54:12-54:64",
+                  "alias": "DysplasiaProstate",
+                  "expression": {
+                    "localId": "73",
+                    "locator": "54:12-54:46",
+                    "dataType": "{urn:healthit-gov:qdm:v5_5}Diagnosis",
+                    "codeProperty": "code",
+                    "type": "Retrieve",
+                    "codes": {
+                      "locator": "54:26-54:45",
+                      "name": "Prostate Dysplasia",
+                      "type": "ValueSetRef"
+                    }
+                  }
+                }
+              ],
+              "relationship": [],
+              "where": {
+                "localId": "84",
+                "locator": "55:7-56:34",
+                "type": "Overlaps",
+                "operand": [
+                  {
+                    "localId": "76",
+                    "locator": "55:13-55:46",
+                    "path": "prevalencePeriod",
+                    "scope": "DysplasiaProstate",
+                    "type": "Property"
+                  },
+                  {
+                    "localId": "83",
+                    "locator": "55:57-56:34",
+                    "lowClosed": true,
+                    "highClosed": true,
+                    "type": "Interval",
+                    "low": {
+                      "localId": "80",
+                      "locator": "55:66-55:103",
+                      "type": "Subtract",
+                      "operand": [
+                        {
+                          "localId": "78",
+                          "locator": "55:66-55:94",
+                          "type": "Start",
+                          "operand": {
+                            "localId": "77",
+                            "locator": "55:75-55:94",
+                            "name": "Measurement Period",
+                            "type": "ParameterRef"
+                          }
+                        },
+                        {
+                          "localId": "79",
+                          "locator": "55:98-55:103",
+                          "value": 1,
+                          "unit": "year",
+                          "type": "Quantity"
+                        }
+                      ]
+                    },
+                    "high": {
+                      "localId": "82",
+                      "locator": "56:7-56:33",
+                      "type": "End",
+                      "operand": {
+                        "localId": "81",
+                        "locator": "56:14-56:33",
+                        "name": "Measurement Period",
+                        "type": "ParameterRef"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "localId": "93",
+          "locator": "63:1-64:11",
+          "name": "LOG",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "93",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"LOG\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "92",
+                    "s": [
+                      {
+                        "r": "90",
+                        "s": [
+                          {
+                            "r": "88",
+                            "value": [
+                              "1",
+                              " + ",
+                              "1"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "r": "91",
+                        "value": [
+                          " ",
+                          "=",
+                          " ",
+                          "2"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "92",
+            "locator": "64:3-64:11",
+            "type": "Equal",
+            "operand": [
+              {
+                "localId": "90",
+                "locator": "64:3-64:7",
+                "type": "Add",
+                "operand": [
+                  {
+                    "localId": "88",
+                    "locator": "64:3",
+                    "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                    "value": "1",
+                    "type": "Literal"
+                  },
+                  {
+                    "localId": "89",
+                    "locator": "64:7",
+                    "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                    "value": "1",
+                    "type": "Literal"
+                  }
+                ]
+              },
+              {
+                "localId": "91",
+                "locator": "64:11",
+                "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                "value": "2",
+                "type": "Literal"
+              }
+            ]
+          }
+        },
+        {
+          "localId": "110",
+          "locator": "85:1-89:3",
+          "name": "Recent Abnormal PSA Test Result or Finding",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "110",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"Recent Abnormal PSA Test Result or Finding\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "109",
+                    "s": [
+                      {
+                        "value": [
+                          "exists "
+                        ]
+                      },
+                      {
+                        "r": "108",
+                        "s": [
+                          {
+                            "value": [
+                              "( "
+                            ]
+                          },
+                          {
+                            "r": "108",
+                            "s": [
+                              {
+                                "s": [
+                                  {
+                                    "r": "95",
+                                    "s": [
+                                      {
+                                        "r": "94",
+                                        "s": [
+                                          {
+                                            "r": "94",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "[",
+                                                  "\"Diagnosis\"",
+                                                  ": "
+                                                ]
+                                              },
+                                              {
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "\"Abnormal PSA Test Result or Finding\""
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "]"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "value": [
+                                          " ",
+                                          "AbnormalPSAResult"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "value": [
+                                  "\n      "
+                                ]
+                              },
+                              {
+                                "r": "107",
+                                "s": [
+                                  {
+                                    "value": [
+                                      "where "
+                                    ]
+                                  },
+                                  {
+                                    "r": "107",
+                                    "s": [
+                                      {
+                                        "r": "97",
+                                        "s": [
+                                          {
+                                            "r": "96",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "AbnormalPSAResult"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              "."
+                                            ]
+                                          },
+                                          {
+                                            "r": "97",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "prevalencePeriod"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "r": "107",
+                                        "value": [
+                                          " ",
+                                          "starts during",
+                                          " "
+                                        ]
+                                      },
+                                      {
+                                        "r": "106",
+                                        "s": [
+                                          {
+                                            "value": [
+                                              "Interval["
+                                            ]
+                                          },
+                                          {
+                                            "r": "101",
+                                            "s": [
+                                              {
+                                                "r": "99",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "start of "
+                                                    ]
+                                                  },
+                                                  {
+                                                    "r": "98",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "\"Measurement Period\""
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  " - "
+                                                ]
+                                              },
+                                              {
+                                                "r": "100",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "1 ",
+                                                      "year"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              ", \n      "
+                                            ]
+                                          },
+                                          {
+                                            "r": "105",
+                                            "s": [
+                                              {
+                                                "r": "103",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "end of "
+                                                    ]
+                                                  },
+                                                  {
+                                                    "r": "102",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "\"Measurement Period\""
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  " - "
+                                                ]
+                                              },
+                                              {
+                                                "r": "104",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "1 ",
+                                                      "year"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              "]"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "value": [
+                              "\n  )"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "109",
+            "locator": "86:3-89:3",
+            "type": "Exists",
+            "operand": {
+              "localId": "108",
+              "locator": "86:10-89:3",
+              "type": "Query",
+              "source": [
+                {
+                  "localId": "95",
+                  "locator": "86:12-86:81",
+                  "alias": "AbnormalPSAResult",
+                  "expression": {
+                    "localId": "94",
+                    "locator": "86:12-86:63",
+                    "dataType": "{urn:healthit-gov:qdm:v5_5}Diagnosis",
+                    "codeProperty": "code",
+                    "type": "Retrieve",
+                    "codes": {
+                      "locator": "86:26-86:62",
+                      "name": "Abnormal PSA Test Result or Finding",
+                      "type": "ValueSetRef"
+                    }
+                  }
+                }
+              ],
+              "relationship": [],
+              "where": {
+                "localId": "107",
+                "locator": "87:7-88:43",
+                "type": "In",
+                "operand": [
+                  {
+                    "locator": "87:48-87:53",
+                    "type": "Start",
+                    "operand": {
+                      "localId": "97",
+                      "locator": "87:13-87:46",
+                      "path": "prevalencePeriod",
+                      "scope": "AbnormalPSAResult",
+                      "type": "Property"
+                    }
+                  },
+                  {
+                    "localId": "106",
+                    "locator": "87:62-88:43",
+                    "lowClosed": true,
+                    "highClosed": true,
+                    "type": "Interval",
+                    "low": {
+                      "localId": "101",
+                      "locator": "87:71-87:108",
+                      "type": "Subtract",
+                      "operand": [
+                        {
+                          "localId": "99",
+                          "locator": "87:71-87:99",
+                          "type": "Start",
+                          "operand": {
+                            "localId": "98",
+                            "locator": "87:80-87:99",
+                            "name": "Measurement Period",
+                            "type": "ParameterRef"
+                          }
+                        },
+                        {
+                          "localId": "100",
+                          "locator": "87:103-87:108",
+                          "value": 1,
+                          "unit": "year",
+                          "type": "Quantity"
+                        }
+                      ]
+                    },
+                    "high": {
+                      "localId": "105",
+                      "locator": "88:7-88:42",
+                      "type": "Subtract",
+                      "operand": [
+                        {
+                          "localId": "103",
+                          "locator": "88:7-88:33",
+                          "type": "End",
+                          "operand": {
+                            "localId": "102",
+                            "locator": "88:14-88:33",
+                            "name": "Measurement Period",
+                            "type": "ParameterRef"
+                          }
+                        },
+                        {
+                          "localId": "104",
+                          "locator": "88:37-88:42",
+                          "value": 1,
+                          "unit": "year",
+                          "type": "Quantity"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "localId": "128",
+          "locator": "91:1-97:5",
+          "name": "Numerator",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "128",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"Numerator\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "127",
+                    "s": [
+                      {
+                        "r": "118",
+                        "s": [
+                          {
+                            "value": [
+                              "exists "
+                            ]
+                          },
+                          {
+                            "r": "117",
+                            "s": [
+                              {
+                                "value": [
+                                  "( "
+                                ]
+                              },
+                              {
+                                "r": "117",
+                                "s": [
+                                  {
+                                    "s": [
+                                      {
+                                        "r": "112",
+                                        "s": [
+                                          {
+                                            "r": "111",
+                                            "s": [
+                                              {
+                                                "r": "111",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "[",
+                                                      "\"Laboratory Test, Performed\"",
+                                                      ": "
+                                                    ]
+                                                  },
+                                                  {
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "\"PSA Lab Test\""
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "value": [
+                                                      "]"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              " ",
+                                              "PSALab"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "value": [
+                                      "\n      "
+                                    ]
+                                  },
+                                  {
+                                    "r": "116",
+                                    "s": [
+                                      {
+                                        "value": [
+                                          "where "
+                                        ]
+                                      },
+                                      {
+                                        "r": "116",
+                                        "s": [
+                                          {
+                                            "r": "114",
+                                            "s": [
+                                              {
+                                                "r": "113",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "PSALab"
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "."
+                                                ]
+                                              },
+                                              {
+                                                "r": "114",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "relevantDatetime"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "r": "116",
+                                            "value": [
+                                              " ",
+                                              "during",
+                                              " "
+                                            ]
+                                          },
+                                          {
+                                            "r": "115",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "\"Measurement Period\""
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "value": [
+                                  "\n  )"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "value": [
+                          "\n    or "
+                        ]
+                      },
+                      {
+                        "r": "126",
+                        "s": [
+                          {
+                            "value": [
+                              "exists "
+                            ]
+                          },
+                          {
+                            "r": "125",
+                            "s": [
+                              {
+                                "value": [
+                                  "( "
+                                ]
+                              },
+                              {
+                                "r": "125",
+                                "s": [
+                                  {
+                                    "s": [
+                                      {
+                                        "r": "120",
+                                        "s": [
+                                          {
+                                            "r": "119",
+                                            "s": [
+                                              {
+                                                "r": "119",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "[",
+                                                      "\"Diagnosis\"",
+                                                      ": "
+                                                    ]
+                                                  },
+                                                  {
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "\"PSA Test Result or Finding\""
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "value": [
+                                                      "]"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              " ",
+                                              "PSADiagnosis"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "value": [
+                                      "\n        "
+                                    ]
+                                  },
+                                  {
+                                    "r": "124",
+                                    "s": [
+                                      {
+                                        "value": [
+                                          "where "
+                                        ]
+                                      },
+                                      {
+                                        "r": "124",
+                                        "s": [
+                                          {
+                                            "r": "122",
+                                            "s": [
+                                              {
+                                                "r": "121",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "PSADiagnosis"
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "."
+                                                ]
+                                              },
+                                              {
+                                                "r": "122",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "prevalencePeriod"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "r": "124",
+                                            "value": [
+                                              " ",
+                                              "starts during",
+                                              " "
+                                            ]
+                                          },
+                                          {
+                                            "r": "123",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "\"Measurement Period\""
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "value": [
+                                  "\n    )"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "127",
+            "locator": "92:3-97:5",
+            "type": "Or",
+            "operand": [
+              {
+                "localId": "118",
+                "locator": "92:3-94:3",
+                "type": "Exists",
+                "operand": {
+                  "localId": "117",
+                  "locator": "92:10-94:3",
+                  "type": "Query",
+                  "source": [
+                    {
+                      "localId": "112",
+                      "locator": "92:12-92:64",
+                      "alias": "PSALab",
+                      "expression": {
+                        "localId": "111",
+                        "locator": "92:12-92:57",
+                        "dataType": "{urn:healthit-gov:qdm:v5_5}PositiveLaboratoryTestPerformed",
+                        "templateId": "PositiveLaboratoryTestPerformed",
+                        "codeProperty": "code",
+                        "type": "Retrieve",
+                        "codes": {
+                          "locator": "92:43-92:56",
+                          "name": "PSA Lab Test",
+                          "type": "ValueSetRef"
+                        }
+                      }
+                    }
+                  ],
+                  "relationship": [],
+                  "where": {
+                    "localId": "116",
+                    "locator": "93:7-93:63",
+                    "type": "In",
+                    "operand": [
+                      {
+                        "localId": "114",
+                        "locator": "93:13-93:35",
+                        "path": "relevantDatetime",
+                        "scope": "PSALab",
+                        "type": "Property"
+                      },
+                      {
+                        "localId": "115",
+                        "locator": "93:44-93:63",
+                        "name": "Measurement Period",
+                        "type": "ParameterRef"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "localId": "126",
+                "locator": "95:8-97:5",
+                "type": "Exists",
+                "operand": {
+                  "localId": "125",
+                  "locator": "95:15-97:5",
+                  "type": "Query",
+                  "source": [
+                    {
+                      "localId": "120",
+                      "locator": "95:17-95:72",
+                      "alias": "PSADiagnosis",
+                      "expression": {
+                        "localId": "119",
+                        "locator": "95:17-95:59",
+                        "dataType": "{urn:healthit-gov:qdm:v5_5}Diagnosis",
+                        "codeProperty": "code",
+                        "type": "Retrieve",
+                        "codes": {
+                          "locator": "95:31-95:58",
+                          "name": "PSA Test Result or Finding",
+                          "type": "ValueSetRef"
+                        }
+                      }
+                    }
+                  ],
+                  "relationship": [],
+                  "where": {
+                    "localId": "124",
+                    "locator": "96:9-96:78",
+                    "type": "In",
+                    "operand": [
+                      {
+                        "locator": "96:45-96:50",
+                        "type": "Start",
+                        "operand": {
+                          "localId": "122",
+                          "locator": "96:15-96:43",
+                          "path": "prevalencePeriod",
+                          "scope": "PSADiagnosis",
+                          "type": "Property"
+                        }
+                      },
+                      {
+                        "localId": "123",
+                        "locator": "96:59-96:78",
+                        "name": "Measurement Period",
+                        "type": "ParameterRef"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "localId": "137",
+          "locator": "99:1-102:3",
+          "name": "5-ARI Prescription",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "137",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"5-ARI Prescription\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "136",
+                    "s": [
+                      {
+                        "value": [
+                          "exists "
+                        ]
+                      },
+                      {
+                        "r": "135",
+                        "s": [
+                          {
+                            "value": [
+                              "( "
+                            ]
+                          },
+                          {
+                            "r": "135",
+                            "s": [
+                              {
+                                "s": [
+                                  {
+                                    "r": "130",
+                                    "s": [
+                                      {
+                                        "r": "129",
+                                        "s": [
+                                          {
+                                            "r": "129",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "[",
+                                                  "\"Medication, Dispensed\"",
+                                                  ": "
+                                                ]
+                                              },
+                                              {
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "\"5 ARI Medications\""
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "]"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "value": [
+                                          " ",
+                                          "FiveARIMed"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "value": [
+                                  "\n      "
+                                ]
+                              },
+                              {
+                                "r": "134",
+                                "s": [
+                                  {
+                                    "value": [
+                                      "where "
+                                    ]
+                                  },
+                                  {
+                                    "r": "134",
+                                    "s": [
+                                      {
+                                        "r": "132",
+                                        "s": [
+                                          {
+                                            "r": "131",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "FiveARIMed"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              "."
+                                            ]
+                                          },
+                                          {
+                                            "r": "132",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "relevantDatetime"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "r": "134",
+                                        "value": [
+                                          " ",
+                                          "during",
+                                          " "
+                                        ]
+                                      },
+                                      {
+                                        "r": "133",
+                                        "s": [
+                                          {
+                                            "value": [
+                                              "\"Measurement Period\""
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "value": [
+                              "\n  )"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "136",
+            "locator": "100:3-102:3",
+            "type": "Exists",
+            "operand": {
+              "localId": "135",
+              "locator": "100:10-102:3",
+              "type": "Query",
+              "source": [
+                {
+                  "localId": "130",
+                  "locator": "100:12-100:68",
+                  "alias": "FiveARIMed",
+                  "expression": {
+                    "localId": "129",
+                    "locator": "100:12-100:57",
+                    "dataType": "{urn:healthit-gov:qdm:v5_5}PositiveMedicationDispensed",
+                    "templateId": "PositiveMedicationDispensed",
+                    "codeProperty": "code",
+                    "type": "Retrieve",
+                    "codes": {
+                      "locator": "100:38-100:56",
+                      "name": "5 ARI Medications",
+                      "type": "ValueSetRef"
+                    }
+                  }
+                }
+              ],
+              "relationship": [],
+              "where": {
+                "localId": "134",
+                "locator": "101:7-101:67",
+                "type": "In",
+                "operand": [
+                  {
+                    "localId": "132",
+                    "locator": "101:13-101:39",
+                    "path": "relevantDatetime",
+                    "scope": "FiveARIMed",
+                    "type": "Property"
+                  },
+                  {
+                    "localId": "133",
+                    "locator": "101:48-101:67",
+                    "name": "Measurement Period",
+                    "type": "ParameterRef"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "localId": "159",
+          "locator": "104:1-109:3",
+          "name": "Recent Abnormal PSA Lab Test",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "159",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"Recent Abnormal PSA Lab Test\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "158",
+                    "s": [
+                      {
+                        "value": [
+                          "exists "
+                        ]
+                      },
+                      {
+                        "r": "157",
+                        "s": [
+                          {
+                            "value": [
+                              "( "
+                            ]
+                          },
+                          {
+                            "r": "157",
+                            "s": [
+                              {
+                                "s": [
+                                  {
+                                    "r": "139",
+                                    "s": [
+                                      {
+                                        "r": "138",
+                                        "s": [
+                                          {
+                                            "r": "138",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "[",
+                                                  "\"Laboratory Test, Performed\"",
+                                                  ": "
+                                                ]
+                                              },
+                                              {
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "\"PSA Lab Test Exclusion\""
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "]"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "value": [
+                                          " ",
+                                          "PSALabAbnormal"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "value": [
+                                  "\n      "
+                                ]
+                              },
+                              {
+                                "r": "156",
+                                "s": [
+                                  {
+                                    "value": [
+                                      "where "
+                                    ]
+                                  },
+                                  {
+                                    "r": "156",
+                                    "s": [
+                                      {
+                                        "r": "143",
+                                        "s": [
+                                          {
+                                            "r": "141",
+                                            "s": [
+                                              {
+                                                "r": "140",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "PSALabAbnormal"
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "."
+                                                ]
+                                              },
+                                              {
+                                                "r": "141",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "result"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "value": [
+                                              " ",
+                                              ">=",
+                                              " "
+                                            ]
+                                          },
+                                          {
+                                            "r": "142",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "4.0 ",
+                                                  "'ng/mL'"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "value": [
+                                          "\n        and "
+                                        ]
+                                      },
+                                      {
+                                        "r": "155",
+                                        "s": [
+                                          {
+                                            "r": "145",
+                                            "s": [
+                                              {
+                                                "r": "144",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "PSALabAbnormal"
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "."
+                                                ]
+                                              },
+                                              {
+                                                "r": "145",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "relevantDatetime"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "r": "155",
+                                            "value": [
+                                              " ",
+                                              "during",
+                                              " "
+                                            ]
+                                          },
+                                          {
+                                            "r": "154",
+                                            "s": [
+                                              {
+                                                "value": [
+                                                  "Interval["
+                                                ]
+                                              },
+                                              {
+                                                "r": "149",
+                                                "s": [
+                                                  {
+                                                    "r": "147",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "start of "
+                                                        ]
+                                                      },
+                                                      {
+                                                        "r": "146",
+                                                        "s": [
+                                                          {
+                                                            "value": [
+                                                              "\"Measurement Period\""
+                                                            ]
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "value": [
+                                                      " - "
+                                                    ]
+                                                  },
+                                                  {
+                                                    "r": "148",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "1 ",
+                                                          "year"
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  ", \n        "
+                                                ]
+                                              },
+                                              {
+                                                "r": "153",
+                                                "s": [
+                                                  {
+                                                    "r": "151",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "end of "
+                                                        ]
+                                                      },
+                                                      {
+                                                        "r": "150",
+                                                        "s": [
+                                                          {
+                                                            "value": [
+                                                              "\"Measurement Period\""
+                                                            ]
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "value": [
+                                                      " - "
+                                                    ]
+                                                  },
+                                                  {
+                                                    "r": "152",
+                                                    "s": [
+                                                      {
+                                                        "value": [
+                                                          "1 ",
+                                                          "year"
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "]"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "value": [
+                              "\n  )"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "158",
+            "locator": "105:3-109:3",
+            "type": "Exists",
+            "operand": {
+              "localId": "157",
+              "locator": "105:10-109:3",
+              "type": "Query",
+              "source": [
+                {
+                  "localId": "139",
+                  "locator": "105:12-105:82",
+                  "alias": "PSALabAbnormal",
+                  "expression": {
+                    "localId": "138",
+                    "locator": "105:12-105:67",
+                    "dataType": "{urn:healthit-gov:qdm:v5_5}PositiveLaboratoryTestPerformed",
+                    "templateId": "PositiveLaboratoryTestPerformed",
+                    "codeProperty": "code",
+                    "type": "Retrieve",
+                    "codes": {
+                      "locator": "105:43-105:66",
+                      "name": "PSA Lab Test Exclusion",
+                      "type": "ValueSetRef"
+                    }
+                  }
+                }
+              ],
+              "relationship": [],
+              "where": {
+                "localId": "156",
+                "locator": "106:7-108:45",
+                "type": "And",
+                "operand": [
+                  {
+                    "localId": "143",
+                    "locator": "106:13-106:48",
+                    "type": "GreaterOrEqual",
+                    "operand": [
+                      {
+                        "asType": "{urn:hl7-org:elm-types:r1}Quantity",
+                        "type": "As",
+                        "operand": {
+                          "localId": "141",
+                          "locator": "106:13-106:33",
+                          "path": "result",
+                          "scope": "PSALabAbnormal",
+                          "type": "Property"
+                        }
+                      },
+                      {
+                        "localId": "142",
+                        "locator": "106:38-106:48",
+                        "value": 4.0,
+                        "unit": "ng/mL",
+                        "type": "Quantity"
+                      }
+                    ]
+                  },
+                  {
+                    "localId": "155",
+                    "locator": "107:13-108:45",
+                    "type": "In",
+                    "operand": [
+                      {
+                        "localId": "145",
+                        "locator": "107:13-107:43",
+                        "path": "relevantDatetime",
+                        "scope": "PSALabAbnormal",
+                        "type": "Property"
+                      },
+                      {
+                        "localId": "154",
+                        "locator": "107:52-108:45",
+                        "lowClosed": true,
+                        "highClosed": true,
+                        "type": "Interval",
+                        "low": {
+                          "localId": "149",
+                          "locator": "107:61-107:98",
+                          "type": "Subtract",
+                          "operand": [
+                            {
+                              "localId": "147",
+                              "locator": "107:61-107:89",
+                              "type": "Start",
+                              "operand": {
+                                "localId": "146",
+                                "locator": "107:70-107:89",
+                                "name": "Measurement Period",
+                                "type": "ParameterRef"
+                              }
+                            },
+                            {
+                              "localId": "148",
+                              "locator": "107:93-107:98",
+                              "value": 1,
+                              "unit": "year",
+                              "type": "Quantity"
+                            }
+                          ]
+                        },
+                        "high": {
+                          "localId": "153",
+                          "locator": "108:9-108:44",
+                          "type": "Subtract",
+                          "operand": [
+                            {
+                              "localId": "151",
+                              "locator": "108:9-108:35",
+                              "type": "End",
+                              "operand": {
+                                "localId": "150",
+                                "locator": "108:16-108:35",
+                                "name": "Measurement Period",
+                                "type": "ParameterRef"
+                              }
+                            },
+                            {
+                              "localId": "152",
+                              "locator": "108:39-108:44",
+                              "value": 1,
+                              "unit": "year",
+                              "type": "Quantity"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "localId": "173",
+          "locator": "119:1-125:27",
+          "name": "Exclusions",
+          "context": "Patient",
+          "accessLevel": "Public",
+          "annotation": [
+            {
+              "type": "Annotation",
+              "s": {
+                "r": "173",
+                "s": [
+                  {
+                    "value": [
+                      "define ",
+                      "\"Exclusions\"",
+                      ":\n  "
+                    ]
+                  },
+                  {
+                    "r": "172",
+                    "s": [
+                      {
+                        "r": "170",
+                        "s": [
+                          {
+                            "r": "168",
+                            "s": [
+                              {
+                                "r": "166",
+                                "s": [
+                                  {
+                                    "r": "164",
+                                    "s": [
+                                      {
+                                        "r": "162",
+                                        "s": [
+                                          {
+                                            "value": [
+                                              "exists "
+                                            ]
+                                          },
+                                          {
+                                            "r": "161",
+                                            "s": [
+                                              {
+                                                "r": "160",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "Common"
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "value": [
+                                                  "."
+                                                ]
+                                              },
+                                              {
+                                                "r": "161",
+                                                "s": [
+                                                  {
+                                                    "value": [
+                                                      "\"Hospice Intervention or Encounter\""
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "value": [
+                                          "\n    or "
+                                        ]
+                                      },
+                                      {
+                                        "r": "163",
+                                        "s": [
+                                          {
+                                            "value": [
+                                              "\"Prostate Cancer Diagnosis\""
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "value": [
+                                      "\n    or "
+                                    ]
+                                  },
+                                  {
+                                    "r": "165",
+                                    "s": [
+                                      {
+                                        "value": [
+                                          "\"Dysplasia of Prostate\""
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "value": [
+                                  "\n    or "
+                                ]
+                              },
+                              {
+                                "r": "167",
+                                "s": [
+                                  {
+                                    "value": [
+                                      "\"Recent Abnormal PSA Lab Test\""
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "value": [
+                              "\n    or "
+                            ]
+                          },
+                          {
+                            "r": "169",
+                            "s": [
+                              {
+                                "value": [
+                                  "\"Recent Abnormal PSA Test Result or Finding\""
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "value": [
+                          "\n    or "
+                        ]
+                      },
+                      {
+                        "r": "171",
+                        "s": [
+                          {
+                            "value": [
+                              "\"5-ARI Prescription\""
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "expression": {
+            "localId": "172",
+            "locator": "120:3-125:27",
+            "type": "Null"
+          }
+        }
+      ]
+    }
+  }
+}

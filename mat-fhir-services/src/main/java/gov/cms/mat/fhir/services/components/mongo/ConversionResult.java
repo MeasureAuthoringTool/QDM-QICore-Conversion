@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import gov.cms.mat.fhir.services.service.support.CqlConversionError;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -66,5 +67,7 @@ public class ConversionResult {
     public static class CqlConversionResult {
         Boolean result;
         List<String> errors;
+        String cql;
+        List<CqlConversionError> cqlConversionErrors;
     }
 }

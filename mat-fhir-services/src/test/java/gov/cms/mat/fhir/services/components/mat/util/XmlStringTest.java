@@ -14,7 +14,7 @@ class XmlStringTest implements ResourceFileUtil {
 
     @BeforeEach
     void setUp() {
-        xml = getXml("/measureGroupings.xml");
+        xml = getStringFromResource("/measureGroupings.xml");
     }
 
     @Test

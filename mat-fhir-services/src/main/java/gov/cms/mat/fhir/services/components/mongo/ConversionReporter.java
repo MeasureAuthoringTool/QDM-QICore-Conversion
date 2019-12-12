@@ -1,6 +1,9 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import gov.cms.mat.fhir.services.service.support.CqlConversionError;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Slf4j
 public class ConversionReporter {
@@ -10,7 +13,6 @@ public class ConversionReporter {
 
     private final String measureId;
     private final ConversionResultsService conversionResultsService;
-
 
     private ConversionReporter(String measureId, ConversionResultsService conversionResultsService) {
         this.measureId = measureId;
@@ -39,10 +41,22 @@ public class ConversionReporter {
         conversionReporter.addCqlConversionResultSuccess();
     }
 
-    public static void setCqlConversionError(String error) {
+    public static void setCqlConversionErrorMessage(String error) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.addCqlConversionError(error);
+        conversionReporter.addCqlConversionErrorMessage(error);
+    }
+
+    public static void setCqlConversionErrors(List<CqlConversionError> errors) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addCqlConversionErrors(errors);
+    }
+
+
+    public static void setCql(String cql) {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        conversionReporter.addCql(cql);
     }
 
 
@@ -80,7 +94,7 @@ public class ConversionReporter {
         return conversionReporter;
     }
 
-    
+
     public static void setValueSetResult(String oid, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
@@ -107,7 +121,6 @@ public class ConversionReporter {
         return conversionReporter;
     }
 
-
     private ConversionResult addValueSetResult(String oid, String reason) {
         ConversionResult.ValueSetResult result = ConversionResult.ValueSetResult.builder()
                 .oid(oid)
@@ -127,7 +140,7 @@ public class ConversionReporter {
 
         return conversionResultsService.addMeasureResult(measureId, result);
     }
-    
+
     private ConversionResult addLibraryResult(String field, String destination, String reason) {
 
         ConversionResult.LibraryResult result = ConversionResult.LibraryResult.builder()
@@ -138,7 +151,7 @@ public class ConversionReporter {
 
         return conversionResultsService.addLibraryResult(measureId, result);
     }
-    
+
 
     private ConversionResult clearValueSetResults() {
         return conversionResultsService.clearValueSetResults(measureId);
@@ -160,8 +173,16 @@ public class ConversionReporter {
         return conversionResultsService.addCqlConversionResultSuccess(measureId);
     }
 
-    private ConversionResult addCqlConversionError(String error) {
-        return conversionResultsService.addCqlConversionError(measureId, error);
+    private ConversionResult addCqlConversionErrorMessage(String error) {
+        return conversionResultsService.addCqlConversionErrorMessage(measureId, error);
+    }
+
+    private ConversionResult addCql(String cql) {
+        return conversionResultsService.addCql(measureId, cql);
+    }
+
+    private ConversionResult addCqlConversionErrors(List<CqlConversionError> errors) {
+        return conversionResultsService.addCqlConversionErrors(measureId, errors);
     }
 
 }

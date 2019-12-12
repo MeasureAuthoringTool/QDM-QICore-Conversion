@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class CqlConversionException extends RuntimeException {
 
     public CqlConversionException(String message) {
-        super(message);
+        this(message, null);
+    }
+
+    public CqlConversionException(String message, Exception cause) {
+        super(message, cause);
         log.warn(getMessage());
     }
 }

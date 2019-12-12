@@ -3,7 +3,7 @@ package gov.cms.mat.fhir.services.translate;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import gov.cms.mat.fhir.services.service.VsacService;
+import gov.cms.mat.fhir.services.summary.VsacService;
 import gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.MatValueSet;
