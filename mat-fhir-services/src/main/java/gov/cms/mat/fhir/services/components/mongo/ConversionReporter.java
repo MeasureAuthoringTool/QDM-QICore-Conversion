@@ -66,10 +66,10 @@ public class ConversionReporter {
         conversionReporter.clearCqlConversionResult(conversionType);
     }
 
-    public static void resetValueSetResults() {
+    public static void resetValueSetResults(ConversionType conversionType) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.clearValueSetResults();
+        conversionReporter.clearValueSetResults(conversionType);
     }
 
     public static void resetMeasure(ConversionType conversionType) {
@@ -159,8 +159,9 @@ public class ConversionReporter {
     }
 
 
-    private ConversionResult clearValueSetResults() {
-        return conversionResultsService.clearValueSetResults(measureId);
+    private ConversionResult clearValueSetResults(ConversionType conversionType) {
+        conversionResultsService.clearValueSetResults(measureId);
+        return conversionResultsService.setValueSetConversionType(measureId, conversionType);
     }
 
     private ConversionResult clearMeasure(ConversionType conversionType) {

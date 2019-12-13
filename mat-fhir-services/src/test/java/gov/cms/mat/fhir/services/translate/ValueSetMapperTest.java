@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.translate;
 
 import ca.uhn.fhir.context.FhirContext;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.summary.VsacService;
 import mat.model.MatConcept;
@@ -85,7 +86,7 @@ class ValueSetMapperTest {
     @Test
     void translateToFhir_matXmlConverterReturnsNull() {
         when(matXmlConverter.toQualityData(XML)).thenReturn(null);
-        assertTrue(valueSetMapper.translateToFhir(XML).isEmpty());
+        assertTrue(valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION).isEmpty());
         verify(matXmlConverter).toQualityData(XML);
     }
 
@@ -93,7 +94,7 @@ class ValueSetMapperTest {
     void translateToFhir_matXmlConverterReturnsEmptyList() {
         CQLQualityDataModelWrapper wrapper = new CQLQualityDataModelWrapper();
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
-        assertTrue(valueSetMapper.translateToFhir(XML).isEmpty());
+        assertTrue(valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION).isEmpty());
         verify(matXmlConverter).toQualityData(XML);
 
         verifyNoInteractions(vsacService);
@@ -107,7 +108,7 @@ class ValueSetMapperTest {
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
         when(vsacService.getData(OID)).thenReturn(null);
 
-        assertTrue(valueSetMapper.translateToFhir(XML).isEmpty());
+        assertTrue(valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION).isEmpty());
 
         verify(matXmlConverter).toQualityData(XML);
         verify(vsacService).getData(OID);
@@ -131,7 +132,7 @@ class ValueSetMapperTest {
 
         when(hapiFhirServer.createAndExecuteBundle(any())).thenReturn(bundle);
 
-        List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML);
+        List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION);
         assertEquals(1, valueSets.size());
         assertEquals(valueSet, valueSets.get(0));
 
@@ -158,7 +159,7 @@ class ValueSetMapperTest {
         when(hapiFhirServer.createAndExecuteBundle(any())).thenReturn(bundle);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            valueSetMapper.translateToFhir(XML);
+            valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION);
         });
 
         verify(hapiFhirServer).createAndExecuteBundle(any());

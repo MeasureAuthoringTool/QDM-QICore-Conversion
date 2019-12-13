@@ -83,7 +83,7 @@ class ConversionReporterTest {
 
     @Test
     void resetValueSetResults_NoThreadLocal() {
-        Assertions.assertThrows(ThreadLocalNotFoundException.class, ConversionReporter::resetValueSetResults);
+        Assertions.assertThrows(ThreadLocalNotFoundException.class, () -> ConversionReporter.resetValueSetResults(ConversionType.VALIDATION));
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
 

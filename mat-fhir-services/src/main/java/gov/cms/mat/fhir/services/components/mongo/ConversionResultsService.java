@@ -61,6 +61,7 @@ public class ConversionResultsService {
         if (optional.isPresent()) {
             ConversionResult conversionResult = optional.get();
             conversionResult.getValueSetResults().clear();
+            conversionResult.setValueSetConversionType(null);
             return conversionResultRepository.save(conversionResult);
         } else {
             return null;
@@ -91,6 +92,14 @@ public class ConversionResultsService {
         ConversionResult conversionResult = findOrCreate(measureId);
 
         conversionResult.setLibraryConversionType(conversionType);
+
+        return conversionResultRepository.save(conversionResult);
+    }
+
+    public ConversionResult setValueSetConversionType(String measureId, ConversionType conversionType) {
+        ConversionResult conversionResult = findOrCreate(measureId);
+
+        conversionResult.setValueSetConversionType(conversionType);
 
         return conversionResultRepository.save(conversionResult);
     }
@@ -183,4 +192,6 @@ public class ConversionResultsService {
 
         return conversionResultRepository.save(conversionResult);
     }
+
+
 }

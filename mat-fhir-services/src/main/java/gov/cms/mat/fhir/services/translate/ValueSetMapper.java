@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.summary.VsacService;
 import gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator;
@@ -41,7 +42,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
         return hapiFhirServer.count(ValueSet.class);
     }
 
-    public List<ValueSet> translateToFhir(String xml) {
+    public List<ValueSet> translateToFhir(String xml, ConversionType conversionType) {
         CQLQualityDataModelWrapper wrapper = matXmlConverter.toQualityData(xml);
 
         if (wrapper == null || CollectionUtils.isEmpty(wrapper.getQualityDataDTO())) {
@@ -51,13 +52,14 @@ public class ValueSetMapper implements FhirValueSetCreator {
         List<ValueSet> valueSets = new ArrayList<>();
 
         wrapper.getQualityDataDTO()
-                .forEach(t -> processFhir(t, valueSets));
+                .forEach(t -> processFhir(t, valueSets, conversionType));
 
         return valueSets;
     }
 
     private void processFhir(CQLQualityDataSetDTO cqlQualityDataSetDTO,
-                             List<ValueSet> valueSets) {
+                             List<ValueSet> valueSets,
+                             ConversionType conversionType) {
         String oid;
 
         if (StringUtils.isBlank(cqlQualityDataSetDTO.getOid())) {
@@ -68,7 +70,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
 
         Bundle hapiBundle = hapiFhirServer.isValueSetInHapi(oid);
 
-        if (hapiBundle != null && hapiBundle.hasEntry()) {
+        if (conversionType == ConversionType.CONVERSION && hapiBundle != null && hapiBundle.hasEntry()) {
             log.debug("Fhir valueSet already in hapi, oid: {}", oid);
         } else {
             VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid);
@@ -79,28 +81,35 @@ public class ValueSetMapper implements FhirValueSetCreator {
                 return;
             }
 
-            List<ValueSet> valueSetsCreated = createFhirValueSetList(cqlQualityDataSetDTO, vsacValueSetWrapper);
+            List<ValueSet> valueSetsCreated = createFhirValueSetList(cqlQualityDataSetDTO, vsacValueSetWrapper, conversionType);
             valueSets.addAll(valueSetsCreated);
         }
     }
 
     private List<ValueSet> createFhirValueSetList(CQLQualityDataSetDTO cqlQualityDataSetDTO,
-                                                  VSACValueSetWrapper vsacValueSet) {
+                                                  VSACValueSetWrapper vsacValueSet,
+                                                  ConversionType conversionType) {
         return vsacValueSet.getValueSetList()
                 .stream()
-                .map(matValueSet -> createAndPersistFhirValueSet(matValueSet, cqlQualityDataSetDTO))
+                .map(matValueSet -> createAndPersistFhirValueSet(matValueSet, cqlQualityDataSetDTO, conversionType))
                 .collect(Collectors.toList());
     }
 
-    private ValueSet createAndPersistFhirValueSet(MatValueSet matValueSet, CQLQualityDataSetDTO cqlQualityDataSetDTO) {
+    private ValueSet createAndPersistFhirValueSet(MatValueSet matValueSet,
+                                                  CQLQualityDataSetDTO cqlQualityDataSetDTO,
+                                                  ConversionType conversionType) {
         ValueSet valueSet = createFhirValueSet(matValueSet, cqlQualityDataSetDTO);
 
-        Bundle bundle = hapiFhirServer.createAndExecuteBundle(valueSet);
-
-        if (bundle.isEmpty()) {
-            throw new IllegalArgumentException("Could not create hapi value set with oid: " + matValueSet.getID());
+        if (conversionType.equals(ConversionType.VALIDATION)) {
+            return valueSet;
         } else {
-            return (ValueSet) bundle.getEntry().get(0).getResource();
+            Bundle bundle = hapiFhirServer.createAndExecuteBundle(valueSet);
+
+            if (bundle.isEmpty()) {
+                throw new IllegalArgumentException("Could not create hapi value set with oid: " + matValueSet.getID());
+            } else {
+                return (ValueSet) bundle.getEntry().get(0).getResource();
+            }
         }
     }
 

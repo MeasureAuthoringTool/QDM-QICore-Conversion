@@ -28,6 +28,7 @@ public class ConversionResult {
     private Instant modified;
 
     private List<ValueSetResult> valueSetResults = new ArrayList<>();
+    private ConversionType valueSetConversionType;
 
     private List<FieldConversionResult> measureResults = new ArrayList<>();
     private ConversionType measureConversionType;

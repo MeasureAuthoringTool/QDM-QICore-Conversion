@@ -3,9 +3,10 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
-import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
+import gov.cms.mat.fhir.services.service.MeasureExportService;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import org.hl7.fhir.r4.model.ValueSet;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +32,7 @@ class ValueSetControllerTest {
 
 
     @Mock
-    private MeasureExportRepository measureExportRepository;
+    private MeasureExportService measureExportRepository;
     @Mock
     private ValueSetMapper valueSetMapper;
     @Mock
@@ -45,17 +45,17 @@ class ValueSetControllerTest {
 
     @BeforeEach
     public void setUp() {
-        ReflectionTestUtils.setField(valueSetController, "allowedVersions", ALLOWED_VERSIONS);
+        //  ReflectionTestUtils.setField(valueSetController, "allowedVersions", ALLOWED_VERSIONS);
     }
 
     @Test
     void translateAll_NoneToTranslate() {
-        TranslationOutcome translationOutcome = valueSetController.translateAll(null);
+        TranslationOutcome translationOutcome = valueSetController.translateAll(null, ConversionType.CONVERSION);
         assertTrue(translationOutcome.getMessage()
                 .startsWith("Read 0 Measure Export objects converted 0 Value sets to fhir in"));
 
         verify(valueSetMapper, times(2)).count();
-        verify(measureExportRepository).getAllExportIdsAndVersion(ALLOWED_VERSIONS);
+        verify(measureExportRepository).getAllExportIdsAndVersion();
         verify(measureExportRepository, never()).findById(anyString());
 
         verifyNoInteractions(conversionResultsService);
@@ -72,9 +72,9 @@ class ValueSetControllerTest {
                 Arrays.asList(new MeasureVersionExportId(idGood, ALLOWED_VERSIONS.get(0)),
                         new MeasureVersionExportId(idBad, ALLOWED_VERSIONS.get(0)));
 
-        when(valueSetMapper.translateToFhir(xml)).thenReturn(Collections.singletonList(new ValueSet()));
+        when(valueSetMapper.translateToFhir(xml, ConversionType.CONVERSION)).thenReturn(Collections.singletonList(new ValueSet()));
 
-        when(measureExportRepository.getAllExportIdsAndVersion(ALLOWED_VERSIONS)).thenReturn(idsAndVersion);
+        when(measureExportRepository.getAllExportIdsAndVersion()).thenReturn(idsAndVersion);
 
         MeasureExport measureExport = new MeasureExport();
         measureExport.setMeasureId(id);
@@ -88,15 +88,15 @@ class ValueSetControllerTest {
                 .thenReturn(0)
                 .thenReturn(1);
 
-        TranslationOutcome translationOutcome = valueSetController.translateAll(XmlSource.SIMPLE);
+        TranslationOutcome translationOutcome = valueSetController.translateAll(XmlSource.SIMPLE, ConversionType.CONVERSION);
 
         assertTrue(translationOutcome.getMessage()
                 .startsWith("Read 2 Measure Export objects converted 1 Value sets to fhir in"));
 
         verify(valueSetMapper, times(2)).count();
-        verify(measureExportRepository).getAllExportIdsAndVersion(ALLOWED_VERSIONS);
+        verify(measureExportRepository).getAllExportIdsAndVersion();
         verify(measureExportRepository, times(2)).findById(anyString());
-        verify(valueSetMapper).translateToFhir(xml);
+        verify(valueSetMapper).translateToFhir(xml, ConversionType.CONVERSION);
         verify(matXmlProcessor).getXmlById(id, XmlSource.SIMPLE);
     }
 

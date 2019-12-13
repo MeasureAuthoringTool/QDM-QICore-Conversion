@@ -1,19 +1,26 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.commons.model.MeasureExport;
+import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
-import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
+import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
+import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
+import gov.cms.mat.fhir.services.service.MeasureExportService;
+import gov.cms.mat.fhir.services.service.MeasureService;
+import gov.cms.mat.fhir.services.summary.FhirValueSetResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.ValueSet;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,44 +29,50 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/valueSet")
 @Tag(name = "ValueSet-Controller", description = "API for converting MAT ValueSets to FHIR.")
 @Slf4j
-public class ValueSetController {
-
-    @Value("#{'${measures.allowed.versions}'.split(',')}")
-    private List<String> allowedVersions;
+public class ValueSetController implements FhirValidatorProcessor {
 
     private static final String TRANSLATE_SUCCESS_MESSAGE = "Read %d Measure Export objects converted %d " +
             "Value sets to fhir in %d seconds";
 
-    private final MeasureExportRepository measureExportRepository;
+    private final MeasureExportService measureExportService;
     private final ValueSetMapper valueSetMapper;
     private final ConversionResultsService conversionResultsService;
     private final MatXmlProcessor matXmlProcessor;
+    private final MeasureService measureService;
+    private final HapiFhirServer hapiFhirServer;
 
-    public ValueSetController(MeasureExportRepository measureExportRepository,
+
+    public ValueSetController(MeasureExportService measureExportService,
                               ValueSetMapper valueSetMapper,
                               ConversionResultsService conversionResultsService,
-                              MatXmlProcessor matXmlProcessor) {
-        this.measureExportRepository = measureExportRepository;
+                              MatXmlProcessor matXmlProcessor,
+                              MeasureService measureService, HapiFhirServer hapiFhirServer) {
+        this.measureExportService = measureExportService;
         this.valueSetMapper = valueSetMapper;
         this.conversionResultsService = conversionResultsService;
         this.matXmlProcessor = matXmlProcessor;
+        this.measureService = measureService;
+        this.hapiFhirServer = hapiFhirServer;
     }
 
     @Operation(summary = "Translate all ValueSets in MAT to FHIR.",
             description = "Translate all the ValueSets in the MAT Database and persist to the HAPI FHIR Database.")
     @Transactional(readOnly = true)
     @PutMapping(path = "/translateAll")
-    public TranslationOutcome translateAll(@RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
+    public TranslationOutcome translateAll(
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
+            @RequestParam(required = false, defaultValue = "CONVERSION") ConversionType conversionType) {
 
         Instant startTime = Instant.now();
         int startCount = valueSetMapper.count();
 
-        int measureExportCount = processMeasureExport(xmlSource);
+        int measureExportCount = processMeasureExport(xmlSource, conversionType);
 
         int finishCount = valueSetMapper.count();
         long duration = Duration.between(startTime, Instant.now()).toMillis() / 1000;
@@ -68,6 +81,54 @@ public class ValueSetController {
         log.info(successMessage);
 
         return createOutcome(successMessage);
+    }
+
+    @Operation(summary = "Translate all ValueSets in MAT to FHIR.",
+            description = "Translate all the ValueSets in the MAT Database and persist to the HAPI FHIR Database.")
+    @Transactional(readOnly = true)
+    @PutMapping(path = "/validate")
+    public FhirValueSetResourceValidationResult validate(
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
+            @RequestParam String measureId) {
+
+        measureService.findOneValid(measureId);
+
+        byte[] xml = getXmlBytesBySource(measureId, xmlSource);
+
+        List<ValueSet> valueSets = translateToFhir(measureId, xml, ConversionType.VALIDATION);
+
+        if (valueSets.isEmpty()) {
+            throw new ValueSetConversionException("No value sets found");
+        } else {
+            return generateValidationResults(valueSets, xmlSource, measureId);
+        }
+    }
+
+    public FhirValueSetResourceValidationResult generateValidationResults(List<ValueSet> valueSets,
+                                                                          XmlSource xmlSource,
+                                                                          String measureId) {
+        FhirValueSetResourceValidationResult res = new FhirValueSetResourceValidationResult();
+
+        List<FhirResourceValidationResult> results = valueSets.stream()
+                .map(this::createResult)
+                .collect(Collectors.toList());
+        res.setFhirResourceValidationResults(results);
+
+        ConversionResult conversionResult = ConversionReporter.getConversionResult();
+        res.setValueSetConversionType(conversionResult.getValueSetConversionType());
+        res.setValueSetResults(conversionResult.getValueSetResults());
+        res.setXmlSource(xmlSource);
+        res.setMeasureId(measureId);
+
+        return res;
+    }
+
+    private FhirResourceValidationResult createResult(ValueSet valueSet) {
+        FhirResourceValidationResult res = new FhirResourceValidationResult();
+        validateResource(res, valueSet, hapiFhirServer.getCtx());
+        res.setId(valueSet.getId());
+        res.setType("ValueSet");
+        return res;
     }
 
     @Operation(summary = "Count of persisted FHIR ValueSets.",
@@ -84,17 +145,17 @@ public class ValueSetController {
         return valueSetMapper.deleteAll();
     }
 
-    private int processMeasureExport(XmlSource xmlSource) {
+    private int processMeasureExport(XmlSource xmlSource, ConversionType conversionType) {
         List<ValueSet> outcomes = new ArrayList<>();
 
-        List<MeasureVersionExportId> idsAndVersion = measureExportRepository.getAllExportIdsAndVersion(allowedVersions);
+        List<MeasureVersionExportId> idsAndVersion = measureExportService.getAllExportIdsAndVersion();
         int measureExportCount = idsAndVersion.size();
 
         idsAndVersion.stream()
-                .map(mv -> measureExportRepository.findById(mv.getId()))
+                .map(mv -> measureExportService.findById(mv.getId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(me -> translate(me, outcomes, xmlSource));
+                .forEach(me -> translate(me, outcomes, xmlSource, conversionType));
 
         return measureExportCount;
     }
@@ -106,23 +167,35 @@ public class ValueSetController {
         return res;
     }
 
-    private void translate(MeasureExport measureExport, List<ValueSet> outcomes, XmlSource xmlSource) {
-        byte[] xmlBytes = matXmlProcessor.getXmlById(measureExport.getMeasureId(), xmlSource);
+    private void translate(MeasureExport measureExport,
+                           List<ValueSet> outcomes,
+                           XmlSource xmlSource,
+                           ConversionType conversionType) {
+        byte[] xmlBytes = getXmlBytesBySource(measureExport.getMeasureId(), xmlSource);
 
         if (xmlBytes == null) {
             log.warn("Cannot find XML with MeasureId: {} and XmlSource: {}", measureExport.getMeasureId(), xmlSource);
         } else {
-            translateToFhir(measureExport, outcomes, xmlBytes);
+            List<ValueSet> valueSets = translateToFhir(measureExport.getMeasureId(), xmlBytes, conversionType);
+            outcomes.addAll(valueSets);
         }
     }
 
-    private void translateToFhir(MeasureExport measureExport, List<ValueSet> outcomes, byte[] xmlBytes) {
-        ConversionReporter.setInThreadLocal(measureExport.getMeasureId(), conversionResultsService);
-        ConversionReporter.resetValueSetResults();
+    private byte[] getXmlBytesBySource(String measureId, XmlSource xmlSource) {
+        return matXmlProcessor.getXmlById(measureId, xmlSource);
+    }
 
-        List<ValueSet> valueSets = valueSetMapper.translateToFhir(new String(xmlBytes));
-        outcomes.addAll(valueSets);
+    private List<ValueSet> translateToFhir(String measureId,
+                                           byte[] xmlBytes,
+                                           ConversionType conversionType) {
+        if (xmlBytes == null) {
+            log.warn("Cannot find XML with MeasureId: {}", measureId);
+            throw new ValueSetConversionException("Cannot find XML with MeasureId: " + measureId);
+        }
 
-        ConversionReporter.removeInThreadLocal();
+        ConversionReporter.setInThreadLocal(measureId, conversionResultsService);
+        ConversionReporter.resetValueSetResults(conversionType);
+
+        return valueSetMapper.translateToFhir(new String(xmlBytes), conversionType);
     }
 }
