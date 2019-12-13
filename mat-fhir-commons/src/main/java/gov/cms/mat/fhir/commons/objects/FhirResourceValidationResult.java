@@ -49,12 +49,4 @@ public class FhirResourceValidationResult {
         return errorList;
     }
 
-    /**
-     * @param errorList the errorList to set
-     */
-    public void setErrorList(List<FhirResourceValidationError> errorList) {
-        this.errorList = errorList;
-    }
-    
-    
 }
