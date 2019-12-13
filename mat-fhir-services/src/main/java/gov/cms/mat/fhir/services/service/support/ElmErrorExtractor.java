@@ -32,7 +32,7 @@ public class ElmErrorExtractor {
     public List<CqlConversionError> processAnnotationNode(JsonNode annotationNode) {
         List<CqlConversionError> cqlConversionErrors = new ArrayList<>();
 
-        if (annotationNode.isArray()) {
+        if (annotationNode.isArray()) { // will not be array when isMissingNode
             for (JsonNode node : annotationNode) {
                 cqlConversionErrors.add(mapper.convertValue(node, CqlConversionError.class));
             }

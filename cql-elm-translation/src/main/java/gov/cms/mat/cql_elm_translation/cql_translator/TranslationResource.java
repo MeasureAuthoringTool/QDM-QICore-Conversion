@@ -7,7 +7,6 @@ import org.fhir.ucum.UcumService;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,16 +84,12 @@ public class TranslationResource {
                     signatureLevel,
                     options);
 
-        } catch (IOException e) {
-            throw new TranslationFailureException("Unable to read request");
+        } catch (Exception e) {
+            throw new TranslationFailureException("Unable to read request", e);
         }
     }
 
-    public UcumService getUcumService() {
-        try {
-            return new UcumEssenceService(UcumEssenceService.class.getResourceAsStream("/ucum-essence.xml"));
-        } catch (UcumException e) {
-            throw new TranslationFailureException("Cannot load UCUM service to validate units");
-        }
+    UcumService getUcumService() throws UcumException {
+        return new UcumEssenceService(UcumEssenceService.class.getResourceAsStream("/ucum-essence.xml"));
     }
 }
