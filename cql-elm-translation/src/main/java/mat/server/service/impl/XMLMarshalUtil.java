@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class XMLMarshalUtil {
 
@@ -35,7 +36,7 @@ public class XMLMarshalUtil {
 			marshaller.setMapping(mapping);
 			marshaller.marshal(obj);
 
-			return stream.toString();
+			return stream.toString(StandardCharsets.UTF_8);
 		}
 	}
 

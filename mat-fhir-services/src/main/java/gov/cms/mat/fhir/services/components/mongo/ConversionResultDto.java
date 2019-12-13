@@ -14,5 +14,5 @@ public class ConversionResultDto {
 
     private List<MeasureResultMappingDto> measureResults;
 
-    private List<ConversionResult.LibraryResult> libraryResults;
+    private List<ConversionResult.FieldConversionResult> libraryResults;
 }

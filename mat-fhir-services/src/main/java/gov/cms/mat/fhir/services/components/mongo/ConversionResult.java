@@ -29,9 +29,10 @@ public class ConversionResult {
 
     private List<ValueSetResult> valueSetResults = new ArrayList<>();
 
-    private List<MeasureResult> measureResults = new ArrayList<>();
+    private List<FieldConversionResult> measureResults = new ArrayList<>();
 
-    private List<LibraryResult> libraryResults = new ArrayList<>();
+    private List<FieldConversionResult> libraryResults = new ArrayList<>();
+    private ConversionType libraryConversionType;
 
     private CqlConversionResult cqlConversionResult;
 
@@ -42,7 +43,7 @@ public class ConversionResult {
 
     @Data
     @Builder
-    public static class MeasureResult {
+    public static class FieldConversionResult {
         String field;
         String destination;
         String reason;
@@ -56,15 +57,8 @@ public class ConversionResult {
     }
 
     @Data
-    @Builder
-    public static class LibraryResult {
-        String field;
-        String destination;
-        String reason;
-    }
-
-    @Data
     public static class CqlConversionResult {
+        ConversionType type;
         Boolean result;
         List<String> errors;
         String cql;

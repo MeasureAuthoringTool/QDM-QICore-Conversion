@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class MeasureResultMappingDtoTest {
     @Test
     void testEquals() {
-        ConversionResult.MeasureResult result = ConversionResult.MeasureResult.builder().build();
+        ConversionResult.FieldConversionResult result = ConversionResult.FieldConversionResult.builder().build();
         ConversionMapping conversionMapping = ConversionMapping.builder().build();
 
         MeasureResultMappingDto lhs = new MeasureResultMappingDto(result, conversionMapping);

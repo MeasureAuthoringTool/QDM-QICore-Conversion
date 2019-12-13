@@ -49,7 +49,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(any(ConversionResult.class)))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.MeasureResult result = buildMeasureResult();
+        ConversionResult.FieldConversionResult result = buildMeasureResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addMeasureResult(MEASURE_ID, result);
 
@@ -67,7 +67,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(any(ConversionResult.class)))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.LibraryResult result = buildLibraryResult();
+        ConversionResult.FieldConversionResult result = buildLibraryResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result);
 
@@ -87,7 +87,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(conversionResultToReturn))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.MeasureResult result = buildMeasureResult();
+        ConversionResult.FieldConversionResult result = buildMeasureResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addMeasureResult(MEASURE_ID, result);
 
@@ -106,7 +106,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(conversionResultToReturn))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.LibraryResult result = buildLibraryResult();
+        ConversionResult.FieldConversionResult result = buildLibraryResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result);
 
@@ -244,16 +244,16 @@ class ConversionResultsServiceTest {
     }
 
 
-    private ConversionResult.MeasureResult buildMeasureResult() {
-        return ConversionResult.MeasureResult.builder()
+    private ConversionResult.FieldConversionResult buildMeasureResult() {
+        return ConversionResult.FieldConversionResult.builder()
                 .field("FIELD")
                 .destination("DESTINATION")
                 .reason("REASON")
                 .build();
     }
 
-    private ConversionResult.LibraryResult buildLibraryResult() {
-        return ConversionResult.LibraryResult.builder()
+    private ConversionResult.FieldConversionResult buildLibraryResult() {
+        return ConversionResult.FieldConversionResult.builder()
                 .field("FIELD")
                 .destination("DESTINATION")
                 .reason("REASON")

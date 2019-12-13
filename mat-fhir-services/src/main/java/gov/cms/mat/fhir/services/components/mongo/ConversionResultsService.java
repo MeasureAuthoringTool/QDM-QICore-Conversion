@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import gov.cms.mat.fhir.services.service.support.CqlConversionError;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,13 @@ public class ConversionResultsService {
         return conversionResultRepository.save(conversionResult);
     }
 
-    ConversionResult addMeasureResult(String measureId, ConversionResult.MeasureResult result) {
+    ConversionResult addMeasureResult(String measureId, ConversionResult.FieldConversionResult result) {
         ConversionResult conversionResult = findOrCreate(measureId);
         conversionResult.getMeasureResults().add(result);
         return conversionResultRepository.save(conversionResult);
     }
 
-    ConversionResult addLibraryResult(String measureId, ConversionResult.LibraryResult result) {
+    ConversionResult addLibraryResult(String measureId, ConversionResult.FieldConversionResult result) {
         ConversionResult conversionResult = findOrCreate(measureId);
         conversionResult.getLibraryResults().add(result);
         return conversionResultRepository.save(conversionResult);
@@ -78,6 +79,21 @@ public class ConversionResultsService {
         }
     }
 
+    public ConversionResult findConversionResult(String measureId) {
+        Optional<ConversionResult> optional = findByMeasureId(measureId);
+
+        return optional
+                .orElseThrow(() -> new LibraryConversionException("Cannot find ConversionResult for measureId: " + measureId));
+    }
+
+    public ConversionResult setLibraryConversionType(String measureId, ConversionType conversionType) {
+        ConversionResult conversionResult = findOrCreate(measureId);
+
+        conversionResult.setLibraryConversionType(conversionType);
+
+        return conversionResultRepository.save(conversionResult);
+    }
+
     ConversionResult clearLibrary(String measureId) {
         Optional<ConversionResult> optional = findByMeasureId(measureId);
 
@@ -95,7 +111,6 @@ public class ConversionResultsService {
 
         if (optional.isPresent()) {
             ConversionResult conversionResult = optional.get();
-
             conversionResult.setCqlConversionResult(null);
 
             return conversionResultRepository.save(conversionResult);
@@ -149,4 +164,14 @@ public class ConversionResultsService {
         conversionResult.getCqlConversionResult().setResult(Boolean.FALSE);
         return conversionResultRepository.save(conversionResult);
     }
+
+    public ConversionResult setCqlConversionResult(String measureId, ConversionType conversionType) {
+        ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
+
+        conversionResult.getCqlConversionResult().setType(conversionType);
+
+        return conversionResultRepository.save(conversionResult);
+    }
+
+
 }

@@ -6,6 +6,7 @@ import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.services.components.cql.CqlConversionClient;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.service.support.CqlConversionError;
@@ -31,7 +32,9 @@ public class CQLLibraryTranslationService {
     private final ConversionResultsService conversionResultsService;
 
     public CQLLibraryTranslationService(MeasureService measureService,
-                                        CqlLibraryRepository cqlLibraryRepository, CqlConversionClient cqlConversionClient, ConversionResultsService conversionResultsService) {
+                                        CqlLibraryRepository cqlLibraryRepository,
+                                        CqlConversionClient cqlConversionClient,
+                                        ConversionResultsService conversionResultsService) {
         this.measureService = measureService;
         this.cqlLibraryRepository = cqlLibraryRepository;
         this.cqlConversionClient = cqlConversionClient;
@@ -46,22 +49,24 @@ public class CQLLibraryTranslationService {
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        return String.format(CONVERSION_RESULTS_TEMPLATE, all.size(), successfulConversions);
+        String resultMessage = String.format(CONVERSION_RESULTS_TEMPLATE, all.size(), successfulConversions);
+        log.info("Conversion results: {}", resultMessage);
+        return resultMessage;
     }
 
     private int processCount(String id) {
         try {
-            process(id);
+            process(id, ConversionType.VALIDATION);
             return 1;
         } catch (Exception e) {
             return 0;
         }
     }
 
-    private String process(String id) {
+    private String process(String id, ConversionType conversionType) {
         log.info("Processing measure id: {}", id);
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetCqlConversionResult();
+        ConversionReporter.resetCqlConversionResult(conversionType);
 
         List<CqlLibrary> cqlLibraries = cqlLibraryRepository.getCqlLibraryByMeasureId(id);
 
@@ -108,7 +113,6 @@ public class CQLLibraryTranslationService {
         }
     }
 
-
     private String convertToCql(String xml) {
         try {
             ResponseEntity<String> entity = cqlConversionClient.getCql(xml);
@@ -130,9 +134,8 @@ public class CQLLibraryTranslationService {
         }
     }
 
-
-    public String processOne(String measureId) {
+    public String processOne(String measureId, ConversionType conversionType) {
         Measure measure = measureService.findOneValid(measureId);
-        return process(measure.getId());
+        return process(measure.getId(), conversionType);
     }
 }

@@ -60,10 +60,10 @@ public class ConversionReporter {
     }
 
 
-    public static void resetCqlConversionResult() {
+    public static void resetCqlConversionResult(ConversionType conversionType) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.clearCqlConversionResult();
+        conversionReporter.clearCqlConversionResult(conversionType);
     }
 
     public static void resetValueSetResults() {
@@ -78,10 +78,10 @@ public class ConversionReporter {
         conversionReporter.clearMeasure();
     }
 
-    public static void resetLibrary() {
+    public static ConversionResult resetLibrary(ConversionType conversionType) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.clearLibrary();
+        return conversionReporter.clearLibrary(conversionType);
     }
 
     public static ConversionReporter getConversionReporter() {
@@ -92,6 +92,11 @@ public class ConversionReporter {
         }
 
         return conversionReporter;
+    }
+
+    public static ConversionResult getConversionResult() {
+        ConversionReporter conversionReporter = getConversionReporter();
+        return conversionReporter.findConversionResult();
     }
 
 
@@ -121,8 +126,9 @@ public class ConversionReporter {
         return conversionReporter;
     }
 
+
     private ConversionResult addValueSetResult(String oid, String reason) {
-        ConversionResult.ValueSetResult result = ConversionResult.ValueSetResult.builder()
+        ConversionResult.ValueSetResult result = gov.cms.mat.fhir.services.components.mongo.ConversionResult.ValueSetResult.builder()
                 .oid(oid)
                 .reason(reason)
                 .build();
@@ -132,7 +138,7 @@ public class ConversionReporter {
 
     private ConversionResult addMeasureResult(String field, String destination, String reason) {
 
-        ConversionResult.MeasureResult result = ConversionResult.MeasureResult.builder()
+        ConversionResult.FieldConversionResult result = ConversionResult.FieldConversionResult.builder()
                 .field(field)
                 .destination(destination)
                 .reason(reason)
@@ -143,7 +149,7 @@ public class ConversionReporter {
 
     private ConversionResult addLibraryResult(String field, String destination, String reason) {
 
-        ConversionResult.LibraryResult result = ConversionResult.LibraryResult.builder()
+        ConversionResult.FieldConversionResult result = ConversionResult.FieldConversionResult.builder()
                 .field(field)
                 .destination(destination)
                 .reason(reason)
@@ -161,12 +167,14 @@ public class ConversionReporter {
         return conversionResultsService.clearMeasure(measureId);
     }
 
-    private ConversionResult clearLibrary() {
-        return conversionResultsService.clearLibrary(measureId);
+    private ConversionResult clearLibrary(ConversionType conversionType) {
+        conversionResultsService.clearLibrary(measureId);
+        return conversionResultsService.setLibraryConversionType(measureId, conversionType);
     }
 
-    private ConversionResult clearCqlConversionResult() {
-        return conversionResultsService.clearCqlConversionResult(measureId);
+    private ConversionResult clearCqlConversionResult(ConversionType conversionType) {
+        conversionResultsService.clearCqlConversionResult(measureId);
+        return conversionResultsService.setCqlConversionResult(measureId, conversionType);
     }
 
     private ConversionResult addCqlConversionResultSuccess() {
@@ -183,6 +191,10 @@ public class ConversionReporter {
 
     private ConversionResult addCqlConversionErrors(List<CqlConversionError> errors) {
         return conversionResultsService.addCqlConversionErrors(measureId, errors);
+    }
+
+    private ConversionResult findConversionResult() {
+        return conversionResultsService.findConversionResult(measureId);
     }
 
 }

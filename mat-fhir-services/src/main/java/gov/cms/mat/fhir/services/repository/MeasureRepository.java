@@ -30,4 +30,6 @@ public interface MeasureRepository extends JpaRepository<Measure, String> {
     List<String> findAllIdsWithAllowedVersions(Collection<String> allowedVersions);
 
     Optional<Measure> findByIdAndReleaseVersionIn(String measureId, List<String> allowedVersions);
+
+    List<Measure> findByReleaseVersionIn(List<String> allowedVersions);
 }

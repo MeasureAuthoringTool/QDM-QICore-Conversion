@@ -35,14 +35,14 @@ class ConversionReporterTest {
 
     @Test
     void setMeasureResult_Success() {
-        when(conversionResultsService.addMeasureResult(anyString(), any(ConversionResult.MeasureResult.class)))
+        when(conversionResultsService.addMeasureResult(anyString(), any(ConversionResult.FieldConversionResult.class)))
                 .thenReturn(new ConversionResult());
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
         ConversionReporter.resetMeasure();
         ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 
-        verify(conversionResultsService).addMeasureResult(anyString(), any(ConversionResult.MeasureResult.class));
+        verify(conversionResultsService).addMeasureResult(anyString(), any(ConversionResult.FieldConversionResult.class));
     }
 
     @Test
@@ -56,14 +56,14 @@ class ConversionReporterTest {
 
     @Test
     void setLibraryResult_Success() {
-        when(conversionResultsService.addLibraryResult(anyString(), any(ConversionResult.LibraryResult.class)))
+        when(conversionResultsService.addLibraryResult(anyString(), any(ConversionResult.FieldConversionResult.class)))
                 .thenReturn(new ConversionResult());
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
-        ConversionReporter.resetLibrary();
+        ConversionReporter.resetLibrary(ConversionType.VALIDATION);
         ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON);
 
-        verify(conversionResultsService).addLibraryResult(anyString(), any(ConversionResult.LibraryResult.class));
+        verify(conversionResultsService).addLibraryResult(anyString(), any(ConversionResult.FieldConversionResult.class));
     }
 
     @Test
@@ -95,7 +95,7 @@ class ConversionReporterTest {
 
     @Test
     void resetLibrary_NoThreadLocal() {
-        Assertions.assertThrows(ThreadLocalNotFoundException.class, ConversionReporter::resetLibrary);
+        Assertions.assertThrows(ThreadLocalNotFoundException.class, () -> ConversionReporter.resetLibrary(null));
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
 }

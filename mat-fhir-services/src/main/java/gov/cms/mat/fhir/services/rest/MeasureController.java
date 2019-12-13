@@ -33,14 +33,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import org.apache.commons.lang3.ArrayUtils;
+import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
-import org.hl7.fhir.r4.model.OperationOutcome;
 
 @RestController
 @RequestMapping(path = "/measure")
@@ -232,7 +231,7 @@ public class MeasureController {
     public FhirResourceValidationResult validateMeasure(
             @RequestParam("id") String id, 
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
-        OperationOutcome outcome = new OperationOutcome();
+
         FhirResourceValidationResult res = new FhirResourceValidationResult();
         //Don't do conversion reporting
         try {
@@ -271,7 +270,7 @@ public class MeasureController {
             
             FhirValidator validator = ctx.newValidator();
             FhirInstanceValidator instanceValidator = new FhirInstanceValidator();
-            validator.registerValidatorModule(instanceValidator);         
+            validator.registerValidatorModule(instanceValidator);
             
             ValidationResult result = validator.validateWithResult(fhirMeasure);
             

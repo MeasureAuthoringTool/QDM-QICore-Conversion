@@ -1,34 +1,41 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gov.cms.mat.fhir.services.rest;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.validation.FhirValidator;
+import ca.uhn.fhir.validation.SingleValidationMessage;
+import ca.uhn.fhir.validation.ValidationResult;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.objects.CQLSourceForTranslation;
+import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
+import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.mongo.ConversionType;
+import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.repository.MeasureRepository;
+import gov.cms.mat.fhir.services.service.MeasureService;
+import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.translate.LibraryMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Library;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -36,13 +43,15 @@ import java.util.List;
 @Tag(name = "Library-Controller", description = "API for converting MAT Libraries to FHIR")
 @Slf4j
 public class LibraryController {
-    private final MeasureRepository measureRepo;
+    private static final String ERROR_LIBRARY_SEARCH = "Error in Library search for this measure: {}";
+
+    private final MeasureService measureRepo;
     private final HapiFhirServer hapiFhirServer;
     private final CqlLibraryRepository cqlLibraryRepo;
     private final CqlLibraryExportRepository cqlLibraryExportRepo;
     private final ConversionResultsService conversionResultsService;
 
-    public LibraryController(MeasureRepository measureRepository,
+    public LibraryController(MeasureService measureRepository,
                              HapiFhirServer hapiFhirServer,
                              CqlLibraryRepository cqlLibraryRepo,
                              CqlLibraryExportRepository cqlLibraryExportRepo,
@@ -61,26 +70,19 @@ public class LibraryController {
     public TranslationOutcome translateLibraryByMeasureId(@RequestParam("id") String id) {
         TranslationOutcome res = new TranslationOutcome();
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetLibrary();
+        ConversionReporter.resetLibrary(ConversionType.CONVERSION);
 
         try {
             List<CqlLibrary> cqlLibs = cqlLibraryRepo.getCqlLibraryByMeasureId(id);
-            Iterator iter = cqlLibs.iterator();
-            while (iter.hasNext()) {
-                CqlLibrary cqlLib = (CqlLibrary) iter.next();
-                //go get the associated cql and elm
-                CqlLibraryExport cqlExp = cqlLibraryExportRepo.getCqlLibraryExportByCqlLibraryId(cqlLib.getId());
-                byte[] cql = cqlExp.getCql();
-                byte[] elm = cqlExp.getElm();
-                LibraryMapper fhirMapper = new LibraryMapper(cqlLib, cql, elm, hapiFhirServer.getBaseURL());
-                org.hl7.fhir.r4.model.Library fhirLibrary = fhirMapper.translateToFhir();
+
+            for (CqlLibrary cqlLib : cqlLibs) {
+                Library fhirLibrary = translateLibrary(cqlLib);
 
                 Bundle bundle = hapiFhirServer.createAndExecuteBundle(fhirLibrary);
 
                 IGenericClient client = hapiFhirServer.getHapiClient();
                 Bundle resp = client.transaction().withBundle(bundle).execute();
 
-                // Log the response
                 log.info(hapiFhirServer.getCtx().newXmlParser().setPrettyPrint(true).encodeResourceToString(resp));
             }
         } catch (Exception ex) {
@@ -95,6 +97,68 @@ public class LibraryController {
         return res;
     }
 
+
+    @Operation(summary = "Validate Library in MAT to FHIR.",
+            description = "Translate one Library in the MAT Database and persist to the HAPI FHIR Database.")
+    @PutMapping(path = "/validateLibraryByMeasureId")
+    public FhirResourceValidationResult validateLibraryByMeasureId(@RequestParam("id") String id) {
+
+        try {
+            FhirLibraryResourceValidationResult res = new FhirLibraryResourceValidationResult();
+
+            ConversionReporter.setInThreadLocal(id, conversionResultsService);
+            ConversionReporter.resetLibrary(ConversionType.VALIDATION);
+
+            List<CqlLibrary> cqlLibs = cqlLibraryRepo.getCqlLibraryByMeasureId(id);
+
+            for (CqlLibrary cqlLib : cqlLibs) {
+                Library fhirLibrary = translateLibrary(cqlLib);
+                validateResource(res, fhirLibrary);
+
+                res.setId(id);
+                res.setType("Library");
+
+                ConversionResult conversionResult = ConversionReporter.getConversionResult();
+                res.setLibraryResults(conversionResult.getLibraryResults());
+                res.setLibraryConversionType(conversionResult.getLibraryConversionType());
+            }
+
+            return res;
+
+        } catch (Exception ex) {
+            String message = "Failed to Translate Library for measureId: " + id;
+            log.error(message, ex);
+            throw new LibraryConversionException(message, ex);
+        }
+
+    }
+
+    public void validateResource(FhirResourceValidationResult res, IBaseResource resource) {
+        //validate the Measure Resource
+        FhirContext ctx = hapiFhirServer.getCtx();
+
+        FhirValidator validator = ctx.newValidator();
+        FhirInstanceValidator instanceValidator = new FhirInstanceValidator();
+        validator.registerValidatorModule(instanceValidator);
+
+        ValidationResult result = validator.validateWithResult(resource);
+
+        for (SingleValidationMessage next : result.getMessages()) {
+            FhirResourceValidationError error = new FhirResourceValidationError(next.getSeverity().name(), next.getLocationString(), next.getMessage());
+            res.getErrorList().add(error);
+        }
+    }
+
+
+    public Library translateLibrary(CqlLibrary cqlLib) {
+        //go get the associated cql and elm
+        CqlLibraryExport cqlExp = cqlLibraryExportRepo.getCqlLibraryExportByCqlLibraryId(cqlLib.getId());
+        byte[] cql = cqlExp.getCql();
+        byte[] elm = cqlExp.getElm();
+        LibraryMapper fhirMapper = new LibraryMapper(cqlLib, cql, elm, hapiFhirServer.getBaseURL());
+        return fhirMapper.translateToFhir();
+    }
+
     @Operation(summary = "Find a list of CQLSourceForTranslation.",
             description = "Find a list of CQLSourceForTranslation identified by the id.")
     @GetMapping(path = "/getLibrariesByMeasureId")
@@ -102,9 +166,8 @@ public class LibraryController {
         List<CQLSourceForTranslation> res = new ArrayList<>();
         try {
             List<CqlLibrary> libraries = cqlLibraryRepo.getCqlLibraryByMeasureId(id);
-            Iterator iter = libraries.iterator();
-            while (iter.hasNext()) {
-                CqlLibrary lib = (CqlLibrary) iter.next();
+
+            for (CqlLibrary lib : libraries) {
                 CQLSourceForTranslation dest = new CQLSourceForTranslation();
                 dest.setId(lib.getId());
                 dest.setMeasureId(lib.getMeasureId());
@@ -114,7 +177,7 @@ public class LibraryController {
                 res.add(dest);
             }
         } catch (Exception ex) {
-            log.error("Error in Library search for this measure: {}", ex.getMessage());
+            log.error(ERROR_LIBRARY_SEARCH, ex.getMessage());
         }
         return res;
     }
@@ -132,12 +195,12 @@ public class LibraryController {
             dest.setQdmVersion(lib.getQdmVersion());
             dest.setReleaseVersion(lib.getReleaseVersion());
         } catch (Exception ex) {
-            log.error("Error in Library search for this measure: {}", ex.getMessage());
+            log.error(ERROR_LIBRARY_SEARCH, ex.getMessage());
         }
         return dest;
     }
-    
-        @Operation(summary = "Find a CQLSourceForTranslation.",
+
+    @Operation(summary = "Find a CQLSourceForTranslation.",
             description = "Find a CQLSourceForTranslation identified by the name and version.")
     @GetMapping(path = "/getLibraryByNameAndVersion")
     public CQLSourceForTranslation getLibraryByNameAndVersion(@RequestParam("cqlName") String cqlName, @RequestParam("version") String version) {
@@ -150,7 +213,7 @@ public class LibraryController {
             dest.setQdmVersion(lib.getQdmVersion());
             dest.setReleaseVersion(lib.getReleaseVersion());
         } catch (Exception ex) {
-            log.error("Error in Library search for this measure: {}", ex.getMessage());
+            log.error(ERROR_LIBRARY_SEARCH, ex.getMessage());
         }
         return dest;
     }
@@ -162,29 +225,21 @@ public class LibraryController {
     public List<TranslationOutcome> translateAllLibraries() {
         List<TranslationOutcome> res = new ArrayList<>();
         try {
-            List<Measure> measureList = measureRepo.findAll();
-            Iterator iter = measureList.iterator();
-            while (iter.hasNext()) {
-                Measure measure = (Measure) iter.next();
-                String measureId = measure.getId().trim();
-                String version = measure.getReleaseVersion();
+            List<Measure> measureList = measureRepo.findAllValid();
 
-                if (version != null) {
-                    if (version.equals("v5.5") || version.equals("v5.6") || version.equals("v5.7") || version.equals("v5.8")) {
-                        System.out.println("Translating Libraries for " + measureId);
-                        TranslationOutcome result = translateLibraryByMeasureId(measureId);
-                        res.add(result);
-                    }
-                }
+            for (Measure measure : measureList) {
+                String measureId = measure.getId().trim();
+                TranslationOutcome result = translateLibraryByMeasureId(measureId);
+                res.add(result);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             TranslationOutcome tOut = new TranslationOutcome();
             tOut.setSuccessful(Boolean.FALSE);
             tOut.setMessage("/library/translateAllLibraries Failed " + ex.getMessage());
             res.add(tOut);
-            log.error("Failed Batch Translation of Libraries ALL: {}", ex.getMessage());
+            log.error("Failed Batch Translation of Libraries ALL:", ex);
         }
+
         ConversionReporter.removeInThreadLocal();
         return res;
     }
@@ -196,23 +251,25 @@ public class LibraryController {
         TranslationOutcome res = new TranslationOutcome();
         try {
             List<CqlLibraryExport> exportList = cqlLibraryExportRepo.findAll();
-            Iterator iter = exportList.iterator();
-            while (iter.hasNext()) {
-                CqlLibraryExport library = (CqlLibraryExport) iter.next();
-                String cqlId = library.getCqlLibraryId();
-                try {
-                    IGenericClient client = hapiFhirServer.getHapiClient();
-                    client.delete().resourceById(new IdDt("Library", cqlId)).execute();
-                } catch (Exception ex) {
-                }
+
+            for (CqlLibraryExport library : exportList) {
+                deleteLibrary(library.getCqlLibraryId());
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             res.setSuccessful(Boolean.FALSE);
             res.setMessage("/library/removeAllLibraries removeAllLibraries Failed " + ex.getMessage());
-            log.error("Failed Batch Delete of Libraries ALL: {}", ex.getMessage());
+            log.error("Failed Batch Delete of Libraries ALL: ", ex);
         }
 
         return res;
+    }
+
+    public void deleteLibrary(String cqlId) {
+        try {
+            IGenericClient client = hapiFhirServer.getHapiClient();
+            client.delete().resourceById(new IdDt("Library", cqlId)).execute();
+        } catch (Exception e) {
+            log.trace("Error deleting library with cqlId : {}", cqlId, e);
+        }
     }
 }

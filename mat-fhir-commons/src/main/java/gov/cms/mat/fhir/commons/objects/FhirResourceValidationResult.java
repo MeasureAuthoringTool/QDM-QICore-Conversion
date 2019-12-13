@@ -1,19 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gov.cms.mat.fhir.commons.objects;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- *
- * @author duanedecouteau
- */
 @XmlRootElement
 public class FhirResourceValidationResult {
     private String type;

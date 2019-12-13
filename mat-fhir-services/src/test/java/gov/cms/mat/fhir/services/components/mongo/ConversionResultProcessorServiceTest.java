@@ -132,31 +132,31 @@ class ConversionResultProcessorServiceTest {
     }
 
     private List<ConversionResult.ValueSetResult> createValueSetResults() {
-        return Collections.singletonList(ConversionResult.ValueSetResult
+        return Collections.singletonList(gov.cms.mat.fhir.services.components.mongo.ConversionResult.ValueSetResult
                 .builder()
                 .oid("OID")
                 .reason("REASON")
                 .build());
     }
 
-    private List<ConversionResult.MeasureResult> createMeasureResults() {
+    private List<ConversionResult.FieldConversionResult> createMeasureResults() {
         return Arrays.asList(buildMeasureResult(0), buildMeasureResult(1));
     }
 
-    private List<ConversionResult.LibraryResult> createLibraryResults() {
+    private List<ConversionResult.FieldConversionResult> createLibraryResults() {
         return Arrays.asList(buildLibraryResult(0), buildLibraryResult(1), buildLibraryResult(2));
     }
 
-    private ConversionResult.LibraryResult buildLibraryResult(int i) {
-        return ConversionResult.LibraryResult.builder()
+    private ConversionResult.FieldConversionResult buildLibraryResult(int i) {
+        return ConversionResult.FieldConversionResult.builder()
                 .field("FIELD" + i)
                 .destination("DESTINATION" + i)
                 .reason("REASON" + i)
                 .build();
     }
 
-    private ConversionResult.MeasureResult buildMeasureResult(int i) {
-        return ConversionResult.MeasureResult.builder()
+    private ConversionResult.FieldConversionResult buildMeasureResult(int i) {
+        return ConversionResult.FieldConversionResult.builder()
                 .field("FIELD" + i)
                 .destination("DESTINATION" + i)
                 .reason("REASON" + i)

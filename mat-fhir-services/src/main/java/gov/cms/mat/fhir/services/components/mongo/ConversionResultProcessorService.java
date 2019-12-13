@@ -54,7 +54,7 @@ public class ConversionResultProcessorService {
                 .collect(Collectors.toList());
     }
 
-    private MeasureResultMappingDto convertToDto(ConversionResult.MeasureResult measureResult) {
+    private MeasureResultMappingDto convertToDto(ConversionResult.FieldConversionResult measureResult) {
         try {
             ConversionMapping conversionMapping =
                     qdmQiCoreDataService.findByFhirR4QiCoreMapping(measureResult.field, measureResult.destination);
@@ -68,9 +68,9 @@ public class ConversionResultProcessorService {
     public Set<String> findMissingValueSets() {
         return conversionResultsService.findAll()
                 .stream()
-                .map(ConversionResult::getValueSetResults)
+                .map(gov.cms.mat.fhir.services.components.mongo.ConversionResult::getValueSetResults)
                 .flatMap(List::stream)
-                .map(ConversionResult.ValueSetResult::getOid)
+                .map(gov.cms.mat.fhir.services.components.mongo.ConversionResult.ValueSetResult::getOid)
                 .collect(Collectors.toSet());
     }
 }
