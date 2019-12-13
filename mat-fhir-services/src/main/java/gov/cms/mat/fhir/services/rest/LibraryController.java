@@ -1,17 +1,11 @@
 package gov.cms.mat.fhir.services.rest;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.validation.FhirValidator;
-import ca.uhn.fhir.validation.SingleValidationMessage;
-import ca.uhn.fhir.validation.ValidationResult;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.objects.CQLSourceForTranslation;
-import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
-import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
@@ -21,14 +15,13 @@ import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
+import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.MeasureService;
 import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.translate.LibraryMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.web.bind.annotation.*;
@@ -42,21 +35,21 @@ import java.util.List;
 @RequestMapping(path = "/library")
 @Tag(name = "Library-Controller", description = "API for converting MAT Libraries to FHIR")
 @Slf4j
-public class LibraryController {
+public class LibraryController implements FhirValidatorProcessor {
     private static final String ERROR_LIBRARY_SEARCH = "Error in Library search for this measure: {}";
 
-    private final MeasureService measureRepo;
+    private final MeasureService measureService;
     private final HapiFhirServer hapiFhirServer;
     private final CqlLibraryRepository cqlLibraryRepo;
     private final CqlLibraryExportRepository cqlLibraryExportRepo;
     private final ConversionResultsService conversionResultsService;
 
-    public LibraryController(MeasureService measureRepository,
+    public LibraryController(MeasureService measureService,
                              HapiFhirServer hapiFhirServer,
                              CqlLibraryRepository cqlLibraryRepo,
                              CqlLibraryExportRepository cqlLibraryExportRepo,
                              ConversionResultsService conversionResultsService) {
-        this.measureRepo = measureRepository;
+        this.measureService = measureService;
         this.hapiFhirServer = hapiFhirServer;
         this.cqlLibraryExportRepo = cqlLibraryExportRepo;
         this.cqlLibraryRepo = cqlLibraryRepo;
@@ -101,7 +94,7 @@ public class LibraryController {
     @Operation(summary = "Validate Library in MAT to FHIR.",
             description = "Translate one Library in the MAT Database and persist to the HAPI FHIR Database.")
     @PutMapping(path = "/validateLibraryByMeasureId")
-    public FhirResourceValidationResult validateLibraryByMeasureId(@RequestParam("id") String id) {
+    public FhirLibraryResourceValidationResult validateLibraryByMeasureId(@RequestParam("id") String id) {
 
         try {
             FhirLibraryResourceValidationResult res = new FhirLibraryResourceValidationResult();
@@ -113,7 +106,7 @@ public class LibraryController {
 
             for (CqlLibrary cqlLib : cqlLibs) {
                 Library fhirLibrary = translateLibrary(cqlLib);
-                validateResource(res, fhirLibrary);
+                validateResource(res, fhirLibrary, hapiFhirServer.getCtx());
 
                 res.setId(id);
                 res.setType("Library");
@@ -130,25 +123,7 @@ public class LibraryController {
             log.error(message, ex);
             throw new LibraryConversionException(message, ex);
         }
-
     }
-
-    public void validateResource(FhirResourceValidationResult res, IBaseResource resource) {
-        //validate the Measure Resource
-        FhirContext ctx = hapiFhirServer.getCtx();
-
-        FhirValidator validator = ctx.newValidator();
-        FhirInstanceValidator instanceValidator = new FhirInstanceValidator();
-        validator.registerValidatorModule(instanceValidator);
-
-        ValidationResult result = validator.validateWithResult(resource);
-
-        for (SingleValidationMessage next : result.getMessages()) {
-            FhirResourceValidationError error = new FhirResourceValidationError(next.getSeverity().name(), next.getLocationString(), next.getMessage());
-            res.getErrorList().add(error);
-        }
-    }
-
 
     public Library translateLibrary(CqlLibrary cqlLib) {
         //go get the associated cql and elm
@@ -225,7 +200,7 @@ public class LibraryController {
     public List<TranslationOutcome> translateAllLibraries() {
         List<TranslationOutcome> res = new ArrayList<>();
         try {
-            List<Measure> measureList = measureRepo.findAllValid();
+            List<Measure> measureList = measureService.findAllValid();
 
             for (Measure measure : measureList) {
                 String measureId = measure.getId().trim();

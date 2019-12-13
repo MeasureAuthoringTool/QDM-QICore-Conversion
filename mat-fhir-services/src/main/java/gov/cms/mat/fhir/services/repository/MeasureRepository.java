@@ -21,6 +21,10 @@ public interface MeasureRepository extends JpaRepository<Measure, String> {
     @Query("select a from Measure a where a.measureStatus = :measureStatus")
     List<Measure> getMeasuresByStatus(@Param("measureStatus") String measureStatus);
 
+    @Query("select a from Measure a where a.measureStatus = :measureStatus and a.releaseVersion in :allowedVersions")
+    List<Measure> getMeasuresByStatusWithAllowedVersions(String measureStatus, Collection<String> allowedVersions);
+
+
     @Query("select a.version from Measure a where a.id = :id")
     String findVersion(String id);
 

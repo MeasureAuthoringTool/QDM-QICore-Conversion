@@ -39,7 +39,7 @@ class ConversionReporterTest {
                 .thenReturn(new ConversionResult());
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
-        ConversionReporter.resetMeasure();
+        ConversionReporter.resetMeasure(ConversionType.VALIDATION);
         ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 
         verify(conversionResultsService).addMeasureResult(anyString(), any(ConversionResult.FieldConversionResult.class));
@@ -89,7 +89,7 @@ class ConversionReporterTest {
 
     @Test
     void resetMeasure_NoThreadLocal() {
-        Assertions.assertThrows(ThreadLocalNotFoundException.class, ConversionReporter::resetMeasure);
+        Assertions.assertThrows(ThreadLocalNotFoundException.class, () -> ConversionReporter.resetMeasure(ConversionType.VALIDATION));
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
 

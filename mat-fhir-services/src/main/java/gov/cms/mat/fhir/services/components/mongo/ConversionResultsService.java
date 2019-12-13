@@ -73,6 +73,7 @@ public class ConversionResultsService {
         if (optional.isPresent()) {
             ConversionResult conversionResult = optional.get();
             conversionResult.getMeasureResults().clear();
+            conversionResult.setMeasureConversionType(null);
             return conversionResultRepository.save(conversionResult);
         } else {
             return null;
@@ -100,6 +101,7 @@ public class ConversionResultsService {
         if (optional.isPresent()) {
             ConversionResult conversionResult = optional.get();
             conversionResult.getLibraryResults().clear();
+            conversionResult.setLibraryConversionType(null);
             return conversionResultRepository.save(conversionResult);
         } else {
             return null;
@@ -174,4 +176,11 @@ public class ConversionResultsService {
     }
 
 
+    public ConversionResult setMeasureConversionType(String measureId, ConversionType conversionType) {
+        ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
+
+        conversionResult.setMeasureConversionType(conversionType);
+
+        return conversionResultRepository.save(conversionResult);
+    }
 }

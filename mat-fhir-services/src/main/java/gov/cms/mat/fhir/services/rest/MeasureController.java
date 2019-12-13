@@ -5,27 +5,25 @@
  */
 package gov.cms.mat.fhir.services.rest;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.validation.FhirValidator;
-import ca.uhn.fhir.validation.SingleValidationMessage;
-import ca.uhn.fhir.validation.ValidationResult;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
-import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
-import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.SupplementalDataProcessor;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
-import gov.cms.mat.fhir.services.repository.MeasureRepository;
+import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
+import gov.cms.mat.fhir.services.service.MeasureService;
+import gov.cms.mat.fhir.services.summary.FhirMeasureResourceValidationResult;
 import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
 import gov.cms.mat.fhir.services.translate.MeasureMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,20 +31,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import org.apache.commons.lang3.ArrayUtils;
-import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/measure")
 @Tag(name = "Measure-Controller", description = "API for converting MAT Measures to FHIR")
 @Slf4j
-public class MeasureController {
-    private final MeasureRepository measureRepo;
+public class MeasureController implements FhirValidatorProcessor {
+    private final MeasureService measureService;
     private final MeasureExportRepository measureExportRepo;
     private final ManageMeasureDetailMapper manageMeasureDetailMapper;
     private final HapiFhirServer hapiFhirServer;
@@ -57,7 +53,7 @@ public class MeasureController {
 
     private final MatXmlProcessor matXmlProcessor;
 
-    public MeasureController(MeasureRepository measureRepository,
+    public MeasureController(MeasureService measureService,
                              MeasureExportRepository measureExportRepository,
                              ManageMeasureDetailMapper manageMeasureDetailMapper,
                              HapiFhirServer hapiFhirServer,
@@ -66,7 +62,7 @@ public class MeasureController {
                              RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor,
                              MeasureGroupingDataProcessor measureGroupingDataProcessor,
                              MatXmlProcessor matXmlProcessor) {
-        this.measureRepo = measureRepository;
+        this.measureService = measureService;
 
         this.measureExportRepo = measureExportRepository;
         this.manageMeasureDetailMapper = manageMeasureDetailMapper;
@@ -88,38 +84,20 @@ public class MeasureController {
 
         TranslationOutcome res = new TranslationOutcome();
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetMeasure();
+        ConversionReporter.resetMeasure(ConversionType.CONVERSION);
 
         try {
-            Measure qdmMeasure = measureRepo.getMeasureById(id);
+            Measure qdmMeasure = measureService.findOneValid(id);
             res.setFhirIdentity("Measure/" + qdmMeasure.getId());
 
             MeasureExport measureExport = measureExportRepo.getMeasureExportById(id);
 
             byte[] xmlBytes = findXml(qdmMeasure, xmlSource);
 
-            //human-readable may exist not an error if it doesn't
-            String narrative = "";
-            try {
-                narrative = new String(measureExport.getHumanReadable());
-            } catch (Exception ex) {
-                log.error("Narrative not found: {}", ex.getMessage());
-            }
 
-            ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);
+            String narrative = getNarrative(measureExport);
 
-            MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());
-            org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
-
-            if (ArrayUtils.isNotEmpty(xmlBytes)) {
-                String xml = new String(xmlBytes);
-
-                fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(xml));
-                fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
-
-                fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
-                log.debug("Processed");
-            }
+            org.hl7.fhir.r4.model.Measure fhirMeasure = getMeasure(qdmMeasure, xmlBytes, narrative);
 
             Bundle bundle = hapiFhirServer.createAndExecuteBundle(fhirMeasure);
             log.debug("bundle: {}", bundle);
@@ -142,18 +120,18 @@ public class MeasureController {
     public List<TranslationOutcome> translateMeasuresByStatus(
             @RequestParam("measureStatus") String measureStatus,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
-
         List<TranslationOutcome> res = new ArrayList<>();
+
         try {
-            List<Measure> measureList = measureRepo.getMeasuresByStatus(measureStatus);
-            Iterator iter = measureList.iterator();
-            while (iter.hasNext()) {
-                Measure measure = (Measure) iter.next();
+            List<Measure> measureList = measureService.getMeasuresByStatus(measureStatus);
+
+            for (Measure measure : measureList) {
                 String measureId = measure.getId().trim();
                 log.debug("Translating Measure measureId: {}", measureId);
                 TranslationOutcome result = translateMeasureById(measureId, xmlSource);
                 res.add(result);
             }
+
         } catch (Exception ex) {
             TranslationOutcome tOut = new TranslationOutcome();
             tOut.setSuccessful(Boolean.FALSE);
@@ -172,21 +150,16 @@ public class MeasureController {
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
 
         List<TranslationOutcome> res = new ArrayList<>();
-        try {
-            List<Measure> measureList = measureRepo.findAll();
-            Iterator iter = measureList.iterator();
-            while (iter.hasNext()) {
-                Measure measure = (Measure) iter.next();
-                String measureId = measure.getId().trim();
-                String version = measure.getReleaseVersion();
 
-                if (version != null) {
-                    if (version.equals("v5.5") || version.equals("v5.6") || version.equals("v5.7") || version.equals("v5.8")) {
-                        log.debug("Translating Measure: {} ", measureId);
-                        TranslationOutcome result = translateMeasureById(measureId, xmlSource);
-                        res.add(result);
-                    }
-                }
+        try {
+            List<Measure> measureList = measureService.findAllValid();
+
+            for (Measure measure : measureList) {
+                String measureId = measure.getId().trim();
+
+                log.debug("Translating Measure: {} ", measureId);
+                TranslationOutcome result = translateMeasureById(measureId, xmlSource);
+                res.add(result);
             }
         } catch (Exception ex) {
             TranslationOutcome tOut = new TranslationOutcome();
@@ -205,16 +178,11 @@ public class MeasureController {
     public TranslationOutcome removeAllMeasures() {
         TranslationOutcome res = new TranslationOutcome();
         try {
-            List<Measure> measureList = measureRepo.findAll();
-            Iterator iter = measureList.iterator();
-            while (iter.hasNext()) {
-                Measure measure = (Measure) iter.next();
+            List<Measure> measureList = measureService.findAllValid();
+
+            for (Measure measure : measureList) {
                 String measureId = measure.getId().trim();
-                try {
-                    IGenericClient client = hapiFhirServer.getHapiClient();
-                    client.delete().resourceById(new IdDt("Measure", measureId)).execute();
-                } catch (Exception ex) {
-                }
+                deleteMeasure(measureId);
             }
         } catch (Exception ex) {
             res.setSuccessful(Boolean.FALSE);
@@ -224,72 +192,85 @@ public class MeasureController {
 
         return res;
     }
-    
+
+    public void deleteMeasure(String measureId) {
+        try {
+            IGenericClient client = hapiFhirServer.getHapiClient();
+            client.delete().resourceById(new IdDt("Measure", measureId)).execute();
+        } catch (Exception ex) {
+            log.trace("Error deleting measure with measureId: {}", measureId, ex);
+        }
+    }
+
     @Operation(summary = "Validate Measure",
-            description ="Validate a Measure for conformance prior to persisting it to FHIR Resource Server")
-    @PostMapping(path ="/validateMeasure")
-    public FhirResourceValidationResult validateMeasure(
-            @RequestParam("id") String id, 
+            description = "Validate a Measure for conformance prior to persisting it to FHIR Resource Server")
+    @PostMapping(path = "/validateMeasure")
+    public FhirMeasureResourceValidationResult validateMeasure(
+            @RequestParam("id") String id,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
 
-        FhirResourceValidationResult res = new FhirResourceValidationResult();
-        //Don't do conversion reporting
-        try {
-            Measure qdmMeasure = measureRepo.getMeasureById(id);
+        FhirMeasureResourceValidationResult res = new FhirMeasureResourceValidationResult();
 
+        ConversionReporter.setInThreadLocal(id, conversionResultsService);
+        ConversionReporter.resetMeasure(ConversionType.VALIDATION);
+
+        try {
+            Measure qdmMeasure = measureService.findOneValid(id);
 
             MeasureExport measureExport = measureExportRepo.getMeasureExportById(id);
 
             byte[] xmlBytes = findXml(qdmMeasure, xmlSource);
 
             //human-readable may exist not an error if it doesn't
-            String narrative = "";
-            try {
-                narrative = new String(measureExport.getHumanReadable());
-            } catch (Exception ex) {
-                log.error("Narrative not found: {}", ex.getMessage());
-            }
+            String narrative = getNarrative(measureExport);
 
-            ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);
+            org.hl7.fhir.r4.model.Measure fhirMeasure = getMeasure(qdmMeasure, xmlBytes, narrative);
 
-            MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());
-            org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
+            validateResource(res, fhirMeasure, hapiFhirServer.getCtx());
 
-            if (ArrayUtils.isNotEmpty(xmlBytes)) {
-                String xml = new String(xmlBytes);
-
-                fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(xml));
-                fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
-
-                fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
-                log.debug("Processed");
-            }
-
-            //validate the Measure Resource
-            FhirContext ctx = hapiFhirServer.getCtx();
-            
-            FhirValidator validator = ctx.newValidator();
-            FhirInstanceValidator instanceValidator = new FhirInstanceValidator();
-            validator.registerValidatorModule(instanceValidator);
-            
-            ValidationResult result = validator.validateWithResult(fhirMeasure);
-            
             res.setId(id);
             res.setType("Measure");
-            
-            for (SingleValidationMessage next : result.getMessages()) {
-                FhirResourceValidationError error = new FhirResourceValidationError(next.getSeverity().name(), next.getLocationString(), next.getMessage());
-                res.getErrorList().add(error);
-            }            
+
+            ConversionResult conversionResult = ConversionReporter.getConversionResult();
+            res.setMeasureResults(conversionResult.getMeasureResults());
+            res.setMeasureConversionType(conversionResult.getMeasureConversionType());
+
             log.debug("Validated");
-            
+
         } catch (Exception ex) {
-            log.debug("Validation of Fhir Measure Failed: {}", ex.getMessage());
-            ex.printStackTrace();
+            log.debug("Validation of Fhir Measure Failed for measureId: {}", id, ex);
         }
+
         return res;
     }
-       
+
+    public org.hl7.fhir.r4.model.Measure getMeasure(Measure qdmMeasure, byte[] xmlBytes, String narrative) {
+        ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);
+
+        MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());
+        org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
+
+        if (ArrayUtils.isNotEmpty(xmlBytes)) {
+            String xml = new String(xmlBytes);
+
+            fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(xml));
+            fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
+
+            fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
+            log.debug("Processed");
+        }
+        return fhirMeasure;
+    }
+
+    public String getNarrative(MeasureExport measureExport) {
+        try {
+            return new String(measureExport.getHumanReadable());
+        } catch (Exception ex) {
+            log.error("Narrative not found: {}", ex.getMessage());
+            return "";
+        }
+    }
+
     private byte[] findXml(Measure qdmMeasure, XmlSource xmlSource) {
         return matXmlProcessor.getXml(qdmMeasure, xmlSource);
     }

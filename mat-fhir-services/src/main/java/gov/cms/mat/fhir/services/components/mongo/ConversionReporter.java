@@ -72,10 +72,10 @@ public class ConversionReporter {
         conversionReporter.clearValueSetResults();
     }
 
-    public static void resetMeasure() {
+    public static void resetMeasure(ConversionType conversionType) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.clearMeasure();
+        conversionReporter.clearMeasure(conversionType);
     }
 
     public static ConversionResult resetLibrary(ConversionType conversionType) {
@@ -163,8 +163,9 @@ public class ConversionReporter {
         return conversionResultsService.clearValueSetResults(measureId);
     }
 
-    private ConversionResult clearMeasure() {
-        return conversionResultsService.clearMeasure(measureId);
+    private ConversionResult clearMeasure(ConversionType conversionType) {
+        conversionResultsService.clearMeasure(measureId);
+        return conversionResultsService.setMeasureConversionType(measureId, conversionType);
     }
 
     private ConversionResult clearLibrary(ConversionType conversionType) {

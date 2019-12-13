@@ -58,4 +58,8 @@ public class MeasureService {
             return allowedVersions.contains(releaseVersion);
         }
     }
+
+    public List<Measure> getMeasuresByStatus(String measureStatus) {
+        return measureRepository.getMeasuresByStatusWithAllowedVersions(measureStatus, allowedVersions);
+    }
 }

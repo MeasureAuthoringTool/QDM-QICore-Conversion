@@ -30,6 +30,7 @@ public class ConversionResult {
     private List<ValueSetResult> valueSetResults = new ArrayList<>();
 
     private List<FieldConversionResult> measureResults = new ArrayList<>();
+    private ConversionType measureConversionType;
 
     private List<FieldConversionResult> libraryResults = new ArrayList<>();
     private ConversionType libraryConversionType;
