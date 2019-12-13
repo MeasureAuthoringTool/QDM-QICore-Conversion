@@ -80,7 +80,6 @@ public class CQLLibraryTranslationService {
                 String json = convertCqlToJson(cql);
 
                 processJsonForError(json);
-                ConversionReporter.setCqlConversionResultSuccess();
 
                 return json;
             }
