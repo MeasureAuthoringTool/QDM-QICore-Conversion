@@ -10,7 +10,6 @@ import gov.cms.mat.fhir.services.service.MeasureExportService;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import org.hl7.fhir.r4.model.ValueSet;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,7 +29,6 @@ import static org.mockito.Mockito.*;
 class ValueSetControllerTest {
     private static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
 
-
     @Mock
     private MeasureExportService measureExportRepository;
     @Mock
@@ -42,11 +40,6 @@ class ValueSetControllerTest {
 
     @InjectMocks
     private ValueSetController valueSetController;
-
-    @BeforeEach
-    public void setUp() {
-        //  ReflectionTestUtils.setField(valueSetController, "allowedVersions", ALLOWED_VERSIONS);
-    }
 
     @Test
     void translateAll_NoneToTranslate() {
