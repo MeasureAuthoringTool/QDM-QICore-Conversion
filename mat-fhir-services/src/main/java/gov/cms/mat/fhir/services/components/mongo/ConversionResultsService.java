@@ -62,6 +62,7 @@ public class ConversionResultsService {
         if (optional.isPresent()) {
             ConversionResult conversionResult = optional.get();
             conversionResult.getValueSetResults().clear();
+            conversionResult.getValueSetFhirValidationErrors().clear();
             conversionResult.setValueSetConversionType(null);
             return conversionResultRepository.save(conversionResult);
         } else {
@@ -212,6 +213,18 @@ public class ConversionResultsService {
         ConversionResult conversionResult = findOrCreate(measureId);
 
         conversionResult.setLibraryFhirValidationErrors(list);
+
+        return conversionResultRepository.save(conversionResult);
+    }
+
+    public ConversionResult addValueSetValidationResults(String measureId, String oid,
+                                                         List<ConversionResult.FhirValidationResult> list) {
+        ConversionResult conversionResult = findOrCreate(measureId);
+
+        ConversionResult.ValueSetValidationResult validationResult = new ConversionResult.ValueSetValidationResult(oid);
+        validationResult.setLibraryFhirValidationErrors(list);
+
+        conversionResult.getValueSetFhirValidationErrors().add(validationResult);
 
         return conversionResultRepository.save(conversionResult);
     }

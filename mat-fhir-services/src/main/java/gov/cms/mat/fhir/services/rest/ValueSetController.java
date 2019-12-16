@@ -20,6 +20,7 @@ import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,28 +111,42 @@ public class ValueSetController implements FhirValidatorProcessor {
                                                                           XmlSource xmlSource,
                                                                           String measureId) {
 
-        FhirValueSetResourceValidationResult res = new FhirValueSetResourceValidationResult();
+        FhirValueSetResourceValidationResult response = new FhirValueSetResourceValidationResult();
 
         List<FhirResourceValidationResult> results = valueSets.stream()
                 .map(v -> createResult(v, measureId))
                 .collect(Collectors.toList());
-        res.setFhirResourceValidationResults(results);
+        response.setFhirResourceValidationResults(results);
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
-        res.setValueSetConversionType(conversionResult.getValueSetConversionType());
-        res.setValueSetResults(conversionResult.getValueSetResults());
-        res.setXmlSource(xmlSource);
 
-        return res;
+        response.setValueSetConversionType(conversionResult.getValueSetConversionType());
+        response.setValueSetResults(conversionResult.getValueSetResults());
+        response.setXmlSource(xmlSource);
+
+        return response;
     }
 
     private FhirResourceValidationResult createResult(ValueSet valueSet, String measureId) {
         FhirResourceValidationResult res = new FhirResourceValidationResult();
         validateResource(res, valueSet, hapiFhirServer.getCtx());
+
         res.setId(valueSet.getId());
         res.setType("ValueSet");
         res.setMeasureId(measureId);
+
+        List<ConversionResult.FhirValidationResult> results = buildResultList(res);
+        ConversionReporter.setValueSetsValidationResults(res.getId(), results);
+
         return res;
+    }
+
+    private List<ConversionResult.FhirValidationResult> buildResultList(FhirResourceValidationResult res) {
+        if (CollectionUtils.isEmpty(res.getValidationErrorList())) {
+            return Collections.emptyList();
+        } else {
+            return buildResults(res);
+        }
     }
 
     @Operation(summary = "Count of persisted FHIR ValueSets.",

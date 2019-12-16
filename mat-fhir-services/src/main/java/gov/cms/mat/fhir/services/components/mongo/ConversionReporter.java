@@ -138,23 +138,31 @@ public class ConversionReporter {
         return conversionReporter;
     }
 
+    public static ConversionReporter setValueSetsValidationResults(String oid,
+                                                                   List<ConversionResult.FhirValidationResult> list) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addValueSetValidationResults(oid, list);
+        return conversionReporter;
+    }
+
 
     private ConversionResult addValueSetResult(String oid, String reason) {
-        ConversionResult.ValueSetResult result = gov.cms.mat.fhir.services.components.mongo.ConversionResult.ValueSetResult.builder()
-                .oid(oid)
-                .reason(reason)
-                .build();
+        ConversionResult.ValueSetResult result =
+                ConversionResult.ValueSetResult.builder()
+                        .oid(oid)
+                        .reason(reason)
+                        .build();
 
         return conversionResultsService.addValueSetResult(measureId, result);
     }
 
     private ConversionResult addMeasureResult(String field, String destination, String reason) {
-
-        ConversionResult.FieldConversionResult result = ConversionResult.FieldConversionResult.builder()
-                .field(field)
-                .destination(destination)
-                .reason(reason)
-                .build();
+        ConversionResult.FieldConversionResult result =
+                ConversionResult.FieldConversionResult.builder()
+                        .field(field)
+                        .destination(destination)
+                        .reason(reason)
+                        .build();
 
         return conversionResultsService.addMeasureResult(measureId, result);
     }
@@ -215,8 +223,11 @@ public class ConversionReporter {
         return conversionResultsService.addLibraryValidationResults(measureId, list);
     }
 
+    private ConversionResult addValueSetValidationResults(String oid, List<ConversionResult.FhirValidationResult> list) {
+        return conversionResultsService.addValueSetValidationResults(measureId, oid, list);
+    }
+
     private ConversionResult findConversionResult() {
         return conversionResultsService.findConversionResult(measureId);
     }
-
 }

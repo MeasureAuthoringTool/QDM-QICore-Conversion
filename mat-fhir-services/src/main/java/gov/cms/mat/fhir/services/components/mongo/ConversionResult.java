@@ -3,6 +3,8 @@ package gov.cms.mat.fhir.services.components.mongo;
 import gov.cms.mat.fhir.services.service.support.CqlConversionError;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -29,6 +31,7 @@ public class ConversionResult {
 
     private List<ValueSetResult> valueSetResults = new ArrayList<>();
     private ConversionType valueSetConversionType;
+    private List<ValueSetValidationResult> valueSetFhirValidationErrors = new ArrayList<>();
 
     private List<FieldConversionResult> measureResults = new ArrayList<>();
     private ConversionType measureConversionType;
@@ -75,5 +78,13 @@ public class ConversionResult {
         String severity;
         String locationField;
         String errorDescription;
+    }
+
+    @Data
+    @RequiredArgsConstructor
+    public static class ValueSetValidationResult {
+        @NonNull
+        final String oid;
+        List<FhirValidationResult> libraryFhirValidationErrors = new ArrayList<>();
     }
 }
