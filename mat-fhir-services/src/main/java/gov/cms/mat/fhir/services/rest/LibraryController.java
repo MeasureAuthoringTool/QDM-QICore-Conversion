@@ -114,6 +114,7 @@ public class LibraryController implements FhirValidatorProcessor {
 
     private FhirLibraryResourceValidationResult validate(CqlLibrary cqlLib) {
         FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(cqlLib.getId());
+        response.setMeasureId(cqlLib.getMeasureId());
 
         Library fhirLibrary = translateLibrary(cqlLib);
         validateResource(response, fhirLibrary, hapiFhirServer.getCtx());
