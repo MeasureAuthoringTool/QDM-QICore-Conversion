@@ -10,6 +10,10 @@ import java.util.List;
 
 public class FhirLibraryResourceValidationResult extends FhirResourceValidationResult {
 
+    public FhirLibraryResourceValidationResult(String id) {
+        super(id, "Library");
+    }
+
     private List<ConversionResult.FieldConversionResult> libraryResults = new ArrayList<>();
     private ConversionType libraryConversionType;
 

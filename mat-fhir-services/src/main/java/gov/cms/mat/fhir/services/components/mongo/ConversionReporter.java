@@ -127,8 +127,14 @@ public class ConversionReporter {
     }
 
     public static ConversionReporter setFhirMeasureValidationResults(List<ConversionResult.FhirValidationResult> list) {
-        ConversionReporter conversionReporter = getFromThreadLocal();
+        ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addFhirMeasureValidationResults(list);
+        return conversionReporter;
+    }
+
+    public static ConversionReporter setFhirLibraryValidationResults(List<ConversionResult.FhirValidationResult> list) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addFhirMeasureLibraryResults(list);
         return conversionReporter;
     }
 
@@ -203,6 +209,10 @@ public class ConversionReporter {
 
     private ConversionResult addFhirMeasureValidationResults(List<ConversionResult.FhirValidationResult> list) {
         return conversionResultsService.addFhirMeasureValidationResults(measureId, list);
+    }
+
+    private ConversionResult addFhirMeasureLibraryResults(List<ConversionResult.FhirValidationResult> list) {
+        return conversionResultsService.addLibraryValidationResults(measureId, list);
     }
 
     private ConversionResult findConversionResult() {

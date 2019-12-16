@@ -111,6 +111,7 @@ public class ConversionResultsService {
 
         if (optional.isPresent()) {
             ConversionResult conversionResult = optional.get();
+            conversionResult.getLibraryFhirValidationErrors().clear();
             conversionResult.getLibraryResults().clear();
             conversionResult.setLibraryConversionType(null);
             return conversionResultRepository.save(conversionResult);
@@ -196,12 +197,21 @@ public class ConversionResultsService {
         return conversionResultRepository.save(conversionResult);
     }
 
-
     public ConversionResult addFhirMeasureValidationResults(String measureId,
                                                             List<ConversionResult.FhirValidationResult> list) {
         ConversionResult conversionResult = findOrCreate(measureId);
 
         conversionResult.setMeasureFhirValidationErrors(list);
+
+        return conversionResultRepository.save(conversionResult);
+    }
+
+    public ConversionResult addLibraryValidationResults(String measureId,
+                                                        List<ConversionResult.FhirValidationResult> list) {
+
+        ConversionResult conversionResult = findOrCreate(measureId);
+
+        conversionResult.setLibraryFhirValidationErrors(list);
 
         return conversionResultRepository.save(conversionResult);
     }

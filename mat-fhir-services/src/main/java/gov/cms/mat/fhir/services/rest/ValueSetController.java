@@ -83,8 +83,9 @@ public class ValueSetController implements FhirValidatorProcessor {
         return createOutcome(successMessage);
     }
 
-    @Operation(summary = "Translate all ValueSets in MAT to FHIR.",
-            description = "Translate all the ValueSets in the MAT Database and persist to the HAPI FHIR Database.")
+    @Operation(summary = "Validate ValueSet conversion MAT to FHIR.",
+            description = "Validate ValueSet conversion MAT to FHIR of all the ValueSets that are contained in the " +
+                    "measure indicated by measureId.")
     @Transactional(readOnly = true)
     @PutMapping(path = "/validate")
     public FhirValueSetResourceValidationResult validate(
@@ -107,6 +108,7 @@ public class ValueSetController implements FhirValidatorProcessor {
     public FhirValueSetResourceValidationResult generateValidationResults(List<ValueSet> valueSets,
                                                                           XmlSource xmlSource,
                                                                           String measureId) {
+
         FhirValueSetResourceValidationResult res = new FhirValueSetResourceValidationResult();
 
         List<FhirResourceValidationResult> results = valueSets.stream()

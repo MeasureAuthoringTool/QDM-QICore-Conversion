@@ -21,6 +21,8 @@ logging:
   level:
     root: INFO
     gov.cms.mat: DEBUG
+    org.hl7.fhir.r4.hapi.ctx: WARN
+    org.exolab: WARN
 
 vsac-client:
   server: https://vsac.nlm.nih.gov/vsac/ws/Ticket

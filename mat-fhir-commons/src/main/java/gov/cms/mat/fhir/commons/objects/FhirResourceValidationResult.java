@@ -9,7 +9,7 @@ import java.util.List;
 public class FhirResourceValidationResult {
     private String type;
     private String id;
-    private List<FhirResourceValidationError> errorList = new ArrayList<>();
+    private List<FhirResourceValidationError> validationErrorList = new ArrayList<>();
     private String measureId;
 
     public FhirResourceValidationResult() {
@@ -22,6 +22,7 @@ public class FhirResourceValidationResult {
 
     /**
      * @return the type
+     *
      */
     @XmlElement
     public String getType() {
@@ -54,8 +55,8 @@ public class FhirResourceValidationResult {
      * @return the errorList
      */
     @XmlElement
-    public List<FhirResourceValidationError> getErrorList() {
-        return errorList;
+    public List<FhirResourceValidationError> getValidationErrorList() {
+        return validationErrorList;
     }
 
     @XmlElement

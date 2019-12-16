@@ -36,6 +36,7 @@ public class ConversionResult {
 
     private List<FieldConversionResult> libraryResults = new ArrayList<>();
     private ConversionType libraryConversionType;
+    private List<FhirValidationResult> libraryFhirValidationErrors = new ArrayList<>();
 
     private CqlConversionResult cqlConversionResult;
 

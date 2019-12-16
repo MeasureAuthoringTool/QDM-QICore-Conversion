@@ -9,7 +9,6 @@ import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
-import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
@@ -37,7 +36,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/measure")
@@ -222,7 +220,7 @@ public class MeasureController implements FhirValidatorProcessor {
 
             processConversionResult(response);
 
-            log.debug("Validated");
+            log.debug("Validated measureId: {}", id);
         } catch (Exception ex) {
             log.debug("Validation of Fhir Measure Failed for measureId: {}", id, ex);
         }
@@ -240,10 +238,7 @@ public class MeasureController implements FhirValidatorProcessor {
     }
 
     public void processConversionResult(FhirMeasureResourceValidationResult response) {
-        List<ConversionResult.FhirValidationResult> list = response.getErrorList().stream()
-                .map(this::processError)
-                .collect(Collectors.toList());
-
+        List<ConversionResult.FhirValidationResult> list = buildResults(response);
         ConversionReporter.setFhirMeasureValidationResults(list);
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
@@ -253,13 +248,6 @@ public class MeasureController implements FhirValidatorProcessor {
 
     }
 
-    private ConversionResult.FhirValidationResult processError(FhirResourceValidationError e) {
-        return ConversionResult.FhirValidationResult.builder()
-                .severity(e.getSeverity())
-                .locationField(e.getLocationField())
-                .errorDescription(e.getErrorDescription())
-                .build();
-    }
 
     public org.hl7.fhir.r4.model.Measure getMeasure(Measure qdmMeasure, byte[] xmlBytes, String narrative) {
         ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);
@@ -274,7 +262,6 @@ public class MeasureController implements FhirValidatorProcessor {
             fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
 
             fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
-            log.debug("Processed");
         }
         return fhirMeasure;
     }
