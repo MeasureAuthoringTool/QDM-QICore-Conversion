@@ -9,6 +9,7 @@ import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
+import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/measure")
@@ -193,14 +195,6 @@ public class MeasureController implements FhirValidatorProcessor {
         return res;
     }
 
-    public void deleteMeasure(String measureId) {
-        try {
-            IGenericClient client = hapiFhirServer.getHapiClient();
-            client.delete().resourceById(new IdDt("Measure", measureId)).execute();
-        } catch (Exception ex) {
-            log.trace("Error deleting measure with measureId: {}", measureId, ex);
-        }
-    }
 
     @Operation(summary = "Validate Measure",
             description = "Validate a Measure for conformance prior to persisting it to FHIR Resource Server")
@@ -208,8 +202,7 @@ public class MeasureController implements FhirValidatorProcessor {
     public FhirMeasureResourceValidationResult validateMeasure(
             @RequestParam("id") String id,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
-
-        FhirMeasureResourceValidationResult res = new FhirMeasureResourceValidationResult();
+        FhirMeasureResourceValidationResult response = new FhirMeasureResourceValidationResult(id, "Measure");
 
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
         ConversionReporter.resetMeasure(ConversionType.VALIDATION);
@@ -225,23 +218,47 @@ public class MeasureController implements FhirValidatorProcessor {
             String narrative = getNarrative(measureExport);
 
             org.hl7.fhir.r4.model.Measure fhirMeasure = getMeasure(qdmMeasure, xmlBytes, narrative);
+            validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
 
-            validateResource(res, fhirMeasure, hapiFhirServer.getCtx());
-
-            res.setId(id);
-            res.setType("Measure");
-
-            ConversionResult conversionResult = ConversionReporter.getConversionResult();
-            res.setMeasureResults(conversionResult.getMeasureResults());
-            res.setMeasureConversionType(conversionResult.getMeasureConversionType());
+            processConversionResult(response);
 
             log.debug("Validated");
-
         } catch (Exception ex) {
             log.debug("Validation of Fhir Measure Failed for measureId: {}", id, ex);
         }
 
-        return res;
+        return response;
+    }
+
+    public void deleteMeasure(String measureId) {
+        try {
+            IGenericClient client = hapiFhirServer.getHapiClient();
+            client.delete().resourceById(new IdDt("Measure", measureId)).execute();
+        } catch (Exception ex) {
+            log.trace("Error deleting measure with measureId: {}", measureId, ex);
+        }
+    }
+
+    public void processConversionResult(FhirMeasureResourceValidationResult response) {
+        List<ConversionResult.FhirValidationResult> list = response.getErrorList().stream()
+                .map(this::processError)
+                .collect(Collectors.toList());
+
+        ConversionReporter.setFhirMeasureValidationResults(list);
+
+        ConversionResult conversionResult = ConversionReporter.getConversionResult();
+        response.setMeasureResults(conversionResult.getMeasureResults());
+        response.setMeasureConversionType(conversionResult.getMeasureConversionType());
+        response.setMeasureId(conversionResult.getMeasureId());
+
+    }
+
+    private ConversionResult.FhirValidationResult processError(FhirResourceValidationError e) {
+        return ConversionResult.FhirValidationResult.builder()
+                .severity(e.getSeverity())
+                .locationField(e.getLocationField())
+                .errorDescription(e.getErrorDescription())
+                .build();
     }
 
     public org.hl7.fhir.r4.model.Measure getMeasure(Measure qdmMeasure, byte[] xmlBytes, String narrative) {

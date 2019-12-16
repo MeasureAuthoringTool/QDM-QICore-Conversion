@@ -13,6 +13,14 @@ public class FhirMeasureResourceValidationResult extends FhirResourceValidationR
     private List<ConversionResult.FieldConversionResult> measureResults = new ArrayList<>();
     private ConversionType measureConversionType;
 
+    public FhirMeasureResourceValidationResult() {
+        super();
+    }
+
+    public FhirMeasureResourceValidationResult(String id, String measure) {
+        super(id, measure);
+    }
+
     @XmlElement
     public List<ConversionResult.FieldConversionResult> getMeasureResults() {
         return measureResults;

@@ -32,6 +32,7 @@ public class ConversionResult {
 
     private List<FieldConversionResult> measureResults = new ArrayList<>();
     private ConversionType measureConversionType;
+    private List<FhirValidationResult> measureFhirValidationErrors = new ArrayList<>();
 
     private List<FieldConversionResult> libraryResults = new ArrayList<>();
     private ConversionType libraryConversionType;
@@ -65,5 +66,13 @@ public class ConversionResult {
         List<String> errors;
         String cql;
         List<CqlConversionError> cqlConversionErrors;
+    }
+
+    @Data
+    @Builder
+    public static class FhirValidationResult {
+        String severity;
+        String locationField;
+        String errorDescription;
     }
 }

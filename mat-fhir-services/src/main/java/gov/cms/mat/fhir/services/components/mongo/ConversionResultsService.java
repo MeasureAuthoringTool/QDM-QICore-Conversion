@@ -29,6 +29,7 @@ public class ConversionResultsService {
         return conversionResultRepository.save(conversionResult);
     }
 
+
     ConversionResult addLibraryResult(String measureId, ConversionResult.FieldConversionResult result) {
         ConversionResult conversionResult = findOrCreate(measureId);
         conversionResult.getLibraryResults().add(result);
@@ -74,6 +75,7 @@ public class ConversionResultsService {
         if (optional.isPresent()) {
             ConversionResult conversionResult = optional.get();
             conversionResult.getMeasureResults().clear();
+            conversionResult.getMeasureFhirValidationErrors().clear();
             conversionResult.setMeasureConversionType(null);
             return conversionResultRepository.save(conversionResult);
         } else {
@@ -188,10 +190,19 @@ public class ConversionResultsService {
     public ConversionResult setMeasureConversionType(String measureId, ConversionType conversionType) {
         ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
 
+        conversionResult.setMeasureId(measureId);
         conversionResult.setMeasureConversionType(conversionType);
 
         return conversionResultRepository.save(conversionResult);
     }
 
 
+    public ConversionResult addFhirMeasureValidationResults(String measureId,
+                                                            List<ConversionResult.FhirValidationResult> list) {
+        ConversionResult conversionResult = findOrCreate(measureId);
+
+        conversionResult.setMeasureFhirValidationErrors(list);
+
+        return conversionResultRepository.save(conversionResult);
+    }
 }

@@ -110,7 +110,7 @@ public class ValueSetController implements FhirValidatorProcessor {
         FhirValueSetResourceValidationResult res = new FhirValueSetResourceValidationResult();
 
         List<FhirResourceValidationResult> results = valueSets.stream()
-                .map(this::createResult)
+                .map(v -> createResult(v, measureId))
                 .collect(Collectors.toList());
         res.setFhirResourceValidationResults(results);
 
@@ -118,16 +118,16 @@ public class ValueSetController implements FhirValidatorProcessor {
         res.setValueSetConversionType(conversionResult.getValueSetConversionType());
         res.setValueSetResults(conversionResult.getValueSetResults());
         res.setXmlSource(xmlSource);
-        res.setMeasureId(measureId);
 
         return res;
     }
 
-    private FhirResourceValidationResult createResult(ValueSet valueSet) {
+    private FhirResourceValidationResult createResult(ValueSet valueSet, String measureId) {
         FhirResourceValidationResult res = new FhirResourceValidationResult();
         validateResource(res, valueSet, hapiFhirServer.getCtx());
         res.setId(valueSet.getId());
         res.setType("ValueSet");
+        res.setMeasureId(measureId);
         return res;
     }
 

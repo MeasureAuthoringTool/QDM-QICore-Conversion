@@ -126,6 +126,12 @@ public class ConversionReporter {
         return conversionReporter;
     }
 
+    public static ConversionReporter setFhirMeasureValidationResults(List<ConversionResult.FhirValidationResult> list) {
+        ConversionReporter conversionReporter = getFromThreadLocal();
+        conversionReporter.addFhirMeasureValidationResults(list);
+        return conversionReporter;
+    }
+
 
     private ConversionResult addValueSetResult(String oid, String reason) {
         ConversionResult.ValueSetResult result = gov.cms.mat.fhir.services.components.mongo.ConversionResult.ValueSetResult.builder()
@@ -193,6 +199,10 @@ public class ConversionReporter {
 
     private ConversionResult addCqlConversionErrors(List<CqlConversionError> errors) {
         return conversionResultsService.addCqlConversionErrors(measureId, errors);
+    }
+
+    private ConversionResult addFhirMeasureValidationResults(List<ConversionResult.FhirValidationResult> list) {
+        return conversionResultsService.addFhirMeasureValidationResults(measureId, list);
     }
 
     private ConversionResult findConversionResult() {

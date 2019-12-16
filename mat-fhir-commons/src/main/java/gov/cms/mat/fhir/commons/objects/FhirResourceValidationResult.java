@@ -10,6 +10,15 @@ public class FhirResourceValidationResult {
     private String type;
     private String id;
     private List<FhirResourceValidationError> errorList = new ArrayList<>();
+    private String measureId;
+
+    public FhirResourceValidationResult() {
+    }
+
+    public FhirResourceValidationResult(String id, String type) {
+        this.id = id;
+        this.type = type;
+    }
 
     /**
      * @return the type
@@ -49,4 +58,12 @@ public class FhirResourceValidationResult {
         return errorList;
     }
 
+    @XmlElement
+    public String getMeasureId() {
+        return measureId;
+    }
+
+    public void setMeasureId(String measureId) {
+        this.measureId = measureId;
+    }
 }
