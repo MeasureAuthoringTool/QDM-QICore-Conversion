@@ -227,6 +227,23 @@ public class MeasureController implements FhirValidatorProcessor {
 
         return response;
     }
+    
+    @Operation(summary = "FHIR Measure",
+            description = "Get FHIR Measure by Measure Id")
+    @GetMapping(path = "/getFHIRMeasure")
+    public String getFHIRMeasure(
+            @RequestParam("id") String id) {
+        String res = "";
+        try {
+           Bundle bundle = hapiFhirServer.getMeasure(id);
+           res = hapiFhirServer.getCtx().newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
+
+        } catch (Exception ex) {
+            log.debug("Get FHIR Measure Failed: {}", id, ex);
+        }
+        return res;
+    }
+    
 
     public void deleteMeasure(String measureId) {
         try {

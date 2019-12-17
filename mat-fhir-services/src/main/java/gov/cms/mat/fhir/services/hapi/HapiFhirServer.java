@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 import static gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator.SYSTEM_IDENTIFIER;
+import org.hl7.fhir.r4.model.Measure;
 
 @Component
 @Slf4j
@@ -86,6 +87,14 @@ public class HapiFhirServer {
         return hapiClient.search()
                 .forResource(ValueSet.class)
                 .where(ValueSet.IDENTIFIER.exactly().systemAndCode(SYSTEM_IDENTIFIER, oid))
+                .returnBundle(Bundle.class)
+                .execute();
+    }
+    
+    public Bundle getMeasure(String id) {
+        return hapiClient.search()
+                .forResource(Measure.class)
+                .where(Measure.URL.matches().value(baseURL + "Measure/" + id))
                 .returnBundle(Bundle.class)
                 .execute();
     }
