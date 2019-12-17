@@ -121,17 +121,17 @@ public class ConversionResultsService {
         }
     }
 
-    ConversionResult clearCqlConversionResult(String measureId) {
-        Optional<ConversionResult> optional = findByMeasureId(measureId);
+   synchronized ConversionResult clearCqlConversionResult(String measureId) {
+       Optional<ConversionResult> optional = findByMeasureId(measureId);
 
-        if (optional.isPresent()) {
-            ConversionResult conversionResult = optional.get();
-            conversionResult.setCqlConversionResult(null);
+       if (optional.isPresent()) {
+           ConversionResult conversionResult = optional.get();
+           conversionResult.setCqlConversionResult(null);
 
-            return conversionResultRepository.save(conversionResult);
-        } else {
-            return null;
-        }
+           return conversionResultRepository.save(conversionResult);
+       } else {
+           return null;
+       }
     }
 
     public ConversionResult addCqlConversionResultSuccess(String measureId) {

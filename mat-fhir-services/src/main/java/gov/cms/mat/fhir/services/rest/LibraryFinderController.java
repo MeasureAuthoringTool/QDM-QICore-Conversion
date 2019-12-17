@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "LibraryFinder-Controller", description = "API for finding MAT Libraries ")
 @Slf4j
 public class LibraryFinderController implements CqlVersionConverter {
-
     private final CqlLibraryService cqlLibraryService;
 
     public LibraryFinderController(CqlLibraryService cqlLibraryService) {
@@ -29,9 +28,8 @@ public class LibraryFinderController implements CqlVersionConverter {
 
     @Operation(summary = "Find Cql-XML in mat.",
             description = "Find Cql-XML in mat using the request params")
-    @PutMapping
+    @GetMapping
     public String findLibraryXml(@RequestParam String qdmVersion, @RequestParam String name, @RequestParam String version) {
-
         CqlLibraryFindData data = CqlLibraryFindData.builder()
                 .qdmVersion(qdmVersion)
                 .name(name)
@@ -45,7 +43,5 @@ public class LibraryFinderController implements CqlVersionConverter {
         } else {
             return cqlLibrary.getCqlXml();
         }
-
     }
-
 }

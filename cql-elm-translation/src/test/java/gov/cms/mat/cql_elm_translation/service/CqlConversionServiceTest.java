@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CqlConversionServiceTest implements ResourceFileUtil {
-    CqlConversionService cqlConversionService = new CqlConversionService();
+    CqlConversionService cqlConversionService = new CqlConversionService(null);
 
     String cqlData;
     LibraryBuilder.SignatureLevel signatureLevel;

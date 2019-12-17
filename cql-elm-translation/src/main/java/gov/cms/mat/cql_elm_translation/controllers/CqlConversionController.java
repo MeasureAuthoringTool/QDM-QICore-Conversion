@@ -33,7 +33,6 @@ public class CqlConversionController {
             @RequestParam(value = "disable-list-promotion", defaultValue = "true") Boolean disableListPromotion,
             @RequestParam(value = "disable-method-invocation", defaultValue = "true") Boolean disableMethodInvocation,
             @RequestParam(value = "validate-units", defaultValue = "true") Boolean validateUnits) {
-
         RequestData requestData = RequestData.builder()
                 .cqlData(cqlData)
                 .signatures(signatures)
@@ -44,6 +43,8 @@ public class CqlConversionController {
                 .disableMethodInvocation(disableMethodInvocation)
                 .validateUnits(validateUnits)
                 .build();
+
+        processLibraries(cqlData);
 
         CqlTranslator cqlTranslator = cqlConversionService.processCqlData(requestData);
         return cqlTranslator.toJson();
@@ -62,6 +63,8 @@ public class CqlConversionController {
 
         String cqlData = matXmlConversionService.processCqlXml(xml);
 
+        processLibraries(cqlData);
+
         RequestData requestData = RequestData.builder()
                 .cqlData(cqlData)
                 .signatures(signatures)
@@ -75,5 +78,9 @@ public class CqlConversionController {
 
         CqlTranslator cqlTranslator = cqlConversionService.processCqlData(requestData);
         return cqlTranslator.toJson();
+    }
+
+    private void processLibraries(String cqlData) {
+        cqlConversionService.processCqlLibraries(cqlData);
     }
 }

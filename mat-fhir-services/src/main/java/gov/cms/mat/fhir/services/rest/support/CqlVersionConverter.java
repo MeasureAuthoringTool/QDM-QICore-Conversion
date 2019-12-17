@@ -27,16 +27,28 @@ public interface CqlVersionConverter {
             throw new InvalidVersionException("Version is invalid: " + versionString);
         }
 
-        int firstDecimalPointPointer = versionString.indexOf(".");
+        int firstDecimalPointPointer = versionString.indexOf('.');
 
         String majorVersion = versionString.substring(0, firstDecimalPointPointer);
 
-        int secondDecimalPointPointer = versionString.indexOf(".", firstDecimalPointPointer + 1);
+        int secondDecimalPointPointer = versionString.indexOf('.', firstDecimalPointPointer + 1);
 
         String minorVersion = versionString.substring(firstDecimalPointPointer + 1, secondDecimalPointPointer);
 
-        String convertedValue = majorVersion + ".00" + minorVersion;
+        String zeroPadding = getZeroPadding(minorVersion.length());
+
+        String convertedValue = majorVersion + zeroPadding + minorVersion;
 
         return new BigDecimal(convertedValue);
+    }
+
+    default String getZeroPadding(int length) {
+        if (length > 2) {
+            return ".";
+        } else if (length == 2) {
+            return ".0";
+        } else {
+            return ".00";
+        }
     }
 }

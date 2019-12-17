@@ -1,2 +1,6 @@
 server:
   port: 7070
+
+fhir:
+  conversion:
+    baseurl: http://localhost:9080
