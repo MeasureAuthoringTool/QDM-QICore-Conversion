@@ -3,11 +3,13 @@ package gov.cms.mat.fhir.services.service;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
+import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,4 +37,27 @@ public class CqlLibraryService {
     public CqlLibrary getCqlLibraryByNameAndVersion(String cqlName, BigDecimal version) {
         return cqlLibraryRepo.getCqlLibraryByNameAndVersion(cqlName, version);
     }
+
+    public CqlLibrary findCqlLibrary(CqlLibraryFindData cqlLibraryFindData) {
+
+        List<CqlLibrary> libraries =
+                cqlLibraryRepo.findByQdmVersionAndCqlNameAndVersionAndFinalizedDateIsNotNull(
+                        cqlLibraryFindData.getQdmVersion(),
+                        cqlLibraryFindData.getName(),
+                        cqlLibraryFindData.getVersion());
+
+        if (libraries.isEmpty()) {
+            throw new CqlLibraryNotFoundException(cqlLibraryFindData);
+        } else if (libraries.size() > 1) {
+
+            String ids = libraries.stream()
+                    .map(CqlLibrary::getId)
+                    .collect(Collectors.joining(", "));
+
+            throw new CqlLibraryNotFoundException("To many cql libraries found ids: ", ids);
+        } else {
+            return libraries.get(0);
+        }
+    }
+
 }

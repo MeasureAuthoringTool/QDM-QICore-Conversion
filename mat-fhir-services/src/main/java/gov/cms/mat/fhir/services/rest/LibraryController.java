@@ -61,7 +61,7 @@ public class LibraryController implements FhirValidatorProcessor {
     @Operation(summary = "Translate Library in MAT to FHIR.",
             description = "Translate one Library in the MAT Database and persist to the HAPI FHIR Database.")
     @PutMapping(path = "/translateLibraryByMeasureId")
-    public TranslationOutcome translateLibraryByMeasureId(@RequestParam("id") String id) {
+    public TranslationOutcome translateLibraryByMeasureId(@RequestParam String id) {
         TranslationOutcome res = new TranslationOutcome();
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
         ConversionReporter.resetLibrary(ConversionType.CONVERSION);
@@ -95,7 +95,7 @@ public class LibraryController implements FhirValidatorProcessor {
     @Operation(summary = "Validate Library in MAT to FHIR.",
             description = "Translate one Library in the MAT Database and persist to the HAPI FHIR Database.")
     @PutMapping(path = "/validateLibraryByMeasureId")
-    public List<FhirLibraryResourceValidationResult> validateLibraryByMeasureId(@RequestParam("id") String id) {
+    public List<FhirLibraryResourceValidationResult> validateLibraryByMeasureId(@RequestParam String id) {
         try {
             List<CqlLibrary> cqlLibs = cqlLibraryRepo.getCqlLibrariesByMeasureIdRequired(id);
 
@@ -141,7 +141,7 @@ public class LibraryController implements FhirValidatorProcessor {
     @Operation(summary = "Find a list of CQLSourceForTranslation.",
             description = "Find a list of CQLSourceForTranslation identified by the id.")
     @GetMapping(path = "/getLibrariesByMeasureId")
-    public List<CQLSourceForTranslation> getLibrariesByMeasureId(@RequestParam("id") String id) {
+    public List<CQLSourceForTranslation> getLibrariesByMeasureId(@RequestParam String id) {
         List<CQLSourceForTranslation> res = new ArrayList<>();
         try {
             List<CqlLibrary> libraries = cqlLibraryRepo.getCqlLibrariesByMeasureIdRequired(id);
@@ -164,7 +164,7 @@ public class LibraryController implements FhirValidatorProcessor {
     @Operation(summary = "Find a CQLSourceForTranslation.",
             description = "Find a CQLSourceForTranslation identified by the id.")
     @GetMapping(path = "/getLibraryById")
-    public CQLSourceForTranslation getLibraryById(@RequestParam("id") String id) {
+    public CQLSourceForTranslation getLibraryById(@RequestParam String id) {
         CQLSourceForTranslation dest = new CQLSourceForTranslation();
         try {
             CqlLibrary lib = cqlLibraryRepo.getCqlLibraryById(id);
@@ -182,7 +182,7 @@ public class LibraryController implements FhirValidatorProcessor {
     @Operation(summary = "Find a CQLSourceForTranslation.",
             description = "Find a CQLSourceForTranslation identified by the name and version.")
     @GetMapping(path = "/getLibraryByNameAndVersion")
-    public CQLSourceForTranslation getLibraryByNameAndVersion(@RequestParam("cqlName") String cqlName, @RequestParam("version") String version) {
+    public CQLSourceForTranslation getLibraryByNameAndVersion(@RequestParam String cqlName, @RequestParam String version) {
         CQLSourceForTranslation dest = new CQLSourceForTranslation();
         try {
             CqlLibrary lib = cqlLibraryRepo.getCqlLibraryByNameAndVersion(cqlName, new BigDecimal(version));
