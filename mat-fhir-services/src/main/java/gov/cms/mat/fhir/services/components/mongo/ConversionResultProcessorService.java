@@ -41,9 +41,17 @@ public class ConversionResultProcessorService {
     private ConversionResultDto buildDto(ConversionResult conversionResult) {
         return ConversionResultDto.builder()
                 .measureId(conversionResult.getMeasureId())
-                .libraryResults(conversionResult.getLibraryResults())
+                .modified(conversionResult.getModified())
                 .valueSetResults(conversionResult.getValueSetResults())
+                .valueSetConversionType(conversionResult.getValueSetConversionType())
+                .valueSetFhirValidationErrors(conversionResult.getValueSetFhirValidationErrors())
                 .measureResults(processMeasureResults(conversionResult))
+                .measureConversionType(conversionResult.getMeasureConversionType())
+                .measureFhirValidationErrors(conversionResult.getMeasureFhirValidationErrors())
+                .libraryResults(conversionResult.getLibraryResults())
+                .libraryConversionType(conversionResult.getLibraryConversionType())
+                .libraryFhirValidationErrors(conversionResult.getLibraryFhirValidationErrors())
+                .cqlConversionResult(conversionResult.getCqlConversionResult())
                 .build();
     }
 

@@ -8,14 +8,17 @@ import java.io.InputStream;
 
 public class MatLibrarySourceProvider implements LibrarySourceProvider {
 
+
     @Override
     public InputStream getLibrarySource(VersionedIdentifier libraryIdentifier) {
 
         if (libraryIdentifier.getId().toLowerCase().contains("fhir")) {
-            return FhirLibrarySourceProvider.class.getResourceAsStream(String.format("/org/hl7/fhir/%s-%s.cql", libraryIdentifier.getId(),
+            return FhirLibrarySourceProvider.class.getResourceAsStream(String.format("/org/hl7/fhir/%s-%s.cql",
+                    libraryIdentifier.getId(),
                     libraryIdentifier.getVersion()));
         } else {
-            return FhirLibrarySourceProvider.class.getResourceAsStream(String.format("/%s-%s.cql", libraryIdentifier.getId(),
+            return FhirLibrarySourceProvider.class.getResourceAsStream(String.format("/%s-%s.cql",
+                    libraryIdentifier.getId(),
                     libraryIdentifier.getVersion()));
         }
     }
