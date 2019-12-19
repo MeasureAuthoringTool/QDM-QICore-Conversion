@@ -15,12 +15,12 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class MeasureService {
+public class MeasureDataService {
     private final MeasureRepository measureRepository;
     @Value("#{'${measures.allowed.versions}'.split(',')}")
     private List<String> allowedVersions;
 
-    public MeasureService(MeasureRepository measureRepository) {
+    public MeasureDataService(MeasureRepository measureRepository) {
         this.measureRepository = measureRepository;
     }
 

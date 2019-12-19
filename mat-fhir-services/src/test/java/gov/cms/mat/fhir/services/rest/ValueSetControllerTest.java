@@ -6,7 +6,7 @@ import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
-import gov.cms.mat.fhir.services.service.MeasureExportService;
+import gov.cms.mat.fhir.services.service.MeasureExportDataService;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import org.hl7.fhir.r4.model.ValueSet;
@@ -30,7 +30,7 @@ class ValueSetControllerTest {
     private static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
 
     @Mock
-    private MeasureExportService measureExportRepository;
+    private MeasureExportDataService measureExportRepository;
     @Mock
     private ValueSetMapper valueSetMapper;
     @Mock

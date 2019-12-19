@@ -15,8 +15,8 @@ import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
-import gov.cms.mat.fhir.services.service.CqlLibraryService;
-import gov.cms.mat.fhir.services.service.MeasureService;
+import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
+import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.translate.LibraryMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,18 +39,18 @@ import java.util.stream.Collectors;
 public class LibraryController implements FhirValidatorProcessor {
     private static final String ERROR_LIBRARY_SEARCH = "Error in Library search for this measure: {}";
 
-    private final MeasureService measureService;
+    private final MeasureDataService measureDataService;
     private final HapiFhirServer hapiFhirServer;
-    private final CqlLibraryService cqlLibraryRepo;
+    private final CqlLibraryDataService cqlLibraryRepo;
     private final CqlLibraryExportRepository cqlLibraryExportRepo;
     private final ConversionResultsService conversionResultsService;
 
-    public LibraryController(MeasureService measureService,
+    public LibraryController(MeasureDataService measureDataService,
                              HapiFhirServer hapiFhirServer,
-                             CqlLibraryService cqlLibraryRepo,
+                             CqlLibraryDataService cqlLibraryRepo,
                              CqlLibraryExportRepository cqlLibraryExportRepo,
                              ConversionResultsService conversionResultsService) {
-        this.measureService = measureService;
+        this.measureDataService = measureDataService;
         this.hapiFhirServer = hapiFhirServer;
         this.cqlLibraryExportRepo = cqlLibraryExportRepo;
         this.cqlLibraryRepo = cqlLibraryRepo;
@@ -204,7 +204,7 @@ public class LibraryController implements FhirValidatorProcessor {
     public List<TranslationOutcome> translateAllLibraries() {
         List<TranslationOutcome> res = new ArrayList<>();
         try {
-            List<Measure> measureList = measureService.findAllValid();
+            List<Measure> measureList = measureDataService.findAllValid();
 
             for (Measure measure : measureList) {
                 String measureId = measure.getId().trim();

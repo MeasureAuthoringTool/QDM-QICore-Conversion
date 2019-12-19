@@ -12,8 +12,8 @@ import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
-import gov.cms.mat.fhir.services.service.MeasureExportService;
-import gov.cms.mat.fhir.services.service.MeasureService;
+import gov.cms.mat.fhir.services.service.MeasureDataService;
+import gov.cms.mat.fhir.services.service.MeasureExportDataService;
 import gov.cms.mat.fhir.services.summary.FhirValueSetResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
@@ -42,24 +42,24 @@ public class ValueSetController implements FhirValidatorProcessor {
     private static final String TRANSLATE_SUCCESS_MESSAGE = "Read %d Measure Export objects converted %d " +
             "Value sets to fhir in %d seconds";
 
-    private final MeasureExportService measureExportService;
+    private final MeasureExportDataService measureExportDataService;
     private final ValueSetMapper valueSetMapper;
     private final ConversionResultsService conversionResultsService;
     private final MatXmlProcessor matXmlProcessor;
-    private final MeasureService measureService;
+    private final MeasureDataService measureDataService;
     private final HapiFhirServer hapiFhirServer;
 
 
-    public ValueSetController(MeasureExportService measureExportService,
+    public ValueSetController(MeasureExportDataService measureExportDataService,
                               ValueSetMapper valueSetMapper,
                               ConversionResultsService conversionResultsService,
                               MatXmlProcessor matXmlProcessor,
-                              MeasureService measureService, HapiFhirServer hapiFhirServer) {
-        this.measureExportService = measureExportService;
+                              MeasureDataService measureDataService, HapiFhirServer hapiFhirServer) {
+        this.measureExportDataService = measureExportDataService;
         this.valueSetMapper = valueSetMapper;
         this.conversionResultsService = conversionResultsService;
         this.matXmlProcessor = matXmlProcessor;
-        this.measureService = measureService;
+        this.measureDataService = measureDataService;
         this.hapiFhirServer = hapiFhirServer;
     }
 
@@ -94,7 +94,7 @@ public class ValueSetController implements FhirValidatorProcessor {
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam String measureId) {
 
-        measureService.findOneValid(measureId);
+        measureDataService.findOneValid(measureId);
 
         byte[] xml = getXmlBytesBySource(measureId, xmlSource);
 
@@ -166,11 +166,11 @@ public class ValueSetController implements FhirValidatorProcessor {
     private int processMeasureExport(XmlSource xmlSource, ConversionType conversionType) {
         List<ValueSet> outcomes = new ArrayList<>();
 
-        List<MeasureVersionExportId> idsAndVersion = measureExportService.getAllExportIdsAndVersion();
+        List<MeasureVersionExportId> idsAndVersion = measureExportDataService.getAllExportIdsAndVersion();
         int measureExportCount = idsAndVersion.size();
 
         idsAndVersion.stream()
-                .map(mv -> measureExportService.findById(mv.getId()))
+                .map(mv -> measureExportDataService.findById(mv.getId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .forEach(me -> translate(me, outcomes, xmlSource, conversionType));

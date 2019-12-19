@@ -8,7 +8,7 @@ import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
-import gov.cms.mat.fhir.services.service.MeasureService;
+import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
@@ -35,7 +35,7 @@ class MeasureControllerTest {
     private static final String STATUS = "status";
 
     @Mock
-    private MeasureService measureService;
+    private MeasureDataService measureDataService;
     @Mock
     private MeasureExportRepository measureExportRepo;
     @Mock
@@ -53,7 +53,7 @@ class MeasureControllerTest {
 
     @Test
     void translateMeasureById_NotFoundMeasureRepo() {
-        when(measureService.findOneValid(ID)).thenReturn(null);
+        when(measureDataService.findOneValid(ID)).thenReturn(null);
 
         TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID, XmlSource.SIMPLE);
 
@@ -62,12 +62,12 @@ class MeasureControllerTest {
 
         verifyNoInteractions(measureExportRepo, manageMeasureDetailMapper, hapiFhirServer);
 
-        verify(measureService).findOneValid(ID);
+        verify(measureDataService).findOneValid(ID);
     }
 
     @Test
     void translateMeasureById_NotFoundMeasureRep() {
-        when(measureService.findOneValid(ID)).thenReturn(new Measure());
+        when(measureDataService.findOneValid(ID)).thenReturn(new Measure());
         when(measureExportRepo.getMeasureExportById(ID)).thenReturn(null);
 
         TranslationOutcome translationOutcome = measureTranslationService.translateMeasureById(ID, XmlSource.SIMPLE);
@@ -75,14 +75,14 @@ class MeasureControllerTest {
         assertTrue(translationOutcome.getMessage().contains("No SimpleXML Available"));
         assertFalse(translationOutcome.getSuccessful());
 
-        verify(measureService).findOneValid(ID);
+        verify(measureDataService).findOneValid(ID);
         verify(measureExportRepo).getMeasureExportById(ID);
     }
 
     @Test
     void translateMeasureById_ManageMeasureDetailMapperException() {
         Measure measure = new Measure();
-        when(measureService.findOneValid(ID)).thenReturn(measure);
+        when(measureDataService.findOneValid(ID)).thenReturn(measure);
         when(measureExportRepo.getMeasureExportById(ID)).thenReturn(new MeasureExport());
 
         String message = "oops";
@@ -95,7 +95,7 @@ class MeasureControllerTest {
         assertFalse(translationOutcome.getSuccessful());
 
         verifyNoInteractions(hapiFhirServer);
-        verify(measureService).findOneValid(ID);
+        verify(measureDataService).findOneValid(ID);
         verify(measureExportRepo).getMeasureExportById(ID);
         verify(manageMeasureDetailMapper).convert(null, measure);
     }
@@ -103,7 +103,7 @@ class MeasureControllerTest {
     @Test
     void translateMeasureById_Success() {
         Measure measure = new Measure();
-        when(measureService.findOneValid(ID)).thenReturn(measure);
+        when(measureDataService.findOneValid(ID)).thenReturn(measure);
         when(measureExportRepo.getMeasureExportById(ID)).thenReturn(new MeasureExport());
 
         ManageCompositeMeasureDetailModel manageCompositeMeasureDetailModel = createManageCompositeMeasureDetailModel();
@@ -117,7 +117,7 @@ class MeasureControllerTest {
         assertTrue(translationOutcome.getMessage().isEmpty());
         assertTrue(translationOutcome.getSuccessful());
 
-        verify(measureService).findOneValid(ID);
+        verify(measureDataService).findOneValid(ID);
         verify(measureExportRepo).getMeasureExportById(ID);
         verify(manageMeasureDetailMapper).convert(null, measure);
         verify(hapiFhirServer).createAndExecuteBundle(any(Resource.class));
@@ -126,19 +126,19 @@ class MeasureControllerTest {
 
     @Test
     void translateMeasuresByStatus_NotFoundInDb() {
-        when(measureService.getMeasuresByStatus(STATUS)).thenReturn(Collections.emptyList());
+        when(measureDataService.getMeasuresByStatus(STATUS)).thenReturn(Collections.emptyList());
 
         List<TranslationOutcome> translationOutcomes =
                 measureTranslationService.translateMeasuresByStatus(STATUS, XmlSource.SIMPLE);
 
         assertTrue(translationOutcomes.isEmpty());
 
-        verify(measureService).getMeasuresByStatus(STATUS);
+        verify(measureDataService).getMeasuresByStatus(STATUS);
     }
 
     @Test
     void translateMeasuresByStatus_Exception() {
-        when(measureService.getMeasuresByStatus(STATUS)).thenThrow(new IllegalArgumentException("oops"));
+        when(measureDataService.getMeasuresByStatus(STATUS)).thenThrow(new IllegalArgumentException("oops"));
 
         List<TranslationOutcome> translationOutcomes =
                 measureTranslationService.translateMeasuresByStatus(STATUS, XmlSource.SIMPLE);
@@ -146,15 +146,15 @@ class MeasureControllerTest {
         assertEquals(1, translationOutcomes.size());
         assertFalse(translationOutcomes.get(0).getSuccessful());
 
-        verify(measureService).getMeasuresByStatus(STATUS);
+        verify(measureDataService).getMeasuresByStatus(STATUS);
     }
 
     @Test
     void translateMeasuresByStatus_FoundInDb() {
         Measure measure = new Measure();
         measure.setId(ID);
-        when(measureService.getMeasuresByStatus(STATUS)).thenReturn(Collections.singletonList(measure));
-        when(measureService.findOneValid(ID)).thenReturn(measure);
+        when(measureDataService.getMeasuresByStatus(STATUS)).thenReturn(Collections.singletonList(measure));
+        when(measureDataService.findOneValid(ID)).thenReturn(measure);
         when(measureExportRepo.getMeasureExportById(ID)).thenReturn(new MeasureExport());
         when(manageMeasureDetailMapper.convert(null, measure))
                 .thenReturn(createManageCompositeMeasureDetailModel());
@@ -165,31 +165,31 @@ class MeasureControllerTest {
         assertEquals(1, translationOutcomes.size());
         assertTrue(translationOutcomes.get(0).getSuccessful());
 
-        verify(measureService).getMeasuresByStatus(STATUS);
-        verify(measureService).findOneValid(ID);
+        verify(measureDataService).getMeasuresByStatus(STATUS);
+        verify(measureDataService).findOneValid(ID);
         verify(measureExportRepo).getMeasureExportById(ID);
         verify(manageMeasureDetailMapper).convert(null, measure);
     }
 
     @Test
     void translateAllMeasures_NotFoundInDb() {
-        when(measureService.findAllValid()).thenReturn(Collections.emptyList());
+        when(measureDataService.findAllValid()).thenReturn(Collections.emptyList());
 
         List<TranslationOutcome> translationOutcomes = measureTranslationService.translateAllMeasures(XmlSource.SIMPLE);
         assertTrue(translationOutcomes.isEmpty());
 
-        verify(measureService).findAllValid();
+        verify(measureDataService).findAllValid();
     }
 
     @Test
     void translateAllMeasures_Exception() {
-        when(measureService.findAllValid()).thenThrow(new IllegalArgumentException("bad things happened"));
+        when(measureDataService.findAllValid()).thenThrow(new IllegalArgumentException("bad things happened"));
 
         List<TranslationOutcome> translationOutcomes = measureTranslationService.translateAllMeasures(XmlSource.SIMPLE);
         assertEquals(1, translationOutcomes.size());
         assertFalse(translationOutcomes.get(0).getSuccessful());
 
-        verify(measureService).findAllValid();
+        verify(measureDataService).findAllValid();
     }
 
     @Test
@@ -198,8 +198,8 @@ class MeasureControllerTest {
         measure.setId(ID);
         measure.setReleaseVersion("v5.5");
 
-        when(measureService.findAllValid()).thenReturn(Collections.singletonList(measure));
-        when(measureService.findOneValid(ID)).thenReturn(measure);
+        when(measureDataService.findAllValid()).thenReturn(Collections.singletonList(measure));
+        when(measureDataService.findOneValid(ID)).thenReturn(measure);
         when(measureExportRepo.getMeasureExportById(ID)).thenReturn(new MeasureExport());
         when(manageMeasureDetailMapper.convert(null, measure))
                 .thenReturn(createManageCompositeMeasureDetailModel());
@@ -210,8 +210,8 @@ class MeasureControllerTest {
         assertEquals(1, translationOutcomes.size());
         assertTrue(translationOutcomes.get(0).getSuccessful());
 
-        verify(measureService).findAllValid();
-        verify(measureService).findOneValid(ID);
+        verify(measureDataService).findAllValid();
+        verify(measureDataService).findOneValid(ID);
         verify(measureExportRepo).getMeasureExportById(ID);
         verify(manageMeasureDetailMapper).convert(null, measure);
     }

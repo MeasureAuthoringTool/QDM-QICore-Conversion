@@ -13,14 +13,14 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class MeasureExportService {
+public class MeasureExportDataService {
     private final MeasureExportRepository measureExportRepository;
 
     @Value("#{'${measures.allowed.versions}'.split(',')}")
     private List<String> allowedVersions;
 
 
-    public MeasureExportService(MeasureExportRepository measureExportRepository) {
+    public MeasureExportDataService(MeasureExportRepository measureExportRepository) {
         this.measureExportRepository = measureExportRepository;
     }
 

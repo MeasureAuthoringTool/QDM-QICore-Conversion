@@ -22,7 +22,7 @@ import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
-import gov.cms.mat.fhir.services.service.MeasureService;
+import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.summary.FhirMeasureResourceValidationResult;
 import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
 import gov.cms.mat.fhir.services.translate.MeasureMapper;
@@ -42,7 +42,7 @@ import java.util.List;
 @Tag(name = "Measure-Controller", description = "API for converting MAT Measures to FHIR")
 @Slf4j
 public class MeasureController implements FhirValidatorProcessor {
-    private final MeasureService measureService;
+    private final MeasureDataService measureDataService;
     private final MeasureExportRepository measureExportRepo;
     private final ManageMeasureDetailMapper manageMeasureDetailMapper;
     private final HapiFhirServer hapiFhirServer;
@@ -53,7 +53,7 @@ public class MeasureController implements FhirValidatorProcessor {
 
     private final MatXmlProcessor matXmlProcessor;
 
-    public MeasureController(MeasureService measureService,
+    public MeasureController(MeasureDataService measureDataService,
                              MeasureExportRepository measureExportRepository,
                              ManageMeasureDetailMapper manageMeasureDetailMapper,
                              HapiFhirServer hapiFhirServer,
@@ -62,7 +62,7 @@ public class MeasureController implements FhirValidatorProcessor {
                              RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor,
                              MeasureGroupingDataProcessor measureGroupingDataProcessor,
                              MatXmlProcessor matXmlProcessor) {
-        this.measureService = measureService;
+        this.measureDataService = measureDataService;
 
         this.measureExportRepo = measureExportRepository;
         this.manageMeasureDetailMapper = manageMeasureDetailMapper;
@@ -87,7 +87,7 @@ public class MeasureController implements FhirValidatorProcessor {
         ConversionReporter.resetMeasure(ConversionType.CONVERSION);
 
         try {
-            Measure qdmMeasure = measureService.findOneValid(id);
+            Measure qdmMeasure = measureDataService.findOneValid(id);
             res.setFhirIdentity("Measure/" + qdmMeasure.getId());
 
             MeasureExport measureExport = measureExportRepo.getMeasureExportById(id);
@@ -123,7 +123,7 @@ public class MeasureController implements FhirValidatorProcessor {
         List<TranslationOutcome> res = new ArrayList<>();
 
         try {
-            List<Measure> measureList = measureService.getMeasuresByStatus(measureStatus);
+            List<Measure> measureList = measureDataService.getMeasuresByStatus(measureStatus);
 
             for (Measure measure : measureList) {
                 String measureId = measure.getId().trim();
@@ -152,7 +152,7 @@ public class MeasureController implements FhirValidatorProcessor {
         List<TranslationOutcome> res = new ArrayList<>();
 
         try {
-            List<Measure> measureList = measureService.findAllValid();
+            List<Measure> measureList = measureDataService.findAllValid();
 
             for (Measure measure : measureList) {
                 String measureId = measure.getId().trim();
@@ -178,7 +178,7 @@ public class MeasureController implements FhirValidatorProcessor {
     public TranslationOutcome removeAllMeasures() {
         TranslationOutcome res = new TranslationOutcome();
         try {
-            List<Measure> measureList = measureService.findAllValid();
+            List<Measure> measureList = measureDataService.findAllValid();
 
             for (Measure measure : measureList) {
                 String measureId = measure.getId().trim();
@@ -206,7 +206,7 @@ public class MeasureController implements FhirValidatorProcessor {
         ConversionReporter.resetMeasure(ConversionType.VALIDATION);
 
         try {
-            Measure qdmMeasure = measureService.findOneValid(id);
+            Measure qdmMeasure = measureDataService.findOneValid(id);
 
             MeasureExport measureExport = measureExportRepo.getMeasureExportById(id);
 

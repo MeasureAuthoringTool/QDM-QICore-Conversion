@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class CqlLibraryService {
+public class CqlLibraryDataService {
     private final CqlLibraryRepository cqlLibraryRepo;
 
-    public CqlLibraryService(CqlLibraryRepository cqlLibraryRepo) {
+    public CqlLibraryDataService(CqlLibraryRepository cqlLibraryRepo) {
         this.cqlLibraryRepo = cqlLibraryRepo;
     }
 
@@ -38,7 +38,7 @@ public class CqlLibraryService {
         return cqlLibraryRepo.getCqlLibraryByNameAndVersion(cqlName, version);
     }
 
-    public CqlLibrary findCqlLibrary(CqlLibraryFindData cqlLibraryFindData) {
+    public CqlLibrary findCqlLibrary(CqlLibraryFindData cqlLibraryFindData) {  //todo MCG return array can be multiples
 
         List<CqlLibrary> libraries =
                 cqlLibraryRepo.findByQdmVersionAndCqlNameAndVersionAndFinalizedDateIsNotNull(
@@ -59,5 +59,4 @@ public class CqlLibraryService {
             return libraries.get(0);
         }
     }
-
 }

@@ -27,23 +27,23 @@ public class CQLLibraryTranslationService {
 
     private static final String NO_LIBRARIES_FOUND = "No CqlLibraries found for the measure";
     private static final String TOO_MANY_LIBRARIES_FOUND_TEMPLATE = "No CqlLibraries found for the measure count: %d";
-    private final MeasureService measureService;
+    private final MeasureDataService measureDataService;
     private final CqlLibraryRepository cqlLibraryRepository;
     private final CqlConversionClient cqlConversionClient;
     private final ConversionResultsService conversionResultsService;
 
-    public CQLLibraryTranslationService(MeasureService measureService,
+    public CQLLibraryTranslationService(MeasureDataService measureDataService,
                                         CqlLibraryRepository cqlLibraryRepository,
                                         CqlConversionClient cqlConversionClient,
                                         ConversionResultsService conversionResultsService) {
-        this.measureService = measureService;
+        this.measureDataService = measureDataService;
         this.cqlLibraryRepository = cqlLibraryRepository;
         this.cqlConversionClient = cqlConversionClient;
         this.conversionResultsService = conversionResultsService;
     }
 
     public String processAll() {
-        List<String> all = measureService.findAllValidIds();
+        List<String> all = measureDataService.findAllValidIds();
 
         int successfulConversions = all.stream()
                 .map(this::processCount)
@@ -151,7 +151,7 @@ public class CQLLibraryTranslationService {
     }
 
     public String processOne(String measureId, ConversionType conversionType) {
-        Measure measure = measureService.findOneValid(measureId);
+        Measure measure = measureDataService.findOneValid(measureId);
         return process(measure.getId(), conversionType);
     }
 }

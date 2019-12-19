@@ -4,7 +4,7 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
-import gov.cms.mat.fhir.services.service.CqlLibraryService;
+import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "LibraryFinder-Controller", description = "API for finding MAT Libraries ")
 @Slf4j
 public class LibraryFinderController implements CqlVersionConverter {
-    private final CqlLibraryService cqlLibraryService;
+    private final CqlLibraryDataService cqlLibraryDataService;
 
-    public LibraryFinderController(CqlLibraryService cqlLibraryService) {
-        this.cqlLibraryService = cqlLibraryService;
+    public LibraryFinderController(CqlLibraryDataService cqlLibraryDataService) {
+        this.cqlLibraryDataService = cqlLibraryDataService;
     }
 
     @Operation(summary = "Find Cql-XML in mat.",
@@ -36,7 +36,7 @@ public class LibraryFinderController implements CqlVersionConverter {
                 .version(convertVersionToBigDecimal(version))
                 .build();
 
-        CqlLibrary cqlLibrary = cqlLibraryService.findCqlLibrary(data);
+        CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);
 
         if (StringUtils.isEmpty(cqlLibrary.getCqlXml())) {
             throw new CqlLibraryNotFoundException("Xml is missing for library id: ", cqlLibrary.getId());

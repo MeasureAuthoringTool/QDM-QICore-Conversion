@@ -20,6 +20,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CqlConversionClientTest {
+    private final static String JSON = "json";
+    private final static String XML = "</xml>";
+
     @Mock
     private RestTemplate restTemplate;
     @InjectMocks
@@ -32,16 +35,24 @@ class CqlConversionClientTest {
 
     @Test
     void getJson() {
-        String json = "json";
         when(restTemplate.exchange(any(RequestEntity.class), eq(String.class)))
-                .thenReturn(new ResponseEntity<>(json, HttpStatus.ACCEPTED));
+                .thenReturn(new ResponseEntity<>(JSON, HttpStatus.ACCEPTED));
 
         ResponseEntity<String> entity = cqlConversionClient.getJson("CQL");
-        assertEquals(json, entity.getBody());
+        assertEquals(JSON, entity.getBody());
+        assertEquals(HttpStatus.ACCEPTED, entity.getStatusCode());
         verify(restTemplate).exchange(any(RequestEntity.class), eq(String.class));
+
     }
 
     @Test
     void getCql() {
+        when(restTemplate.exchange(any(RequestEntity.class), eq(String.class)))
+                .thenReturn(new ResponseEntity<>(JSON, HttpStatus.ACCEPTED));
+
+        ResponseEntity<String> entity = cqlConversionClient.getCql(XML);
+        assertEquals(JSON, entity.getBody());
+        assertEquals(HttpStatus.ACCEPTED, entity.getStatusCode());
+        verify(restTemplate).exchange(any(RequestEntity.class), eq(String.class));
     }
 }
