@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import gov.cms.mat.fhir.rest.cql.MatCqlConversionException;
 import gov.cms.mat.fhir.services.service.support.CqlConversionError;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,11 +53,22 @@ public class ConversionReporter {
         conversionReporter.addCqlConversionErrors(errors);
     }
 
+    public static void setMatCqlConversionExceptions(List<MatCqlConversionException> errors) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addMatCqlConversionErrors(errors);
+    }
+
 
     public static void setCql(String cql) {
         ConversionReporter conversionReporter = getConversionReporter();
 
         conversionReporter.addCql(cql);
+    }
+
+    public static void setElm(String json) {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        conversionReporter.addElm(json);
     }
 
 
@@ -211,8 +223,16 @@ public class ConversionReporter {
         return conversionResultsService.addCql(measureId, cql);
     }
 
+    private ConversionResult addElm(String json) {
+        return conversionResultsService.addElm(measureId, json);
+    }
+
     private ConversionResult addCqlConversionErrors(List<CqlConversionError> errors) {
         return conversionResultsService.addCqlConversionErrors(measureId, errors);
+    }
+
+    private ConversionResult addMatCqlConversionErrors(List<MatCqlConversionException> errors) {
+        return conversionResultsService.addMatCqlConversionErrors(measureId, errors);
     }
 
     private ConversionResult addFhirMeasureValidationResults(List<ConversionResult.FhirValidationResult> list) {

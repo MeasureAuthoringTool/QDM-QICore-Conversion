@@ -13,7 +13,7 @@ class ElmErrorExtractorTest implements ResourceFileUtil {
 
         ElmErrorExtractor elmErrorExtractor = new ElmErrorExtractor(json);
 
-        assertEquals(15, elmErrorExtractor.parse().size());
+        assertEquals(15, elmErrorExtractor.parseForAnnotations().size());
     }
 
     @Test
@@ -22,7 +22,7 @@ class ElmErrorExtractorTest implements ResourceFileUtil {
 
         ElmErrorExtractor elmErrorExtractor = new ElmErrorExtractor(json);
 
-        assertTrue(elmErrorExtractor.parse().isEmpty());
+        assertTrue(elmErrorExtractor.parseForAnnotations().isEmpty());
     }
 
     @Test
@@ -31,7 +31,7 @@ class ElmErrorExtractorTest implements ResourceFileUtil {
 
         ElmErrorExtractor elmErrorExtractor = new ElmErrorExtractor(json);
 
-        CqlConversionException thrown = assertThrows(CqlConversionException.class, elmErrorExtractor::parse);
+        CqlConversionException thrown = assertThrows(CqlConversionException.class, elmErrorExtractor::parseForAnnotations);
 
         assertTrue(thrown.getMessage().contains("Error processing json"));
     }

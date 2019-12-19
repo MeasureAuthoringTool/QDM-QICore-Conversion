@@ -5,7 +5,6 @@ import gov.cms.mat.cql_elm_translation.service.CqlConversionService;
 import gov.cms.mat.cql_elm_translation.service.MatXmlConversionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.cqframework.cql.cql2elm.CqlTranslator;
 import org.cqframework.cql.cql2elm.LibraryBuilder;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,8 +45,7 @@ public class CqlConversionController {
 
         processLibraries(cqlData);
 
-        CqlTranslator cqlTranslator = cqlConversionService.processCqlData(requestData);
-        return cqlTranslator.toJson();
+        return cqlConversionService.processCqlDataWithErrors(requestData);
     }
 
     @PutMapping(path = "/xml", consumes = "text/plain", produces = "application/elm+json")
@@ -76,11 +74,10 @@ public class CqlConversionController {
                 .validateUnits(validateUnits)
                 .build();
 
-        CqlTranslator cqlTranslator = cqlConversionService.processCqlData(requestData);
-        return cqlTranslator.toJson();
+        return cqlConversionService.processCqlDataWithErrors(requestData);
     }
 
     private void processLibraries(String cqlData) {
-        cqlConversionService.processCqlLibraries(cqlData);
+        cqlConversionService.processQdmVersion(cqlData);
     }
 }

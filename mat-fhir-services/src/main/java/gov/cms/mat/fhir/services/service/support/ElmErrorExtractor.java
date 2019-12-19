@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.service.support;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.mat.fhir.rest.cql.MatCqlConversionException;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,23 +19,44 @@ public class ElmErrorExtractor {
         this.json = json;
     }
 
-    public List<CqlConversionError> parse() {
+    public List<CqlConversionError> parseForAnnotations() {
         try {
             JsonNode annotationNode = getAnnotationNode();
 
             return processAnnotationNode(annotationNode);
         } catch (JsonProcessingException e) {
+            log.warn("Error in parse", e);
             log.trace(json);
             throw new CqlConversionException("Error processing json", e);
         }
     }
 
+    public List<MatCqlConversionException> parseForErrorExceptions() {
+        try {
+            JsonNode errorExceptionsNode = getErrorExceptionsNode();
+
+            return processErrorExceptionNode(errorExceptionsNode);
+        } catch (JsonProcessingException e) {
+            log.warn("Error in parse", e);
+            log.trace(json);
+            throw new CqlConversionException("Error processing json", e);
+        }
+    }
+
+    private List<MatCqlConversionException> processErrorExceptionNode(JsonNode errorExceptionsNode) {
+        return processJsonNode(errorExceptionsNode, MatCqlConversionException.class);
+    }
+
     public List<CqlConversionError> processAnnotationNode(JsonNode annotationNode) {
-        List<CqlConversionError> cqlConversionErrors = new ArrayList<>();
+        return processJsonNode(annotationNode, CqlConversionError.class);
+    }
+
+    public <T> List<T> processJsonNode(JsonNode annotationNode, Class<T> type) {
+        List<T> cqlConversionErrors = new ArrayList<>();
 
         if (annotationNode.isArray()) { // will not be array when isMissingNode
             for (JsonNode node : annotationNode) {
-                cqlConversionErrors.add(mapper.convertValue(node, CqlConversionError.class));
+                cqlConversionErrors.add(mapper.convertValue(node, type));
             }
         }
 
@@ -47,15 +69,14 @@ public class ElmErrorExtractor {
         JsonNode annotationNode = libraryNode.path("annotation");
 
         if (annotationNode.isMissingNode()) {
-            log.trace("Does not contain a Annotation Node"); // if no error this is normal
+            log.debug("Json Does not contain a annotation Node"); // if no error this is normal
         }
 
         return annotationNode;
     }
 
     public JsonNode getLibraryNode() throws JsonProcessingException {
-        JsonNode root = mapper.readTree(json);
-        JsonNode libraryNode = root.path("library");
+        JsonNode libraryNode = getNodeFromRoot("library");
 
         if (libraryNode.isMissingNode()) {
             log.trace(json);
@@ -63,5 +84,20 @@ public class ElmErrorExtractor {
         }
 
         return libraryNode;
+    }
+
+    public JsonNode getErrorExceptionsNode() throws JsonProcessingException {
+        JsonNode errorExceptionsNode = getNodeFromRoot("errorExceptions");
+
+        if (errorExceptionsNode.isMissingNode()) {
+            log.debug("Json Does not contain a errorExceptions Node"); // if no error this is normal
+        }
+
+        return errorExceptionsNode;
+    }
+
+    private JsonNode getNodeFromRoot(String fieldName) throws JsonProcessingException {
+        JsonNode root = mapper.readTree(json);
+        return root.path(fieldName);
     }
 }

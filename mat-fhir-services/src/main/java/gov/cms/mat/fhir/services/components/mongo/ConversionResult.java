@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import gov.cms.mat.fhir.rest.cql.MatCqlConversionException;
 import gov.cms.mat.fhir.services.service.support.CqlConversionError;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Document
 @Data
@@ -41,7 +44,7 @@ public class ConversionResult {
     private ConversionType libraryConversionType;
     private List<FhirValidationResult> libraryFhirValidationErrors = new ArrayList<>();
 
-    private CqlConversionResult cqlConversionResult;
+    private CqlConversionResult cqlConversionResult; // add me to the library uber object
 
 
     @NotBlank
@@ -69,7 +72,9 @@ public class ConversionResult {
         Boolean result;
         List<String> errors;
         String cql;
+        String elm;
         List<CqlConversionError> cqlConversionErrors;
+        Set<MatCqlConversionException> matCqlConversionErrors = new HashSet<>();
     }
 
     @Data

@@ -37,7 +37,7 @@ class CqlVersionConverterTest {
                 Assertions.assertThrows(InvalidVersionException.class, () -> {
                     converterTester.convertVersionToBigDecimal("i_am_a_teapot");
                 });
-        assertTrue(thrown.getMessage().contains("Version is invalid:"));
+        assertTrue(thrown.getMessage().contains("Version can contain only numbers and two decimal points:"));
     }
 
     @Test
@@ -46,7 +46,7 @@ class CqlVersionConverterTest {
                 Assertions.assertThrows(InvalidVersionException.class, () -> {
                     converterTester.convertVersionToBigDecimal("4.1.000A");
                 });
-        assertTrue(thrown.getMessage().contains("ersion can contain only numbers and two decimal points:"));
+        assertTrue(thrown.getMessage().contains("Version can contain only numbers and two decimal points:"));
     }
 
     private static class CqlVersionConverterTester implements CqlVersionConverter {

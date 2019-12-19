@@ -35,7 +35,7 @@ public class CqlConversionClient {
         return restTemplate.exchange(requestEntity, String.class);
     }
 
-    public RequestEntity<String> buildConvertCqlToJsonRequestEntity(String xml) {
+    private RequestEntity<String> buildConvertCqlToJsonRequestEntity(String xml) {
         return RequestEntity
                 .put(buildUriJson())
                 .body(xml);

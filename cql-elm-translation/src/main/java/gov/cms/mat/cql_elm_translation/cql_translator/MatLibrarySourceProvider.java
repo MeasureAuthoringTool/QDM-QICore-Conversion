@@ -79,6 +79,4 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
             throw new UncheckedIOException(e);
         }
     }
-
-
 }

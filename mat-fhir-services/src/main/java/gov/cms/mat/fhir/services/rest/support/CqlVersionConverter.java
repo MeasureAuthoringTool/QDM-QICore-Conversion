@@ -35,14 +35,14 @@ public interface CqlVersionConverter {
 
         String minorVersion = versionString.substring(firstDecimalPointPointer + 1, secondDecimalPointPointer);
 
-        String zeroPadding = getZeroPadding(minorVersion.length());
+        String zeroPadding = getZeroPaddingAndDecimal(minorVersion.length());
 
         String convertedValue = majorVersion + zeroPadding + minorVersion;
 
         return new BigDecimal(convertedValue);
     }
 
-    default String getZeroPadding(int length) {
+    default String getZeroPaddingAndDecimal(int length) {
         if (length > 2) {
             return ".";
         } else if (length == 2) {

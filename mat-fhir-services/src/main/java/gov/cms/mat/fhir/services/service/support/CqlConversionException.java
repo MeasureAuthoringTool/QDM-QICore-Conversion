@@ -6,10 +6,9 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CqlConversionError extends CqlConversionBase {
+public class CqlConversionException extends CqlConversionBase {
     String errorSeverity;
     String targetIncludeLibraryId;
     String targetIncludeLibraryVersionId;
     String type;
-    String message;
 }

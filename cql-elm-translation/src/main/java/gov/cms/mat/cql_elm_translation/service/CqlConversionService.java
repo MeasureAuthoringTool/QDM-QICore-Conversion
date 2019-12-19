@@ -1,16 +1,17 @@
 package gov.cms.mat.cql_elm_translation.service;
 
-import gov.cms.mat.cql_elm_translation.cql_translator.MatLibrarySourceParser;
+import gov.cms.mat.cql_elm_translation.cql_translator.MatCqlSourceParser;
 import gov.cms.mat.cql_elm_translation.cql_translator.MatLibrarySourceProvider;
 import gov.cms.mat.cql_elm_translation.cql_translator.TranslationResource;
 import gov.cms.mat.cql_elm_translation.data.RequestData;
+import gov.cms.mat.cql_elm_translation.service.support.CqlExceptionErrorProcessor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.cqframework.cql.cql2elm.CqlTranslator;
 import org.cqframework.cql.cql2elm.CqlTranslatorException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,54 +24,45 @@ public class CqlConversionService {
         this.fhirServicesService = fhirServicesService;
     }
 
-    public void processCqlLibraries(String cqlData) {
-
-        MatLibrarySourceParser parser = new MatLibrarySourceParser(cqlData);
-        MatLibrarySourceParser.ParseResults results = parser.parse();
-
-        MatLibrarySourceProvider.setQdmVersion(results.getQdmVersion());
+    public void processQdmVersion(String cqlData) {
+        String qdmVersion = new MatCqlSourceParser(cqlData).parseQdmVersion();
+        MatLibrarySourceProvider.setQdmVersion(qdmVersion);
         MatLibrarySourceProvider.setFhirServicesService(fhirServicesService);
-
-
-//        results.getLibraries()
-//                .stream()
-//                .filter(l -> isRequired(l, results.getQdmVersion()))
-//                .forEach(l -> getFromRest(l, results.getQdmVersion()));
     }
 
-    private void getFromRest(MatLibrarySourceParser.LibraryItem l, String qdmVersion) {
+    public String processCqlDataWithErrors(RequestData requestData) {
+        CqlTranslator cqlTranslator = processCqlData(requestData);
+        List<CqlTranslatorException> errors = processErrors(cqlTranslator.getExceptions());
 
-        String cql = fhirServicesService.getCql(l.getName(), l.getLibraryVersion(), qdmVersion);
+        return attachErrorsToJson(errors, cqlTranslator.toJson());
+    }
 
-        if (StringUtils.isEmpty(cql)) {
-            log.debug("Did not find any cql");
+    private String attachErrorsToJson(List<CqlTranslatorException> errors, String json) {
+
+        if (CollectionUtils.isEmpty(errors)) {
+            return json;
         } else {
-            MatLibrarySourceProvider.addLibraryInMap(l.getName(), qdmVersion, l.getLibraryVersion(), cql);
+            return new CqlExceptionErrorProcessor(errors, json).process();
         }
     }
-
-    private boolean isRequired(MatLibrarySourceParser.LibraryItem item, String qdmVersion) {
-        return !MatLibrarySourceProvider.isLibraryInMap(item.getName(), qdmVersion, item.getLibraryVersion());
-    }
-
 
     public CqlTranslator processCqlData(RequestData requestData) {
         TranslationResource translationResource = new TranslationResource();
-        CqlTranslator cqlTranslator =
-                translationResource.buildTranslator(requestData.getCqlDataInputStream(), requestData.createMap());
+        return translationResource.buildTranslator(requestData.getCqlDataInputStream(), requestData.createMap());
+    }
 
-        logErrors(cqlTranslator.getErrors());
-
-        return cqlTranslator;
+    private List<CqlTranslatorException> processErrors(List<CqlTranslatorException> exceptions) {
+        if (CollectionUtils.isEmpty(exceptions)) {
+            log.debug("No CQL Errors found");
+            return Collections.emptyList();
+        } else {
+            logErrors(exceptions);
+            return exceptions;
+        }
     }
 
     private void logErrors(List<CqlTranslatorException> exceptions) {
-        if (CollectionUtils.isEmpty(exceptions)) {
-            log.trace("No Errors found");
-        } else {
-            exceptions
-                    .forEach(e -> log.warn(formatMessage(e)));
-        }
+        exceptions.forEach(e -> log.warn(formatMessage(e)));
     }
 
     private String formatMessage(CqlTranslatorException e) {

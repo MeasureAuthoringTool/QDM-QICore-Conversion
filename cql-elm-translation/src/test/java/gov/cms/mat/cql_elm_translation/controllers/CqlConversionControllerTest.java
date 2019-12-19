@@ -29,11 +29,12 @@ class CqlConversionControllerTest {
 
     @Test
     void cqlToElmJson() {
+        String cqlData = "cqlData";
         String result = "json-data";
-        when(cqlConversionService.processCqlData(any())).thenReturn(cqlTranslator);
-        when(cqlTranslator.toJson()).thenReturn(result);
+        when(cqlConversionService.processCqlDataWithErrors(any())).thenReturn(result);
 
-        String json = cqlConversionController.cqlToElmJson("cqlData",
+
+        String json = cqlConversionController.cqlToElmJson(cqlData,
                 LibraryBuilder.SignatureLevel.All,
                 true,
                 true,
@@ -43,19 +44,18 @@ class CqlConversionControllerTest {
                 true);
 
         assertEquals(result, json);
-        verify(cqlConversionService).processCqlData(any());
-        verify(cqlTranslator).toJson();
+        verify(cqlConversionService).processCqlDataWithErrors(any());
+        verify(cqlConversionService).processQdmVersion(cqlData);
     }
 
     @Test
     void xmlToElmJson() {
+        String cqlData = "cqlData";
         String xml = "</xml>";
         String result = "json-data";
 
-        when(matXmlConversionService.processCqlXml(xml)).thenReturn(result);
-
-        when(cqlConversionService.processCqlData(any())).thenReturn(cqlTranslator);
-        when(cqlTranslator.toJson()).thenReturn(result);
+        when(matXmlConversionService.processCqlXml(xml)).thenReturn(cqlData);
+        when(cqlConversionService.processCqlDataWithErrors(any())).thenReturn(result);
 
         String json = cqlConversionController.xmlToElmJson(xml,
                 LibraryBuilder.SignatureLevel.All,
@@ -67,8 +67,9 @@ class CqlConversionControllerTest {
                 true);
 
         assertEquals(result, json);
+
         verify(matXmlConversionService).processCqlXml(xml);
-        verify(cqlConversionService).processCqlData(any());
-        verify(cqlTranslator).toJson();
+        verify(cqlConversionService).processCqlDataWithErrors(any());
+        verify(cqlConversionService).processQdmVersion(cqlData);
     }
 }

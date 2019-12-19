@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.service;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
+import gov.cms.mat.fhir.rest.cql.MatCqlConversionException;
 import gov.cms.mat.fhir.services.components.cql.CqlConversionClient;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
@@ -86,6 +87,8 @@ public class CQLLibraryTranslationService {
 
                 processJsonForError(json);
 
+                ConversionReporter.setElm(json);
+
                 return json;
             }
         }
@@ -93,13 +96,24 @@ public class CQLLibraryTranslationService {
 
     private void processJsonForError(String json) {
         ElmErrorExtractor extractor = new ElmErrorExtractor(json);
-        List<CqlConversionError> errors = extractor.parse();
+        List<CqlConversionError> cqlConversionErrors = extractor.parseForAnnotations();
+        List<MatCqlConversionException> matCqlConversionExceptions = extractor.parseForErrorExceptions();
 
-        if (errors.isEmpty()) {
+        if (cqlConversionErrors.isEmpty() && matCqlConversionExceptions.isEmpty()) {
             ConversionReporter.setCqlConversionResultSuccess();
         } else {
-            ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + errors.size() + " errors.");
-            ConversionReporter.setCqlConversionErrors(errors);
+
+            if (!cqlConversionErrors.isEmpty()) {
+                ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + cqlConversionErrors.size()
+                        + " cqlConversionErrors errors.");
+                ConversionReporter.setCqlConversionErrors(cqlConversionErrors);
+            }
+
+            if (!matCqlConversionExceptions.isEmpty()) {
+                ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + matCqlConversionExceptions.size()
+                        + " matCqlConversionExceptions (errorExceptions) errors.");
+                ConversionReporter.setMatCqlConversionExceptions(matCqlConversionExceptions);
+            }
         }
     }
 
@@ -118,6 +132,7 @@ public class CQLLibraryTranslationService {
             ResponseEntity<String> entity = cqlConversionClient.getCql(xml);
             return entity.getBody();
         } catch (Exception e) {
+            log.warn("Error convertToCql", e);
             log.trace(xml);
             throw new CqlConversionException("Cannot convert xml to cql.", e);
         }
@@ -129,6 +144,7 @@ public class CQLLibraryTranslationService {
             ResponseEntity<String> entity = cqlConversionClient.getJson(cql);
             return entity.getBody();
         } catch (Exception e) {
+            log.warn("Error convertCqlToJson", e);
             log.trace(cql);
             throw new CqlConversionException("Cannot convert cql to json.", e);
         }
