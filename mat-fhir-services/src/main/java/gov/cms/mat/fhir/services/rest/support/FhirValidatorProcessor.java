@@ -5,7 +5,7 @@ import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
+import gov.cms.mat.fhir.rest.cql.FhirValidationResult;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 
@@ -26,15 +26,15 @@ public interface FhirValidatorProcessor {
         }
     }
 
-    default List<ConversionResult.FhirValidationResult> buildResults(FhirResourceValidationResult response) {
+    default List<FhirValidationResult> buildResults(FhirResourceValidationResult response) {
         return response.getValidationErrorList().stream()
                 .map(this::processError)
                 .collect(Collectors.toList());
     }
 
 
-    default ConversionResult.FhirValidationResult processError(FhirResourceValidationError e) {
-        return ConversionResult.FhirValidationResult.builder()
+    default FhirValidationResult processError(FhirResourceValidationError e) {
+        return FhirValidationResult.builder()
                 .severity(e.getSeverity())
                 .locationField(e.getLocationField())
                 .errorDescription(e.getErrorDescription())

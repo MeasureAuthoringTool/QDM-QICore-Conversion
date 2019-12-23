@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.summary;
 
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
-import gov.cms.mat.fhir.services.components.mongo.ConversionType;
+import gov.cms.mat.fhir.rest.cql.ConversionType;
+import gov.cms.mat.fhir.rest.cql.FieldConversionResult;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class FhirMeasureResourceValidationResult extends FhirResourceValidationResult {
 
-    private List<ConversionResult.FieldConversionResult> measureResults = new ArrayList<>();
+    private List<FieldConversionResult> measureResults = new ArrayList<>();
     private ConversionType measureConversionType;
 
     public FhirMeasureResourceValidationResult() {
@@ -22,11 +22,11 @@ public class FhirMeasureResourceValidationResult extends FhirResourceValidationR
     }
 
     @XmlElement
-    public List<ConversionResult.FieldConversionResult> getMeasureResults() {
+    public List<FieldConversionResult> getMeasureResults() {
         return measureResults;
     }
 
-    public void setMeasureResults(List<ConversionResult.FieldConversionResult> measureResults) {
+    public void setMeasureResults(List<FieldConversionResult> measureResults) {
         this.measureResults = measureResults;
     }
 

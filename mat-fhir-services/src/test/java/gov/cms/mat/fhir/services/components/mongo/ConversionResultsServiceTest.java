@@ -1,6 +1,8 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
 
+import gov.cms.mat.fhir.rest.cql.FieldConversionResult;
+import gov.cms.mat.fhir.rest.cql.ValueSetResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -49,7 +50,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(any(ConversionResult.class)))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.FieldConversionResult result = buildMeasureResult();
+        FieldConversionResult result = buildMeasureResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addMeasureResult(MEASURE_ID, result);
 
@@ -67,7 +68,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(any(ConversionResult.class)))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.FieldConversionResult result = buildLibraryResult();
+        FieldConversionResult result = buildLibraryResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result);
 
@@ -87,7 +88,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(conversionResultToReturn))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.FieldConversionResult result = buildMeasureResult();
+        FieldConversionResult result = buildMeasureResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addMeasureResult(MEASURE_ID, result);
 
@@ -106,7 +107,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(conversionResultToReturn))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.FieldConversionResult result = buildLibraryResult();
+        FieldConversionResult result = buildLibraryResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result);
 
@@ -124,7 +125,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(any(ConversionResult.class)))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.ValueSetResult result = buildValueSetResult();
+        ValueSetResult result = buildValueSetResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addValueSetResult(MEASURE_ID, result);
 
@@ -144,7 +145,7 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(conversionResultToReturn))
                 .thenReturn(conversionResultToReturn);
 
-        ConversionResult.ValueSetResult result = buildValueSetResult();
+        ValueSetResult result = buildValueSetResult();
 
         ConversionResult conversionResultReturned = conversionResultsService.addValueSetResult(MEASURE_ID, result);
 
@@ -158,7 +159,7 @@ class ConversionResultsServiceTest {
     void clearValueSetResults_NotFoundInDb() {
         when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
 
-        assertNull(conversionResultsService.clearValueSetResults(MEASURE_ID));
+        conversionResultsService.clearValueSetResults(MEASURE_ID);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository, never()).save(any(ConversionResult.class));
@@ -170,24 +171,15 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.findByMeasureId(MEASURE_ID))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
-        when(conversionResultRepository.save(conversionResultToReturn))
-                .thenReturn(conversionResultToReturn);
-
-        ConversionResult conversionResultReturned =
-                conversionResultsService.clearValueSetResults(MEASURE_ID);
-
-        assertEquals(conversionResultToReturn, conversionResultReturned);
-
+        conversionResultsService.clearValueSetResults(MEASURE_ID);
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
-        verify(conversionResultRepository).save(conversionResultReturned);
     }
 
     @Test
     void clearMeasure_NotFoundInDb() {
-
         when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
 
-        assertNull(conversionResultsService.clearMeasure(MEASURE_ID));
+        conversionResultsService.clearMeasure(MEASURE_ID);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository, never()).save(any(ConversionResult.class));
@@ -198,7 +190,7 @@ class ConversionResultsServiceTest {
 
         when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
 
-        assertNull(conversionResultsService.clearLibrary(MEASURE_ID));
+        conversionResultsService.clearLibrary(MEASURE_ID);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository, never()).save(any(ConversionResult.class));
@@ -207,61 +199,47 @@ class ConversionResultsServiceTest {
 
     @Test
     void clearMeasure_FoundInDb() {
-
         ConversionResult conversionResultToReturn = new ConversionResult();
         when(conversionResultRepository.findByMeasureId(MEASURE_ID))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
-        when(conversionResultRepository.save(conversionResultToReturn))
-                .thenReturn(conversionResultToReturn);
 
-        ConversionResult conversionResultReturned =
-                conversionResultsService.clearMeasure(MEASURE_ID);
-
-        assertEquals(conversionResultToReturn, conversionResultReturned);
+        conversionResultsService.clearMeasure(MEASURE_ID);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
-        verify(conversionResultRepository).save(conversionResultReturned);
     }
 
     @Test
     void clearLibrary_FoundInDb() {
-
         ConversionResult conversionResultToReturn = new ConversionResult();
         when(conversionResultRepository.findByMeasureId(MEASURE_ID))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
-        when(conversionResultRepository.save(conversionResultToReturn))
-                .thenReturn(conversionResultToReturn);
 
-        ConversionResult conversionResultReturned =
-                conversionResultsService.clearLibrary(MEASURE_ID);
-
-        assertEquals(conversionResultToReturn, conversionResultReturned);
+        conversionResultsService.clearLibrary(MEASURE_ID);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
-        verify(conversionResultRepository).save(conversionResultReturned);
     }
 
 
-    private ConversionResult.FieldConversionResult buildMeasureResult() {
-        return ConversionResult.FieldConversionResult.builder()
+    private FieldConversionResult buildMeasureResult() {
+        return FieldConversionResult.builder()
                 .field("FIELD")
                 .destination("DESTINATION")
                 .reason("REASON")
                 .build();
     }
 
-    private ConversionResult.FieldConversionResult buildLibraryResult() {
-        return ConversionResult.FieldConversionResult.builder()
+    private FieldConversionResult buildLibraryResult() {
+        return FieldConversionResult.builder()
                 .field("FIELD")
                 .destination("DESTINATION")
                 .reason("REASON")
                 .build();
     }
 
-    private ConversionResult.ValueSetResult buildValueSetResult() {
-        return ConversionResult.ValueSetResult.builder()
+    private ValueSetResult buildValueSetResult() {
+        return ValueSetResult.builder()
                 .oid("OID")
                 .reason("REASON")
                 .build();

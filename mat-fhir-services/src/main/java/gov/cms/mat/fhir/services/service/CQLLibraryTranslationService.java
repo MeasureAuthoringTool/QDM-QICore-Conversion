@@ -3,14 +3,14 @@ package gov.cms.mat.fhir.services.service;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
+import gov.cms.mat.fhir.rest.cql.ConversionType;
+import gov.cms.mat.fhir.rest.cql.CqlConversionError;
 import gov.cms.mat.fhir.rest.cql.MatCqlConversionException;
 import gov.cms.mat.fhir.services.components.cql.CqlConversionClient;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.service.support.CqlConversionError;
 import gov.cms.mat.fhir.services.service.support.ElmErrorExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

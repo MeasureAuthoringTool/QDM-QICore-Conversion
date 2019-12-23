@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.service;
 
+import gov.cms.mat.fhir.rest.cql.ConversionMapping;
 import gov.cms.mat.fhir.services.exceptions.QdmQiCoreDataException;
-import gov.cms.mat.fhir.services.service.support.ConversionMapping;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

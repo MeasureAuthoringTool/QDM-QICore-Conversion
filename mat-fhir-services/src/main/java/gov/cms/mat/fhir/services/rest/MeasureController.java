@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gov.cms.mat.fhir.services.rest;
 
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -10,13 +5,14 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
+import gov.cms.mat.fhir.rest.cql.ConversionType;
+import gov.cms.mat.fhir.rest.cql.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.SupplementalDataProcessor;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -109,7 +105,8 @@ public class MeasureController implements FhirValidatorProcessor {
             } else {
                 res.setMessage("/measure/translateMeasure Failed " + id + " " + ex.getMessage());
             }
-            log.error("Failed to Translate Measure", ex);
+            log.error("Failed to Translate Measure id: {} - {}", id, ex.getMessage());
+            log.trace("Failed to Translate Measure", ex);
         }
         return res;
     }
@@ -227,7 +224,7 @@ public class MeasureController implements FhirValidatorProcessor {
 
         return response;
     }
-    
+
     @Operation(summary = "FHIR Measure",
             description = "Get FHIR Measure by Measure Id")
     @GetMapping(path = "/getFHIRMeasure")
@@ -235,15 +232,15 @@ public class MeasureController implements FhirValidatorProcessor {
             @RequestParam("id") String id) {
         String res = "";
         try {
-           Bundle bundle = hapiFhirServer.getMeasure(id);
-           res = hapiFhirServer.getCtx().newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
+            Bundle bundle = hapiFhirServer.getMeasure(id);
+            res = hapiFhirServer.getCtx().newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
 
         } catch (Exception ex) {
             log.debug("Get FHIR Measure Failed: {}", id, ex);
         }
         return res;
     }
-    
+
 
     public void deleteMeasure(String measureId) {
         try {
@@ -255,16 +252,17 @@ public class MeasureController implements FhirValidatorProcessor {
     }
 
     public void processConversionResult(FhirMeasureResourceValidationResult response) {
-        List<ConversionResult.FhirValidationResult> list = buildResults(response);
+        List<FhirValidationResult> list = buildResults(response);
         ConversionReporter.setFhirMeasureValidationResults(list);
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
-        response.setMeasureResults(conversionResult.getMeasureResults());
-        response.setMeasureConversionType(conversionResult.getMeasureConversionType());
-        response.setMeasureId(conversionResult.getMeasureId());
 
+        if (conversionResult.getMeasureConversionResults() != null) {
+            response.setMeasureResults(conversionResult.getMeasureConversionResults().getMeasureResults());
+            response.setMeasureConversionType(conversionResult.getMeasureConversionResults().getMeasureConversionType());
+            response.setMeasureId(conversionResult.getMeasureId());
+        }
     }
-
 
     public org.hl7.fhir.r4.model.Measure getMeasure(Measure qdmMeasure, byte[] xmlBytes, String narrative) {
         ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);

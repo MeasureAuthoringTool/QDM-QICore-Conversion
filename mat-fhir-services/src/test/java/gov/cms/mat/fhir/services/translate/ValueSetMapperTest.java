@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.translate;
 
 import ca.uhn.fhir.context.FhirContext;
+import gov.cms.mat.fhir.rest.cql.ConversionType;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.MatConcept;

@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.service.support;
+package gov.cms.mat.fhir.rest.cql;
 
 import lombok.Builder;
 import lombok.Getter;

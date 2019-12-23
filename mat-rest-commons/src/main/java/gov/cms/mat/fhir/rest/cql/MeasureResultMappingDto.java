@@ -1,8 +1,6 @@
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.rest.cql;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import gov.cms.mat.fhir.rest.cql.ConversionMapping;
-import gov.cms.mat.fhir.rest.cql.FieldConversionResult;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -11,7 +9,6 @@ import lombok.Getter;
 public class MeasureResultMappingDto extends FieldConversionResult {
     private final ConversionMapping conversionMapping;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final String errorMessage;
 
     MeasureResultMappingDto(FieldConversionResult result, ConversionMapping conversionMapping) {

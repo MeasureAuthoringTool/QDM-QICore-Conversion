@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.services.service.support.ConversionMapping;
+import gov.cms.mat.fhir.rest.cql.ConversionMapping;
+import gov.cms.mat.fhir.rest.cql.FieldConversionResult;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class MeasureResultMappingDtoTest {
     @Test
     void testEquals() {
-        ConversionResult.FieldConversionResult result = ConversionResult.FieldConversionResult.builder().build();
+        FieldConversionResult result = FieldConversionResult.builder().build();
         ConversionMapping conversionMapping = ConversionMapping.builder().build();
 
         MeasureResultMappingDto lhs = new MeasureResultMappingDto(result, conversionMapping);

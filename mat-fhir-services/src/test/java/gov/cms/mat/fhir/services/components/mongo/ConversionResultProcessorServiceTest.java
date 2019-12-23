@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import gov.cms.mat.fhir.rest.cql.*;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
-import gov.cms.mat.fhir.services.exceptions.QdmQiCoreDataException;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,8 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ConversionResultProcessorServiceTest {
@@ -36,12 +36,9 @@ class ConversionResultProcessorServiceTest {
         List<ConversionResultDto> conversionResults = conversionResultProcessorService.processAll();
         ConversionResultDto dto = verifyResults(conversionResults);
 
-        dto.getMeasureResults().forEach(r -> assertNull(r.getErrorMessage()));
-        dto.getMeasureResults().forEach(r -> assertNull(r.getConversionMapping()));
 
         verify(conversionResultsService).findAll();
-        verify(qdmQiCoreDataService, times(2))
-                .findByFhirR4QiCoreMapping(anyString(), anyString());
+
     }
 
     @Test
@@ -61,20 +58,13 @@ class ConversionResultProcessorServiceTest {
         when(conversionResultsService.findAll())
                 .thenReturn(Collections.singletonList(createConversionResult()));
 
-        String errorMessage = "The core is damaged";
-
-        when(qdmQiCoreDataService.findByFhirR4QiCoreMapping(anyString(), anyString()))
-                .thenThrow(new QdmQiCoreDataException(errorMessage));
-
         List<ConversionResultDto> conversionResults = conversionResultProcessorService.processAll();
         ConversionResultDto dto = verifyResults(conversionResults);
 
-        dto.getMeasureResults().forEach(r -> assertEquals(errorMessage, r.getErrorMessage()));
-        dto.getMeasureResults().forEach(r -> assertNull(r.getConversionMapping()));
+        //dto.getMeasureResults().forEach(r -> assertEquals(errorMessage, r.getErrorMessage()));
+        //dto.getMeasureResults().forEach(r -> assertNull(r.getConversionMapping()));
 
         verify(conversionResultsService).findAll();
-        verify(qdmQiCoreDataService, times(2))
-                .findByFhirR4QiCoreMapping(anyString(), anyString());
     }
 
     @Test
@@ -96,11 +86,10 @@ class ConversionResultProcessorServiceTest {
 
         ConversionResultDto dto = conversionResultProcessorService.process(MEASURE_ID);
         verifyResult(dto);
-        dto.getMeasureResults().forEach(r -> assertNull(r.getErrorMessage()));
+        // dto.getMeasureResults().forEach(r -> assertNull(r.getErrorMessage()));
 
         verify(conversionResultsService).findByMeasureId(MEASURE_ID);
-        verify(qdmQiCoreDataService, times(2))
-                .findByFhirR4QiCoreMapping(anyString(), anyString());
+
     }
 
 
@@ -115,48 +104,54 @@ class ConversionResultProcessorServiceTest {
 
     private void verifyResult(ConversionResultDto dto) {
         assertEquals(MEASURE_ID, dto.getMeasureId());
-        assertEquals(1, dto.getValueSetResults().size());
-        assertEquals(2, dto.getMeasureResults().size());
-        assertEquals(3, dto.getLibraryResults().size());
+        assertNotNull(dto.getValueSetConversionResults());
+        assertEquals(2, dto.getMeasureConversionResults().getMeasureResults().size());
+        assertEquals(3, dto.getLibraryConversionResults().getLibraryResults().size());
     }
 
     private ConversionResult createConversionResult() {
         ConversionResult conversionResult = new ConversionResult();
         conversionResult.setMeasureId(MEASURE_ID);
 
-        conversionResult.setValueSetResults(createValueSetResults());
-        conversionResult.setMeasureResults(createMeasureResults());
-        conversionResult.setLibraryResults(createLibraryResults());
+        conversionResult.setValueSetConversionResults(new ValueSetConversionResults());
+        conversionResult.setMeasureConversionResults(new MeasureConversionResults());
+        conversionResult.setLibraryConversionResults(new LibraryConversionResults());
+
+        conversionResult.getValueSetConversionResults().setValueSetResults(createValueSetResults());
+
+        conversionResult.getMeasureConversionResults().setMeasureResults(createMeasureResults());
+
+        conversionResult.getLibraryConversionResults().setLibraryResults(createLibraryResults());
 
         return conversionResult;
     }
 
-    private List<ConversionResult.ValueSetResult> createValueSetResults() {
-        return Collections.singletonList(gov.cms.mat.fhir.services.components.mongo.ConversionResult.ValueSetResult
+    private List<ValueSetResult> createValueSetResults() {
+        return Collections.singletonList(ValueSetResult
                 .builder()
                 .oid("OID")
                 .reason("REASON")
                 .build());
     }
 
-    private List<ConversionResult.FieldConversionResult> createMeasureResults() {
+    private List<FieldConversionResult> createMeasureResults() {
         return Arrays.asList(buildMeasureResult(0), buildMeasureResult(1));
     }
 
-    private List<ConversionResult.FieldConversionResult> createLibraryResults() {
+    private List<FieldConversionResult> createLibraryResults() {
         return Arrays.asList(buildLibraryResult(0), buildLibraryResult(1), buildLibraryResult(2));
     }
 
-    private ConversionResult.FieldConversionResult buildLibraryResult(int i) {
-        return ConversionResult.FieldConversionResult.builder()
+    private FieldConversionResult buildLibraryResult(int i) {
+        return FieldConversionResult.builder()
                 .field("FIELD" + i)
                 .destination("DESTINATION" + i)
                 .reason("REASON" + i)
                 .build();
     }
 
-    private ConversionResult.FieldConversionResult buildMeasureResult(int i) {
-        return ConversionResult.FieldConversionResult.builder()
+    private FieldConversionResult buildMeasureResult(int i) {
+        return FieldConversionResult.builder()
                 .field("FIELD" + i)
                 .destination("DESTINATION" + i)
                 .reason("REASON" + i)

@@ -1,9 +1,9 @@
 package gov.cms.mat.fhir.services.service;
 
 import gov.cms.mat.fhir.commons.model.MeasureExport;
+import gov.cms.mat.fhir.rest.cql.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
@@ -70,7 +70,7 @@ public class ValueSetService {
         Instant startTime = Instant.now();
         int startCount = valueSetMapper.count();
 
-        int measureExportCount = processMeasureExport(xmlSource, conversionType);
+        int measureExportCount = processValueSets(xmlSource, conversionType);
 
         int finishCount = valueSetMapper.count();
         long duration = Duration.between(startTime, Instant.now()).toMillis() / 1000;
@@ -78,7 +78,7 @@ public class ValueSetService {
         return String.format(TRANSLATE_SUCCESS_MESSAGE, measureExportCount, finishCount - startCount, duration);
     }
 
-    private int processMeasureExport(XmlSource xmlSource, ConversionType conversionType) {
+    private int processValueSets(XmlSource xmlSource, ConversionType conversionType) {
         List<ValueSet> outcomes = new ArrayList<>();
 
         List<MeasureVersionExportId> idsAndVersion = measureExportDataService.getAllExportIdsAndVersion();
@@ -110,9 +110,7 @@ public class ValueSetService {
     private List<ValueSet> translateToFhir(String measureId,
                                            byte[] xmlBytes,
                                            ConversionType conversionType) {
-
         ConversionReporter.setInThreadLocal(measureId, conversionResultsService);
-        ConversionReporter.resetValueSetResults(conversionType);
 
         return valueSetMapper.translateToFhir(new String(xmlBytes), conversionType);
     }

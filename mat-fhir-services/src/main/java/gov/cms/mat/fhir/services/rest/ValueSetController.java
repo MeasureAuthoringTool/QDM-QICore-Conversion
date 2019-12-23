@@ -2,9 +2,10 @@ package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
+import gov.cms.mat.fhir.rest.cql.ConversionType;
+import gov.cms.mat.fhir.rest.cql.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
-import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -83,8 +84,8 @@ public class ValueSetController implements FhirValidatorProcessor {
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
 
-        response.setValueSetConversionType(conversionResult.getValueSetConversionType());
-        response.setValueSetResults(conversionResult.getValueSetResults());
+        response.setValueSetConversionType(conversionResult.getValueSetConversionResults().getValueSetConversionType());
+        response.setValueSetResults(conversionResult.getValueSetConversionResults().getValueSetResults());
         response.setXmlSource(xmlSource);
 
         return response;
@@ -98,13 +99,13 @@ public class ValueSetController implements FhirValidatorProcessor {
         res.setType("ValueSet");
         res.setMeasureId(measureId);
 
-        List<ConversionResult.FhirValidationResult> results = buildResultList(res);
+        List<FhirValidationResult> results = buildResultList(res);
         ConversionReporter.setValueSetsValidationResults(res.getId(), results);
 
         return res;
     }
 
-    private List<ConversionResult.FhirValidationResult> buildResultList(FhirResourceValidationResult res) {
+    private List<FhirValidationResult> buildResultList(FhirResourceValidationResult res) {
         if (CollectionUtils.isEmpty(res.getValidationErrorList())) {
             return Collections.emptyList();
         } else {

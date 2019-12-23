@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.service.support;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.mat.fhir.rest.cql.CqlConversionError;
 import gov.cms.mat.fhir.rest.cql.MatCqlConversionException;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import lombok.extern.slf4j.Slf4j;

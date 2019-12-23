@@ -1,5 +1,8 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import gov.cms.mat.fhir.rest.cql.ConversionType;
+import gov.cms.mat.fhir.rest.cql.FieldConversionResult;
+import gov.cms.mat.fhir.rest.cql.ValueSetResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,14 +38,14 @@ class ConversionReporterTest {
 
     @Test
     void setMeasureResult_Success() {
-        when(conversionResultsService.addMeasureResult(anyString(), any(ConversionResult.FieldConversionResult.class)))
+        when(conversionResultsService.addMeasureResult(anyString(), any(FieldConversionResult.class)))
                 .thenReturn(new ConversionResult());
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
         ConversionReporter.resetMeasure(ConversionType.VALIDATION);
         ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 
-        verify(conversionResultsService).addMeasureResult(anyString(), any(ConversionResult.FieldConversionResult.class));
+        verify(conversionResultsService).addMeasureResult(anyString(), any(FieldConversionResult.class));
     }
 
     @Test
@@ -56,19 +59,19 @@ class ConversionReporterTest {
 
     @Test
     void setLibraryResult_Success() {
-        when(conversionResultsService.addLibraryResult(anyString(), any(ConversionResult.FieldConversionResult.class)))
+        when(conversionResultsService.addLibraryResult(anyString(), any(FieldConversionResult.class)))
                 .thenReturn(new ConversionResult());
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
         ConversionReporter.resetLibrary(ConversionType.VALIDATION);
         ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON);
 
-        verify(conversionResultsService).addLibraryResult(anyString(), any(ConversionResult.FieldConversionResult.class));
+        verify(conversionResultsService).addLibraryResult(anyString(), any(FieldConversionResult.class));
     }
 
     @Test
     void setValueSetResult_NoThreadLocal() {
-        ConversionReporter.setValueSetResult("OID", REASON);
+        ConversionReporter.setValueSetFailResult("OID", REASON);
 
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
@@ -76,9 +79,9 @@ class ConversionReporterTest {
     @Test
     void setValueSetResult_ThreadLocal() {
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
-        ConversionReporter.setValueSetResult("OID", REASON);
+        ConversionReporter.setValueSetFailResult("OID", REASON);
 
-        verify(conversionResultsService).addValueSetResult(anyString(), any(ConversionResult.ValueSetResult.class));
+        verify(conversionResultsService).addValueSetResult(anyString(), any(ValueSetResult.class));
     }
 
     @Test

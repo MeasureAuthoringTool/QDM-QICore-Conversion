@@ -1,32 +1,25 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
+import gov.cms.mat.fhir.rest.cql.CqlConversionResult;
+import gov.cms.mat.fhir.rest.cql.LibraryConversionResults;
+import gov.cms.mat.fhir.rest.cql.MeasureConversionResults;
+import gov.cms.mat.fhir.rest.cql.ValueSetConversionResults;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 @Builder
 @Getter
 public class ConversionResultDto {
     private String measureId;
-
     private Instant modified;
 
-    private List<ConversionResult.ValueSetResult> valueSetResults;
-    private ConversionType valueSetConversionType;
-    private List<ConversionResult.ValueSetValidationResult> valueSetFhirValidationErrors;
+    private ValueSetConversionResults valueSetConversionResults;
 
-    private List<MeasureResultMappingDto> measureResults;
-    private ConversionType measureConversionType;
-    private List<ConversionResult.FhirValidationResult> measureFhirValidationErrors;
+    private MeasureConversionResults measureConversionResults;
 
+    private LibraryConversionResults libraryConversionResults;
 
-    private List<ConversionResult.FieldConversionResult> libraryResults;
-    private ConversionType libraryConversionType;
-    private List<ConversionResult.FhirValidationResult> libraryFhirValidationErrors = new ArrayList<>();
-
-    private ConversionResult.CqlConversionResult cqlConversionResult;
-
+    private CqlConversionResult cqlConversionResult;
 }

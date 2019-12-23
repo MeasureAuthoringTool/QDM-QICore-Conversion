@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Measure;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 import static gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator.SYSTEM_IDENTIFIER;
-import org.hl7.fhir.r4.model.Measure;
 
 @Component
 @Slf4j
@@ -64,13 +64,13 @@ public class HapiFhirServer {
         loggingInterceptor.setLogger(log);
 
         // Optionally you may configure the interceptor (by default only summary info is logged)
-        loggingInterceptor.setLogRequestBody(true);
-        loggingInterceptor.setLogRequestSummary(true);
-        loggingInterceptor.setLogRequestHeaders(true);
+        loggingInterceptor.setLogRequestBody(false);
+        loggingInterceptor.setLogRequestSummary(false);
+        loggingInterceptor.setLogRequestHeaders(false);
 
-        loggingInterceptor.setLogResponseBody(true);
-        loggingInterceptor.setLogResponseHeaders(true);
-        loggingInterceptor.setLogResponseSummary(true);
+        loggingInterceptor.setLogResponseBody(false);
+        loggingInterceptor.setLogResponseHeaders(false);
+        loggingInterceptor.setLogResponseSummary(false);
 
         return loggingInterceptor;
     }
@@ -90,7 +90,7 @@ public class HapiFhirServer {
                 .returnBundle(Bundle.class)
                 .execute();
     }
-    
+
     public Bundle getMeasure(String id) {
         return hapiClient.search()
                 .forResource(Measure.class)

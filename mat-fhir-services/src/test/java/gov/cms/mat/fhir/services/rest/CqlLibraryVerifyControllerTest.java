@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.rest;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionType;
+
+import gov.cms.mat.fhir.rest.cql.ConversionType;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

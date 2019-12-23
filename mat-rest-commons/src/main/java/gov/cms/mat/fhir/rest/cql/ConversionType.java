@@ -1,5 +1,6 @@
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.rest.cql;
 
 public enum ConversionType {
     VALIDATION, CONVERSION
 }
+

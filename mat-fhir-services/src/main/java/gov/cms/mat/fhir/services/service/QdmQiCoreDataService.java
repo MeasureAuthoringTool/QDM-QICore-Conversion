@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.service;
 
+import gov.cms.mat.fhir.rest.cql.ConversionMapping;
 import gov.cms.mat.fhir.services.exceptions.QdmQiCoreDataException;
-import gov.cms.mat.fhir.services.service.support.ConversionMapping;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

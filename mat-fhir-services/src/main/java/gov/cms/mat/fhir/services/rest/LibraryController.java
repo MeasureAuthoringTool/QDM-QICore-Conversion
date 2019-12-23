@@ -7,10 +7,11 @@ import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.objects.CQLSourceForTranslation;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
+import gov.cms.mat.fhir.rest.cql.ConversionType;
+import gov.cms.mat.fhir.rest.cql.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-import gov.cms.mat.fhir.services.components.mongo.ConversionType;
 import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
@@ -119,12 +120,16 @@ public class LibraryController implements FhirValidatorProcessor {
         Library fhirLibrary = translateLibrary(cqlLib);
         validateResource(response, fhirLibrary, hapiFhirServer.getCtx());
 
-        List<ConversionResult.FhirValidationResult> list = buildResults(response);
+        List<FhirValidationResult> list = buildResults(response);
         ConversionReporter.setFhirLibraryValidationResults(list);
 
+
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
-        response.setLibraryResults(conversionResult.getLibraryResults());
-        response.setLibraryConversionType(conversionResult.getLibraryConversionType());
+
+        if (conversionResult.getLibraryConversionResults() == null) {
+            response.setLibraryResults(conversionResult.getLibraryConversionResults().getLibraryResults());
+            response.setLibraryConversionType(conversionResult.getLibraryConversionResults().getLibraryConversionType());
+        }
 
         return response;
     }

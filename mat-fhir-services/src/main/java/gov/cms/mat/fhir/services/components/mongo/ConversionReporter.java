@@ -1,7 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.cql.MatCqlConversionException;
-import gov.cms.mat.fhir.services.service.support.CqlConversionError;
+import gov.cms.mat.fhir.rest.cql.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -90,12 +89,6 @@ public class ConversionReporter {
         conversionReporter.clearMeasure(conversionType);
     }
 
-    public static ConversionResult resetLibrary(ConversionType conversionType) {
-        ConversionReporter conversionReporter = getConversionReporter();
-
-        return conversionReporter.clearLibrary(conversionType);
-    }
-
     public static ConversionReporter getConversionReporter() {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
@@ -111,12 +104,19 @@ public class ConversionReporter {
         return conversionReporter.findConversionResult();
     }
 
-
-    public static void setValueSetResult(String oid, String reason) {
+    public static void setValueSetFailResult(String oid, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter != null) {
-            conversionReporter.addValueSetResult(oid, reason);
+            conversionReporter.addValueSetFailResult(oid, reason);
+        }
+    }
+
+    public static void setValueSetSuccessResult(String oid) {
+        ConversionReporter conversionReporter = getFromThreadLocal();
+
+        if (conversionReporter != null) {
+            conversionReporter.addValueSetSuccessResult(oid);
         }
     }
 
@@ -138,113 +138,127 @@ public class ConversionReporter {
         return conversionReporter;
     }
 
-    public static ConversionReporter setFhirMeasureValidationResults(List<ConversionResult.FhirValidationResult> list) {
+    public static void setFhirMeasureValidationResults(List<FhirValidationResult> list) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addFhirMeasureValidationResults(list);
-        return conversionReporter;
+
     }
 
-    public static ConversionReporter setFhirLibraryValidationResults(List<ConversionResult.FhirValidationResult> list) {
+    public static void setFhirLibraryValidationResults(List<FhirValidationResult> list) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addFhirMeasureLibraryResults(list);
-        return conversionReporter;
     }
 
-    public static ConversionReporter setValueSetsValidationResults(String oid,
-                                                                   List<ConversionResult.FhirValidationResult> list) {
+    public static void setValueSetsValidationResults(String oid,
+                                                     List<FhirValidationResult> list) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addValueSetValidationResults(oid, list);
-        return conversionReporter;
     }
 
+    public static void resetLibrary(ConversionType conversionType) {
+        ConversionReporter conversionReporter = getConversionReporter();
 
-    private ConversionResult addValueSetResult(String oid, String reason) {
-        ConversionResult.ValueSetResult result =
-                ConversionResult.ValueSetResult.builder()
+        conversionReporter.clearLibrary(conversionType);
+    }
+
+    private void addValueSetFailResult(String oid, String reason) {
+        ValueSetResult result =
+                ValueSetResult.builder()
                         .oid(oid)
                         .reason(reason)
+                        .success(false)
                         .build();
 
-        return conversionResultsService.addValueSetResult(measureId, result);
+        conversionResultsService.addValueSetResult(measureId, result);
     }
 
-    private ConversionResult addMeasureResult(String field, String destination, String reason) {
-        ConversionResult.FieldConversionResult result =
-                ConversionResult.FieldConversionResult.builder()
+    private void addValueSetSuccessResult(String oid) {
+        ValueSetResult result =
+                ValueSetResult.builder()
+                        .oid(oid)
+                        .success(true)
+                        .build();
+
+        conversionResultsService.addValueSetResult(measureId, result);
+    }
+
+    private void addMeasureResult(String field, String destination, String reason) {
+        FieldConversionResult result =
+                FieldConversionResult.builder()
                         .field(field)
                         .destination(destination)
                         .reason(reason)
                         .build();
 
-        return conversionResultsService.addMeasureResult(measureId, result);
+        conversionResultsService.addMeasureResult(measureId, result);
     }
 
-    private ConversionResult addLibraryResult(String field, String destination, String reason) {
+    private void addLibraryResult(String field, String destination, String reason) {
 
-        ConversionResult.FieldConversionResult result = ConversionResult.FieldConversionResult.builder()
+        FieldConversionResult result = FieldConversionResult.builder()
                 .field(field)
                 .destination(destination)
                 .reason(reason)
                 .build();
 
-        return conversionResultsService.addLibraryResult(measureId, result);
+        conversionResultsService.addLibraryResult(measureId, result);
     }
 
 
-    private ConversionResult clearValueSetResults(ConversionType conversionType) {
+    private void clearValueSetResults(ConversionType conversionType) {
         conversionResultsService.clearValueSetResults(measureId);
-        return conversionResultsService.setValueSetConversionType(measureId, conversionType);
+        conversionResultsService.setValueSetConversionType(measureId, conversionType);
     }
 
-    private ConversionResult clearMeasure(ConversionType conversionType) {
+    private void clearMeasure(ConversionType conversionType) {
         conversionResultsService.clearMeasure(measureId);
-        return conversionResultsService.setMeasureConversionType(measureId, conversionType);
+        conversionResultsService.setMeasureConversionType(measureId, conversionType);
     }
 
-    private ConversionResult clearLibrary(ConversionType conversionType) {
+    private void clearLibrary(ConversionType conversionType) {
         conversionResultsService.clearLibrary(measureId);
-        return conversionResultsService.setLibraryConversionType(measureId, conversionType);
+        conversionResultsService.setLibraryConversionType(measureId, conversionType);
     }
 
-    private ConversionResult clearCqlConversionResult(ConversionType conversionType) {
+    private void clearCqlConversionResult(ConversionType conversionType) {
         conversionResultsService.clearCqlConversionResult(measureId);
-        return conversionResultsService.setCqlConversionResult(measureId, conversionType);
+        conversionResultsService.setCqlConversionResult(measureId, conversionType);
     }
 
-    private ConversionResult addCqlConversionResultSuccess() {
-        return conversionResultsService.addCqlConversionResultSuccess(measureId);
+    private void addCqlConversionResultSuccess() {
+        conversionResultsService.addCqlConversionResultSuccess(measureId);
     }
 
-    private ConversionResult addCqlConversionErrorMessage(String error) {
-        return conversionResultsService.addCqlConversionErrorMessage(measureId, error);
+    private void addCqlConversionErrorMessage(String error) {
+        conversionResultsService.addCqlConversionErrorMessage(measureId, error);
     }
 
-    private ConversionResult addCql(String cql) {
-        return conversionResultsService.addCql(measureId, cql);
+    private void addCql(String cql) {
+        conversionResultsService.addCql(measureId, cql);
     }
 
-    private ConversionResult addElm(String json) {
-        return conversionResultsService.addElm(measureId, json);
+    private void addElm(String json) {
+        conversionResultsService.addElm(measureId, json);
     }
 
-    private ConversionResult addCqlConversionErrors(List<CqlConversionError> errors) {
-        return conversionResultsService.addCqlConversionErrors(measureId, errors);
+    private void addCqlConversionErrors(List<CqlConversionError> errors) {
+        conversionResultsService.addCqlConversionErrors(measureId, errors);
     }
 
-    private ConversionResult addMatCqlConversionErrors(List<MatCqlConversionException> errors) {
-        return conversionResultsService.addMatCqlConversionErrors(measureId, errors);
+    private void addMatCqlConversionErrors(List<MatCqlConversionException> errors) {
+        conversionResultsService.addMatCqlConversionErrors(measureId, errors);
     }
 
-    private ConversionResult addFhirMeasureValidationResults(List<ConversionResult.FhirValidationResult> list) {
-        return conversionResultsService.addFhirMeasureValidationResults(measureId, list);
+    private void addFhirMeasureValidationResults(List<FhirValidationResult> list) {
+        conversionResultsService.addFhirMeasureValidationResults(measureId, list);
     }
 
-    private ConversionResult addFhirMeasureLibraryResults(List<ConversionResult.FhirValidationResult> list) {
-        return conversionResultsService.addLibraryValidationResults(measureId, list);
+    private void addFhirMeasureLibraryResults(List<FhirValidationResult> list) {
+        conversionResultsService.addLibraryValidationResults(measureId, list);
     }
 
-    private ConversionResult addValueSetValidationResults(String oid, List<ConversionResult.FhirValidationResult> list) {
-        return conversionResultsService.addValueSetValidationResults(measureId, oid, list);
+    private void addValueSetValidationResults(String oid, List<FhirValidationResult> list) {
+        conversionResultsService.addValueSetValidationResults(measureId, oid, list);
     }
 
     private ConversionResult findConversionResult() {
