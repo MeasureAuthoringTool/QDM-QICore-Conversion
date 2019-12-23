@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.summary;
 
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
-import gov.cms.mat.fhir.rest.cql.ConversionType;
-import gov.cms.mat.fhir.rest.cql.FieldConversionResult;
+import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;

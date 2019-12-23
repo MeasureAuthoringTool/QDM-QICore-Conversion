@@ -2,7 +2,7 @@ package gov.cms.mat.cql_elm_translation.service.support;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.cms.mat.fhir.rest.cql.MatCqlConversionException;
+import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.cqframework.cql.cql2elm.CqlTranslatorException;

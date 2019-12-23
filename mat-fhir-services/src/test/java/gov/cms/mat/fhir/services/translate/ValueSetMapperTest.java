@@ -1,8 +1,10 @@
 package gov.cms.mat.fhir.services.translate;
 
 import ca.uhn.fhir.context.FhirContext;
-import gov.cms.mat.fhir.rest.cql.ConversionType;
+import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.MatConcept;
@@ -12,7 +14,7 @@ import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.hl7.fhir.r4.model.*;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,8 +44,16 @@ class ValueSetMapperTest {
     private MatXmlConverter matXmlConverter;
     @Mock
     private HapiFhirServer hapiFhirServer;
+    @Mock
+    private ConversionResultsService conversionResultsService;
+
     @InjectMocks
     private ValueSetMapper valueSetMapper;
+
+    @BeforeEach
+    void setUp() {
+        ConversionReporter.setInThreadLocal("measureId", conversionResultsService);
+    }
 
     @Test
     void count() {
@@ -146,23 +156,17 @@ class ValueSetMapperTest {
 
     @Test
     void translateToFhir_EmptyBundle() {
+
         CQLQualityDataModelWrapper wrapper = new CQLQualityDataModelWrapper();
         wrapper.setQualityDataDTO(Collections.singletonList(create()));
 
         VSACValueSetWrapper vsacValueSetWrapper = new VSACValueSetWrapper();
         vsacValueSetWrapper.setValueSetList(createValueSetList());
-        when(vsacService.getData(OID)).thenReturn(vsacValueSetWrapper);
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
-        Bundle bundle = new Bundle();
-        when(hapiFhirServer.createAndExecuteBundle(any())).thenReturn(bundle);
+        valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION);
-        });
-
-        verify(hapiFhirServer).createAndExecuteBundle(any());
     }
 
     /* Need all this data set to get past bundle.isEmpty() */

@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.cql.ValueSetResult;
+import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
+import gov.cms.mat.fhir.rest.dto.ValueSetResult;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -40,22 +41,14 @@ public class ConversionResultProcessorService {
     }
 
     private ConversionResultDto buildDto(ConversionResult conversionResult) {
+
+
         return ConversionResultDto.builder()
                 .measureId(conversionResult.getMeasureId())
                 .modified(conversionResult.getModified())
                 .valueSetConversionResults(conversionResult.getValueSetConversionResults())
                 .measureConversionResults(conversionResult.getMeasureConversionResults())
                 .libraryConversionResults(conversionResult.getLibraryConversionResults())
-                //.valueSetResults(conversionResult.getValueSetResults())
-                //.valueSetConversionType(conversionResult.getValueSetConversionType())
-                //.valueSetFhirValidationErrors(conversionResult.getValueSetFhirValidationErrors())
-                //.measureResults(processMeasureResults(conversionResult))
-                // .measureConversionType(conversionResult.getMeasureConversionType())
-                // .measureFhirValidationErrors(conversionResult.getMeasureFhirValidationErrors())
-//                .libraryResults(conversionResult.getLibraryResults())
-//                .libraryConversionType(conversionResult.getLibraryConversionType())
-//                .libraryFhirValidationErrors(conversionResult.getLibraryFhirValidationErrors())
-                .cqlConversionResult(conversionResult.getCqlConversionResult())
                 .build();
     }
 

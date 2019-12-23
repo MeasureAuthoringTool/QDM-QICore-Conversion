@@ -1,9 +1,9 @@
-package gov.cms.mat.fhir.rest.cql;
+package gov.cms.mat.fhir.rest.dto;
 
 import lombok.Data;
 
 @Data
-public class CqlConversionBase {
+public class MatCqlConversionBase {
     Integer startLine;
     Integer startChar;
     Integer endLine;

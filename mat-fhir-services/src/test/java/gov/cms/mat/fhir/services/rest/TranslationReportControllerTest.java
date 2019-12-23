@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.rest;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultDto;
+import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,8 @@ class TranslationReportControllerTest {
     @Test
     void findSearchData() {
         String measureId = "MEASURE_ID";
+
+        ConversionReporter.setInThreadLocal(measureId, null);
 
         ConversionResultDto conversionResultToReturn = ConversionResultDto.builder().build();
         when(conversionResultProcessorService.process(measureId)).thenReturn(conversionResultToReturn);

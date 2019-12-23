@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.service;
 
-import gov.cms.mat.fhir.rest.cql.ConversionMapping;
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.fhir.services.exceptions.QdmQiCoreDataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

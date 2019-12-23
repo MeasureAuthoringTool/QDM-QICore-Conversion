@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.cql.*;
+import gov.cms.mat.fhir.rest.dto.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

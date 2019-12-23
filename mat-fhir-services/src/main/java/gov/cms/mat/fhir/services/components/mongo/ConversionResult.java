@@ -1,9 +1,8 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.cql.CqlConversionResult;
-import gov.cms.mat.fhir.rest.cql.LibraryConversionResults;
-import gov.cms.mat.fhir.rest.cql.MeasureConversionResults;
-import gov.cms.mat.fhir.rest.cql.ValueSetConversionResults;
+import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
+import gov.cms.mat.fhir.rest.dto.MeasureConversionResults;
+import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -18,6 +17,9 @@ import java.time.Instant;
 @Document
 @Data
 public class ConversionResult {
+    ValueSetConversionResults valueSetConversionResults;
+    MeasureConversionResults measureConversionResults;
+    LibraryConversionResults libraryConversionResults;
     @Id
     private String id;
     @Version
@@ -26,27 +28,7 @@ public class ConversionResult {
     private Instant created;
     @LastModifiedDate
     private Instant modified;
-
-    ValueSetConversionResults valueSetConversionResults;
-    MeasureConversionResults measureConversionResults;
-    LibraryConversionResults libraryConversionResults;
     @NotBlank
     @Indexed(unique = true)
     private String measureId;
-
-
-//    private List<ValueSetResult> valueSetResults = new ArrayList<>();
-//    private ConversionType valueSetConversionType;
-//    private List<ValueSetValidationResult> valueSetFhirValidationErrors = new ArrayList<>();
-
-    // private List<FieldConversionResult> measureResults = new ArrayList<>();
-    // private ConversionType measureConversionType;
-    //  private List<FhirValidationResult> measureFhirValidationErrors = new ArrayList<>();
-
-//    private List<FieldConversionResult> libraryResults = new ArrayList<>();
-//    private ConversionType libraryConversionType;
-//    private List<FhirValidationResult> libraryFhirValidationErrors = new ArrayList<>();
-
-
-    private CqlConversionResult cqlConversionResult; // add me to the library uber object
 }

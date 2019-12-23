@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.rest.cql;
+package gov.cms.mat.fhir.rest.dto;
 
 public enum ConversionType {
     VALIDATION, CONVERSION

@@ -1,9 +1,5 @@
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.rest.dto;
 
-import gov.cms.mat.fhir.rest.cql.CqlConversionResult;
-import gov.cms.mat.fhir.rest.cql.LibraryConversionResults;
-import gov.cms.mat.fhir.rest.cql.MeasureConversionResults;
-import gov.cms.mat.fhir.rest.cql.ValueSetConversionResults;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,6 +16,5 @@ public class ConversionResultDto {
     private MeasureConversionResults measureConversionResults;
 
     private LibraryConversionResults libraryConversionResults;
-
-    private CqlConversionResult cqlConversionResult;
 }
+

@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.cql.ConversionMapping;
-import gov.cms.mat.fhir.rest.cql.FieldConversionResult;
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
+import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

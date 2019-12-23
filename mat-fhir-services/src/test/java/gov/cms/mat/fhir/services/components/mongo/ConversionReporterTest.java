@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.cql.ConversionType;
-import gov.cms.mat.fhir.rest.cql.FieldConversionResult;
-import gov.cms.mat.fhir.rest.cql.ValueSetResult;
+import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
+import gov.cms.mat.fhir.rest.dto.ValueSetResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

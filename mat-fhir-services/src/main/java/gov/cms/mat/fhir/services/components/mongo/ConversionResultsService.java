@@ -1,12 +1,11 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.cql.*;
+import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -152,7 +151,10 @@ public class ConversionResultsService {
 
         if (optional.isPresent()) {
             ConversionResult conversionResult = optional.get();
-            conversionResult.setCqlConversionResult(null);
+
+            if (conversionResult.getLibraryConversionResults() != null && conversionResult.getLibraryConversionResults().getCqlConversionResult() != null) {
+                conversionResult.getLibraryConversionResults().setCqlConversionResult(new CqlConversionResult());
+            }
 
             conversionResultRepository.save(conversionResult);
         } else {
@@ -163,7 +165,7 @@ public class ConversionResultsService {
     public synchronized void addCqlConversionResultSuccess(String measureId) {
         ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
 
-        conversionResult.getCqlConversionResult().setResult(Boolean.TRUE);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().setResult(Boolean.TRUE);
 
         conversionResultRepository.save(conversionResult);
     }
@@ -171,8 +173,12 @@ public class ConversionResultsService {
     public ConversionResult findOrCreateCqlConversionResult(String measureId) {
         ConversionResult conversionResult = findOrCreate(measureId);
 
-        if (conversionResult.getCqlConversionResult() == null) {
-            conversionResult.setCqlConversionResult(new CqlConversionResult());
+        if (conversionResult.getLibraryConversionResults() == null) {
+            conversionResult.setLibraryConversionResults(new LibraryConversionResults());
+        }
+
+        if (conversionResult.getLibraryConversionResults().getCqlConversionResult() == null) {
+            conversionResult.getLibraryConversionResults().setCqlConversionResult(new CqlConversionResult());
         }
         return conversionResult;
     }
@@ -180,12 +186,8 @@ public class ConversionResultsService {
     public synchronized void addCqlConversionErrorMessage(String measureId, String error) {
         ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
 
-        if (conversionResult.getCqlConversionResult().getErrors() == null) {
-            conversionResult.getCqlConversionResult().setErrors(new ArrayList<>());
-        }
-
-        conversionResult.getCqlConversionResult().getErrors().add(error);
-        conversionResult.getCqlConversionResult().setResult(Boolean.FALSE);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().getErrors().add(error);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().setResult(Boolean.FALSE);
 
         conversionResultRepository.save(conversionResult);
     }
@@ -193,7 +195,7 @@ public class ConversionResultsService {
     public synchronized void addCql(String measureId, String cql) {
         ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
 
-        conversionResult.getCqlConversionResult().setCql(cql);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().setCql(cql);
 
         conversionResultRepository.save(conversionResult);
     }
@@ -201,32 +203,32 @@ public class ConversionResultsService {
     public synchronized void addElm(String measureId, String json) {
         ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
 
-        conversionResult.getCqlConversionResult().setElm(json);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().setElm(json);
 
         conversionResultRepository.save(conversionResult);
     }
 
     public synchronized void addCqlConversionErrors(String measureId, List<CqlConversionError> errors) {
         ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
-        conversionResult.getCqlConversionResult().setCqlConversionErrors(errors);
-        conversionResult.getCqlConversionResult().setResult(Boolean.FALSE);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().setCqlConversionErrors(errors);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().setResult(Boolean.FALSE);
         conversionResultRepository.save(conversionResult);
     }
 
     public synchronized void addMatCqlConversionErrors(String measureId, List<MatCqlConversionException> errors) {
         ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
 
-        conversionResult.getCqlConversionResult().getMatCqlConversionErrors().clear();
-        conversionResult.getCqlConversionResult().getMatCqlConversionErrors().addAll(errors);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().getMatCqlConversionErrors().clear();
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().getMatCqlConversionErrors().addAll(errors);
 
-        conversionResult.getCqlConversionResult().setResult(Boolean.FALSE);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().setResult(Boolean.FALSE);
         conversionResultRepository.save(conversionResult);
     }
 
     public synchronized void setCqlConversionResult(String measureId, ConversionType conversionType) {
         ConversionResult conversionResult = findOrCreateCqlConversionResult(measureId);
 
-        conversionResult.getCqlConversionResult().setType(conversionType);
+        conversionResult.getLibraryConversionResults().getCqlConversionResult().setType(conversionType);
 
         conversionResultRepository.save(conversionResult);
     }

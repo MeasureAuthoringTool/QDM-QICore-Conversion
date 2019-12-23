@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import gov.cms.mat.fhir.rest.cql.ConversionMapping;
-import gov.cms.mat.fhir.rest.cql.FieldConversionResult;
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
+import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 

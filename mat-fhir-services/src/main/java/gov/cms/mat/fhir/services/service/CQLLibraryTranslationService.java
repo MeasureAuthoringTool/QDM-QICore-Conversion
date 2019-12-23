@@ -3,9 +3,9 @@ package gov.cms.mat.fhir.services.service;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
-import gov.cms.mat.fhir.rest.cql.ConversionType;
-import gov.cms.mat.fhir.rest.cql.CqlConversionError;
-import gov.cms.mat.fhir.rest.cql.MatCqlConversionException;
+import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.rest.dto.CqlConversionError;
+import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
 import gov.cms.mat.fhir.services.components.cql.CqlConversionClient;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
