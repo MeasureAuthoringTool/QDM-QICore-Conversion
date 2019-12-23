@@ -14,6 +14,6 @@ public class CqlConversionResult {
     List<String> errors = new ArrayList<>();
     String cql;
     String elm;
-    List<CqlConversionError> cqlConversionErrors;
+    List<CqlConversionError> cqlConversionErrors = new ArrayList<>();
     Set<MatCqlConversionException> matCqlConversionErrors = new HashSet<>();
 }
