@@ -1,7 +1,17 @@
 {
   "measureId": "40280382649c54c30164d76256dd11dc",
-  "modified": "2019-12-23T18:52:57.338Z",
-  "valueSetConversionResults": null,
+  "modified": "2019-12-23T19:02:02.329Z",
+  "valueSetConversionResults": {
+    "valueSetResults": [
+      {
+        "oid": "2.16.840.1.113883.3.464.1003.123.12.1007",
+        "reason": null,
+        "success": true
+      }
+    ],
+    "valueSetConversionType": "CONVERSION",
+    "valueSetFhirValidationErrors": []
+  },
   "measureConversionResults": {
     "measureResults": [
       {
