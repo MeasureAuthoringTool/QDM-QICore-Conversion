@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.mat;
 
+import gov.cms.mat.fhir.services.ResourceFileUtil;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measurepackage.MeasurePackageDetail;
 import mat.model.cql.CQLDefinitionsWrapper;
@@ -11,12 +12,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MatXmlConverterTest {
+class MatXmlConverterTest implements ResourceFileUtil {
     private static final String XML = "xml";
     private static final String XPATH = "xpath";
 
@@ -28,6 +31,23 @@ class MatXmlConverterTest {
     private MatXmlConverter matXmlConverter;
 
     @Test
+    void toMeasureGroupingstoMeasureGroupings() {
+        when(matXpath.toMeasureGrouping(anyString())).thenReturn(XPATH);
+        when(matXmlMarshaller.toMeasureGrouping(XPATH)).thenReturn(new MeasurePackageDetail());
+
+        String xml = getStringFromResource("/measureGroupings.xml");
+
+        int expectedListSize = 4;
+
+        List<MeasurePackageDetail> measurePackageDetails = matXmlConverter.toMeasureGroupings(xml);
+        assertEquals(expectedListSize, measurePackageDetails.size());
+
+        verify(matXpath, times(expectedListSize)).toMeasureGrouping(anyString());
+        verify(matXmlMarshaller, times(expectedListSize)).toMeasureGrouping(XPATH);
+    }
+
+
+    @Test
     void toCompositeMeasureDetail_ThrowsException() {
         when(matXpath.toCompositeMeasureDetail(XML)).thenThrow(new IllegalArgumentException("oops"));
 
@@ -37,7 +57,7 @@ class MatXmlConverterTest {
     }
 
     @Test
-    void toCompositeMeasureDetail_HappyPath() {
+    void toCompositeMeasureDetailtoMeasureGroupings() {
         ManageCompositeMeasureDetailModel modelToReturn = new ManageCompositeMeasureDetailModel();
 
         when(matXpath.toCompositeMeasureDetail(XML)).thenReturn(XPATH);

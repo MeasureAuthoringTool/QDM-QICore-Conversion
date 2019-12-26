@@ -1,6 +1,8 @@
 package gov.cms.mat.fhir.services.components.fhir;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import mat.client.measurepackage.MeasurePackageClauseDetail;
+import mat.client.measurepackage.MeasurePackageDetail;
 import org.hl7.fhir.r4.model.Measure;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,27 +41,43 @@ class MeasureGroupingDataProcessorTest {
 
     @Test
     void processXml_FoundMeasureGroupings() {
-        List<Measure.MeasureGroupComponent> measureGroupComponents = createList();
+        List<MeasurePackageDetail> measureGroupComponents = createList();
 
-        when(matXmlConverter.toMeasureGroupings(XML)).thenReturn(Collections.emptyList());
+        when(matXmlConverter.toMeasureGroupings(XML)).thenReturn(measureGroupComponents);
 
-        assertTrue(measureGroupingDataProcessor.processXml(XML).isEmpty());
+        List<Measure.MeasureGroupComponent> componentList = measureGroupingDataProcessor.processXml(XML);
+
+        assertEquals(6, componentList.size());
 
         verify(matXmlConverter).toMeasureGroupings(XML);
     }
 
-    private List<Measure.MeasureGroupComponent> createList() {
-        return IntStream.range(-3, 0)
+    private List<MeasurePackageDetail> createList() {
+        return IntStream.range(-6, 0)
                 .boxed()
                 .map(i -> createMeasureGroupComponent(Math.abs(i)))
                 .collect(Collectors.toList());
     }
 
-    private Measure.MeasureGroupComponent createMeasureGroupComponent(int i) {
-//        Measure.MeasureGroupComponent measureGroupComponent = new Measure.MeasureGroupComponent();
-//        measureGroupComponent.setPa
+    private MeasurePackageDetail createMeasureGroupComponent(int i) {
+        MeasurePackageDetail measurePackageDetail = new MeasurePackageDetail();
+        measurePackageDetail.setSequence("" + i);
+        measurePackageDetail.setPackageClauses(createPackageClauses(i));
 
-        return null;
+        return measurePackageDetail;
 
+    }
+
+    private List<MeasurePackageClauseDetail> createPackageClauses(int i) {
+
+        return Collections.singletonList(createPackageClause(i));
+    }
+
+    private MeasurePackageClauseDetail createPackageClause(int i) {
+        MeasurePackageClauseDetail clauseDetail = new MeasurePackageClauseDetail();
+        clauseDetail.setType("" + i);
+        clauseDetail.setDisplayName("" + i);
+        clauseDetail.setIsInGrouping(i % 2 == 0);
+        return clauseDetail;
     }
 }
