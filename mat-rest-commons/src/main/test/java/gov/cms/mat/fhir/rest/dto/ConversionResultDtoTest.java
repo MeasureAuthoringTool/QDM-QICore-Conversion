@@ -11,7 +11,7 @@ class ConversionResultDtoTest implements ResourceFileUtil {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void builder() throws JsonProcessingException {
+    void parseJson() throws JsonProcessingException {
         String json = getStringFromResource("/report.json");
         ConversionResultDto conversionResultDto = objectMapper.readValue(json, ConversionResultDto.class);
         assertEquals("40280382649c54c30164d76256dd11dc", conversionResultDto.getMeasureId());
