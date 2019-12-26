@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @Component
 public class MeasureGroupingDataProcessor implements FhirCreator {
     private static final String SYSTEM = "http://terminology.hl7.org/CodeSystem/measure-population";
-    private static final String LANGUAGE = "text/cql";
     private final MatXmlConverter matXmlConverter;
 
     public MeasureGroupingDataProcessor(MatXmlConverter matXmlConverter) {
@@ -37,15 +36,15 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
 
     private List<Measure.MeasureGroupComponent> processDetails(List<MeasurePackageDetail> list) {
         return list.stream()
-                .map(this::processDetails2)
+                .map(this::createMeasureGroupComponent)
                 .collect(Collectors.toList());
     }
 
-    private Measure.MeasureGroupComponent processDetails2(MeasurePackageDetail m) {
+    private Measure.MeasureGroupComponent createMeasureGroupComponent(MeasurePackageDetail measurePackageDetail) {
         Measure.MeasureGroupComponent component = new Measure.MeasureGroupComponent();
 
-        if (CollectionUtils.isNotEmpty(m.getPackageClauses())) {
-            component.setPopulation(createPopulations(m.getPackageClauses()));
+        if (CollectionUtils.isNotEmpty(measurePackageDetail.getPackageClauses())) {
+            component.setPopulation(createPopulations(measurePackageDetail.getPackageClauses()));
         }
 
         return component;
@@ -53,25 +52,20 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
 
     private List<Measure.MeasureGroupPopulationComponent> createPopulations(List<MeasurePackageClauseDetail> packageClauses) {
         return packageClauses.stream()
-                .filter(MeasurePackageClauseDetail::isInGrouping) //todo this not mapping
+                .filter(MeasurePackageClauseDetail::isInGrouping)
                 .map(this::createPopulation)
                 .collect(Collectors.toList());
     }
 
-    private Measure.MeasureGroupPopulationComponent createPopulation(MeasurePackageClauseDetail c) {
+    private Measure.MeasureGroupPopulationComponent createPopulation(MeasurePackageClauseDetail clauseDetail) {
         Measure.MeasureGroupPopulationComponent component = new Measure.MeasureGroupPopulationComponent();
 
         Expression value = new Expression();
         value.setLanguage(Expression.ExpressionLanguage.TEXT_CQL);
-        value.setExpression(c.getDisplayName());
-        component.setCode(buildCodeableConcept(c.getType(), SYSTEM, c.getDisplayName()));
+        value.setExpression(clauseDetail.getDisplayName());
+        component.setCode(buildCodeableConcept(clauseDetail.getType(), SYSTEM, clauseDetail.getDisplayName()));
         return component;
     }
 
-    private Expression buildCqlExpression(String expression) {
-        return new Expression()
-                .setExpression(expression)
-                .setLanguage(Expression.ExpressionLanguage.TEXT_CQL);
-    }
 
 }

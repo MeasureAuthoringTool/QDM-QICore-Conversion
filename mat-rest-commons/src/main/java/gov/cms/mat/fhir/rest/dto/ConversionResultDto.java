@@ -1,19 +1,17 @@
 package gov.cms.mat.fhir.rest.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.Instant;
 
 @Builder
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class ConversionResultDto {
     private String measureId;
-    private Instant modified;
+    private String modified;
 
     private ValueSetConversionResults valueSetConversionResults;
 

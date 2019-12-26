@@ -42,10 +42,9 @@ public class ConversionResultProcessorService {
 
     private ConversionResultDto buildDto(ConversionResult conversionResult) {
 
-
         return ConversionResultDto.builder()
                 .measureId(conversionResult.getMeasureId())
-                .modified(conversionResult.getModified())
+                .modified(conversionResult.getModified() == null ? null : conversionResult.getModified().toString())
                 .valueSetConversionResults(conversionResult.getValueSetConversionResults())
                 .measureConversionResults(conversionResult.getMeasureConversionResults())
                 .libraryConversionResults(conversionResult.getLibraryConversionResults())

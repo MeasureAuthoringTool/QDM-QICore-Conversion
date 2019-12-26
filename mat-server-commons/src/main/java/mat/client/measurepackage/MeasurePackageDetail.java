@@ -249,7 +249,7 @@ public class MeasurePackageDetail implements IsSerializable, Comparable<MeasureP
     /**
      * Sets the cql qdm elements.
      *
-     * @param cqlSuppDataElements the new cql qdm elements
+     * @param CqlQdmElements the new cql qdm elements
      */
     public void setCqlQdmElements(List<CQLDefinition> CqlQdmElements) {
         this.cqlQdmElements = CqlQdmElements;
@@ -259,10 +259,10 @@ public class MeasurePackageDetail implements IsSerializable, Comparable<MeasureP
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
-    public int compareTo(MeasurePackageDetail detail) {
-        Integer seq1 = Integer.parseInt(this.sequence);
-        Integer seq2 = Integer.parseInt(detail.getSequence());
-        return seq1.compareTo(seq2);
+    public int compareTo(MeasurePackageDetail rhs) {
+        Integer lhsInt = Integer.parseInt(this.sequence);
+        Integer rhsInt = Integer.parseInt(rhs.getSequence());
+        return lhsInt.compareTo(rhsInt);
     }
 
     /**
