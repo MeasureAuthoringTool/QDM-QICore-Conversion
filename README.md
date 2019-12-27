@@ -114,6 +114,16 @@ $ cd ../qdm-qicore-mapping-services
 $ mvn spring-boot:run
 ```
 
+5. Navigate to CQL-ELM-Translation directory
+```
+$ cd ../cql-elm-translation
+```
+
+6. Launch the micro service
+```
+$ mvn spring-boot:run
+```
+
 ## Viewing API and Testing Via Swagger
 Swagger provides a mechanism to view(and test) available service endpoints, their input criteria, and results.  You can
 access this at;
