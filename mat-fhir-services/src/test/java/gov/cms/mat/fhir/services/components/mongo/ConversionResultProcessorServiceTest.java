@@ -31,7 +31,7 @@ class ConversionResultProcessorServiceTest {
     @Test
     void processAll_HappyPath() {
         when(conversionResultsService.findAll())
-                .thenReturn(Collections.singletonList(createConversionResult()));
+                .thenReturn(Collections.singletonList(createConversionResult(true)));
 
         List<ConversionResultDto> conversionResults = conversionResultProcessorService.processAll();
         ConversionResultDto dto = verifyResults(conversionResults);
@@ -44,7 +44,7 @@ class ConversionResultProcessorServiceTest {
     @Test
     void findMissingValueSets() {
         when(conversionResultsService.findAll())
-                .thenReturn(Collections.singletonList(createConversionResult()));
+                .thenReturn(Collections.singletonList(createConversionResult(false)));
 
         Set<String> set = conversionResultProcessorService.findMissingValueSets();
 
@@ -56,7 +56,7 @@ class ConversionResultProcessorServiceTest {
     @Test
     void processAll_DataServiceError() {
         when(conversionResultsService.findAll())
-                .thenReturn(Collections.singletonList(createConversionResult()));
+                .thenReturn(Collections.singletonList(createConversionResult(true)));
 
         List<ConversionResultDto> conversionResults = conversionResultProcessorService.processAll();
         ConversionResultDto dto = verifyResults(conversionResults);
@@ -82,7 +82,7 @@ class ConversionResultProcessorServiceTest {
 
     @Test
     void processSearchData_HappyPath() {
-        when(conversionResultsService.findByMeasureId(MEASURE_ID)).thenReturn(Optional.of(createConversionResult()));
+        when(conversionResultsService.findByMeasureId(MEASURE_ID)).thenReturn(Optional.of(createConversionResult(true)));
 
         ConversionResultDto dto = conversionResultProcessorService.process(MEASURE_ID);
         verifyResult(dto);
@@ -109,7 +109,7 @@ class ConversionResultProcessorServiceTest {
         assertEquals(3, dto.getLibraryConversionResults().getLibraryResults().size());
     }
 
-    private ConversionResult createConversionResult() {
+    private ConversionResult createConversionResult(boolean oidFound) {
         ConversionResult conversionResult = new ConversionResult();
         conversionResult.setMeasureId(MEASURE_ID);
 
@@ -117,7 +117,7 @@ class ConversionResultProcessorServiceTest {
         conversionResult.setMeasureConversionResults(new MeasureConversionResults());
         conversionResult.setLibraryConversionResults(new LibraryConversionResults());
 
-        conversionResult.getValueSetConversionResults().setValueSetResults(createValueSetResults());
+        conversionResult.getValueSetConversionResults().setValueSetResults(createValueSetResults(oidFound));
 
         conversionResult.getMeasureConversionResults().setMeasureResults(createMeasureResults());
 
@@ -126,11 +126,12 @@ class ConversionResultProcessorServiceTest {
         return conversionResult;
     }
 
-    private List<ValueSetResult> createValueSetResults() {
+    private List<ValueSetResult> createValueSetResults(boolean oidFound) {
         return Collections.singletonList(ValueSetResult
                 .builder()
                 .oid("OID")
                 .reason("REASON")
+                .success(oidFound)
                 .build());
     }
 

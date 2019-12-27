@@ -1,42 +1,34 @@
 package gov.cms.mat.fhir.services.rest;
 
-import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
+import gov.cms.mat.fhir.services.components.fhir.ValueSetFhirValidationResults;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
-import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.ValueSetService;
 import gov.cms.mat.fhir.services.summary.FhirValueSetResourceValidationResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/valueSet")
 @Tag(name = "ValueSet-Controller", description = "API for converting MAT ValueSets to FHIR.")
 @Slf4j
 public class ValueSetController implements FhirValidatorProcessor {
-
-    private final HapiFhirServer hapiFhirServer;
     private final ValueSetService valueSetService;
+    private final ValueSetFhirValidationResults valueSetFhirValidationResults;
 
-    public ValueSetController(HapiFhirServer hapiFhirServer,
-                              ValueSetService valueSetService) {
-        this.hapiFhirServer = hapiFhirServer;
+    public ValueSetController(ValueSetService valueSetService,
+                              ValueSetFhirValidationResults valueSetFhirValidationResults) {
         this.valueSetService = valueSetService;
+        this.valueSetFhirValidationResults = valueSetFhirValidationResults;
     }
 
     @Operation(summary = "Translate all ValueSets in MAT to FHIR.",
@@ -67,49 +59,7 @@ public class ValueSetController implements FhirValidatorProcessor {
         if (valueSets.isEmpty()) {
             throw new ValueSetConversionException("No value sets found");
         } else {
-            return generateValidationResults(valueSets, xmlSource, measureId);
-        }
-    }
-
-    public FhirValueSetResourceValidationResult generateValidationResults(List<ValueSet> valueSets,
-                                                                          XmlSource xmlSource,
-                                                                          String measureId) {
-
-        FhirValueSetResourceValidationResult response = new FhirValueSetResourceValidationResult();
-
-        List<FhirResourceValidationResult> results = valueSets.stream()
-                .map(v -> createResult(v, measureId))
-                .collect(Collectors.toList());
-        response.setFhirResourceValidationResults(results);
-
-        ConversionResult conversionResult = ConversionReporter.getConversionResult();
-
-        response.setValueSetConversionType(conversionResult.getValueSetConversionResults().getValueSetConversionType());
-        response.setValueSetResults(conversionResult.getValueSetConversionResults().getValueSetResults());
-        response.setXmlSource(xmlSource);
-
-        return response;
-    }
-
-    private FhirResourceValidationResult createResult(ValueSet valueSet, String measureId) {
-        FhirResourceValidationResult res = new FhirResourceValidationResult();
-        validateResource(res, valueSet, hapiFhirServer.getCtx());
-
-        res.setId(valueSet.getId());
-        res.setType("ValueSet");
-        res.setMeasureId(measureId);
-
-        List<FhirValidationResult> results = buildResultList(res);
-        ConversionReporter.setValueSetsValidationResults(res.getId(), results);
-
-        return res;
-    }
-
-    private List<FhirValidationResult> buildResultList(FhirResourceValidationResult res) {
-        if (CollectionUtils.isEmpty(res.getValidationErrorList())) {
-            return Collections.emptyList();
-        } else {
-            return buildResults(res);
+            return valueSetFhirValidationResults.generate(valueSets, xmlSource, measureId);
         }
     }
 

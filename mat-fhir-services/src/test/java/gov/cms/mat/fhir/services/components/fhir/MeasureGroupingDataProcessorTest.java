@@ -65,11 +65,9 @@ class MeasureGroupingDataProcessorTest {
         measurePackageDetail.setPackageClauses(createPackageClauses(i));
 
         return measurePackageDetail;
-
     }
 
     private List<MeasurePackageClauseDetail> createPackageClauses(int i) {
-
         return Collections.singletonList(createPackageClause(i));
     }
 

@@ -42,7 +42,6 @@ class CqlConversionClientTest {
         assertEquals(JSON, entity.getBody());
         assertEquals(HttpStatus.ACCEPTED, entity.getStatusCode());
         verify(restTemplate).exchange(any(RequestEntity.class), eq(String.class));
-
     }
 
     @Test
