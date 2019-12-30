@@ -12,6 +12,7 @@ such as NLMs VSAC to gather valueSets needed for measure evaluation.
 5.  Hapi-Fhir Jpaserver deployed in Tomcat and accessible locally or remotely.  You can clone and build HAPI-FHIR JPAServer at
 https://github.com/MeasureAuthoringTool/mat-fhir-jpaserver/tree/HapiFhir3.7-R4/hapi-fhir-jpaserver-starter.  Follow the instructions 
 in the README.md file.
+6.  MongoDB version 3.4.23 or greater.
 
 ## Setting Up Your Local Development and Test Environment
 1.  Checkout this project
@@ -134,11 +135,37 @@ http://localhost:9080/swagger-ui.html
 
 ## FHIR Validation of Measure
 
-![FHIR validation flow](FHIR Validation.png)
+Request URL example
+
+```
+http://localhost:9080/orchestration/measure?measureId=40280382649c54c30164d76256dd11dc&type=VALIDATION&xmlSource=MEASURE
+```
+
+Note: You may also access the Orchestration-Controller API using swagger at http://localhost:9080/swagger-ui.html.
+
+![FHIR validation flow](https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion/blob/develop/FHIR%20Validation.png)
 
 ## FHIR Validation and Conversion of Measure
 
+Request URL example
+
+```
+http://localhost:9080/orchestration/measure?measureId=40280382649c54c30164d76256dd11dc&type=CONVERSION&xmlSource=MEASURE
+```
+
+Note: You may also access the Orchestration-Controller API using swagger at http://localhost:9080/swagger-ui.html.
+
 ![FHIR validation and conversion flow](https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion/blob/develop/FHIR%20Validation%20and%20Conversion.png)
+
+## Accessing Validation and Conversion Error Reports
+
+Request URL example
+
+```
+http://localhost:9080/report/find?measureId=40280382649c54c30164d76256dd11dc
+```
+
+Note: You may also access the TranslationReport-Controller API using swagger at http://localhost:9080/swagger-ui.html.
 
 
 ## Searching for FHIR Resources - Some Basics
