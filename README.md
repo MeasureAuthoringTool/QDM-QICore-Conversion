@@ -138,7 +138,7 @@ http://localhost:9080/swagger-ui.html
 Request URL example
 
 ```
-http://localhost:9080/orchestration/measure?measureId=40280382649c54c30164d76256dd11dc&type=VALIDATION&xmlSource=MEASURE
+http://localhost:9080/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=VALIDATION&xmlSource=MEASURE
 ```
 
 Note: You may also access the Orchestration-Controller API using swagger at http://localhost:9080/swagger-ui.html.
@@ -150,7 +150,7 @@ Note: You may also access the Orchestration-Controller API using swagger at http
 Request URL example
 
 ```
-http://localhost:9080/orchestration/measure?measureId=40280382649c54c30164d76256dd11dc&type=CONVERSION&xmlSource=MEASURE
+http://localhost:9080/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=CONVERSION&xmlSource=MEASURE
 ```
 
 Note: You may also access the Orchestration-Controller API using swagger at http://localhost:9080/swagger-ui.html.
