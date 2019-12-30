@@ -138,7 +138,7 @@ http://localhost:9080/swagger-ui.html
 
 ## FHIR Validation and Conversion of Measure
 
-![FHIR validation and conversion flow](FHIR Validation and Conversion.png)
+![FHIR validation and conversion flow](https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion/blob/develop/FHIR%20Validation%20and%20Conversion.png)
 
 
 ## Searching for FHIR Resources - Some Basics
