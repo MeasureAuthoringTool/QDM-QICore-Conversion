@@ -57,7 +57,8 @@ public class OrchestrationController {
                 .conversionType(conversionType)
                 .xmlSource(xmlSource)
                 .build();
-        orchestrationService.process(orchestrationProperties);
+
+        orchestrationService.validate(orchestrationProperties);
 
         return conversionResultProcessorService.process(id);
     }

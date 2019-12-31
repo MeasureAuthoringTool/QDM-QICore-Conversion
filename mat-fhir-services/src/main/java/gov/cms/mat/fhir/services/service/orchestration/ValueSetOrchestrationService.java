@@ -24,17 +24,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 class ValueSetOrchestrationService {
     private final ValueSetService valueSetService;
     private final ValueSetFhirValidationResults valueSetFhirValidationResults;
-    private final ValueSetVsacVerifier valueSetVsacVerifier;
+
 
     ValueSetOrchestrationService(ValueSetService valueSetService,
                                  ValueSetFhirValidationResults valueSetFhirValidationResults,
                                  ValueSetVsacVerifier valueSetVsacVerifier) {
         this.valueSetService = valueSetService;
         this.valueSetFhirValidationResults = valueSetFhirValidationResults;
-        this.valueSetVsacVerifier = valueSetVsacVerifier;
+
     }
 
-    boolean process(OrchestrationProperties properties) {
+    boolean validate(OrchestrationProperties properties) {
+        log.info("Validating ValueSet results for measure: {}", properties.getMatMeasure().getId());
+
         List<ValueSet> valueSets =
                 valueSetService.findValueSetsByMeasure(properties);
 
@@ -42,10 +44,15 @@ class ValueSetOrchestrationService {
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
 
-        boolean missingDataSets =
+        boolean noMissingDataSets =
                 processMissingValueSets(conversionResult.getValueSetConversionResults().getValueSetResults());
 
-        return !missingDataSets && resultPass(conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors());
+        boolean result =
+                noMissingDataSets && resultPass(conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors());
+
+        log.info("Validate results for measure:{} ValueSet results: {}", properties.getMatMeasure().getId(), result);
+
+        return result;
     }
 
     private boolean processMissingValueSets(List<ValueSetResult> valueSetResults) {
@@ -59,6 +66,8 @@ class ValueSetOrchestrationService {
                     .filter(v -> haveError(v, noErrors))
                     .forEach(this::processMissingValueSet);
 
+            log.info("Missing ValueSets results: {}", noErrors.get());
+
             return noErrors.get();
         }
     }
@@ -67,7 +76,7 @@ class ValueSetOrchestrationService {
         if (BooleanUtils.isTrue(valueSetResult.getSuccess())) {
             return false;
         } else {
-            noErrors.set(true);
+            noErrors.set(false);
             return true;
         }
     }
@@ -86,17 +95,23 @@ class ValueSetOrchestrationService {
         if (CollectionUtils.isEmpty(valueSetFhirValidationErrors)) {
             return true;
         } else {
-            return valueSetFhirValidationErrors.stream()
+            boolean haveErrorsOrHigher = valueSetFhirValidationErrors.stream()
                     .filter(r -> !r.getFhirValidationResults().isEmpty())
                     .map(ValueSetValidationResult::getFhirValidationResults)
                     .flatMap(List::stream)
                     .anyMatch(v -> checkSeverity(v.getSeverity()));
+
+            log.info("FhirValidationErrors ValueSets resultPass: {}", haveErrorsOrHigher);
+
+            return !haveErrorsOrHigher; // if none are ERROR or higher then flip the bit, we have no errors and PASS :)
         }
     }
 
     private boolean checkSeverity(String severity) {
         try {
             ResultSeverityEnum resultSeverityEnum = ResultSeverityEnum.valueOf(severity);
+
+            log.trace("resultSeverityEnum: {}", resultSeverityEnum);
 
             return resultSeverityEnum.equals(ResultSeverityEnum.ERROR) ||
                     resultSeverityEnum.equals(ResultSeverityEnum.FATAL);
