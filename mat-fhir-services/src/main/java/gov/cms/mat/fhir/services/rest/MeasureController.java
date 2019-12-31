@@ -136,7 +136,7 @@ public class MeasureController implements FhirValidatorProcessor {
             res.add(tOut);
             log.error("Failed Batch Translation of Measures: ", ex);
         }
-        ConversionReporter.removeInThreadLocal();
+
         return res;
     }
 
@@ -165,7 +165,7 @@ public class MeasureController implements FhirValidatorProcessor {
             res.add(tOut);
             log.error("Failed Batch Translation of Measures ALL:", ex);
         }
-        ConversionReporter.removeInThreadLocal();
+
         return res;
     }
 

@@ -1,9 +1,11 @@
 package gov.cms.mat.fhir.services.service;
 
+import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
+import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,14 +60,18 @@ class ValueSetServiceTest {
 
     @Test
     void findValueSets_XmlIsNull() {
-        String measureId = "measureId";
+        Measure matMeasure = new Measure();
+        matMeasure.setId(MEASURE_ID);
+        when(measureDataService.findOneValid(MEASURE_ID)).thenReturn(matMeasure);
 
-        when(matXmlProcessor.getXmlById(measureId, XmlSource.SIMPLE)).thenReturn(null);
+        when(matXmlProcessor.getXmlById(MEASURE_ID, XmlSource.SIMPLE)).thenReturn(null);
 
-        assertTrue(valueSetService.findValueSets(XmlSource.SIMPLE, measureId, ConversionType.CONVERSION).isEmpty());
+        assertThrows(ValueSetConversionException.class,
+                () -> valueSetService.findValueSetsByMeasureId(XmlSource.SIMPLE, MEASURE_ID, ConversionType.CONVERSION));
 
-        verify(measureDataService).findOneValid(measureId);
-        verify(matXmlProcessor).getXmlById(measureId, XmlSource.SIMPLE);
+
+        verify(measureDataService).findOneValid(MEASURE_ID);
+        verify(matXmlProcessor).getXmlById(MEASURE_ID, XmlSource.SIMPLE);
     }
 
     @Test
@@ -73,11 +79,14 @@ class ValueSetServiceTest {
         String xml = "</xml>";
         when(matXmlProcessor.getXmlById(MEASURE_ID, XmlSource.SIMPLE)).thenReturn(xml.getBytes());
 
-        ValueSet valueSet = new ValueSet();
+        Measure matMeasure = new Measure();
+        matMeasure.setId(MEASURE_ID);
+        when(measureDataService.findOneValid(MEASURE_ID)).thenReturn(matMeasure);
 
+        ValueSet valueSet = new ValueSet();
         when(valueSetMapper.translateToFhir(xml, ConversionType.CONVERSION)).thenReturn(Collections.singletonList(valueSet));
 
-        List<ValueSet> valueSets = valueSetService.findValueSets(XmlSource.SIMPLE, MEASURE_ID, ConversionType.CONVERSION);
+        List<ValueSet> valueSets = valueSetService.findValueSetsByMeasureId(XmlSource.SIMPLE, MEASURE_ID, ConversionType.CONVERSION);
 
         assertEquals(1, valueSets.size());
         assertEquals(valueSet, valueSets.get(0));

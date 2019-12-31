@@ -89,6 +89,12 @@ public class ConversionReporter {
         conversionReporter.clearMeasure(conversionType);
     }
 
+    public static void resetOrchestration() {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        conversionReporter.clearMeasureOrchestration();
+    }
+
     public static ConversionReporter getConversionReporter() {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
@@ -120,7 +126,7 @@ public class ConversionReporter {
         }
     }
 
-    public static void removeInThreadLocal() {
+    static void removeInThreadLocal() {
         threadLocal.remove();
     }
 
@@ -209,6 +215,11 @@ public class ConversionReporter {
         conversionResultsService.clearValueSetResults(measureId);
         conversionResultsService.setValueSetConversionType(measureId, conversionType);
     }
+
+    private void clearMeasureOrchestration() {
+        conversionResultsService.clearMeasureOrchestration(measureId);
+    }
+
 
     private void clearMeasure(ConversionType conversionType) {
         conversionResultsService.clearMeasure(measureId);

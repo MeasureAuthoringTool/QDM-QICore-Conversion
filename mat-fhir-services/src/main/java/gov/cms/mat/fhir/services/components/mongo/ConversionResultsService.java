@@ -102,6 +102,16 @@ public class ConversionResultsService {
         }
     }
 
+    synchronized void clearMeasureOrchestration(String measureId) {
+        ConversionResult conversionResult = findOrCreate(measureId);
+
+        conversionResult.setValueSetConversionResults(new ValueSetConversionResults());
+        conversionResult.setMeasureConversionResults(new MeasureConversionResults());
+        conversionResult.setLibraryConversionResults(new LibraryConversionResults());
+        conversionResult.setMeasureId(measureId);
+        conversionResultRepository.save(conversionResult);
+    }
+
     public ConversionResult findConversionResult(String measureId) {
         Optional<ConversionResult> optional = findByMeasureId(measureId);
 

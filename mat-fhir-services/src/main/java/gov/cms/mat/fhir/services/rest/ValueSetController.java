@@ -4,7 +4,6 @@ import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.fhir.ValueSetFhirValidationResults;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
-import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.ValueSetService;
 import gov.cms.mat.fhir.services.summary.FhirValueSetResourceValidationResult;
@@ -54,13 +53,10 @@ public class ValueSetController implements FhirValidatorProcessor {
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam String measureId) {
 
-        List<ValueSet> valueSets = valueSetService.findValueSets(xmlSource, measureId, ConversionType.VALIDATION);
+        List<ValueSet> valueSets =
+                valueSetService.findValueSetsByMeasureId(xmlSource, measureId, ConversionType.VALIDATION);
 
-        if (valueSets.isEmpty()) {
-            throw new ValueSetConversionException("No value sets found");
-        } else {
-            return valueSetFhirValidationResults.generate(valueSets, xmlSource, measureId);
-        }
+        return valueSetFhirValidationResults.generate(valueSets, xmlSource, measureId);
     }
 
     @Operation(summary = "Count of persisted FHIR ValueSets.",

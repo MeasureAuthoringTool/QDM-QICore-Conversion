@@ -14,16 +14,6 @@ public class FhirValueSetResourceValidationResult {
     private List<ValueSetResult> valueSetResults = new ArrayList<>();
     private ConversionType valueSetConversionType;
     private XmlSource xmlSource;
-    //private String measureId;
-
-//    @XmlElement
-//    public String getMeasureId() {
-//        return measureId;
-//    }
-//
-//    public void setMeasureId(String measureId) {
-//        this.measureId = measureId;
-//    }
 
     @XmlElement
     public XmlSource getXmlSource() {

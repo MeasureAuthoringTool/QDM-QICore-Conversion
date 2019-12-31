@@ -224,7 +224,6 @@ public class LibraryController implements FhirValidatorProcessor {
             log.error("Failed Batch Translation of Libraries ALL:", ex);
         }
 
-        ConversionReporter.removeInThreadLocal();
         return res;
     }
 

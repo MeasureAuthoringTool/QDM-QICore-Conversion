@@ -32,7 +32,6 @@ public class ValueSetFhirValidationResults implements FhirValidatorProcessor {
     public FhirValueSetResourceValidationResult generate(List<ValueSet> valueSets,
                                                          XmlSource xmlSource,
                                                          String measureId) {
-
         if (CollectionUtils.isEmpty(valueSets)) {
             throw new ValueSetValidationException(measureId);
         } else {
@@ -43,7 +42,7 @@ public class ValueSetFhirValidationResults implements FhirValidatorProcessor {
     public FhirValueSetResourceValidationResult generateResponse(List<ValueSet> valueSets, XmlSource xmlSource, String measureId) {
         FhirValueSetResourceValidationResult response = new FhirValueSetResourceValidationResult();
 
-        List<FhirResourceValidationResult> results = getCollect(valueSets, measureId);
+        List<FhirResourceValidationResult> results = collectResults(valueSets, measureId);
 
         response.setFhirResourceValidationResults(results);
 
@@ -61,7 +60,7 @@ public class ValueSetFhirValidationResults implements FhirValidatorProcessor {
         return response;
     }
 
-    public List<FhirResourceValidationResult> getCollect(List<ValueSet> valueSets, String measureId) {
+    public List<FhirResourceValidationResult> collectResults(List<ValueSet> valueSets, String measureId) {
         return valueSets.stream()
                 .map(v -> createResult(v, measureId))
                 .collect(Collectors.toList());

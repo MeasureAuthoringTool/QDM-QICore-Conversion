@@ -35,4 +35,12 @@ vsac-client:
 
 fhir:
   r4:
-    baseurl: http://localhost:8080/cqf-ruler-r4/
+    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+
+qdmqicore:
+  conversion:
+    baseurl: http://localhost:9090
+
+cql:
+  conversion:
+    baseurl: http://localhost:7070

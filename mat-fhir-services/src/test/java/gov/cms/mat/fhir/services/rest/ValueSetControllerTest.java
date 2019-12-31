@@ -4,7 +4,6 @@ import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.fhir.ValueSetFhirValidationResults;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
-import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.service.ValueSetService;
 import gov.cms.mat.fhir.services.summary.FhirValueSetResourceValidationResult;
 import org.hl7.fhir.r4.model.ValueSet;
@@ -18,8 +17,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ValueSetControllerTest {
@@ -44,20 +43,9 @@ class ValueSetControllerTest {
     }
 
     @Test
-    void validate_NoMeasure() {
-        when(valueSetService.findValueSets(XmlSource.SIMPLE, MEASURE_ID, ConversionType.VALIDATION))
-                .thenReturn(Collections.emptyList());
-
-        assertThrows(ValueSetConversionException.class, () -> valueSetController.validate(XmlSource.SIMPLE, MEASURE_ID));
-
-        verify(valueSetService).findValueSets(XmlSource.SIMPLE, MEASURE_ID, ConversionType.VALIDATION);
-        verifyNoInteractions(valueSetFhirValidationResults);
-    }
-
-    @Test
     void validate_WithMeasure() {
         List<ValueSet> valueSets = Collections.singletonList(new ValueSet());
-        when(valueSetService.findValueSets(XmlSource.SIMPLE, MEASURE_ID, ConversionType.VALIDATION))
+        when(valueSetService.findValueSetsByMeasureId(XmlSource.SIMPLE, MEASURE_ID, ConversionType.VALIDATION))
                 .thenReturn(valueSets);
 
         FhirValueSetResourceValidationResult expected = new FhirValueSetResourceValidationResult();
@@ -66,7 +54,7 @@ class ValueSetControllerTest {
         FhirValueSetResourceValidationResult returned = valueSetController.validate(XmlSource.SIMPLE, MEASURE_ID);
         assertEquals(expected, returned);
 
-        verify(valueSetService).findValueSets(XmlSource.SIMPLE, MEASURE_ID, ConversionType.VALIDATION);
+        verify(valueSetService).findValueSetsByMeasureId(XmlSource.SIMPLE, MEASURE_ID, ConversionType.VALIDATION);
         verify(valueSetFhirValidationResults).generate(valueSets, XmlSource.SIMPLE, MEASURE_ID);
     }
 

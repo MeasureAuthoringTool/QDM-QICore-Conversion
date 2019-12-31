@@ -1,12 +1,15 @@
 package gov.cms.mat.fhir.services.service;
 
+import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
+import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
+import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,16 +55,29 @@ public class ValueSetService {
         return valueSetMapper.deleteAll();
     }
 
-    public List<ValueSet> findValueSets(XmlSource xmlSource, String measureId, ConversionType conversionType) {
-        measureDataService.findOneValid(measureId); // if not valid will throw
+    public List<ValueSet> findValueSetsByMeasureId(XmlSource xmlSource, String measureId, ConversionType conversionType) {
+        Measure matMeasure = measureDataService.findOneValid(measureId); // if not valid will throw
 
-        byte[] xml = getXmlBytesBySource(measureId, xmlSource);
+        OrchestrationProperties properties = OrchestrationProperties.builder()
+                .matMeasure(matMeasure)
+                .xmlSource(xmlSource)
+                .conversionType(conversionType)
+                .build();
+
+
+        return findValueSetsByMeasure(properties);
+    }
+
+    public List<ValueSet> findValueSetsByMeasure(OrchestrationProperties properties) {
+        Measure matMeasure = properties.getMatMeasure();
+
+        byte[] xml = getXmlBytesBySource(matMeasure.getId(), properties.getXmlSource());
 
         if (ArrayUtils.isEmpty(xml)) {
-            log.warn(XML_NOT_FOUND_MESSAGE, measureId, xmlSource);
-            return Collections.emptyList();
+            log.warn(XML_NOT_FOUND_MESSAGE, matMeasure.getId(), properties.getXmlSource());
+            throw new ValueSetConversionException("No value sets found for measure id: " + matMeasure.getId());
         } else {
-            return translateToFhir(measureId, xml, conversionType);
+            return translateToFhir(matMeasure.getId(), xml, properties.getConversionType());
         }
     }
 
