@@ -287,11 +287,41 @@ public class ConversionResultsService {
                                                           List<FhirValidationResult> list) {
         ConversionResult conversionResult = getConversionResultWithValueSetConversionResults(measureId);
 
-        ValueSetValidationResult validationResult = new ValueSetValidationResult(oid);
-        validationResult.setLibraryFhirValidationErrors(list);
-        conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors().add(validationResult);
+        ValueSetValidationResult validationResult = createValueSetValidationResult(oid, conversionResult);
+
+        validationResult.setFhirValidationResults(list);
 
         conversionResultRepository.save(conversionResult);
+    }
+
+    public ValueSetValidationResult createValueSetValidationResult(String oid, ConversionResult conversionResult) {
+        ValueSetValidationResult validationResult = new ValueSetValidationResult(oid);
+
+        conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors().add(validationResult);
+
+        return validationResult;
+    }
+
+
+    public synchronized void addValueSetValidationResult(String measureId, String oid,
+                                                         FhirValidationResult fhirValidationResult) {
+        ConversionResult conversionResult = getConversionResultWithValueSetConversionResults(measureId);
+
+        ValueSetValidationResult valueSetValidationResult = findValueSetValidationResult(oid, conversionResult);
+        valueSetValidationResult.getFhirValidationResults().add(fhirValidationResult);
+
+        conversionResultRepository.save(conversionResult);
+    }
+
+    public ValueSetValidationResult findValueSetValidationResult(String oid, ConversionResult conversionResult) {
+        Optional<ValueSetValidationResult> optionalValueSetValidationResult =
+                conversionResult.getValueSetConversionResults()
+                        .getValueSetFhirValidationErrors()
+                        .stream()
+                        .filter(v -> v.getOid().equals(oid))
+                        .findFirst();
+
+        return optionalValueSetValidationResult.orElseGet(() -> createValueSetValidationResult(oid, conversionResult));
     }
 
     public ConversionResult getConversionResultWithValueSetConversionResults(String measureId) {

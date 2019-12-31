@@ -12,5 +12,5 @@ import java.util.List;
 public class ValueSetValidationResult {
     @NonNull
     final String oid;
-    List<FhirValidationResult> libraryFhirValidationErrors = new ArrayList<>();
+    List<FhirValidationResult> fhirValidationResults = new ArrayList<>();
 }
