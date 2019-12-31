@@ -90,7 +90,7 @@ export VSAC_PASS={password}
 6. Build the project again after theses changes.
 
 
-## Running the project
+## Running the project Locally
 1.  Navigate to the MAT-FHIR-Services directory
 
 ```
@@ -100,7 +100,7 @@ $ cd QDM-QICore-Conversion/mat-fhir-services
 2. Launch the micro service
 
 ```
-$ mvn spring-boot:run
+$ mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=local
 ```
 
 3. Navigate to the QDM-QICORE-Mapping-Services directory
