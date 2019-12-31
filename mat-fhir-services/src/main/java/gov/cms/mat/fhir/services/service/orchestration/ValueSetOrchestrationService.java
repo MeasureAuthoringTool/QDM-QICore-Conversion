@@ -33,18 +33,21 @@ class ValueSetOrchestrationService {
         List<ValueSet> valueSets =
                 valueSetService.findValueSetsByMeasure(properties);
 
-        FhirValueSetResourceValidationResult result = valueSetFhirValidationResults.generate(
-                valueSets,
-                properties.getXmlSource(),
-                properties.getMatMeasure().getId());
 
-        if (!resultPass(result)) {
-            log.info("FhirValidationResults failed for measure: {}", properties.getMatMeasure().getId());
-            return false;
-        }
+        List<FhirResourceValidationResult> results = valueSetFhirValidationResults.collectResults(valueSets, properties.getMatMeasure().getId());
+
+//        FhirValueSetResourceValidationResult result = valueSetFhirValidationResults.generate(
+//                valueSets,
+//                properties.getXmlSource(),
+//                properties.getMatMeasure().getId());
+//
+//        if (!resultPass(result)) {
+//            log.info("FhirValidationResults failed for measure: {}", properties.getMatMeasure().getId());
+//            return false;
+//        }
 
 
-        return valueSetVsacVerifier.verify(properties);
+        return true;
     }
 
     private boolean resultPass(FhirValueSetResourceValidationResult result) {

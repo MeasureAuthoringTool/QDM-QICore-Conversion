@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.translate;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.exceptions.ValueSetValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
 import gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator;
@@ -63,29 +64,20 @@ public class ValueSetMapper implements FhirValueSetCreator {
         String oid;
 
         if (StringUtils.isBlank(cqlQualityDataSetDTO.getOid())) {
-            return;
+            throw new ValueSetValidationException("missing oid");
         } else {
             oid = cqlQualityDataSetDTO.getOid();
         }
 
-        Bundle hapiBundle = hapiFhirServer.isValueSetInHapi(oid);
+        VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid);
 
-        if (conversionType == ConversionType.CONVERSION && hapiBundle != null && hapiBundle.hasEntry()) {
-            log.debug("Fhir valueSet already in hapi, oid: {}", oid);
-            ConversionReporter.setValueSetSuccessResult(oid);
+        if (vsacValueSetWrapper == null) {
+            log.debug("VsacService returned null for oid: {}", oid);
+            ConversionReporter.setValueSetFailResult(oid, "Not Found in VSAC");
         } else {
-            ConversionReporter.resetValueSetResults(conversionType);
-
-            VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid);
-
-            if (vsacValueSetWrapper == null) {
-                log.debug("VsacService returned null for oid: {}", oid);
-                ConversionReporter.setValueSetFailResult(oid, "Not Found in VSAC");
-            } else {
-                List<ValueSet> valueSetsCreated = createFhirValueSetList(cqlQualityDataSetDTO, vsacValueSetWrapper, conversionType);
-                valueSets.addAll(valueSetsCreated);
-                ConversionReporter.setValueSetSuccessResult(oid);
-            }
+            List<ValueSet> valueSetsCreated = createFhirValueSetList(cqlQualityDataSetDTO, vsacValueSetWrapper, conversionType);
+            valueSets.addAll(valueSetsCreated);
+            ConversionReporter.setValueSetSuccessResult(oid);
         }
     }
 

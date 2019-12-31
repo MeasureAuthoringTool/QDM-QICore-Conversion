@@ -34,3 +34,5 @@ hs_err_pid*
 /mat-rest-commons/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
 /mat-rest-commons/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
 /mat-rest-commons/target/maven-archiver/pom.properties
+
+.DS_Store
