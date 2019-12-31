@@ -12,6 +12,7 @@ such as NLMs VSAC to gather valueSets needed for measure evaluation.
 5.  Hapi-Fhir Jpaserver deployed in Tomcat and accessible locally or remotely.  You can clone and build HAPI-FHIR JPAServer at
 https://github.com/MeasureAuthoringTool/mat-fhir-jpaserver/tree/HapiFhir3.7-R4/hapi-fhir-jpaserver-starter.  Follow the instructions 
 in the README.md file.
+6.  MongoDB version 3.4.23 or greater.
 
 ## Setting Up Your Local Development and Test Environment
 1.  Checkout this project
@@ -89,7 +90,7 @@ export VSAC_PASS={password}
 6. Build the project again after theses changes.
 
 
-## Running the project
+## Running the project Locally
 1.  Navigate to the MAT-FHIR-Services directory
 
 ```
@@ -99,7 +100,7 @@ $ cd QDM-QICore-Conversion/mat-fhir-services
 2. Launch the micro service
 
 ```
-$ mvn spring-boot:run
+$ mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=local
 ```
 
 3. Navigate to the QDM-QICORE-Mapping-Services directory
@@ -114,6 +115,16 @@ $ cd ../qdm-qicore-mapping-services
 $ mvn spring-boot:run
 ```
 
+5. Navigate to CQL-ELM-Translation directory
+```
+$ cd ../cql-elm-translation
+```
+
+6. Launch the micro service
+```
+$ mvn spring-boot:run
+```
+
 ## Viewing API and Testing Via Swagger
 Swagger provides a mechanism to view(and test) available service endpoints, their input criteria, and results.  You can
 access this at;
@@ -122,59 +133,40 @@ access this at;
 http://localhost:9080/swagger-ui.html
 ```
 
-## Converting to FHIR
+## FHIR Validation of Measure
 
-### Measure Operations
-Measure operations are constrained by the measure's QDM release version, **5.5 thru 5.8**, and the presence of **SIMPLE_XML** within the MEASURE_EXPORT table.
+Request URL example
 
-Translate All Measure - Translates all applicable measures.
+```
+http://localhost:9080/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=VALIDATION&xmlSource=MEASURE
+```
 
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllMeasures
+Note: You may also access the Orchestration-Controller API using swagger at http://localhost:9080/swagger-ui.html.
 
-Translate All Measures Based on Measure Status - Translates all measure with a specific status.
+![FHIR validation flow](https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion/blob/develop/FHIR%20Validation.png)
 
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateMeasuresByStatus?measureStatus={measure_status}  
-Currently MAT stores measure status as "In Progress" or "Complete".
+## FHIR Validation and Conversion of Measure
 
-Translate A Single Measure - Translates a specific measure based on it's MAT UUID.
+Request URL example
 
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateMeasure?id={uuid}
+```
+http://localhost:9080/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=CONVERSION&xmlSource=MEASURE
+```
 
-Delete All Measures - Deletes all measures.
+Note: You may also access the Orchestration-Controller API using swagger at http://localhost:9080/swagger-ui.html.
 
-Method: **DELETE** Endpoint: http://localhost:9080/qdmtofhir/removeAllMeasures
+![FHIR validation and conversion flow](https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion/blob/develop/FHIR%20Validation%20and%20Conversion.png)
 
-**NOTE:** This operation is used for development and demonstration purposes.
+## Accessing Validation and Conversion Error Reports
 
-### ValueSet Operations
-ValueSet operations are constrained by the measure's QDM release version, **5.5 thru 5.8**.
+Request URL example
 
-Translate All ValueSets:  Translate all applicable valueSets.
+```
+http://localhost:9080/report/find?measureId=40280382649c54c30164d76256dd11dc
+```
 
-Method: **GET** Endpoint: http://localhost:9080/valueSet/translateAll
+Note: You may also access the TranslationReport-Controller API using swagger at http://localhost:9080/swagger-ui.html.
 
-Count All ValueSets:  Return count of all FHIR valueSet resources.
-
-Method: **GET** Endpoint: http://localhost:9080/valueSet/count
-
-Delete All ValueSets: Removes all valueSet resources.
-
-Method: **DELETE** Endpoint: http://localhost:9080/valueSet/deleteAll.
-
-**NOTE:** This operation is used for development and demonstration purposes.
-
-### Library Operations
-Creates FHIR Library resource from the Mat CQL_EXPORT table.  It is constrained by measures QDM release version **5.5 thru 5.8**.
-
-Translate All Libraries:  Translates all applicable libraries to FHIR Resource.
-
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries.
-
-Delete All Libraries:  Deletes all loaded FHIR Library resources.
-
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/removeAllLibraries
-
-**Note:** This operation is used for development and demonstration purposes.  Library rows can be very large and may require you to increase the "max_allowed_packet" global variable in MySQL.  Ex.  SET GLOBAL max_allowed_packet=20971520.
 
 ## Searching for FHIR Resources - Some Basics
 The HAPI-FHIR UI, http://localhost:8080/hapi-fhir-jpaserver/ will provide you with examples of how it is querying the system.  For additional information refer to documentation at https://hapifhir.io.
