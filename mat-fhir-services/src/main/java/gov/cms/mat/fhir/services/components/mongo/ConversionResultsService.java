@@ -294,14 +294,6 @@ public class ConversionResultsService {
         conversionResultRepository.save(conversionResult);
     }
 
-    public ValueSetValidationResult createValueSetValidationResult(String oid, ConversionResult conversionResult) {
-        ValueSetValidationResult validationResult = new ValueSetValidationResult(oid);
-
-        conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors().add(validationResult);
-
-        return validationResult;
-    }
-
 
     public synchronized void addValueSetValidationResult(String measureId, String oid,
                                                          FhirValidationResult fhirValidationResult) {
@@ -313,15 +305,49 @@ public class ConversionResultsService {
         conversionResultRepository.save(conversionResult);
     }
 
-    public ValueSetValidationResult findValueSetValidationResult(String oid, ConversionResult conversionResult) {
-        Optional<ValueSetValidationResult> optionalValueSetValidationResult =
-                conversionResult.getValueSetConversionResults()
-                        .getValueSetFhirValidationErrors()
-                        .stream()
-                        .filter(v -> v.getOid().equals(oid))
-                        .findFirst();
+    public synchronized void addValueSetValidationError(String measureId, String oid,
+                                                        String error) {
+        ConversionResult conversionResult = getConversionResultWithValueSetConversionResults(measureId);
 
-        return optionalValueSetValidationResult.orElseGet(() -> createValueSetValidationResult(oid, conversionResult));
+        findValueSetValueSetResult(oid, conversionResult);
+
+
+        conversionResultRepository.save(conversionResult);
+    }
+
+    public ValueSetResult findValueSetValueSetResult(String oid, ConversionResult conversionResult) {
+        return conversionResult.getValueSetConversionResults()
+                .getValueSetResults()
+                .stream()
+                .filter(v -> v.getOid().equals(oid))
+                .findFirst()
+                .orElseGet(() -> createValueSetValueSetResult(oid, conversionResult));
+    }
+
+    public ValueSetResult createValueSetValueSetResult(String oid, ConversionResult conversionResult) {
+        ValueSetResult valueSetResult = ValueSetResult.builder().oid(oid).build();
+
+        conversionResult.getValueSetConversionResults().getValueSetResults().add(valueSetResult);
+
+        return valueSetResult;
+    }
+
+
+    public ValueSetValidationResult findValueSetValidationResult(String oid, ConversionResult conversionResult) {
+        return conversionResult.getValueSetConversionResults()
+                .getValueSetFhirValidationErrors()
+                .stream()
+                .filter(v -> v.getOid().equals(oid))
+                .findFirst()
+                .orElseGet(() -> createValueSetValidationResult(oid, conversionResult));
+    }
+
+    public ValueSetValidationResult createValueSetValidationResult(String oid, ConversionResult conversionResult) {
+        ValueSetValidationResult validationResult = new ValueSetValidationResult(oid);
+
+        conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors().add(validationResult);
+
+        return validationResult;
     }
 
     public ConversionResult getConversionResultWithValueSetConversionResults(String measureId) {
@@ -332,4 +358,6 @@ public class ConversionResultsService {
         }
         return conversionResult;
     }
+
+
 }

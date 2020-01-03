@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.service;
 
 import ca.uhn.fhir.validation.ResultSeverityEnum;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
+import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.fhir.ValueSetFhirValidationResults;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
@@ -46,15 +47,18 @@ public class MeasureOrchestrationService {
         FhirValueSetResourceValidationResult result = valueSetFhirValidationResults.generate(
                 valueSets,
                 properties.getXmlSource(),
-                properties.getMatMeasure().getId());
+                properties.getMeasureId());
 
         if (!resultPass(result)) {
             return false;
         }
 
+        if (properties.getConversionType().equals(ConversionType.VALIDATION)) {
+            log.debug("Fhir objects not create for type ConversionType.VALIDATION");
+            return true;
+        }
 
         return true;
-
     }
 
     private boolean resultPass(FhirValueSetResourceValidationResult result) {

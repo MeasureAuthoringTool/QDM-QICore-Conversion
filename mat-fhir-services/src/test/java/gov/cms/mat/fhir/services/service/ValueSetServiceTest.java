@@ -84,7 +84,7 @@ class ValueSetServiceTest {
         when(measureDataService.findOneValid(MEASURE_ID)).thenReturn(matMeasure);
 
         ValueSet valueSet = new ValueSet();
-        when(valueSetMapper.translateToFhir(xml, ConversionType.CONVERSION)).thenReturn(Collections.singletonList(valueSet));
+        when(valueSetMapper.translateToFhir(xml)).thenReturn(Collections.singletonList(valueSet));
 
         List<ValueSet> valueSets = valueSetService.findValueSetsByMeasureId(XmlSource.SIMPLE, MEASURE_ID, ConversionType.CONVERSION);
 

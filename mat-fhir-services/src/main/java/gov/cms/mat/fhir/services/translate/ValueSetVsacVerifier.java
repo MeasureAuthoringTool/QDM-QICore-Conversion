@@ -37,7 +37,7 @@ public class ValueSetVsacVerifier {
 
         if (wrapper == null || CollectionUtils.isEmpty(wrapper.getQualityDataDTO())) {
             throw new ValueSetConversionException("Cannot find any value sets in the xml for measure id: {}" +
-                    properties.getMatMeasure().getId());
+                    properties.getMeasureId());
         }
 
         ConversionReporter.setInThreadLocal(properties.getMatMeasure().getId(), conversionResultsService);

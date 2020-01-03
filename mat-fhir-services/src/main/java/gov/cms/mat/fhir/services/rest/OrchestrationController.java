@@ -27,7 +27,6 @@ public class OrchestrationController {
     private final ConversionResultProcessorService conversionResultProcessorService;
     private final MeasureDataService measureDataService;
 
-
     public OrchestrationController(OrchestrationService orchestrationService,
                                    ConversionResultProcessorService conversionResultProcessorService,
                                    MeasureDataService measureDataService) {
@@ -48,7 +47,6 @@ public class OrchestrationController {
             @RequestParam String id,
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
-
         Measure matMeasure = measureDataService.findOneValid(id);
         log.info("Orchestrating Measure: {}", id);
 
@@ -58,7 +56,7 @@ public class OrchestrationController {
                 .xmlSource(xmlSource)
                 .build();
 
-        orchestrationService.validate(orchestrationProperties);
+        orchestrationService.process(orchestrationProperties);
 
         return conversionResultProcessorService.process(id);
     }

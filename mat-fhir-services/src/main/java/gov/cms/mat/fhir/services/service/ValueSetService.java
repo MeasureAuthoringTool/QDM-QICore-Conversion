@@ -77,7 +77,7 @@ public class ValueSetService {
             log.warn(XML_NOT_FOUND_MESSAGE, matMeasure.getId(), properties.getXmlSource());
             throw new ValueSetConversionException("No value sets found for measure id: " + matMeasure.getId());
         } else {
-            return translateToFhir(matMeasure.getId(), xml, properties.getConversionType());
+            return translateToFhir(matMeasure.getId(), xml);
         }
     }
 
@@ -85,7 +85,7 @@ public class ValueSetService {
         Instant startTime = Instant.now();
         int startCount = valueSetMapper.count();
 
-        int measureExportCount = processValueSets(xmlSource, conversionType);
+        int measureExportCount = processValueSets(xmlSource);
 
         int finishCount = valueSetMapper.count();
         long duration = Duration.between(startTime, Instant.now()).toMillis() / 1000;
@@ -93,7 +93,7 @@ public class ValueSetService {
         return String.format(TRANSLATE_SUCCESS_MESSAGE, measureExportCount, finishCount - startCount, duration);
     }
 
-    private int processValueSets(XmlSource xmlSource, ConversionType conversionType) {
+    private int processValueSets(XmlSource xmlSource) {
         List<ValueSet> outcomes = new ArrayList<>();
 
         List<MeasureVersionExportId> idsAndVersion = measureExportDataService.getAllExportIdsAndVersion();
@@ -103,31 +103,29 @@ public class ValueSetService {
                 .map(mv -> measureExportDataService.findById(mv.getId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(me -> translate(me, outcomes, xmlSource, conversionType));
+                .forEach(me -> translate(me, outcomes, xmlSource));
 
         return measureExportCount;
     }
 
     private void translate(MeasureExport measureExport,
                            List<ValueSet> outcomes,
-                           XmlSource xmlSource,
-                           ConversionType conversionType) {
+                           XmlSource xmlSource) {
         byte[] xmlBytes = getXmlBytesBySource(measureExport.getMeasureId(), xmlSource);
 
         if (xmlBytes == null) {
             log.warn(XML_NOT_FOUND_MESSAGE, measureExport.getMeasureId(), xmlSource);
         } else {
-            List<ValueSet> valueSets = translateToFhir(measureExport.getMeasureId(), xmlBytes, conversionType);
+            List<ValueSet> valueSets = translateToFhir(measureExport.getMeasureId(), xmlBytes);
             outcomes.addAll(valueSets);
         }
     }
 
     private List<ValueSet> translateToFhir(String measureId,
-                                           byte[] xmlBytes,
-                                           ConversionType conversionType) {
+                                           byte[] xmlBytes) {
         ConversionReporter.setInThreadLocal(measureId, conversionResultsService);
 
-        return valueSetMapper.translateToFhir(new String(xmlBytes), conversionType);
+        return valueSetMapper.translateToFhir(new String(xmlBytes));
     }
 
     private byte[] getXmlBytesBySource(String measureId, XmlSource xmlSource) {

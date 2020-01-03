@@ -46,7 +46,7 @@ class OrchestrationControllerTest {
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
         verify(measureDataService).findOneValid(MEASURE_ID);
-        verify(orchestrationService).validate(any());
+        verify(orchestrationService).process(any());
         verify(conversionResultProcessorService).process(MEASURE_ID);
     }
 }

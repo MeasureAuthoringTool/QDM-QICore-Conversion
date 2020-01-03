@@ -1,7 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
 import ca.uhn.fhir.context.FhirContext;
-import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
@@ -96,7 +95,7 @@ class ValueSetMapperTest {
     @Test
     void translateToFhir_matXmlConverterReturnsNull() {
         when(matXmlConverter.toQualityData(XML)).thenReturn(null);
-        assertTrue(valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION).isEmpty());
+        assertTrue(valueSetMapper.translateToFhir(XML).isEmpty());
         verify(matXmlConverter).toQualityData(XML);
     }
 
@@ -104,7 +103,7 @@ class ValueSetMapperTest {
     void translateToFhir_matXmlConverterReturnsEmptyList() {
         CQLQualityDataModelWrapper wrapper = new CQLQualityDataModelWrapper();
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
-        assertTrue(valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION).isEmpty());
+        assertTrue(valueSetMapper.translateToFhir(XML).isEmpty());
         verify(matXmlConverter).toQualityData(XML);
 
         verifyNoInteractions(vsacService);
@@ -118,7 +117,7 @@ class ValueSetMapperTest {
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
         when(vsacService.getData(OID)).thenReturn(null);
 
-        assertTrue(valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION).isEmpty());
+        assertTrue(valueSetMapper.translateToFhir(XML).isEmpty());
 
         verify(matXmlConverter).toQualityData(XML);
         verify(vsacService).getData(OID);
@@ -136,15 +135,8 @@ class ValueSetMapperTest {
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
-        ValueSet valueSet = new ValueSet();
-        valueSet.setId("ID");
-        Bundle bundle = createBundle(valueSet);
-
-        when(hapiFhirServer.createAndExecuteBundle(any())).thenReturn(bundle);
-
-        List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION);
+        List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML);
         assertEquals(1, valueSets.size());
-        assertEquals(valueSet, valueSets.get(0));
 
         String encoded = ctx.newXmlParser().setPrettyPrint(true)
                 .encodeResourceToString(valueSets.get(0));
@@ -165,7 +157,7 @@ class ValueSetMapperTest {
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
-        valueSetMapper.translateToFhir(XML, ConversionType.CONVERSION);
+        valueSetMapper.translateToFhir(XML);
 
     }
 

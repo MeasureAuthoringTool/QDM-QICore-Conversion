@@ -9,7 +9,6 @@ import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.service.ValueSetService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
-import gov.cms.mat.fhir.services.translate.ValueSetVsacVerifier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -21,28 +20,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
-class ValueSetOrchestrationService {
+class ValueSetOrchestrationValidationService {
     private final ValueSetService valueSetService;
     private final ValueSetFhirValidationResults valueSetFhirValidationResults;
 
-
-    ValueSetOrchestrationService(ValueSetService valueSetService,
-                                 ValueSetFhirValidationResults valueSetFhirValidationResults,
-                                 ValueSetVsacVerifier valueSetVsacVerifier) {
+    ValueSetOrchestrationValidationService(ValueSetService valueSetService,
+                                           ValueSetFhirValidationResults valueSetFhirValidationResults) {
         this.valueSetService = valueSetService;
         this.valueSetFhirValidationResults = valueSetFhirValidationResults;
-
     }
 
     boolean validate(OrchestrationProperties properties) {
-        log.info("Validating ValueSet results for measure: {}", properties.getMatMeasure().getId());
+        log.info("Validating ValueSet results for measure: {}", properties.getMeasureId());
 
-        List<ValueSet> valueSets =
-                valueSetService.findValueSetsByMeasure(properties);
+        valueSetFhirValidationResults.collectResults(properties.getValueSets(), properties.getMeasureId());
 
-        valueSetFhirValidationResults.collectResults(valueSets, properties.getMatMeasure().getId());
-
-        ConversionResult conversionResult = ConversionReporter.getConversionResult();
+        ConversionResult conversionResult = ConversionReporter.getConversionResult(); //Must be set up prior
 
         boolean noMissingDataSets =
                 processMissingValueSets(conversionResult.getValueSetConversionResults().getValueSetResults());
@@ -50,9 +43,13 @@ class ValueSetOrchestrationService {
         boolean result =
                 noMissingDataSets && resultPass(conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors());
 
-        log.info("Validate results for measure:{} ValueSet results: {}", properties.getMatMeasure().getId(), result);
+        log.info("ValueSet validation results for measure:{}, passed: {}", properties.getMeasureId(), result);
 
         return result;
+    }
+
+    public List<ValueSet> getValueSets(OrchestrationProperties properties) {
+        return valueSetService.findValueSetsByMeasure(properties);
     }
 
     private boolean processMissingValueSets(List<ValueSetResult> valueSetResults) {
@@ -66,7 +63,7 @@ class ValueSetOrchestrationService {
                     .filter(v -> haveError(v, noErrors))
                     .forEach(this::processMissingValueSet);
 
-            log.info("Missing ValueSets results: {}", noErrors.get());
+            log.info("No Errors processing value sets: {}", noErrors.get());
 
             return noErrors.get();
         }
@@ -101,9 +98,9 @@ class ValueSetOrchestrationService {
                     .flatMap(List::stream)
                     .anyMatch(v -> checkSeverity(v.getSeverity()));
 
-            log.info("FhirValidationErrors ValueSets resultPass: {}", haveErrorsOrHigher);
+            log.info("FhirValidationErrors ValueSets resultPass: {}", !haveErrorsOrHigher);
 
-            return !haveErrorsOrHigher; // if none are ERROR or higher then flip the bit, we have no errors and PASS :)
+            return !haveErrorsOrHigher; // Since we have ZERO errors flip the bit, we PASSED
         }
     }
 
