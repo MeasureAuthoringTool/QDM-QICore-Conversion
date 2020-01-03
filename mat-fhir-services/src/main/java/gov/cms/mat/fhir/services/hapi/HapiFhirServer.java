@@ -1,11 +1,14 @@
 package gov.cms.mat.fhir.services.hapi;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
+import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
@@ -81,6 +84,20 @@ public class HapiFhirServer {
                 .prettyPrint()
                 .encodedJson()
                 .execute();
+    }
+
+    public String persist(IBaseResource resource) {
+        MethodOutcome outcome = hapiClient.create()
+                .resource(resource)
+                .prettyPrint()
+                .encodedJson()
+                .execute();
+
+        if (BooleanUtils.isTrue(outcome.getCreated()) && outcome.getId() != null) {
+            return outcome.getId().toVersionless().getValue();
+        } else {
+            throw new HapiFhirCreateException(resource.getIdElement().getValue());
+        }
     }
 
     public Bundle isValueSetInHapi(String oid) {

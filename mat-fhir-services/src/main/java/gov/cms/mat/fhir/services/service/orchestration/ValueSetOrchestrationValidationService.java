@@ -41,7 +41,7 @@ class ValueSetOrchestrationValidationService {
                 processMissingValueSets(conversionResult.getValueSetConversionResults().getValueSetResults());
 
         boolean result =
-                noMissingDataSets && resultPass(conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors());
+                noMissingDataSets && resultPass(conversionResult.getValueSetConversionResults().getValueSetFhirValidationResults());
 
         log.info("ValueSet validation results for measure:{}, passed: {}", properties.getMeasureId(), result);
 
@@ -93,8 +93,8 @@ class ValueSetOrchestrationValidationService {
             return true;
         } else {
             boolean haveErrorsOrHigher = valueSetFhirValidationErrors.stream()
-                    .filter(r -> !r.getFhirValidationResults().isEmpty())
-                    .map(ValueSetValidationResult::getFhirValidationResults)
+                    .filter(r -> !r.getValueSetFhirValidationResults().isEmpty())
+                    .map(ValueSetValidationResult::getValueSetFhirValidationResults)
                     .flatMap(List::stream)
                     .anyMatch(v -> checkSeverity(v.getSeverity()));
 

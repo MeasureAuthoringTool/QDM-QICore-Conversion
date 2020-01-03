@@ -34,7 +34,6 @@ public class ConversionResultsService {
         return conversionResultRepository.save(conversionResult);
     }
 
-
     ConversionResult addLibraryResult(String measureId, FieldConversionResult result) {
         ConversionResult conversionResult = findOrCreate(measureId);
 
@@ -115,7 +114,8 @@ public class ConversionResultsService {
         Optional<ConversionResult> optional = findByMeasureId(measureId);
 
         return optional
-                .orElseThrow(() -> new LibraryConversionException("Cannot find ConversionResult for measureId: " + measureId));
+                .orElseThrow(() ->
+                        new LibraryConversionException("Cannot find ConversionResult for measureId: " + measureId));
     }
 
     public synchronized void setLibraryConversionType(String measureId, ConversionType conversionType) {
@@ -294,7 +294,8 @@ public class ConversionResultsService {
     }
 
 
-    public synchronized void addValueSetValidationResult(String measureId, String oid,
+    public synchronized void addValueSetValidationResult(String measureId,
+                                                         String oid,
                                                          FhirValidationResult fhirValidationResult) {
         ConversionResult conversionResult = getConversionResultWithValueSetConversionResults(measureId);
 
@@ -304,12 +305,27 @@ public class ConversionResultsService {
         conversionResultRepository.save(conversionResult);
     }
 
-    public synchronized void addValueSetValidationError(String measureId, String oid,
+    public synchronized void addValueSetValidationError(String measureId,
+                                                        String oid,
                                                         String error) {
         ConversionResult conversionResult = getConversionResultWithValueSetConversionResults(measureId);
 
-        findValueSetValueSetResult(oid, conversionResult);
+        ValueSetResult valueSetResult = findValueSetValueSetResult(oid, conversionResult);
+        valueSetResult.setSuccess(false);
+        valueSetResult.setReason(error);
 
+        conversionResultRepository.save(conversionResult);
+    }
+
+    public synchronized void addValueSetValidationLink(String measureId,
+                                                       String oid,
+                                                       String link,
+                                                       String message) {
+        ConversionResult conversionResult = getConversionResultWithValueSetConversionResults(measureId);
+
+        ValueSetResult valueSetResult = findValueSetValueSetResult(oid, conversionResult);
+        valueSetResult.setLink(link);
+        valueSetResult.setReason(message);
 
         conversionResultRepository.save(conversionResult);
     }
@@ -333,14 +349,9 @@ public class ConversionResultsService {
 
 
     public ValueSetValidationResult findValueSetValidationResult(String oid, ConversionResult conversionResult) {
-        Optional<ValueSetValidationResult> optionalValueSetValidationResult =
-                conversionResult.getValueSetConversionResults()
-                        .getValueSetFhirValidationResults()
-                        .stream()
-                        .filter(v -> v.getOid().equals(oid))
-                        .findFirst();
+
         return conversionResult.getValueSetConversionResults()
-                .getValueSetFhirValidationErrors()
+                .getValueSetFhirValidationResults()
                 .stream()
                 .filter(v -> v.getOid().equals(oid))
                 .findFirst()
@@ -350,7 +361,7 @@ public class ConversionResultsService {
     public ValueSetValidationResult createValueSetValidationResult(String oid, ConversionResult conversionResult) {
         ValueSetValidationResult validationResult = new ValueSetValidationResult(oid);
 
-        conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors().add(validationResult);
+        conversionResult.getValueSetConversionResults().getValueSetFhirValidationResults().add(validationResult);
 
         return validationResult;
     }

@@ -13,4 +13,5 @@ public class ValueSetResult {
     String oid;
     String reason;
     Boolean success;
+    String link;
 }

@@ -39,8 +39,9 @@ public class OrchestrationService {
     public void processValueSets(OrchestrationProperties properties) {
         List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSets(properties);
 
+        List<ValueSet> valueSetsThatAreNotInHapi = valueSetOrchestrationConversionService.filterValueSets(valueSets);
 
-        properties.getValueSets().addAll(valueSets);
+        properties.getValueSets().addAll(valueSetsThatAreNotInHapi);
     }
 
     /* Should be called only when validation has succeeded */

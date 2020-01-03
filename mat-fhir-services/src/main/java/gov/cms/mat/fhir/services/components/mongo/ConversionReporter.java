@@ -173,6 +173,13 @@ public class ConversionReporter {
         conversionReporter.addValueSetValidationError(oid, error);
     }
 
+    public static void setValueSetsValidationLink(String oid,
+                                                  String link,
+                                                  String reason) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addValueSetValidationLink(oid, link, reason);
+    }
+
     public static void resetLibrary(ConversionType conversionType) {
         ConversionReporter conversionReporter = getConversionReporter();
 
@@ -291,6 +298,10 @@ public class ConversionReporter {
 
     private void addValueSetValidationError(String oid, String error) {
         conversionResultsService.addValueSetValidationError(measureId, oid, error);
+    }
+
+    private void addValueSetValidationLink(String oid, String link, String reason) {
+        conversionResultsService.addValueSetValidationLink(measureId, oid, link, reason);
     }
 
     private ConversionResult findConversionResult() {
