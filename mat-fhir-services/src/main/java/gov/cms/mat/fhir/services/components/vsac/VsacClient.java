@@ -71,7 +71,7 @@ public class VsacClient {
             cacheFilePath = createCacheFilePath(oid);
 
             if (cacheFilePath.toFile().exists()) {
-                log.info("Xml is in cache for oid: {}", oid);
+                log.trace("Xml is in cache for oid: {}", oid);
                 return getFromFileCache(cacheFilePath);
             } else {
                 log.trace("Xml is not in cache for path: {}", cacheFilePath);

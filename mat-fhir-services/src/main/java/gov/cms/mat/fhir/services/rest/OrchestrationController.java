@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/orchestration/measure")
-@Tag(name = "Measure-Orchestration-Controller",
+@Tag(name = "Orchestration-Controller",
         description = "API for converting MAT Measures to FHIR executing all validations and services to perform this task")
 @Slf4j
 public class OrchestrationController {
@@ -57,7 +57,8 @@ public class OrchestrationController {
                 .conversionType(conversionType)
                 .xmlSource(xmlSource)
                 .build();
-        orchestrationService.process(orchestrationProperties);
+
+        orchestrationService.validate(orchestrationProperties);
 
         return conversionResultProcessorService.process(id);
     }

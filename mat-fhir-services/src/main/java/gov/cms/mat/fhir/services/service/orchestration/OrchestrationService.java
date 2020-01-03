@@ -17,12 +17,10 @@ public class OrchestrationService {
         this.valueSetOrchestrationService = valueSetOrchestrationService;
     }
 
-
-    public boolean process(OrchestrationProperties properties) {
+    public boolean validate(OrchestrationProperties properties) {
         ConversionReporter.setInThreadLocal(properties.getMatMeasure().getId(), conversionResultsService);
         ConversionReporter.resetOrchestration();
 
-        return valueSetOrchestrationService.process(properties);
+        return valueSetOrchestrationService.validate(properties);
     }
-
 }

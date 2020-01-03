@@ -47,7 +47,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
         CQLQualityDataModelWrapper wrapper = matXmlConverter.toQualityData(xml);
 
         if (wrapper == null || CollectionUtils.isEmpty(wrapper.getQualityDataDTO())) {
-            return Collections.emptyList();
+            return Collections.emptyList(); // should throw
         }
 
         List<ValueSet> valueSets = new ArrayList<>();
@@ -98,7 +98,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
         if (conversionType.equals(ConversionType.VALIDATION)) {
             return valueSet;
         } else {
-            Bundle bundle = hapiFhirServer.createAndExecuteBundle(valueSet);
+            Bundle bundle = hapiFhirServer.createAndExecuteBundle(valueSet); //todo add in separete method
 
             if (bundle.isEmpty()) {
                 throw new IllegalArgumentException("Could not create hapi value set with oid: " + matValueSet.getID());

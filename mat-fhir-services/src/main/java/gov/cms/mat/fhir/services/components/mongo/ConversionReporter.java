@@ -161,6 +161,12 @@ public class ConversionReporter {
         conversionReporter.addValueSetValidationResults(oid, list);
     }
 
+    public static void setValueSetsValidationResult(String oid,
+                                                    FhirValidationResult fhirValidationResult) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addValueSetValidationResult(oid, fhirValidationResult);
+    }
+
     public static void resetLibrary(ConversionType conversionType) {
         ConversionReporter conversionReporter = getConversionReporter();
 
@@ -176,6 +182,7 @@ public class ConversionReporter {
                         .build();
 
         conversionResultsService.addValueSetResult(measureId, result);
+
     }
 
     private void addValueSetSuccessResult(String oid) {
@@ -270,6 +277,10 @@ public class ConversionReporter {
 
     private void addValueSetValidationResults(String oid, List<FhirValidationResult> list) {
         conversionResultsService.addValueSetValidationResults(measureId, oid, list);
+    }
+
+    private void addValueSetValidationResult(String oid, FhirValidationResult fhirValidationResult) {
+        conversionResultsService.addValueSetValidationResult(measureId, oid, fhirValidationResult);
     }
 
     private ConversionResult findConversionResult() {
