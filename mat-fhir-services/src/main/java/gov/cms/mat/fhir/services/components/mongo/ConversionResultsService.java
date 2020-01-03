@@ -20,7 +20,6 @@ public class ConversionResultsService {
 
     ConversionResult addValueSetResult(String measureId, ValueSetResult result) {
         ConversionResult conversionResult = getConversionResultWithValueSetConversionResults(measureId);
-
         conversionResult.getValueSetConversionResults().getValueSetResults().add(result);
         return conversionResultRepository.save(conversionResult);
     }
@@ -76,7 +75,7 @@ public class ConversionResultsService {
 
             if (conversionResult.getValueSetConversionResults() != null) {
                 conversionResult.getValueSetConversionResults().getValueSetResults().clear();
-                conversionResult.getValueSetConversionResults().getValueSetFhirValidationErrors().clear();
+                conversionResult.getValueSetConversionResults().getValueSetFhirValidationResults().clear();
                 conversionResult.getValueSetConversionResults().setValueSetConversionType(null);
                 conversionResultRepository.save(conversionResult);
             }
@@ -94,7 +93,7 @@ public class ConversionResultsService {
             if (conversionResult.getMeasureConversionResults() != null) {
                 conversionResult.getMeasureConversionResults().getMeasureResults().clear();
                 conversionResult.getMeasureConversionResults().setMeasureConversionType(null);
-                conversionResult.getMeasureConversionResults().getMeasureFhirValidationErrors().clear();
+                conversionResult.getMeasureConversionResults().getMeasureFhirValidationResults().clear();
                 conversionResultRepository.save(conversionResult);
             }
         } else {
@@ -146,7 +145,7 @@ public class ConversionResultsService {
             ConversionResult conversionResult = optional.get();
 
             if (conversionResult.getLibraryConversionResults() != null) {
-                conversionResult.getLibraryConversionResults().getLibraryFhirValidationErrors().clear();
+                conversionResult.getLibraryConversionResults().getLibraryFhirValidationResults().clear();
                 conversionResult.getLibraryConversionResults().getLibraryResults().clear();
                 conversionResult.getLibraryConversionResults().setLibraryConversionType(null);
                 conversionResultRepository.save(conversionResult);
@@ -264,7 +263,7 @@ public class ConversionResultsService {
             conversionResult.setMeasureConversionResults(new MeasureConversionResults());
         }
 
-        conversionResult.getMeasureConversionResults().setMeasureFhirValidationErrors(list);
+        conversionResult.getMeasureConversionResults().setMeasureFhirValidationResults(list);
 
         conversionResultRepository.save(conversionResult);
     }
@@ -278,7 +277,7 @@ public class ConversionResultsService {
             conversionResult.setLibraryConversionResults(new LibraryConversionResults());
         }
 
-        conversionResult.getLibraryConversionResults().setLibraryFhirValidationErrors(list);
+        conversionResult.getLibraryConversionResults().setLibraryFhirValidationResults(list);
 
         conversionResultRepository.save(conversionResult);
     }
@@ -289,7 +288,7 @@ public class ConversionResultsService {
 
         ValueSetValidationResult validationResult = createValueSetValidationResult(oid, conversionResult);
 
-        validationResult.setFhirValidationResults(list);
+        validationResult.setValueSetFhirValidationResults(list);
 
         conversionResultRepository.save(conversionResult);
     }
@@ -300,7 +299,7 @@ public class ConversionResultsService {
         ConversionResult conversionResult = getConversionResultWithValueSetConversionResults(measureId);
 
         ValueSetValidationResult valueSetValidationResult = findValueSetValidationResult(oid, conversionResult);
-        valueSetValidationResult.getFhirValidationResults().add(fhirValidationResult);
+        valueSetValidationResult.getValueSetFhirValidationResults().add(fhirValidationResult);
 
         conversionResultRepository.save(conversionResult);
     }
@@ -334,6 +333,12 @@ public class ConversionResultsService {
 
 
     public ValueSetValidationResult findValueSetValidationResult(String oid, ConversionResult conversionResult) {
+        Optional<ValueSetValidationResult> optionalValueSetValidationResult =
+                conversionResult.getValueSetConversionResults()
+                        .getValueSetFhirValidationResults()
+                        .stream()
+                        .filter(v -> v.getOid().equals(oid))
+                        .findFirst();
         return conversionResult.getValueSetConversionResults()
                 .getValueSetFhirValidationErrors()
                 .stream()
