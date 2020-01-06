@@ -1,11 +1,10 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
-
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
-import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Component;
@@ -18,22 +17,32 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ValueSetOrchestrationConversionService {
     private final HapiFhirServer hapiFhirServer;
-    private final ValueSetMapper valueSetMapper;
 
-    public ValueSetOrchestrationConversionService(HapiFhirServer hapiFhirServer, ValueSetMapper valueSetMapper) {
+    public ValueSetOrchestrationConversionService(HapiFhirServer hapiFhirServer) {
         this.hapiFhirServer = hapiFhirServer;
-        this.valueSetMapper = valueSetMapper;
     }
 
     boolean convert(OrchestrationProperties properties) {
-        properties.getValueSets()
+        properties.getValueSets().forEach(this::processPersistToFhir);
+
+        long errorCount = countValueSetResultErrors();
+
+        if (errorCount > 0) {
+            log.info("ValueSet error processing FAILED, count: {} ", errorCount);
+        } else {
+            log.debug("ValueSet error processing PASSED");
+        }
+
+        return errorCount == 0;
+    }
+
+    private long countValueSetResultErrors() {
+        return ConversionReporter.getConversionResult()
+                .getValueSetConversionResults()
+                .getValueSetResults()
                 .stream()
-                .forEach(v -> processPersistToFhir(v));
-
-
-        return true; // todo how to handle errors
-        // valueSetMapper.persistFhirValueSet()
-
+                .filter(t -> BooleanUtils.isFalse(t.getSuccess()))
+                .count();
     }
 
     public List<ValueSet> filterValueSets(List<ValueSet> valueSets) {
