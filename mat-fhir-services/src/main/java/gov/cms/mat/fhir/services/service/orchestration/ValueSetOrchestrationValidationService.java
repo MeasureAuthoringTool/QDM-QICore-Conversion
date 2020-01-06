@@ -8,6 +8,7 @@ import gov.cms.mat.fhir.services.components.fhir.ValueSetFhirValidationResults;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.service.ValueSetService;
+import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
-class ValueSetOrchestrationValidationService {
+class ValueSetOrchestrationValidationService implements ErrorSeverityChecker {
     private final ValueSetService valueSetService;
     private final ValueSetFhirValidationResults valueSetFhirValidationResults;
 
@@ -101,20 +102,6 @@ class ValueSetOrchestrationValidationService {
             log.info("FhirValidationErrors ValueSets resultPass: {}", !haveErrorsOrHigher);
 
             return !haveErrorsOrHigher; // Since we have ZERO errors flip the bit, we PASSED
-        }
-    }
-
-    private boolean checkSeverity(String severity) {
-        try {
-            ResultSeverityEnum resultSeverityEnum = ResultSeverityEnum.valueOf(severity);
-
-            log.trace("resultSeverityEnum: {}", resultSeverityEnum);
-
-            return resultSeverityEnum.equals(ResultSeverityEnum.ERROR) ||
-                    resultSeverityEnum.equals(ResultSeverityEnum.FATAL);
-        } catch (IllegalArgumentException e) {
-            log.error("Cannot find ResultSeverityEnum type from string: {}", severity);
-            return false;
         }
     }
 }

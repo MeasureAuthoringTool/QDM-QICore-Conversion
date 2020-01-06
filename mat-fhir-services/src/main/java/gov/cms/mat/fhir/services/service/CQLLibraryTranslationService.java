@@ -12,6 +12,8 @@ import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.service.support.ElmErrorExtractor;
+import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
+import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class CQLLibraryTranslationService {
+public class CQLLibraryTranslationService implements ErrorSeverityChecker {
     private static final String CONVERSION_RESULTS_TEMPLATE =
             "Found %d CqlLibraries to process, successfully processed %d";
 
@@ -64,7 +66,7 @@ public class CQLLibraryTranslationService {
         }
     }
 
-    private String process(String id, ConversionType conversionType) {
+    private boolean process(String id, ConversionType conversionType) {
         log.info("Processing measure id: {}", id);
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
         ConversionReporter.resetCqlConversionResult(conversionType);
@@ -85,35 +87,56 @@ public class CQLLibraryTranslationService {
 
                 String json = convertCqlToJson(cql);
 
-                processJsonForError(json);
+                boolean success = processJsonForError(json);
 
                 ConversionReporter.setElm(json);
 
-                return json;
+                return success;
             }
         }
     }
 
-    private void processJsonForError(String json) {
+    private boolean processJsonForError(String json) {
         ElmErrorExtractor extractor = new ElmErrorExtractor(json);
         List<CqlConversionError> cqlConversionErrors = extractor.parseForAnnotations();
         List<MatCqlConversionException> matCqlConversionExceptions = extractor.parseForErrorExceptions();
 
         if (cqlConversionErrors.isEmpty() && matCqlConversionExceptions.isEmpty()) {
             ConversionReporter.setCqlConversionResultSuccess();
+            return true;
         } else {
+
+            boolean successFull = true;
 
             if (!cqlConversionErrors.isEmpty()) {
                 ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + cqlConversionErrors.size()
                         + " cqlConversionErrors errors.");
                 ConversionReporter.setCqlConversionErrors(cqlConversionErrors);
+
+                long errorCount = cqlConversionErrors.stream()
+                        .filter(c -> checkSeverity(c.getErrorSeverity()))
+                        .count();
+
+                if (errorCount > 0) {
+                    successFull = false;
+                }
             }
 
             if (!matCqlConversionExceptions.isEmpty()) {
                 ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + matCqlConversionExceptions.size()
                         + " matCqlConversionExceptions (errorExceptions) errors.");
                 ConversionReporter.setMatCqlConversionExceptions(matCqlConversionExceptions);
+
+                long errorCount = matCqlConversionExceptions.stream()
+                        .filter(c -> checkSeverity(c.getErrorSeverity()))
+                        .count();
+
+                if (errorCount > 0) {
+                    successFull = false;
+                }
             }
+
+            return successFull;
         }
     }
 
@@ -150,8 +173,12 @@ public class CQLLibraryTranslationService {
         }
     }
 
-    public String processOne(String measureId, ConversionType conversionType) {
+    public boolean processOne(String measureId, ConversionType conversionType) {
         Measure measure = measureDataService.findOneValid(measureId);
         return process(measure.getId(), conversionType);
+    }
+
+    public boolean validate(OrchestrationProperties properties) {
+        return process(properties.getMeasureId(), properties.getConversionType());
     }
 }

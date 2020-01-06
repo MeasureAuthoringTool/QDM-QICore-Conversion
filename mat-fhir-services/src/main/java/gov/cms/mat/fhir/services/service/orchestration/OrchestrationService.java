@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.service.orchestration;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.ValueSet;
@@ -17,26 +18,33 @@ public class OrchestrationService {
     private final ValueSetOrchestrationValidationService valueSetOrchestrationValidationService;
     private final ValueSetOrchestrationConversionService valueSetOrchestrationConversionService;
 
-    public OrchestrationService(ConversionResultsService conversionResultsService, ValueSetOrchestrationValidationService valueSetOrchestrationValidationService, ValueSetOrchestrationConversionService valueSetOrchestrationConversionService) {
+    private final CQLLibraryTranslationService cqlLibraryTranslationService;
+
+    public OrchestrationService(ConversionResultsService conversionResultsService,
+                                ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
+                                ValueSetOrchestrationConversionService valueSetOrchestrationConversionService,
+                                CQLLibraryTranslationService cqlLibraryTranslationService) {
         this.conversionResultsService = conversionResultsService;
         this.valueSetOrchestrationValidationService = valueSetOrchestrationValidationService;
         this.valueSetOrchestrationConversionService = valueSetOrchestrationConversionService;
+        this.cqlLibraryTranslationService = cqlLibraryTranslationService;
     }
 
     public boolean process(OrchestrationProperties properties) {
         ConversionReporter.setInThreadLocal(properties.getMatMeasure().getId(), conversionResultsService);
         ConversionReporter.resetOrchestration();
 
-        processValueSets(properties);
+        processAndGetValueSets(properties);
 
-        if (processValidation(properties)) {
+        if (!processValidation(properties)) {
+            log.debug("Conversion Stopped due to validation errors measureId: {}", properties.getMeasureId());
             return false;
         } else {
             return processConversion(properties);
         }
     }
 
-    public void processValueSets(OrchestrationProperties properties) {
+    public void processAndGetValueSets(OrchestrationProperties properties) {
         List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSets(properties);
 
         List<ValueSet> valueSetsThatAreNotInHapi = valueSetOrchestrationConversionService.filterValueSets(valueSets);
@@ -86,6 +94,7 @@ public class OrchestrationService {
 
 
     public boolean validate(OrchestrationProperties properties) {
-        return valueSetOrchestrationValidationService.validate(properties);
+        return valueSetOrchestrationValidationService.validate(properties) &&
+                cqlLibraryTranslationService.validate(properties);
     }
 }

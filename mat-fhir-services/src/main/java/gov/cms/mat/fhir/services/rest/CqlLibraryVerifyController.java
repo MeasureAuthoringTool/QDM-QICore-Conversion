@@ -1,7 +1,9 @@
 package gov.cms.mat.fhir.services.rest;
 
 
+import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class CqlLibraryVerifyController {
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
+    private final ConversionResultProcessorService conversionResultProcessorService;
 
-    public CqlLibraryVerifyController(CQLLibraryTranslationService cqlLibraryTranslationService) {
+    public CqlLibraryVerifyController(CQLLibraryTranslationService cqlLibraryTranslationService, ConversionResultProcessorService conversionResultProcessorService) {
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
+        this.conversionResultProcessorService = conversionResultProcessorService;
     }
 
     @Operation(summary = "Translate all Mat XMl cql libraries generating report",
@@ -35,8 +39,10 @@ public class CqlLibraryVerifyController {
             description = "Translate one CqlLibrary in MAT to FHIR identified by the measureId and return the library in json")
     @Transactional(readOnly = true)
     @PutMapping(path = "/translateOne")
-    public String translateOne(@RequestParam String measureId) {
-        return cqlLibraryTranslationService.processOne(measureId, ConversionType.CONVERSION);
+    public ConversionResultDto translateOne(@RequestParam String measureId) {
+        cqlLibraryTranslationService.processOne(measureId, ConversionType.CONVERSION);
+
+        return conversionResultProcessorService.process(measureId);
     }
 }
 

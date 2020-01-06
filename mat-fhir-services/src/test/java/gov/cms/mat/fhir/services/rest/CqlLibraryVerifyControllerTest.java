@@ -1,7 +1,9 @@
 package gov.cms.mat.fhir.services.rest;
 
 
+import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +21,9 @@ class CqlLibraryVerifyControllerTest {
 
     @Mock
     private CQLLibraryTranslationService cqlLibraryTranslationService;
+    @Mock
+    private ConversionResultProcessorService conversionResultProcessorService;
+
     @InjectMocks
     private CqlLibraryVerifyController cqlLibraryVerifyController;
 
@@ -35,10 +40,13 @@ class CqlLibraryVerifyControllerTest {
     void translateOne() {
         String measureId = "measureId";
 
-        when(cqlLibraryTranslationService.processOne(measureId, ConversionType.CONVERSION)).thenReturn(RESULT_EXPECTED);
+        when(cqlLibraryTranslationService.processOne(measureId, ConversionType.CONVERSION)).thenReturn(true);
+        ConversionResultDto conversionResultDtoToReturned = new ConversionResultDto();
+        when(conversionResultProcessorService.process(measureId)).thenReturn(conversionResultDtoToReturned);
 
-        assertEquals(RESULT_EXPECTED, cqlLibraryVerifyController.translateOne(measureId));
+        assertEquals(conversionResultDtoToReturned, cqlLibraryVerifyController.translateOne(measureId));
 
         verify(cqlLibraryTranslationService).processOne(measureId, ConversionType.CONVERSION);
+        verify(conversionResultProcessorService).process(measureId);
     }
 }
