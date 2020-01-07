@@ -370,7 +370,7 @@ http://localhost:9080/report/find?measureId=40280382649c54c30164d76256dd11dc
 ```
 When running in Tomcat container,
 ```
-http://localhost:9080/mat-fhir-services-0.0.1-SNAPSHOT/report/find?measureId=40280382649c54c30164d76256dd11dc
+http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/report/find?measureId=40280382649c54c30164d76256dd11dc
 ```
 
 Note: You may also access the TranslationReport-Controller API using swagger at http://localhost:9080/swagger-ui.html.
