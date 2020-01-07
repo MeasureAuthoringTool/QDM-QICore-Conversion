@@ -257,7 +257,12 @@ spring:
 Rebuild the project.
 
 ## Deployment Considerations
-
+These microservices are not intended to be publically exposed on internet, they are used (consumed) by CMS MAT and in future Bonnie applications.  For testing purpose only `mat-fhir-services` should be exposed, but not in pre-production or production deployments.  Some things to consider,
+1.  These services should be co-located on same host or vm, `mat-fhir-services` will call `qdm-qicore-mapping-services` and `cql-elm-translation` services.
+2.  mongodb should be deployed on same host or vm.
+3.  Can be co-located with HAPI-FHIR resource server.
+4.  MAT and MAT mysql database does not need to be co-located on same host or vm.
+5.  HAPI-FHIR resource server mysql database does not need to be co-located on same host or vm.
 
 ## Running the project Locally As Micro-Service
 Note: Both mat-fhir-services and cql-elm-translation project profiles should built with  be `profile` set to `local`.
@@ -299,8 +304,11 @@ $ mvn spring-boot:run
 Note: Both mat-fhir-services and cql-elm-translation project profiles should built with  be `profile` set to `tomcat-local`.
 
 1. Copy the the following project war files to  <tomcat-installation>/webapps directory for autodeployment
+  
   QDM-QICore-Conversion/mat-fhir-services/target/mat-fhir-services-0.0.1-SNAPSHOT.war
+  
   QDM-QICore-Conversion/qdm-qicore-mapping-services/target/qdm-qicore-mapping-services-0.0.1-SNAPSHOT.war
+  
   QDM-QICore-Conversion/cql-elm-translation/target/cql-elm-translation-0.0.1-SNAPSHOT.war
 
 ## Viewing API and Testing Via Swagger During Development
