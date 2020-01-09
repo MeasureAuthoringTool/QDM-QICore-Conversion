@@ -75,7 +75,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
         if (cqlLibraries.isEmpty()) {
             return true;
         } else {
-            AtomicBoolean atomicBoolean = new AtomicBoolean();
+            AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
             cqlLibraries.forEach(c -> processCqlLibrary(c, atomicBoolean));
 
             if (!atomicBoolean.get()) {
