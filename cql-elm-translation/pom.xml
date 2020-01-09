@@ -11,7 +11,7 @@
     <groupId>gov.cms.mat</groupId>
     <artifactId>cql-elm-translation</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>cql-elm-translation</name>
     <description>CQL ELM Translation services</description>
 
