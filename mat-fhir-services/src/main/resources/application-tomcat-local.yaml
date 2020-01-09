@@ -6,9 +6,13 @@ spring:
     password: mat
   jpa:
     hibernate.ddl-auto: none
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl    
     generate-ddl: false
-    show-sql: false
-  data:
+    show-sql: true
+    data:
     mongodb:
       database: mat_conversion_results
       uri: mongodb://localhost
