@@ -6,6 +6,7 @@ import gov.cms.mat.fhir.services.exceptions.HapiValueSetException;
 import gov.cms.mat.fhir.services.exceptions.ValueSetValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
+import gov.cms.mat.fhir.services.translate.creators.FhirRemover;
 import gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.VSACValueSetWrapper;
@@ -20,14 +21,12 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.hl7.fhir.instance.model.api.IBaseBundle.LINK_NEXT;
 
 @Component
 @Slf4j
-public class ValueSetMapper implements FhirValueSetCreator {
+public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
     private final VsacService vsacService;
     private final MatXmlConverter matXmlConverter;
     private final HapiFhirServer hapiFhirServer;
@@ -46,16 +45,33 @@ public class ValueSetMapper implements FhirValueSetCreator {
         CQLQualityDataModelWrapper wrapper = matXmlConverter.toQualityData(xml);
 
         if (wrapper == null || CollectionUtils.isEmpty(wrapper.getQualityDataDTO())) {
-            return Collections.emptyList(); // should throw
+            return Collections.emptyList();
         }
 
         List<ValueSet> valueSets = new ArrayList<>();
 
         wrapper.getQualityDataDTO()
+                .stream()
+                .filter(w -> !inHapi(w.getOid()))
                 .forEach(t -> processFhir(t, valueSets));
 
         return valueSets;
     }
+
+    private boolean inHapi(String oid) {
+        Optional<String> optional = hapiFhirServer.fetchHapiLink(oid);
+
+        if (optional.isPresent()) {
+            log.debug("ValueSet {} is in hapi: {}", oid, optional.get());
+            ConversionReporter.setValueSetsValidationLink(oid, optional.get(), "Exists");
+            return true;
+        } else {
+            log.debug("ValueSet {} is NOT in hapi", oid);
+            ConversionReporter.setValueSetsValidationError(oid, "ValueSet is NOT in hapi");
+            return false;
+        }
+    }
+
 
     private void processFhir(CQLQualityDataSetDTO cqlQualityDataSetDTO,
                              List<ValueSet> valueSets) {
@@ -75,7 +91,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
         } else {
             List<ValueSet> valueSetsCreated = createFhirValueSetList(cqlQualityDataSetDTO, vsacValueSetWrapper);
             valueSets.addAll(valueSetsCreated);
-            ConversionReporter.setValueSetSuccessResult(oid);
+            ConversionReporter.setValueSetSuccessResult(oid, "Found in VSAC");
         }
     }
 
@@ -98,25 +114,7 @@ public class ValueSetMapper implements FhirValueSetCreator {
     }
 
     public int deleteAll() {
-        Bundle bundle = hapiFhirServer.getAll(ValueSet.class);
-
-        AtomicInteger count = new AtomicInteger();
-
-        while (bundle.hasEntry()) {
-            bundle.getEntry().forEach(f -> {
-                count.getAndIncrement();
-                hapiFhirServer.delete(f.getResource());
-            });
-
-            if (bundle.getLink(LINK_NEXT) != null) {
-                // load next page
-                bundle = hapiFhirServer.getNextPage(bundle);
-            } else {
-                break;
-            }
-        }
-
-        return count.get();
+        return deleteAllResource(hapiFhirServer, ValueSet.class);
     }
 }
 

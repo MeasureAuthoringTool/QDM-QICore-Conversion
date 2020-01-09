@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ConversionResultsServiceTest {
     private static final String MEASURE_ID = "measureId";
+    private static final String MAT_LIBRARY_ID = "matLibraryId";
 
     @Mock
     private ConversionResultRepository conversionResultRepository;
@@ -70,7 +71,7 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result);
+        ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result, MAT_LIBRARY_ID);
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
@@ -109,7 +110,7 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result);
+        ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result, MAT_LIBRARY_ID);
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
@@ -125,9 +126,10 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(any(ConversionResult.class)))
                 .thenReturn(conversionResultToReturn);
 
-        ValueSetResult result = buildValueSetResult();
+        // ValueSetResult result = buildValueSetResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addValueSetResult(MEASURE_ID, result);
+        ConversionResult conversionResultReturned =
+                conversionResultsService.addValueSetResult(MEASURE_ID, "oid", "reason", true, null);
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
@@ -147,7 +149,7 @@ class ConversionResultsServiceTest {
 
         ValueSetResult result = buildValueSetResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addValueSetResult(MEASURE_ID, result);
+        ConversionResult conversionResultReturned = conversionResultsService.addValueSetResult(MEASURE_ID, "oid", "reason", Boolean.TRUE, null);
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
@@ -240,7 +242,6 @@ class ConversionResultsServiceTest {
 
     private ValueSetResult buildValueSetResult() {
         return ValueSetResult.builder()
-                .oid("OID")
                 .reason("REASON")
                 .build();
     }

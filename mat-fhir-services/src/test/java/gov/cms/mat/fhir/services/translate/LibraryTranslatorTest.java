@@ -1,21 +1,19 @@
 package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
-import gov.cms.mat.fhir.commons.model.Measure;
-import gov.cms.mat.fhir.commons.model.MeasureExport;
 import org.hl7.fhir.r4.model.Library;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.Date;
 
-import static gov.cms.mat.fhir.services.translate.LibraryMapper.*;
-import java.math.BigDecimal;
+import static gov.cms.mat.fhir.services.translate.LibraryTranslator.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-class LibraryMapperTest {
+class LibraryTranslatorTest {
     private String MEASURE_ID;
     private byte[] cql;
     private byte[] elm;
@@ -23,7 +21,7 @@ class LibraryMapperTest {
     private String baseURL;
     private String fhirResourceURL;
     private String cqlName;
-    private LibraryMapper libraryMapper;
+    private LibraryTranslator libraryTranslator;
 
     @BeforeEach
     void setUp() {
@@ -40,12 +38,12 @@ class LibraryMapperTest {
         baseURL = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
         fhirResourceURL = baseURL + "Library/" + MEASURE_ID;
         System.out.println(fhirResourceURL);
-        libraryMapper = new LibraryMapper(cqlLib, cql, elm, baseURL);
+        libraryTranslator = new LibraryTranslator(cqlLib, cql, elm, baseURL);
     }
 
     @Test
     void testTranslateToFhir_verifyCqlLibrary() {
-        Library library = libraryMapper.translateToFhir();
+        Library library = libraryTranslator.translateToFhir();
 
         assertEquals(library.getDate().getTime(), new Date().getTime(), 10L);
         assertEquals(cqlName,  library.getName());
@@ -62,7 +60,7 @@ class LibraryMapperTest {
     void testTranslateToFhir_verifyAttachments() {
 
 
-        Library library = libraryMapper.translateToFhir();
+        Library library = libraryTranslator.translateToFhir();
 
         assertEquals(2, library.getContent().size());
 

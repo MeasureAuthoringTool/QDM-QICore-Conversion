@@ -1,18 +1,28 @@
 package gov.cms.mat.fhir.rest.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class LibraryConversionResults {
+
+    String matId;
+
     private List<FieldConversionResult> libraryResults = new ArrayList<>();
-    private ConversionType libraryConversionType;
+
     private List<FhirValidationResult> libraryFhirValidationResults = new ArrayList<>();
-    private CqlConversionResult cqlConversionResult;
+    String reason;
+    Boolean success;
+    String link;
+    private CqlConversionResult cqlConversionResult = new CqlConversionResult();
+
+    public LibraryConversionResults(String matId) {
+        this.matId = matId;
+    }
 }

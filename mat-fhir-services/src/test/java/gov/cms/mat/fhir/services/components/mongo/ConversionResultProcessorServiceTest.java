@@ -36,9 +36,7 @@ class ConversionResultProcessorServiceTest {
         List<ConversionResultDto> conversionResults = conversionResultProcessorService.processAll();
         ConversionResultDto dto = verifyResults(conversionResults);
 
-
         verify(conversionResultsService).findAll();
-
     }
 
     @Test
@@ -49,22 +47,7 @@ class ConversionResultProcessorServiceTest {
         Set<String> set = conversionResultProcessorService.findMissingValueSets();
 
         assertEquals(1, set.size());
-        assertEquals("OID", set.iterator().next());
-    }
-
-
-    @Test
-    void processAll_DataServiceError() {
-        when(conversionResultsService.findAll())
-                .thenReturn(Collections.singletonList(createConversionResult(true)));
-
-        List<ConversionResultDto> conversionResults = conversionResultProcessorService.processAll();
-        ConversionResultDto dto = verifyResults(conversionResults);
-
-        //dto.getMeasureResults().forEach(r -> assertEquals(errorMessage, r.getErrorMessage()));
-        //dto.getMeasureResults().forEach(r -> assertNull(r.getConversionMapping()));
-
-        verify(conversionResultsService).findAll();
+      //  assertEquals("OID", set.iterator().next());
     }
 
     @Test
@@ -106,41 +89,45 @@ class ConversionResultProcessorServiceTest {
         assertEquals(MEASURE_ID, dto.getMeasureId());
         assertNotNull(dto.getValueSetConversionResults());
         assertEquals(2, dto.getMeasureConversionResults().getMeasureResults().size());
-        assertEquals(3, dto.getLibraryConversionResults().getLibraryResults().size());
+        assertEquals(1, dto.getLibraryConversionResults().size());
+        assertEquals(3, dto.getLibraryConversionResults().get(0).getLibraryResults().size());
     }
 
     private ConversionResult createConversionResult(boolean oidFound) {
         ConversionResult conversionResult = new ConversionResult();
         conversionResult.setMeasureId(MEASURE_ID);
 
-        conversionResult.setValueSetConversionResults(new ValueSetConversionResults());
+        //conversionResult.setValueSetConversionResults(new ValueSetConversionResults());
         conversionResult.setMeasureConversionResults(new MeasureConversionResults());
-        conversionResult.setLibraryConversionResults(new LibraryConversionResults());
 
-        conversionResult.getValueSetConversionResults().setValueSetResults(createValueSetResults(oidFound));
+        conversionResult.getValueSetConversionResults().addAll(createValueSetResults(oidFound));
 
         conversionResult.getMeasureConversionResults().setMeasureResults(createMeasureResults());
 
-        conversionResult.getLibraryConversionResults().setLibraryResults(createLibraryResults());
+        conversionResult.getLibraryConversionResults().addAll(createLibraryResults());
 
         return conversionResult;
     }
 
-    private List<ValueSetResult> createValueSetResults(boolean oidFound) {
-        return Collections.singletonList(ValueSetResult
-                .builder()
-                .oid("OID")
-                .reason("REASON")
-                .success(oidFound)
-                .build());
+    private List<ValueSetConversionResults> createValueSetResults(boolean oidFound) {
+        ValueSetConversionResults valueSetConversionResults = new ValueSetConversionResults();
+        valueSetConversionResults.setSuccess(oidFound);
+        valueSetConversionResults.setReason("REASON");
+
+        return Collections.singletonList(valueSetConversionResults);
     }
 
     private List<FieldConversionResult> createMeasureResults() {
         return Arrays.asList(buildMeasureResult(0), buildMeasureResult(1));
     }
 
-    private List<FieldConversionResult> createLibraryResults() {
-        return Arrays.asList(buildLibraryResult(0), buildLibraryResult(1), buildLibraryResult(2));
+    private List<LibraryConversionResults> createLibraryResults() {
+        LibraryConversionResults libraryConversionResults = new LibraryConversionResults();
+        List<FieldConversionResult> libraryResults =
+                Arrays.asList(buildLibraryResult(0), buildLibraryResult(1), buildLibraryResult(2));
+        libraryConversionResults.getLibraryResults().addAll(libraryResults);
+
+        return Collections.singletonList(libraryConversionResults);
     }
 
     private FieldConversionResult buildLibraryResult(int i) {

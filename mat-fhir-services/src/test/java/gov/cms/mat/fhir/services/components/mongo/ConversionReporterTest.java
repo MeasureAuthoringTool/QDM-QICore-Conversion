@@ -2,7 +2,6 @@ package gov.cms.mat.fhir.services.components.mongo;
 
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
-import gov.cms.mat.fhir.rest.dto.ValueSetResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,7 @@ class ConversionReporterTest {
     private static final String FIELD = "field";
     private static final String DESTINATION = "destination";
     private static final String REASON = "reason";
+    private static final String MAT_LIBRARY_ID = "matLibraryId";
 
     ConversionResultsService conversionResultsService;
 
@@ -50,7 +50,7 @@ class ConversionReporterTest {
 
     @Test
     void setLibraryResult_NoThreadLocal() {
-        ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON);
+        ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
 
         assertNull(ConversionReporter.getFromThreadLocal());
 
@@ -59,14 +59,14 @@ class ConversionReporterTest {
 
     @Test
     void setLibraryResult_Success() {
-        when(conversionResultsService.addLibraryResult(anyString(), any(FieldConversionResult.class)))
+        when(conversionResultsService.addLibraryResult(anyString(), any(FieldConversionResult.class), anyString()))
                 .thenReturn(new ConversionResult());
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
         ConversionReporter.resetLibrary(ConversionType.VALIDATION);
-        ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON);
+        ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
 
-        verify(conversionResultsService).addLibraryResult(anyString(), any(FieldConversionResult.class));
+        verify(conversionResultsService).addLibraryResult(anyString(), any(FieldConversionResult.class), anyString());
     }
 
     @Test
@@ -81,7 +81,7 @@ class ConversionReporterTest {
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
         ConversionReporter.setValueSetFailResult("OID", REASON);
 
-        verify(conversionResultsService).addValueSetResult(anyString(), any(ValueSetResult.class));
+        // verify(conversionResultsService).addValueSetResult(anyString(), any(ValueSetResult.class));
     }
 
     @Test

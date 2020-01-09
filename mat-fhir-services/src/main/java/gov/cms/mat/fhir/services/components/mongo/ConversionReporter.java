@@ -27,47 +27,47 @@ public class ConversionReporter {
         }
     }
 
-    public static void setLibraryResult(String field, String destination, String reason) {
+    public static void setLibraryResult(String field, String destination, String reason, String matLibraryId) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter != null) {
-            conversionReporter.addLibraryResult(field, destination, reason);
+            conversionReporter.addLibraryResult(field, destination, reason, matLibraryId);
         }
     }
 
-    public static void setCqlConversionResultSuccess() {
+    public static void setCqlConversionResultSuccess(String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.addCqlConversionResultSuccess();
+        conversionReporter.addCqlConversionResultSuccess(matLibraryId);
     }
 
-    public static void setCqlConversionErrorMessage(String error) {
+    public static void setCqlConversionErrorMessage(String error, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.addCqlConversionErrorMessage(error);
+        conversionReporter.addCqlConversionErrorMessage(error, matLibraryId);
     }
 
-    public static void setCqlConversionErrors(List<CqlConversionError> errors) {
+    public static void setCqlConversionErrors(List<CqlConversionError> errors, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addCqlConversionErrors(errors);
+        conversionReporter.addCqlConversionErrors(errors, matLibraryId);
     }
 
-    public static void setMatCqlConversionExceptions(List<MatCqlConversionException> errors) {
+    public static void setMatCqlConversionExceptions(List<MatCqlConversionException> errors, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addMatCqlConversionErrors(errors);
+        conversionReporter.addMatCqlConversionErrors(errors, matLibraryId);
     }
 
 
-    public static void setCql(String cql) {
+    public static void setCql(String cql, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.addCql(cql);
+        conversionReporter.addCql(cql, matLibraryId);
     }
 
-    public static void setElm(String json) {
+    public static void setElm(String json, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.addElm(json);
+        conversionReporter.addElm(json, matLibraryId);
     }
 
 
@@ -110,6 +110,11 @@ public class ConversionReporter {
         return conversionReporter.findConversionResult();
     }
 
+    public static void saveConversionResult(ConversionResult conversionResult) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.saveConversionResultToMongo(conversionResult);
+    }
+
     public static void setValueSetFailResult(String oid, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
@@ -118,11 +123,11 @@ public class ConversionReporter {
         }
     }
 
-    public static void setValueSetSuccessResult(String oid) {
+    public static void setValueSetSuccessResult(String oid, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter != null) {
-            conversionReporter.addValueSetSuccessResult(oid);
+            conversionReporter.addValueSetSuccessResult(oid, reason);
         }
     }
 
@@ -150,9 +155,9 @@ public class ConversionReporter {
 
     }
 
-    public static void setFhirLibraryValidationResults(List<FhirValidationResult> list) {
+    public static void setFhirLibraryValidationResults(List<FhirValidationResult> list, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addFhirMeasureLibraryResults(list);
+        conversionReporter.addFhirMeasureLibraryResults(list, matLibraryId);
     }
 
     public static void setValueSetsValidationResults(String oid,
@@ -180,32 +185,51 @@ public class ConversionReporter {
         conversionReporter.addValueSetValidationLink(oid, link, reason);
     }
 
+
+    public static void setLibraryValidationLink(String link,
+                                                String reason,
+                                                String matCqlId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addLibraryValidationLink(link, reason, matCqlId);
+    }
+
+    public static void setLibraryValidationError(String reason,
+                                                 String matCqlId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addLibraryValidationError(reason, matCqlId);
+    }
+
+    public static void setLibraryNotFoundInHapi(String matCqlId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addLibraryNotFoundInHapi(matCqlId);
+    }
+
     public static void resetLibrary(ConversionType conversionType) {
         ConversionReporter conversionReporter = getConversionReporter();
 
         conversionReporter.clearLibrary(conversionType);
     }
 
-    private void addValueSetFailResult(String oid, String reason) {
-        ValueSetResult result =
-                ValueSetResult.builder()
-                        .oid(oid)
-                        .reason(reason)
-                        .success(false)
-                        .build();
-
-        conversionResultsService.addValueSetResult(measureId, result);
-
+    public static void setErrorMessage(String errorMessage) {
+        try {
+            ConversionReporter conversionReporter = getConversionReporter();
+            conversionReporter.addErrorMessage(errorMessage);
+        } catch (Exception e) {
+            log.warn("Cannot find ConversionReporter: {}, setting error message: {} ", e.getMessage(), errorMessage);
+        }
     }
 
-    private void addValueSetSuccessResult(String oid) {
-        ValueSetResult result =
-                ValueSetResult.builder()
-                        .oid(oid)
-                        .success(true)
-                        .build();
+    private void addErrorMessage(String message) {
+        conversionResultsService.addErrorMessage(measureId, message);
+    }
 
-        conversionResultsService.addValueSetResult(measureId, result);
+    private void addValueSetFailResult(String oid, String reason) {
+        conversionResultsService.addValueSetResult(measureId, oid, reason, Boolean.FALSE, null);
+    }
+
+    private void addValueSetSuccessResult(String oid, String reason) {
+        //todo add link and result
+        conversionResultsService.addValueSetResult(measureId, oid, reason, Boolean.TRUE, null);
     }
 
     private void addMeasureResult(String field, String destination, String reason) {
@@ -219,7 +243,7 @@ public class ConversionReporter {
         conversionResultsService.addMeasureResult(measureId, result);
     }
 
-    private void addLibraryResult(String field, String destination, String reason) {
+    private void addLibraryResult(String field, String destination, String reason, String matCqlId) {
 
         FieldConversionResult result = FieldConversionResult.builder()
                 .field(field)
@@ -227,13 +251,12 @@ public class ConversionReporter {
                 .reason(reason)
                 .build();
 
-        conversionResultsService.addLibraryResult(measureId, result);
+        conversionResultsService.addLibraryResult(measureId, result, matCqlId);
     }
 
 
     private void clearValueSetResults(ConversionType conversionType) {
         conversionResultsService.clearValueSetResults(measureId);
-        conversionResultsService.setValueSetConversionType(measureId, conversionType);
     }
 
     private void clearMeasureOrchestration() {
@@ -252,40 +275,40 @@ public class ConversionReporter {
     }
 
     private void clearCqlConversionResult(ConversionType conversionType) {
-        conversionResultsService.clearCqlConversionResult(measureId);
+        // conversionResultsService.clearCqlConversionResult(measureId);
         conversionResultsService.setCqlConversionResult(measureId, conversionType);
     }
 
-    private void addCqlConversionResultSuccess() {
-        conversionResultsService.addCqlConversionResultSuccess(measureId);
+    private void addCqlConversionResultSuccess(String matLibraryId) {
+        conversionResultsService.addCqlConversionResultSuccess(measureId, matLibraryId);
     }
 
-    private void addCqlConversionErrorMessage(String error) {
-        conversionResultsService.addCqlConversionErrorMessage(measureId, error);
+    private void addCqlConversionErrorMessage(String error, String matLibraryId) {
+        conversionResultsService.addCqlConversionErrorMessage(measureId, error, matLibraryId);
     }
 
-    private void addCql(String cql) {
-        conversionResultsService.addCql(measureId, cql);
+    private void addCql(String cql, String matLibraryId) {
+        conversionResultsService.addCql(measureId, cql, matLibraryId);
     }
 
-    private void addElm(String json) {
-        conversionResultsService.addElm(measureId, json);
+    private void addElm(String json, String matLibraryId) {
+        conversionResultsService.addElm(measureId, json, matLibraryId);
     }
 
-    private void addCqlConversionErrors(List<CqlConversionError> errors) {
-        conversionResultsService.addCqlConversionErrors(measureId, errors);
+    private void addCqlConversionErrors(List<CqlConversionError> errors, String matLibraryId) {
+        conversionResultsService.addCqlConversionErrors(measureId, errors, matLibraryId);
     }
 
-    private void addMatCqlConversionErrors(List<MatCqlConversionException> errors) {
-        conversionResultsService.addMatCqlConversionErrors(measureId, errors);
+    private void addMatCqlConversionErrors(List<MatCqlConversionException> errors, String matLibraryId) {
+        conversionResultsService.addMatCqlConversionErrors(measureId, errors, matLibraryId);
     }
 
     private void addFhirMeasureValidationResults(List<FhirValidationResult> list) {
         conversionResultsService.addFhirMeasureValidationResults(measureId, list);
     }
 
-    private void addFhirMeasureLibraryResults(List<FhirValidationResult> list) {
-        conversionResultsService.addLibraryValidationResults(measureId, list);
+    private void addFhirMeasureLibraryResults(List<FhirValidationResult> list, String matLibraryId) {
+        conversionResultsService.addLibraryValidationResults(measureId, list, matLibraryId);
     }
 
     private void addValueSetValidationResults(String oid, List<FhirValidationResult> list) {
@@ -302,6 +325,22 @@ public class ConversionReporter {
 
     private void addValueSetValidationLink(String oid, String link, String reason) {
         conversionResultsService.addValueSetValidationLink(measureId, oid, link, reason);
+    }
+
+    private void addLibraryValidationLink(String link, String reason, String matLibraryId) {
+        conversionResultsService.addLibraryValidationLink(measureId, link, reason, matLibraryId);
+    }
+
+    private void addLibraryValidationError(String reason, String matLibraryId) {
+        conversionResultsService.addLibraryValidationError(measureId, reason, matLibraryId);
+    }
+
+    private void addLibraryNotFoundInHapi(String matLibraryId) {
+        conversionResultsService.addLibraryNotFoundInHapi(measureId, matLibraryId);
+    }
+
+    private void saveConversionResultToMongo(ConversionResult conversionResult) {
+        conversionResultsService.save(conversionResult);
     }
 
     private ConversionResult findConversionResult() {

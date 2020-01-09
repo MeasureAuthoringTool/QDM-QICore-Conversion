@@ -59,7 +59,7 @@ public class ValueSetVsacVerifier {
             atomicSuccessFlag.set(false);
             ConversionReporter.setValueSetFailResult(oid, "Not Found in VSAC");
         } else {
-            ConversionReporter.setValueSetSuccessResult(oid);
+            ConversionReporter.setValueSetSuccessResult(oid, "Found in VSAC");
         }
     }
 }

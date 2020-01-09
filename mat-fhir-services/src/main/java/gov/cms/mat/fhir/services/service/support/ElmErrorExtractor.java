@@ -70,7 +70,7 @@ public class ElmErrorExtractor {
         JsonNode annotationNode = libraryNode.path("annotation");
 
         if (annotationNode.isMissingNode()) {
-            log.debug("Json Does not contain a annotation Node"); // if no error this is normal
+            log.trace("Json Does not contain a annotation Node"); // if no error this is normal
         }
 
         return annotationNode;

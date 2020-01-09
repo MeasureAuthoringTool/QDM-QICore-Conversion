@@ -1,7 +1,6 @@
 package gov.cms.mat.fhir.services.service;
 
 import ca.uhn.fhir.validation.ResultSeverityEnum;
-import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.fhir.ValueSetFhirValidationResults;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
@@ -9,7 +8,6 @@ import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.summary.FhirValueSetResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Service;
 
@@ -63,16 +61,18 @@ public class MeasureOrchestrationService {
 
     private boolean resultPass(FhirValueSetResourceValidationResult result) {
 
-        if (CollectionUtils.isEmpty(result.getFhirResourceValidationResults())) {
-            return true;
-        } else {
-            return result.getFhirResourceValidationResults()
-                    .stream()
-                    .filter(r -> r.getValidationErrorList().size() > 0)
-                    .map(FhirResourceValidationResult::getValidationErrorList)
-                    .flatMap(List::stream)
-                    .anyMatch(v -> checkSeverity(v.getSeverity()));
-        }
+//        if (CollectionUtils.isEmpty(result.getFhirResourceValidationResults())) {
+//            return true;
+//        } else {
+//            return result.getFhirResourceValidationResults()
+//                    .stream()
+//                    .filter(r -> r.getValidationErrorList().size() > 0)
+//                    .map(FhirResourceValidationResult::getValidationErrorList)
+//                    .flatMap(List::stream)
+//                    .anyMatch(v -> checkSeverity(v.getSeverity()));
+//        }
+
+        return true;
     }
 
     private boolean checkSeverity(String severity) {

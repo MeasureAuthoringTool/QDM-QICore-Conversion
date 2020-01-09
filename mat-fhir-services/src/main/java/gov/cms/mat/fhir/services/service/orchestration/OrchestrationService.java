@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
+import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
@@ -17,17 +18,19 @@ public class OrchestrationService {
     private final ConversionResultsService conversionResultsService;
     private final ValueSetOrchestrationValidationService valueSetOrchestrationValidationService;
     private final ValueSetOrchestrationConversionService valueSetOrchestrationConversionService;
-
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
+    private final LibraryOrchestrationConversionService libraryOrchestrationConversionService;
 
     public OrchestrationService(ConversionResultsService conversionResultsService,
                                 ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
                                 ValueSetOrchestrationConversionService valueSetOrchestrationConversionService,
-                                CQLLibraryTranslationService cqlLibraryTranslationService) {
+                                CQLLibraryTranslationService cqlLibraryTranslationService,
+                                LibraryOrchestrationConversionService libraryOrchestrationConversionService) {
         this.conversionResultsService = conversionResultsService;
         this.valueSetOrchestrationValidationService = valueSetOrchestrationValidationService;
         this.valueSetOrchestrationConversionService = valueSetOrchestrationConversionService;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
+        this.libraryOrchestrationConversionService = libraryOrchestrationConversionService;
     }
 
     public boolean process(OrchestrationProperties properties) {
@@ -35,6 +38,7 @@ public class OrchestrationService {
         ConversionReporter.resetOrchestration();
 
         processAndGetValueSets(properties);
+        processAndGetCqlLibraries(properties);
 
         if (!processValidation(properties)) {
             log.debug("Conversion Stopped due to validation errors measureId: {}", properties.getMeasureId());
@@ -44,12 +48,16 @@ public class OrchestrationService {
         }
     }
 
+    public void processAndGetCqlLibraries(OrchestrationProperties properties) {
+        List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesNotInHapi(properties);
+
+        properties.getCqlLibraries().addAll(cqlLibraries);
+    }
+
     public void processAndGetValueSets(OrchestrationProperties properties) {
-        List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSets(properties);
+        List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties);
 
-        List<ValueSet> valueSetsThatAreNotInHapi = valueSetOrchestrationConversionService.filterValueSets(valueSets);
-
-        properties.getValueSets().addAll(valueSetsThatAreNotInHapi);
+        properties.getValueSets().addAll(valueSets);
     }
 
     /* Should be called only when validation has succeeded */
@@ -89,7 +97,8 @@ public class OrchestrationService {
     }
 
     public boolean convert(OrchestrationProperties properties) {
-        return valueSetOrchestrationConversionService.convert(properties);
+        return valueSetOrchestrationConversionService.convert(properties) &&
+                libraryOrchestrationConversionService.convert(properties);
     }
 
 

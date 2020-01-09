@@ -2,7 +2,6 @@ package gov.cms.mat.fhir.services.components.fhir;
 
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
-import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
@@ -42,18 +41,8 @@ public class ValueSetFhirValidationResults implements FhirValidatorProcessor {
     public FhirValueSetResourceValidationResult generateResponse(List<ValueSet> valueSets, XmlSource xmlSource, String measureId) {
         FhirValueSetResourceValidationResult response = new FhirValueSetResourceValidationResult();
 
-        List<FhirResourceValidationResult> results = collectResults(valueSets, measureId);
-
-        response.setFhirResourceValidationResults(results);
-
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
-
-        ValueSetConversionResults valueSetConversionResults = conversionResult.getValueSetConversionResults();
-
-        response.setValueSetConversionType(valueSetConversionResults == null ? null :
-                valueSetConversionResults.getValueSetConversionType());
-        response.setValueSetResults(valueSetConversionResults == null ? null :
-                valueSetConversionResults.getValueSetResults());
+        response.setValueSetConversionResults(conversionResult.getValueSetConversionResults());
 
         response.setXmlSource(xmlSource);
 

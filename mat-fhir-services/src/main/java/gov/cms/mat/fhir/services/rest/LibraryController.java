@@ -20,6 +20,7 @@ import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.translate.LibraryMapper;
+import gov.cms.mat.fhir.services.translate.LibraryTranslator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -42,20 +43,24 @@ public class LibraryController implements FhirValidatorProcessor {
 
     private final MeasureDataService measureDataService;
     private final HapiFhirServer hapiFhirServer;
-    private final CqlLibraryDataService cqlLibraryRepo;
+    private final CqlLibraryDataService cqlLibraryDataService;
     private final CqlLibraryExportRepository cqlLibraryExportRepo;
     private final ConversionResultsService conversionResultsService;
 
+    private final LibraryMapper libraryMapper;
+
     public LibraryController(MeasureDataService measureDataService,
                              HapiFhirServer hapiFhirServer,
-                             CqlLibraryDataService cqlLibraryRepo,
+                             CqlLibraryDataService cqlLibraryDataService,
                              CqlLibraryExportRepository cqlLibraryExportRepo,
-                             ConversionResultsService conversionResultsService) {
+                             ConversionResultsService conversionResultsService,
+                             LibraryMapper libraryMapper) {
         this.measureDataService = measureDataService;
         this.hapiFhirServer = hapiFhirServer;
         this.cqlLibraryExportRepo = cqlLibraryExportRepo;
-        this.cqlLibraryRepo = cqlLibraryRepo;
+        this.cqlLibraryDataService = cqlLibraryDataService;
         this.conversionResultsService = conversionResultsService;
+        this.libraryMapper = libraryMapper;
     }
 
 
@@ -68,7 +73,7 @@ public class LibraryController implements FhirValidatorProcessor {
         ConversionReporter.resetLibrary(ConversionType.CONVERSION);
 
         try {
-            List<CqlLibrary> cqlLibs = cqlLibraryRepo.getCqlLibrariesByMeasureIdRequired(id);
+            List<CqlLibrary> cqlLibs = cqlLibraryDataService.getCqlLibrariesByMeasureIdRequired(id);
 
             for (CqlLibrary cqlLib : cqlLibs) {
                 Library fhirLibrary = translateLibrary(cqlLib);
@@ -98,7 +103,7 @@ public class LibraryController implements FhirValidatorProcessor {
     @PutMapping(path = "/validateLibraryByMeasureId")
     public List<FhirLibraryResourceValidationResult> validateLibraryByMeasureId(@RequestParam String id) {
         try {
-            List<CqlLibrary> cqlLibs = cqlLibraryRepo.getCqlLibrariesByMeasureIdRequired(id);
+            List<CqlLibrary> cqlLibs = cqlLibraryDataService.getCqlLibrariesByMeasureIdRequired(id);
 
             ConversionReporter.setInThreadLocal(id, conversionResultsService);
             ConversionReporter.resetLibrary(ConversionType.VALIDATION);
@@ -113,23 +118,21 @@ public class LibraryController implements FhirValidatorProcessor {
         }
     }
 
-    private FhirLibraryResourceValidationResult validate(CqlLibrary cqlLib) {
-        FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(cqlLib.getId());
-        response.setMeasureId(cqlLib.getMeasureId());
+    private FhirLibraryResourceValidationResult validate(CqlLibrary matCqlLibrary) {
+        FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(matCqlLibrary.getId());
+        response.setMeasureId(matCqlLibrary.getMeasureId());
 
-        Library fhirLibrary = translateLibrary(cqlLib);
+        Library fhirLibrary = translateLibrary(matCqlLibrary);
         validateResource(response, fhirLibrary, hapiFhirServer.getCtx());
 
         List<FhirValidationResult> list = buildResults(response);
-        ConversionReporter.setFhirLibraryValidationResults(list);
-
+        ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibrary.getId());
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
+        conversionResult.findOrCreateLibraryConversionResults(matCqlLibrary.getId());
 
-        if (conversionResult.getLibraryConversionResults() == null) {
-            response.setLibraryResults(conversionResult.getLibraryConversionResults().getLibraryResults());
-            response.setLibraryConversionType(conversionResult.getLibraryConversionResults().getLibraryConversionType());
-        }
+        response.setLibraryConversionResults(conversionResult.getLibraryConversionResults());
+        response.setLibraryConversionType(conversionResult.getConversionType());
 
         return response;
     }
@@ -139,8 +142,8 @@ public class LibraryController implements FhirValidatorProcessor {
         CqlLibraryExport cqlExp = cqlLibraryExportRepo.getCqlLibraryExportByCqlLibraryId(cqlLib.getId());
         byte[] cql = cqlExp.getCql();
         byte[] elm = cqlExp.getElm();
-        LibraryMapper fhirMapper = new LibraryMapper(cqlLib, cql, elm, hapiFhirServer.getBaseURL());
-        return fhirMapper.translateToFhir();
+        LibraryTranslator fhirMapperTranslator = new LibraryTranslator(cqlLib, cql, elm, hapiFhirServer.getBaseURL());
+        return fhirMapperTranslator.translateToFhir();
     }
 
     @Operation(summary = "Find a list of CQLSourceForTranslation.",
@@ -149,7 +152,7 @@ public class LibraryController implements FhirValidatorProcessor {
     public List<CQLSourceForTranslation> getLibrariesByMeasureId(@RequestParam String id) {
         List<CQLSourceForTranslation> res = new ArrayList<>();
         try {
-            List<CqlLibrary> libraries = cqlLibraryRepo.getCqlLibrariesByMeasureIdRequired(id);
+            List<CqlLibrary> libraries = cqlLibraryDataService.getCqlLibrariesByMeasureIdRequired(id);
 
             for (CqlLibrary lib : libraries) {
                 CQLSourceForTranslation dest = new CQLSourceForTranslation();
@@ -172,7 +175,7 @@ public class LibraryController implements FhirValidatorProcessor {
     public CQLSourceForTranslation getLibraryById(@RequestParam String id) {
         CQLSourceForTranslation dest = new CQLSourceForTranslation();
         try {
-            CqlLibrary lib = cqlLibraryRepo.getCqlLibraryById(id);
+            CqlLibrary lib = cqlLibraryDataService.getCqlLibraryById(id);
             dest.setId(lib.getId());
             dest.setMeasureId(lib.getMeasureId());
             dest.setCql(Base64.getEncoder().encodeToString(lib.getCqlXml().getBytes()));
@@ -190,7 +193,7 @@ public class LibraryController implements FhirValidatorProcessor {
     public CQLSourceForTranslation getLibraryByNameAndVersion(@RequestParam String cqlName, @RequestParam String version) {
         CQLSourceForTranslation dest = new CQLSourceForTranslation();
         try {
-            CqlLibrary lib = cqlLibraryRepo.getCqlLibraryByNameAndVersion(cqlName, new BigDecimal(version));
+            CqlLibrary lib = cqlLibraryDataService.getCqlLibraryByNameAndVersion(cqlName, new BigDecimal(version));
             dest.setId(lib.getId());
             dest.setMeasureId(lib.getMeasureId());
             dest.setCql(Base64.getEncoder().encodeToString(lib.getCqlXml().getBytes()));
@@ -245,6 +248,20 @@ public class LibraryController implements FhirValidatorProcessor {
         }
 
         return res;
+    }
+
+    @Operation(summary = "Count of persisted FHIR ValueSets.",
+            description = "The count of all the ValueSets in the HAPI FHIR Database.")
+    @GetMapping(path = "/count")
+    public int countValueSets() {
+        return libraryMapper.count();
+    }
+
+    @Operation(summary = "Delete all persisted FHIR L.",
+            description = "Delete all the ValueSets in the HAPI FHIR Database.")
+    @DeleteMapping(path = "/deleteAll")
+    public int deleteValueSets() {
+        return libraryMapper.deleteAll();
     }
 
     public void deleteLibrary(String cqlId) {

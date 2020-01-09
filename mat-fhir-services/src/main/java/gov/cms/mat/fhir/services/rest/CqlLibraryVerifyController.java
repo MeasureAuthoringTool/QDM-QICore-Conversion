@@ -2,7 +2,6 @@ package gov.cms.mat.fhir.services.rest;
 
 
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
-import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +39,7 @@ public class CqlLibraryVerifyController {
     @Transactional(readOnly = true)
     @PutMapping(path = "/translateOne")
     public ConversionResultDto translateOne(@RequestParam String measureId) {
-        cqlLibraryTranslationService.processOne(measureId, ConversionType.CONVERSION);
+        cqlLibraryTranslationService.processOne(measureId);
 
         return conversionResultProcessorService.process(measureId);
     }

@@ -11,14 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Measure;
-import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.r4.model.ValueSet;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Optional;
 
 import static gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator.SYSTEM_IDENTIFIER;
 
@@ -44,6 +42,16 @@ public class HapiFhirServer {
         hapiClient.registerInterceptor(createLoggingInterceptor());
 
         log.info("Created hapi client for server: {} ", baseURL);
+    }
+
+    public Optional<String> fetchHapiLink(String oid) {
+        Bundle bundle = isValueSetInHapi(oid);
+
+        if (bundle.hasEntry()) {
+            return Optional.of(bundle.getLink().get(0).getUrl());
+        } else {
+            return Optional.empty();
+        }
     }
 
     public Bundle createAndExecuteBundle(Resource resource) {
@@ -112,6 +120,14 @@ public class HapiFhirServer {
         return hapiClient.search()
                 .forResource(Measure.class)
                 .where(Measure.URL.matches().value(baseURL + "Measure/" + id))
+                .returnBundle(Bundle.class)
+                .execute();
+    }
+
+    public Bundle getLibrary(String id) {
+        return hapiClient.search()
+                .forResource(Library.class)
+                .where(Measure.URL.matches().value(baseURL + "Library/" + id))
                 .returnBundle(Bundle.class)
                 .execute();
     }

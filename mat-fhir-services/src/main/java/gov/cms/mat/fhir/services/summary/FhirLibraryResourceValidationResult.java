@@ -2,7 +2,7 @@ package gov.cms.mat.fhir.services.summary;
 
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
+import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class FhirLibraryResourceValidationResult extends FhirResourceValidationResult {
 
-    private List<FieldConversionResult> libraryResults = new ArrayList<>();
+    List<LibraryConversionResults> libraryConversionResults = new ArrayList<>();
     private ConversionType libraryConversionType;
 
     public FhirLibraryResourceValidationResult(String id) {
@@ -18,12 +18,12 @@ public class FhirLibraryResourceValidationResult extends FhirResourceValidationR
     }
 
     @XmlElement
-    public List<FieldConversionResult> getLibraryResults() {
-        return libraryResults;
+    public List<LibraryConversionResults> getLibraryConversionResults() {
+        return libraryConversionResults;
     }
 
-    public void setLibraryResults(List<FieldConversionResult> libraryResults) {
-        this.libraryResults = libraryResults;
+    public void setLibraryConversionResults(List<LibraryConversionResults> libraryConversionResults) {
+        this.libraryConversionResults = libraryConversionResults;
     }
 
     @XmlElement

@@ -5,7 +5,6 @@ import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +22,7 @@ public class ValueSetOrchestrationConversionService {
     }
 
     boolean convert(OrchestrationProperties properties) {
-        properties.getValueSets().forEach(this::processPersistToFhir);
+        properties.getValueSets().forEach(this::processPersisting);
 
         long errorCount = countValueSetResultErrors();
 
@@ -39,7 +38,6 @@ public class ValueSetOrchestrationConversionService {
     private long countValueSetResultErrors() {
         return ConversionReporter.getConversionResult()
                 .getValueSetConversionResults()
-                .getValueSetResults()
                 .stream()
                 .filter(t -> BooleanUtils.isFalse(t.getSuccess()))
                 .count();
@@ -52,10 +50,10 @@ public class ValueSetOrchestrationConversionService {
     }
 
     public boolean filterValueSet(ValueSet valueSet) {
-        Optional<String> optional = fetchHapiLink(valueSet.getId());
+        Optional<String> optional = hapiFhirServer.fetchHapiLink(valueSet.getId());
 
         if (optional.isPresent()) {
-            log.warn("Hapi valueSet exists for oid: {}", valueSet.getId());
+            log.info("Hapi valueSet exists for oid: {}", valueSet.getId());
             ConversionReporter.setValueSetsValidationLink(valueSet.getId(), optional.get(), "Exists");
             return false;
         } else {
@@ -64,18 +62,8 @@ public class ValueSetOrchestrationConversionService {
     }
 
 
-    public Optional<String> fetchHapiLink(String oid) {
-        Bundle bundle = hapiFhirServer.isValueSetInHapi(oid);
-
-        if (bundle.hasEntry()) {
-            return Optional.of(bundle.getLink().get(0).getUrl());
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    private void processPersistToFhir(ValueSet valueSet) {
-        Optional<String> optional = fetchHapiLink(valueSet.getId());
+    private void processPersisting(ValueSet valueSet) {
+        Optional<String> optional = hapiFhirServer.fetchHapiLink(valueSet.getId());
 
         if (optional.isPresent()) {
             log.info("ValueSet already in hapiFhir: {}", optional.get());

@@ -1,8 +1,7 @@
 package gov.cms.mat.fhir.services.summary;
 
-import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.rest.dto.ValueSetResult;
+import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -10,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FhirValueSetResourceValidationResult {
-    List<FhirResourceValidationResult> fhirResourceValidationResults = new ArrayList<>();
-    private List<ValueSetResult> valueSetResults = new ArrayList<>();
+    List<ValueSetConversionResults> valueSetConversionResults = new ArrayList<>();
+
     private ConversionType valueSetConversionType;
     private XmlSource xmlSource;
 
@@ -24,22 +23,14 @@ public class FhirValueSetResourceValidationResult {
         this.xmlSource = xmlSource;
     }
 
-    @XmlElement
-    public List<FhirResourceValidationResult> getFhirResourceValidationResults() {
-        return fhirResourceValidationResults;
-    }
-
-    public void setFhirResourceValidationResults(List<FhirResourceValidationResult> fhirResourceValidationResults) {
-        this.fhirResourceValidationResults = fhirResourceValidationResults;
-    }
 
     @XmlElement
-    public List<ValueSetResult> getValueSetResults() {
-        return valueSetResults;
+    public List<ValueSetConversionResults> getValueSetConversionResults() {
+        return valueSetConversionResults;
     }
 
-    public void setValueSetResults(List<ValueSetResult> valueSetResults) {
-        this.valueSetResults = valueSetResults;
+    public void setValueSetConversionResults(List<ValueSetConversionResults> valueSetConversionResults) {
+        this.valueSetConversionResults = valueSetConversionResults;
     }
 
     @XmlElement

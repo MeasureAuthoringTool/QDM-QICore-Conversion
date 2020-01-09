@@ -1,9 +1,6 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
-import ca.uhn.fhir.validation.ResultSeverityEnum;
-import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
-import gov.cms.mat.fhir.rest.dto.ValueSetResult;
-import gov.cms.mat.fhir.rest.dto.ValueSetValidationResult;
+import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.fhir.ValueSetFhirValidationResults;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @Slf4j
@@ -39,69 +37,68 @@ class ValueSetOrchestrationValidationService implements ErrorSeverityChecker {
         ConversionResult conversionResult = ConversionReporter.getConversionResult(); //Must be set up prior
 
         boolean noMissingDataSets =
-                processMissingValueSets(conversionResult.getValueSetConversionResults().getValueSetResults());
+                processMissingValueSets(conversionResult.getValueSetConversionResults(), properties.getMeasureId());
 
         boolean result =
-                noMissingDataSets && resultPass(conversionResult.getValueSetConversionResults().getValueSetFhirValidationResults());
+                noMissingDataSets && resultPass(conversionResult.getValueSetConversionResults());
 
         log.info("ValueSet validation results for measure:{}, passed: {}", properties.getMeasureId(), result);
 
         return result;
     }
 
-    public List<ValueSet> getValueSets(OrchestrationProperties properties) {
+    public List<ValueSet> getValueSetsNotInHapi(OrchestrationProperties properties) {
+        // will throw ValueSetConversionException if none found in DB, then filters if not in hapi
         return valueSetService.findValueSetsByMeasure(properties);
     }
 
-    private boolean processMissingValueSets(List<ValueSetResult> valueSetResults) {
-        if (CollectionUtils.isEmpty(valueSetResults)) {
-            log.warn("No value set results");
+    private boolean processMissingValueSets(List<ValueSetConversionResults> valueSetConversionResults, String measureId) {
+        if (CollectionUtils.isEmpty(valueSetConversionResults)) {
+            log.warn("No valueSetConversionResults results");
             return false;
         } else {
-            AtomicBoolean noErrors = new AtomicBoolean(true);
+            AtomicInteger errorCount = new AtomicInteger();
 
-            valueSetResults.stream()
-                    .filter(v -> haveError(v, noErrors))
-                    .forEach(this::processMissingValueSet);
+            valueSetConversionResults.forEach(v -> haveError(v.getSuccess(), errorCount));
 
-            log.info("No Errors processing value sets: {}", noErrors.get());
+            log.info("Measure: {} contains {} errors", measureId, errorCount.get());
 
-            return noErrors.get();
+            return errorCount.get() == 0;
         }
     }
 
-    private boolean haveError(ValueSetResult valueSetResult, AtomicBoolean noErrors) {
-        if (BooleanUtils.isTrue(valueSetResult.getSuccess())) {
+    private boolean haveError(Boolean success, AtomicInteger errorCount) {
+        if (BooleanUtils.isTrue(success)) {
             return false;
         } else {
-            noErrors.set(false);
+            errorCount.incrementAndGet();
             return true;
         }
     }
 
-    private void processMissingValueSet(ValueSetResult valueSetResult) {
-        FhirValidationResult fhirValidationResult = FhirValidationResult.builder()
-                .severity(ResultSeverityEnum.FATAL.name())
-                .errorDescription(valueSetResult.getReason())
-                .locationField("ValueSet")
-                .build();
 
-        ConversionReporter.setValueSetsValidationResult(valueSetResult.getOid(), fhirValidationResult);
-    }
-
-    private boolean resultPass(List<ValueSetValidationResult> valueSetFhirValidationErrors) {
-        if (CollectionUtils.isEmpty(valueSetFhirValidationErrors)) {
+    private boolean resultPass(List<ValueSetConversionResults> valueSetConversionResults) {
+        if (CollectionUtils.isEmpty(valueSetConversionResults)) {
             return true;
         } else {
-            boolean haveErrorsOrHigher = valueSetFhirValidationErrors.stream()
-                    .filter(r -> !r.getValueSetFhirValidationResults().isEmpty())
-                    .map(ValueSetValidationResult::getValueSetFhirValidationResults)
-                    .flatMap(List::stream)
-                    .anyMatch(v -> checkSeverity(v.getSeverity()));
+            AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
+            valueSetConversionResults.forEach(v -> isValid(v, atomicBoolean));
 
-            log.info("FhirValidationErrors ValueSets resultPass: {}", !haveErrorsOrHigher);
+            log.info("FhirValidationErrors ValueSets resultPass: {}", atomicBoolean.get());
 
-            return !haveErrorsOrHigher; // Since we have ZERO errors flip the bit, we PASSED
+            return atomicBoolean.get();
+        }
+    }
+
+    private void isValid(ValueSetConversionResults v, AtomicBoolean atomicBoolean) {
+        boolean haveErrorsOrHigher = v.getValueSetFhirValidationResults().stream().anyMatch(vv2 -> checkSeverity(vv2.getSeverity()));
+
+        if (haveErrorsOrHigher) {
+            atomicBoolean.set(false);
+        } else {
+            if (BooleanUtils.isFalse(v.getSuccess())) {
+                atomicBoolean.set(false);
+            }
         }
     }
 }

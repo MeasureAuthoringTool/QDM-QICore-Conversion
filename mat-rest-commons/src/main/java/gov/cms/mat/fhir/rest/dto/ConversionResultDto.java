@@ -5,18 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConversionResultDto {
-    private String measureId;
-    private String modified;
+    String measureId;
+    String modified;
 
-    private ValueSetConversionResults valueSetConversionResults;
+    List<ValueSetConversionResults> valueSetConversionResults;
 
-    private MeasureConversionResults measureConversionResults;
+    MeasureConversionResults measureConversionResults;
 
-    private LibraryConversionResults libraryConversionResults;
+    List<LibraryConversionResults> libraryConversionResults;
 }
 

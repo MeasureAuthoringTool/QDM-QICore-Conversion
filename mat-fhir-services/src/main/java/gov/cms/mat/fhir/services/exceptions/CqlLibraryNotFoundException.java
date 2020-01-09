@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.exceptions;
 
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ public class CqlLibraryNotFoundException extends RuntimeException {
     public CqlLibraryNotFoundException(String measureId) {
         super(String.format(NOT_FOUND_BY_MEASURE_ID, measureId));
         log.warn(getMessage());
+        ConversionReporter.setErrorMessage(getMessage());
     }
 
     public CqlLibraryNotFoundException(String message, String id) {

@@ -1,15 +1,26 @@
 package gov.cms.mat.fhir.rest.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ValueSetConversionResults {
-    private List<ValueSetResult> valueSetResults = new ArrayList<>();
-    private ConversionType valueSetConversionType;
-    private List<ValueSetValidationResult> valueSetFhirValidationResults = new ArrayList<>();
+    String oid;
+    String reason;
+    Boolean success;
+    String link;
+    //private List<ValueSetResult> valueSetResults = new ArrayList<>();
+    // private ConversionType valueSetConversionType;
+    //private List<ValueSetValidationResult> valueSetFhirValidationResults = new ArrayList<>();
+    List<FhirValidationResult> valueSetFhirValidationResults = new ArrayList<>();
+
+    public ValueSetConversionResults(String oid) {
+        this.oid = oid;
+    }
 }

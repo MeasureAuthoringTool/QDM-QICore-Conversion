@@ -13,6 +13,4 @@ public class FieldConversionResult {
     String field;
     String destination;
     String reason;
-
-
 }

@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
-import gov.cms.mat.fhir.rest.dto.ValueSetResult;
+import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -50,15 +50,15 @@ public class ConversionResultProcessorService {
         return conversionResultsService.findAll()
                 .stream()
                 .filter(this::hasData)
-                .map(c -> c.getValueSetConversionResults().getValueSetResults())
+                .map(ConversionResult::getValueSetConversionResults)
                 .flatMap(List::stream)
                 .filter(v -> !v.getSuccess())
-                .map(ValueSetResult::getOid)
+                .map(ValueSetConversionResults::getOid)
                 .collect(Collectors.toSet());
     }
 
     private boolean hasData(ConversionResult c) {
         return c.getValueSetConversionResults() != null &&
-                CollectionUtils.isNotEmpty(c.getValueSetConversionResults().getValueSetResults());
+                CollectionUtils.isNotEmpty(c.getValueSetConversionResults());
     }
 }
