@@ -172,8 +172,16 @@
         </numeratorDescription>
         <finalizedDate value="201906301819-0500"/>
     </measureDetails>
-    <supplementalDataElements/>
-    <riskAdjustmentVariables/>
+    <supplementalDataElements>
+        <cqldefinition displayName="Diagnoses Start During Encounters" uuid="b1a1a3c0-dabc-4271-9703-66e30691df41"/>
+        <cqldefinition displayName="SDE Ethnicity" uuid="199a49cd-6244-4dc8-9362-a7cd3d5ae450"/>
+        <cqldefinition displayName="SDE Payer" uuid="9c3a6e60-6a34-4d07-9ad0-870aa4b75344"/>
+        <cqldefinition displayName="SDE Race" uuid="957c5517-308b-43a8-984a-8485a8c7eb3f"/>
+        <cqldefinition displayName="SDE Sex" uuid="0a253ad0-4ce1-4782-953c-ca9a48c052f5"/>
+    </supplementalDataElements>
+    <riskAdjustmentVariables>
+        <cqldefinition displayName="Treatments" uuid="670a2a69-419d-431b-ae46-52d9f7217206"/>
+    </riskAdjustmentVariables>
     <measureGrouping>
         <group sequence="1">
             <clause displayName="Initial Population 1" isInGrouping="true" type="initialPopulation"

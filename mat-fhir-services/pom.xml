@@ -5,15 +5,16 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.0.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.2.2.RELEASE</version>
+        <relativePath/>
     </parent>
 
     <groupId>gov.cms.mat</groupId>
     <artifactId>mat-fhir-services</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mat-fhir-services</name>
-    <description>Spring Boot MAT FHIR JAXRS endpoint</description>
+    <packaging>jar</packaging>
+    <description>Spring Boot MAT FHIR conversion services</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -66,19 +67,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-jaxrs</artifactId>
-            <version>1.5.23</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>swagger-ui</artifactId>
-            <version>3.23.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.socraticgrid</groupId>
-            <artifactId>config-utils</artifactId>
-            <version>1.0.4</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.2.22</version>
         </dependency>
 
         <dependency>
@@ -123,7 +114,22 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-validation-resources-r4</artifactId>
+            <version>3.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-validation</artifactId>
+            <version>3.7.0</version>
+        </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mat-rest-commons</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -134,5 +140,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

@@ -26,6 +26,8 @@ public class VsacConfig {
     private boolean useCache; // By saving the data will speed things up for testing.
     private String cacheDirectory;
 
+    private boolean useCacheOnly = true; // Will only look in cache.
+
     private VsacRestClient vsacRestClient;
 
     @PostConstruct

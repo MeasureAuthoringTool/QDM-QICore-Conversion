@@ -36,7 +36,8 @@ public class FhirQdmMappingData {
     @PostConstruct
     void postConstruct() {
         conversionData = restTemplate.getForObject(url, ConversionData.class);
-        log.info("Received {} records from the spreadsheet's JSON", conversionData.feed.getEntry().size());
+        log.info("Received {} records from the spreadsheet's JSON, URL: {}",
+                conversionData.feed.getEntry().size(), url);
     }
 
     public List<ConversionEntry> getAll() {

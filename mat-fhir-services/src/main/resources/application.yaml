@@ -1,25 +1,12 @@
 server:
   port: 9080
 
-spring:
-  datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC
-    username: mat
-    password: mat
-  jpa:
-    hibernate.ddl-auto: none
-    generate-ddl: false
-    show-sql: false
-  data:
-    mongodb:
-      database: mat_conversion_results
-      uri: mongodb://localhost
 
-logging:
-  level:
-    root: INFO
-    gov.cms.mat: DEBUG
+spring:
+  profiles:
+    active: local
+  jpa:
+    open-in-view: false
 
 vsac-client:
   server: https://vsac.nlm.nih.gov/vsac/ws/Ticket
@@ -31,6 +18,7 @@ vsac-client:
   use-cache: true
   cache-directory: /opt/vsac/cache
 
-fhir:
-  r4:
-    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+measures:
+  allowed:
+    versions: v5.5,v5.6,v5.7,v5.8
+

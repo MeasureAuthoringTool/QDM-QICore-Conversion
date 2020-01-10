@@ -12,6 +12,7 @@ such as NLMs VSAC to gather valueSets needed for measure evaluation.
 5.  Hapi-Fhir Jpaserver deployed in Tomcat and accessible locally or remotely.  You can clone and build HAPI-FHIR JPAServer at
 https://github.com/MeasureAuthoringTool/mat-fhir-jpaserver/tree/HapiFhir3.7-R4/hapi-fhir-jpaserver-starter.  Follow the instructions 
 in the README.md file.
+6.  MongoDB version 3.4.23 or greater.
 
 ## Setting Up Your Local Development and Test Environment
 1.  Checkout this project
@@ -35,28 +36,20 @@ or to skip testing
 $ mvn clean install -DskipTests
 ```
 
-## Configuring Your Environment
-1. Using vi, your IDE, or some other editor modify the project configuration file 'application.yaml'.
+## Configure for Running as Micro-service Locally
+1. Using vi, your IDE, or some other editor modify the mat-fhir-services project 'application.yaml' and 'application-local.yaml files they can be found QDM-QICore-Conversion/mat-fhir-services/src/main/resources.
 
+application.yaml - `Note:` profile is configured for local
 ```
 server:
   port: 9080
 
-spring:
-  datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC
-    username: mat
-    password: mat
-  jpa:
-    hibernate.ddl-auto: none
-    generate-ddl: false
-    show-sql: false
 
-logging:
-  level:
-    root: INFO
-    gov.cms.mat: DEBUG
+spring:
+  profiles:
+    active: local
+  jpa:
+    open-in-view: false
 
 vsac-client:
   server: https://vsac.nlm.nih.gov/vsac/ws/Ticket
@@ -68,14 +61,74 @@ vsac-client:
   use-cache: true
   cache-directory: /opt/vsac/cache
 
+measures:
+  allowed:
+    versions: v5.5,v5.6,v5.7,v5.8
+```
+
+application-local.yaml
+```
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
+    username: mat
+    password: mat
+  jpa:
+    hibernate.ddl-auto: none
+    generate-ddl: false
+    show-sql: false
+  data:
+    mongodb:
+      database: mat_conversion_results
+      uri: mongodb://localhost
+
+logging:
+  level:
+    root: INFO
+    gov.cms.mat: DEBUG
+    org.hl7.fhir.r4.hapi.ctx: WARN
+    org.exolab: WARN
+
 fhir:
   r4:
     baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+
+qdmqicore:
+  conversion:
+    baseurl: http://localhost:9090
+
+cql:
+  conversion:
+    baseurl: http://localhost:7070
 ```
 
 Note:  You will most likely only need to change the datasource username and password.
 
 2. Save your changes.
+
+3. Update cql-elm-translation project application.yaml and application-local.yaml files which can be found at
+QDM-QICore-Conversion/cql-elm-translation/src/main/resources directory
+
+application.yaml - Note: the profile is set to local
+```
+server:
+  port: 7070
+
+spring:
+  profiles:
+    active: local
+```
+
+application-local.yaml
+```
+fhir:
+  conversion:
+    baseurl: http://localhost:9080
+```
+
+4. Save you changes.
+
 
 3. Update your .bash_profile file to include
 
@@ -88,73 +141,240 @@ export VSAC_PASS={password}
 
 6. Build the project again after theses changes.
 
+## Configure for Running in Tomcat Locally
+1. Using vi, your IDE, or some other editor modify the mat-fhir-services project 'application.yaml' and 'application-tomcat-local.yaml files they can be found QDM-QICore-Conversion/mat-fhir-services/src/main/resources.
 
-## Running the project
+application.yaml - `Note:` profile is configured for tomcat-local
+```
+server:
+  port: 9080
+
+
+spring:
+  profiles:
+    active: tomcat-local
+  jpa:
+    open-in-view: false
+
+vsac-client:
+  server: https://vsac.nlm.nih.gov/vsac/ws/Ticket
+  service: http://umlsks.nlm.nih.gov
+  retrieve-multi-oids-service: https://vsac.nlm.nih.gov/vsac/svs/RetrieveMultipleValueSets?
+  profile-service: https://vsac.nlm.nih.gov/vsac/profiles
+  version-service: https://vsac.nlm.nih.gov/vsac/oid/
+  vsac-server-drc-url: https://vsac.nlm.nih.gov/vsac
+  use-cache: true
+  cache-directory: /opt/vsac/cache
+
+measures:
+  allowed:
+    versions: v5.5,v5.6,v5.7,v5.8
+```
+
+application-tomcat-local.yaml
+```
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
+    username: mat
+    password: mat
+  jpa:
+    hibernate.ddl-auto: none
+    generate-ddl: false
+    show-sql: false
+  data:
+    mongodb:
+      database: mat_conversion_results
+      uri: mongodb://localhost
+
+logging:
+  level:
+    root: INFO
+    gov.cms.mat: DEBUG
+    org.hl7.fhir.r4.hapi.ctx: WARN
+    org.exolab: WARN
+
+fhir:
+  r4:
+    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+
+qdmqicore:
+  conversion:
+    baseurl: http://localhost:8080/qdm-qicore-mapping-services-0.0.1-SNAPSHOT/
+
+cql:
+  conversion:
+    baseurl: http://localhost:8080/cql-elm-translation-0.0.1-SNAPSHOT/
+```
+
+Note:  You will most likely only need to change the datasource username and password.
+
+2. Save your changes.
+
+3. Update cql-elm-translation project application.yaml and application-tomcat-local.yaml files which can be found at
+QDM-QICore-Conversion/cql-elm-translation/src/main/resources directory
+
+application.yaml - Note: the profile is set to tomcat-local
+```
+server:
+  port: 7070
+
+spring:
+  profiles:
+    active: tomcat-local
+```
+
+application-tomcat-local.yaml
+```
+fhir:
+  conversion:
+    baseurl: http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/
+```
+
+4. Save you changes.
+
+
+3. Update your .bash_profile file to include
+
+```
+export VSAC_USER={username}
+export VSAC_PASS={password}
+```
+You will need to restart tomcat so it see's these values.
+
+5. Determine if you have write permissions to /opt directory, if not create the vsac cache directory /opt/vsac/cache
+
+6. Build the project again after theses changes.
+
+## Creating Profiles for Other environments.
+You can create profiles for varying deployment scenarios, tomcat-dev, tomcat-qa tomcat-prod, or microservice-dev, etc by sourcing the existing examples in the mat-fhir-services and cql-elm-translation projects.  The profile file must begin with `application` and use the separator `-`, example `application-tomcat-dev.yaml` would describe the tomcat-dev profile.  You then must set the profile in the application.yaml file.  
+```
+spring:
+  profiles:
+    active: tomcat-dev
+```
+Rebuild the project.
+
+## Deployment Considerations
+These microservices are not intended to be publically exposed on internet, they are used (consumed) by CMS MAT and in future Bonnie applications.  For testing purpose only `mat-fhir-services` should be exposed, but not in pre-production or production deployments.  Some things to consider,
+1.  These services should be co-located on same host or vm, `mat-fhir-services` will call `qdm-qicore-mapping-services` and `cql-elm-translation` services.
+2.  mongodb should be deployed on same host or vm.
+3.  Can be co-located with HAPI-FHIR resource server.
+4.  MAT and MAT mysql database does not need to be co-located on same host or vm.
+5.  HAPI-FHIR resource server mysql database does not need to be co-located on same host or vm.
+
+## Running the project Locally As Micro-Service
+Note: Both mat-fhir-services and cql-elm-translation project profiles should built with  be `profile` set to `local`.
 1.  Navigate to the MAT-FHIR-Services directory
 
 ```
 $ cd QDM-QICore-Conversion/mat-fhir-services
 ```
 
-2. Launch the application
+2. Launch the micro service
+
+```
+$ mvn spring-boot:run 
+```
+
+3. Navigate to the QDM-QICORE-Mapping-Services directory
+
+```
+$ cd ../qdm-qicore-mapping-services
+```
+
+4. Launch the micro service
 
 ```
 $ mvn spring-boot:run
 ```
 
-## Converting to FHIR
+5. Navigate to CQL-ELM-Translation directory
+```
+$ cd ../cql-elm-translation
+```
 
-### Measure Operations
-Measure operations are constrained by the measure's QDM release version, **5.5 thru 5.8**, and the presence of **SIMPLE_XML** within the MEASURE_EXPORT table.
+6. Launch the micro service
+```
+$ mvn spring-boot:run
+```
 
-Translate All Measure - Translates all applicable measures.
+## Deploying and Running Inside Tomcat
+Note: Both mat-fhir-services and cql-elm-translation project profiles should built with  be `profile` set to `tomcat-local`.
 
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllMeasures
+1. Copy the the following project war files to  <tomcat-installation>/webapps directory for autodeployment
+  
+  QDM-QICore-Conversion/mat-fhir-services/target/mat-fhir-services-0.0.1-SNAPSHOT.war
+  
+  QDM-QICore-Conversion/qdm-qicore-mapping-services/target/qdm-qicore-mapping-services-0.0.1-SNAPSHOT.war
+  
+  QDM-QICore-Conversion/cql-elm-translation/target/cql-elm-translation-0.0.1-SNAPSHOT.war
 
-Translate All Measures Based on Measure Status - Translates all measure with a specific status.
+## Viewing API and Testing Via Swagger During Development
+Swagger provides a mechanism to view(and test) available service endpoints, their input criteria, and results.  You can
+access this at;
 
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateMeasuresByStatus?measureStatus={measure_status}  
-Currently MAT stores measure status as "In Progress" or "Complete".
+When running as micro-service,
+```
+http://localhost:9080/swagger-ui.html
+```
+When running in Tomcat container,
+```
+http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/swagger-ui/index.html?url=/mat-fhir-services-0.0.1-SNAPSHOT/v3/api-docs&validatorUrl=
+```
 
-Translate A Single Measure - Translates a specific measure based on it's MAT UUID.
 
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateMeasure?id={uuid}
+## FHIR Validation of Measure
 
-Delete All Measures - Deletes all measures.
+Request URL example
 
-Method: **DELETE** Endpoint: http://localhost:9080/qdmtofhir/removeAllMeasures
+When running as micro-service
+```
+http://localhost:9080/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=VALIDATION&xmlSource=MEASURE
+```
+When running in Tomcat container,
+```
+http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=VALIDATION&xmlSource=MEASURE
+```
 
-**NOTE:** This operation is used for development and demonstration purposes.
 
-### ValueSet Operations
-ValueSet operations are constrained by the measure's QDM release version, **5.5 thru 5.8**.
+Note: You may also access the Orchestration-Controller API using swagger at http://localhost:9080/swagger-ui.html.
 
-Translate All ValueSets:  Translate all applicable valueSets.
+![FHIR validation flow](https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion/blob/develop/FHIR%20Validation.png)
 
-Method: **GET** Endpoint: http://localhost:9080/valueSet/translateAll
+## FHIR Validation and Conversion of Measure
 
-Count All ValueSets:  Return count of all FHIR valueSet resources.
+Request URL example
 
-Method: **GET** Endpoint: http://localhost:9080/valueSet/count
+When running as micro-service
+```
+http://localhost:9080/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=CONVERSION&xmlSource=MEASURE
+```
+When running in Tomcat container,
+```
+http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=CONVERSION&xmlSource=MEASURE
+```
 
-Delete All ValueSets: Removes all valueSet resources.
+Note: You may also access the Orchestration-Controller API using swagger at http://localhost:9080/swagger-ui.html.
 
-Method: **DELETE** Endpoint: http://localhost:9080/valueSet/deleteAll.
+![FHIR validation and conversion flow](https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion/blob/develop/FHIR%20Validation%20and%20Conversion.png)
 
-**NOTE:** This operation is used for development and demonstration purposes.
+## Accessing Validation and Conversion Error Reports
 
-### Library Operations
-Creates FHIR Library resource from the Mat CQL_EXPORT table.  It is constrained by measures QDM release version **5.5 thru 5.8**.
+Request URL example
 
-Translate All Libraries:  Translates all applicable libraries to FHIR Resource.
+When running as micro-service
+```
+http://localhost:9080/report/find?measureId=40280382649c54c30164d76256dd11dc
+```
+When running in Tomcat container,
+```
+http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/report/find?measureId=40280382649c54c30164d76256dd11dc
+```
 
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/translateAllLibraries.
+Note: You may also access the TranslationReport-Controller API using swagger at http://localhost:9080/swagger-ui.html.
 
-Delete All Libraries:  Deletes all loaded FHIR Library resources.
-
-Method: **GET** Endpoint: http://localhost:9080/qdmtofhir/removeAllLibraries
-
-**Note:** This operation is used for development and demonstration purposes.  Library rows can be very large and may require you to increase the "max_allowed_packet" global variable in MySQL.  Ex.  SET GLOBAL max_allowed_packet=20971520.
 
 ## Searching for FHIR Resources - Some Basics
 The HAPI-FHIR UI, http://localhost:8080/hapi-fhir-jpaserver/ will provide you with examples of how it is querying the system.  For additional information refer to documentation at https://hapifhir.io.

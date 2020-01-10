@@ -63,7 +63,7 @@ public class CqlLibrary implements Serializable {
     private Date lockedOutDate;
     @Lob
     @Column(name = "CQL_XML")
-    private byte[] cqlXml;
+    private String cqlXml;
     @Column(name = "REVISION_NUMBER")
     private Integer revisionNumber;
     @Basic(optional = false)
@@ -185,11 +185,11 @@ public class CqlLibrary implements Serializable {
     }
 
     @XmlElement
-    public byte[] getCqlXml() {
+    public String getCqlXml() {
         return cqlXml;
     }
 
-    public void setCqlXml(byte[] cqlXml) {
+    public void setCqlXml(String cqlXml) {
         this.cqlXml = cqlXml;
     }
 

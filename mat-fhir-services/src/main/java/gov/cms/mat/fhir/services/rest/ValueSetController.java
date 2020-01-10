@@ -1,79 +1,76 @@
 package gov.cms.mat.fhir.services.rest;
 
-import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
-import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
-import gov.cms.mat.fhir.services.translate.ValueSetMapper;
+import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.fhir.ValueSetFhirValidationResults;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
+import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
+import gov.cms.mat.fhir.services.service.ValueSetService;
+import gov.cms.mat.fhir.services.summary.FhirValueSetResourceValidationResult;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/valueSet")
+@Tag(name = "ValueSet-Controller", description = "API for converting MAT ValueSets to FHIR.")
 @Slf4j
-public class ValueSetController {
-    private static final ThreadLocal<ConversionReporter> threadLocal = new ThreadLocal<>();
+public class ValueSetController implements FhirValidatorProcessor {
+    private final ValueSetService valueSetService;
+    private final ValueSetFhirValidationResults valueSetFhirValidationResults;
 
-
-    private static final List<String> ALLOWED_VERSIONS = Arrays.asList("v5.5", "v5.6", "v5.7", "v5.8");
-    private static final String TRANSLATE_SUCCESS_MESSAGE = "Read %d Measure Export objects converted %d Value sets to fhir in %d seconds";
-
-    private final MeasureExportRepository measureExportRepository;
-    private final ValueSetMapper valueSetMapper;
-    private final ConversionResultsService conversionResultsService;
-
-    public ValueSetController(MeasureExportRepository measureExportRepository, ValueSetMapper valueSetMapper, ConversionResultsService conversionResultsService) {
-        this.measureExportRepository = measureExportRepository;
-        this.valueSetMapper = valueSetMapper;
-        this.conversionResultsService = conversionResultsService;
+    public ValueSetController(ValueSetService valueSetService,
+                              ValueSetFhirValidationResults valueSetFhirValidationResults) {
+        this.valueSetService = valueSetService;
+        this.valueSetFhirValidationResults = valueSetFhirValidationResults;
     }
 
+    @Operation(summary = "Translate all ValueSets in MAT to FHIR.",
+            description = "Translate all the ValueSets in the MAT Database and persist to the HAPI FHIR Database.")
     @Transactional(readOnly = true)
-    @GetMapping(path = "/translateAll")
-    public TranslationOutcome translateAll() {
-        Instant startTime = Instant.now();
-        int startCount = valueSetMapper.count();
+    @PutMapping(path = "/translateAll")
+    public TranslationOutcome translateAll(
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
+            @RequestParam(required = false, defaultValue = "CONVERSION") ConversionType conversionType) {
+        String successMessage = valueSetService.translateAll(xmlSource, conversionType);
 
-        int measureExportCount = processMeasureExport();
-
-        int finishCount = valueSetMapper.count();
-        long duration = Duration.between(startTime, Instant.now()).toMillis() / 1000;
-        String successMessage =
-                String.format(TRANSLATE_SUCCESS_MESSAGE, measureExportCount, finishCount - startCount, duration);
         log.info(successMessage);
 
         return createOutcome(successMessage);
     }
 
-    private int processMeasureExport() {
-        List<ValueSet> outcomes = new ArrayList<>();
+    @Operation(summary = "Validate ValueSet conversion MAT to FHIR.",
+            description = "Validate ValueSet conversion MAT to FHIR of all the ValueSets that are contained in the " +
+                    "measure indicated by measureId.")
+    @Transactional(readOnly = true)
+    @PutMapping(path = "/validate")
+    public FhirValueSetResourceValidationResult validate(
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
+            @RequestParam String measureId) {
 
-        List<MeasureVersionExportId> idsAndVersion = measureExportRepository.getAllExportIdsAndVersion(ALLOWED_VERSIONS);
-        int measureExportCount = idsAndVersion.size();
+        List<ValueSet> valueSets =
+                valueSetService.findValueSetsByMeasureId(xmlSource, measureId, ConversionType.VALIDATION);
 
-        idsAndVersion.stream()
-                .map(mv -> measureExportRepository.findById(mv.getId()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .forEach(me -> translate(me, outcomes));
+        return valueSetFhirValidationResults.generate(valueSets, xmlSource, measureId);
+    }
 
-        ConversionReporter.removeInThreadLocal();
+    @Operation(summary = "Count of persisted FHIR ValueSets.",
+            description = "The count of all the ValueSets in the HAPI FHIR Database.")
+    @GetMapping(path = "/count")
+    public int countValueSets() {
+        return valueSetService.count();
+    }
 
-        return measureExportCount;
+    @Operation(summary = "Delete all persisted FHIR ValueSets.",
+            description = "Delete all the ValueSets in the HAPI FHIR Database.")
+    @DeleteMapping(path = "/deleteAll")
+    public int deleteValueSets() {
+        return valueSetService.deleteAll();
     }
 
     private TranslationOutcome createOutcome(String successMessage) {
@@ -81,28 +78,5 @@ public class ValueSetController {
         res.setMessage(successMessage);
         res.setSuccessful(true);
         return res;
-    }
-
-    @GetMapping(path = "/count")
-    public int countValueSets() {
-        return valueSetMapper.count();
-    }
-
-    @DeleteMapping(path = "/deleteAll")
-    public int deleteValueSets() {
-        return valueSetMapper.deleteAll();
-    }
-
-    private void translate(MeasureExport measureExport, List<ValueSet> outcomes) {
-
-        if (outcomes.size() > 100) {
-            return;
-        }
-
-        ConversionReporter.setInThreadLocal(measureExport.getMeasureId(), conversionResultsService);
-        ConversionReporter.resetValueSetResults();
-
-        List<ValueSet> valueSets = valueSetMapper.translateToFhir(new String(measureExport.getSimpleXml()));
-        outcomes.addAll(valueSets);
     }
 }

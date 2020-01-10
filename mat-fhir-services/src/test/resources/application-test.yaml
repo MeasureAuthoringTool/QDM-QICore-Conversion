@@ -1,3 +1,6 @@
+server:
+  port: 9999
+
 spring:
   datasource:
     url: jdbc:h2:mem:MAT_APP_BLANK;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL
@@ -32,4 +35,12 @@ vsac-client:
 
 fhir:
   r4:
-    baseurl: http://localhost:8080/cqf-ruler-r4/
+    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+
+qdmqicore:
+  conversion:
+    baseurl: http://localhost:9090
+
+cql:
+  conversion:
+    baseurl: http://localhost:7070

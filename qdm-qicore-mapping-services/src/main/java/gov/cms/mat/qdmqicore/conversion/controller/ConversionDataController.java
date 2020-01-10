@@ -1,10 +1,12 @@
 package gov.cms.mat.qdmqicore.conversion.controller;
 
-
 import gov.cms.mat.qdmqicore.conversion.data.SearchData;
 import gov.cms.mat.qdmqicore.conversion.dto.ConversionMapping;
+import gov.cms.mat.qdmqicore.conversion.exceptions.ConversionMappingDataError;
+import gov.cms.mat.qdmqicore.conversion.exceptions.ConversionMappingNotFound;
 import gov.cms.mat.qdmqicore.conversion.service.ConversionDataService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,5 +46,41 @@ public class ConversionDataController {
                 .build();
 
         return conversionDataService.find(searchData);
+    }
+
+    @GetMapping(path = "/findOne")
+    public ConversionMapping findOne(@RequestParam String matAttributeName,
+                                     @RequestParam String matDataTypeDescription) {
+        SearchData searchData = SearchData.builder()
+                .matAttributeName(matAttributeName)
+                .matDataTypeDescription(matDataTypeDescription)
+                .build();
+
+        return findOneFromSearchData(searchData);
+    }
+
+    @GetMapping(path = "/findOneByFhirR4QiCoreMapping")
+    public ConversionMapping findOneByFhirR4QiCoreMapping(String fhirR4QiCoreMapping,
+                                                          String matAttributeName,
+                                                          String matDataTypeDescription) {
+        SearchData searchData = SearchData.builder()
+                .fhirR4QiCoreMapping(fhirR4QiCoreMapping)
+                .matAttributeName(matAttributeName)
+                .matDataTypeDescription(matDataTypeDescription)
+                .build();
+
+        return findOneFromSearchData(searchData);
+    }
+
+    private ConversionMapping findOneFromSearchData(SearchData searchData) {
+        List<ConversionMapping> conversionMappings = conversionDataService.find(searchData);
+
+        if (CollectionUtils.isEmpty(conversionMappings)) {
+            throw new ConversionMappingNotFound(searchData);
+        } else if (conversionMappings.size() > 1) {
+            throw new ConversionMappingDataError(searchData, conversionMappings.size());
+        } else {
+            return conversionMappings.get(0);
+        }
     }
 }

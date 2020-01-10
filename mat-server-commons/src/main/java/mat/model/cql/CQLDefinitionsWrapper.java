@@ -7,11 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CQLDefinitionsWrapper implements IsSerializable{
+	private List<CQLDefinition> cqlDefinitions = new ArrayList<>();
 
-	
-	private List<CQLDefinition> cqlDefinitions = new ArrayList<CQLDefinition>();
-	
-	private List<RiskAdjustmentDTO> riskAdjVarDTOList = new ArrayList<RiskAdjustmentDTO>();
+	private List<RiskAdjustmentDTO> riskAdjVarDTOList = new ArrayList<>();
 
 	public List<CQLDefinition> getCqlDefinitions() {
 		return cqlDefinitions;

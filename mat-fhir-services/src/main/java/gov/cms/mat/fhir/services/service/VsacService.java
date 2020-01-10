@@ -1,11 +1,143 @@
 package gov.cms.mat.fhir.services.service;
 
+import gov.cms.mat.fhir.services.components.vsac.VsacClient;
+import gov.cms.mat.fhir.services.components.vsac.VsacConverter;
+import gov.cms.mat.fhir.services.service.support.VsacTicket;
+import lombok.extern.slf4j.Slf4j;
 import mat.model.VSACValueSetWrapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.vsac.VSACResponseResult;
 
-public interface VsacService {
-    boolean validateUser();
+@Service
+@Slf4j
+public class VsacService {
+    private final VsacClient vsacClient;
+    private final VsacConverter vsacConverter;
 
-    boolean validateTicket();
+    @Value("#{environment.VSAC_USER}")
+    private String userName;
+    @Value("#{environment.VSAC_PASS}")
+    private String password;
+    @Value("28795") // 8 hours - 5 secs
+    private String grantedTicketTimeOutSeconds;
+    @Value("485") // 8 hours - 5 secs
+    private String serviceTicketTimeOutSeconds;
 
-    VSACValueSetWrapper getData(String oid);
+
+    private VsacGrantingTicket vsacGrantingTicket;
+    private VsacServiceTicket vsacServiceTicket;
+
+    public VsacService(VsacClient vsacClient, VsacConverter vsacConverter) {
+        this.vsacClient = vsacClient;
+        this.vsacConverter = vsacConverter;
+    }
+
+
+    public boolean validateUser() {
+        if (vsacGrantingTicket == null || vsacGrantingTicket.isInValid()) {
+            return getGrantingTicket();
+        } else {
+            return true;
+        }
+    }
+
+
+    public boolean validateTicket() {
+        if (!validateUser()) {
+            return false;
+        }
+
+        if (vsacServiceTicket == null || vsacServiceTicket.isInValid()) {
+            return getServiceTicket();
+        } else {
+            return true;
+        }
+    }
+
+
+    public VSACValueSetWrapper getData(String oid) {
+        if (!validateUser()) {
+            return null;
+        }
+
+
+        getServiceTicket();
+
+        VSACResponseResult vsacResponseResult = vsacClient.getDataFromProfile(oid, vsacServiceTicket.getTicket());
+
+        if (isSuccessFull(vsacResponseResult)) {
+            try {
+                return processResponse(vsacResponseResult);
+            } catch (Exception e) {
+                log.warn("Cannot get XMl from vsac oid: {}", oid);
+                return null;
+            }
+        } else {
+            log.warn("Error response from the vsac service, result: {}", vsacResponseResult);
+            return null;
+        }
+    }
+
+    private VSACValueSetWrapper processResponse(VSACResponseResult vsacResponseResult) {
+        return vsacConverter.toWrapper(vsacResponseResult.getXmlPayLoad());
+    }
+
+    private boolean isSuccessFull(VSACResponseResult vsacResponseResult) {
+        return vsacResponseResult != null &&
+                vsacResponseResult.getXmlPayLoad() != null &&
+                !vsacResponseResult.isIsFailResponse();
+
+    }
+
+
+    private synchronized boolean getServiceTicket() {
+        String serviceTicket = vsacClient.getServiceTicket(vsacGrantingTicket.getTicket());
+
+        log.debug("serviceTicket: {}", serviceTicket);
+
+        if (serviceTicket == null) {
+            vsacServiceTicket = null;
+            return false;
+        } else {
+            vsacServiceTicket = new VsacServiceTicket(serviceTicket);
+            return true;
+        }
+    }
+
+    private synchronized boolean getGrantingTicket() {
+        String grantingTicket = vsacClient.getGrantingTicket(userName, password);
+
+        log.debug("grantingTicket: {}", grantingTicket);
+
+        if (grantingTicket == null) {
+            vsacGrantingTicket = null;
+            return false;
+        } else {
+            vsacGrantingTicket = new VsacGrantingTicket(grantingTicket);
+            return true;
+        }
+    }
+
+    private class VsacGrantingTicket extends VsacTicket {
+        private VsacGrantingTicket(String ticket) {
+            super(ticket);
+        }
+
+        @Override
+        protected long getTimeOutSeconds() {
+            return Long.parseLong(grantedTicketTimeOutSeconds);
+        }
+    }
+
+    private class VsacServiceTicket extends VsacTicket {
+        private VsacServiceTicket(String ticket) {
+            super(ticket);
+        }
+
+        @Override
+        protected long getTimeOutSeconds() {
+            return Long.parseLong(grantedTicketTimeOutSeconds);
+        }
+    }
 }

@@ -17,7 +17,7 @@ class VsacConverterTest implements ResourceFileUtil {
 
     @BeforeEach
     void setUp() throws IOException {
-        xml = getXml("/vsacResponseResult.xml");
+        xml = getStringFromResource("/vsacResponseResult.xml");
 
         vsacConverter = new VsacConverter();
     }

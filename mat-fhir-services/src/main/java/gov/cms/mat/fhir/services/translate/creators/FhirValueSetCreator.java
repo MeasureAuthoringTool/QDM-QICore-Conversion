@@ -9,66 +9,81 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.ValueSet;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public interface FhirValueSetCreator extends FhirCreator {
     String SYSTEM_IDENTIFIER = "urn:ietf:rfc:3986";
 
     default ValueSet createFhirValueSet(MatValueSet matValueSet, CQLQualityDataSetDTO cqlQualityDataSetDTO) {
+        ValueSet valueSet = buildValueSet(matValueSet, cqlQualityDataSetDTO);
+
+        processCompose(matValueSet, valueSet);
+
+        return valueSet;
+    }
+
+    default void processCompose(MatValueSet matValueSet, ValueSet valueSet) {
+        ValueSet.ValueSetComposeComponent compose = new ValueSet.ValueSetComposeComponent();
+        compose.setInclude(new ArrayList<>());
+        valueSet.setCompose(compose);
+
+        Map<String, List<MatConcept>> map = createMatConceptMap(getConceptListSafely(matValueSet.getConceptList()));
+        map.values()
+                .forEach(list -> compose.getInclude().add(createConceptSetComponent(list)));
+    }
+
+    default ValueSet buildValueSet(MatValueSet matValueSet, CQLQualityDataSetDTO cqlQualityDataSetDTO) {
         ValueSet valueSet = new ValueSet();
+        valueSet.setId(matValueSet.getID());
 
-        valueSet.setId( matValueSet.getID());
-
-
-        valueSet.setIdentifier(Collections.singletonList(createIdentifier(SYSTEM_IDENTIFIER, matValueSet.getID())));
-        valueSet.setVersion(matValueSet.getVersion());
-        valueSet.setName(matValueSet.getDisplayName());
-        // valueSet.setTitle()   //todo DU cannot find
-
-        //todo DU can throw exception if not found
 
         if (StringUtils.isNotEmpty(matValueSet.getStatus())) {
             valueSet.setStatus(Enumerations.PublicationStatus.fromCode(matValueSet.getStatus().toLowerCase()));
         }
 
-
-        valueSet.setPublisher(matValueSet.getSource()); //todo DU is this correct
-
-        ValueSet.ValueSetComposeComponent value = new ValueSet.ValueSetComposeComponent();
-        value.setInclude(create(matValueSet.getConceptList()));
-
-        valueSet.setCompose(value);
-        return valueSet;
-
+        return valueSet.setIdentifier(Collections.singletonList(createIdentifier(SYSTEM_IDENTIFIER, matValueSet.getID())))
+                .setVersion(cqlQualityDataSetDTO.getVersion())
+                .setName(matValueSet.getDisplayName())
+                .setPublisher(matValueSet.getSource());
     }
 
-    default List<ValueSet.ConceptSetComponent> create(MatConceptList conceptList) {
+    default List<MatConcept> getConceptListSafely(MatConceptList conceptList) {
         if (conceptList == null || CollectionUtils.isEmpty(conceptList.getConceptList())) {
             return Collections.emptyList();
         } else {
-            ValueSet.ConceptSetComponent fhirComponent = new ValueSet.ConceptSetComponent();
-            // fhirComponent.setVersion() todo DU ??
-            //  fhirComponent.setSystem()
-
-            List<ValueSet.ConceptReferenceComponent> list = conceptList.getConceptList().stream()
-                    .map(this::createConceptSetComponent)
-                    .collect(Collectors.toList());
-
-            fhirComponent.setConcept(list);
-
-            return Collections.singletonList(fhirComponent);
+            return conceptList.getConceptList();
         }
+    }
 
+
+    default ValueSet.ConceptSetComponent createConceptSetComponent(List<MatConcept> matConceptList) {
+        ValueSet.ConceptSetComponent fhirComponent = new ValueSet.ConceptSetComponent();
+
+        fhirComponent.setVersion(matConceptList.get(0).getCodeSystemVersion());
+        fhirComponent.setSystem(matConceptList.get(0).getCodeSystem());
+
+        fhirComponent.setConcept(createConceptReferenceComponents(matConceptList));
+        return fhirComponent;
+    }
+
+    default List<ValueSet.ConceptReferenceComponent> createConceptReferenceComponents(List<MatConcept> matConceptList) {
+        return matConceptList.stream()
+                .map(this::createConceptSetComponent)
+                .collect(Collectors.toList());
+    }
+
+    default Map<String, List<MatConcept>> createMatConceptMap(List<MatConcept> conceptList) {
+        return conceptList.stream()
+                .collect(Collectors.groupingBy(MatConcept::createKey));
     }
 
     default ValueSet.ConceptReferenceComponent createConceptSetComponent(MatConcept matConcept) {
-        ValueSet.ConceptReferenceComponent component = new ValueSet.ConceptReferenceComponent();
-
-        component.setCode(matConcept.getCode());
-        component.setDisplay(matConcept.getDisplayName());
-
-        return component;
+        return new ValueSet.ConceptReferenceComponent()
+                .setCode(matConcept.getCode())
+                .setDisplay(matConcept.getDisplayName());
     }
 }

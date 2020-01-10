@@ -21,6 +21,10 @@ public class MatConcept implements IsSerializable {
 	
 	/** The display name. */
 	private String displayName;
+
+	public String createKey() {
+		return codeSystem + "-" + codeSystemVersion;
+	}
 	
 	/**
 	 * Gets the code.

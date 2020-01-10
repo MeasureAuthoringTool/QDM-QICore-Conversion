@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
+    username: mat
+    password: mat
+  jpa:
+    hibernate.ddl-auto: none
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl    
+    generate-ddl: false
+    show-sql: true
+  data:
+    mongodb:
+      database: mat_conversion_results
+      uri: mongodb://localhost
+
+logging:
+  level:
+    root: INFO
+    gov.cms.mat: DEBUG
+    org.hl7.fhir.r4.hapi.ctx: WARN
+    org.exolab: WARN
+
+fhir:
+  r4:
+    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+
+qdmqicore:
+  conversion:
+    baseurl: http://localhost:9090
+
+cql:
+  conversion:
+    baseurl: http://localhost:7070
+
+
+

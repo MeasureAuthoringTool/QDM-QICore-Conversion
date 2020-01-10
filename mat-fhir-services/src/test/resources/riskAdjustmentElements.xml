@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<riskAdjustmentVariables>
+    <cqldefinition displayName="Treatments" uuid="670a2a69-419d-431b-ae46-52d9f7217206"/>
+    <cqldefinition displayName="Test" uuid="670a2a69-419d-431b-ae46-52d9f7217207"/>
+</riskAdjustmentVariables>

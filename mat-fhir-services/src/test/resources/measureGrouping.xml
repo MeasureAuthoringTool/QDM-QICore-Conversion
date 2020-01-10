@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<measureGrouping>
+    <group sequence="1">
+        <clause displayName="Initial Population 1" isInGrouping="true" type="initialPopulation"
+                uuid="652D65BB-8E19-4679-97EC-2AA721BC6964">
+            <cqldefinition displayName="Initial Population 1" uuid="6fc73d74-cdc4-4066-a27c-3526f029d2da"/>
+        </clause>
+        <clause displayName="Denominator 1" isInGrouping="true" type="denominator"
+                uuid="7BEADCCC-396C-4074-9DB7-4C0846D590E7">
+            <cqldefinition displayName="Denominator 1" uuid="6e0710d5-b290-45ab-b9bf-3bd268e0a0b6"/>
+        </clause>
+        <clause displayName="Denominator Exclusions 1" isInGrouping="true" type="denominatorExclusions"
+                uuid="4CBC2DC8-CBB7-457A-B680-8AEF8255F46A">
+            <cqldefinition displayName="Exclusions" uuid="f24b3ae0-0838-495d-b3d2-6291784d0727"/>
+        </clause>
+        <clause displayName="Numerator 1" isInGrouping="true" type="numerator"
+                uuid="703DAA85-D3CA-4C95-B96C-6AE4A1AE1959">
+            <cqldefinition displayName="Numerator 1" uuid="b91d8ef7-aa9b-4d1a-8ac1-53d9a581cc96"/>
+        </clause>
+        <clause displayName="Stratum 1" type="stratum" uuid="6F3FB129-73B3-4316-8744-13902F4DF970">
+            <cqldefinition displayName="Stratification 1" uuid="6f5f1609-2959-4ff8-b9f6-9a39241f7bb6"/>
+        </clause>
+        <clause displayName="Stratum 2" type="stratum" uuid="B553693E-3B96-4815-A443-53125F18EBDF">
+            <cqldefinition displayName="Stratification 2" uuid="22b6d7c8-69cc-4f97-a810-f682690d9a6d"/>
+        </clause>
+        <clause displayName="Stratum 3" type="stratum" uuid="29855AFE-637B-4974-AF64-2F0E7B0DDAC6">
+            <cqldefinition displayName="Stratification 3" uuid="634fd916-a281-4bba-ac17-3de22219a32a"/>
+        </clause>
+        <clause displayName="numeratorExclusions" isInGrouping="false" type="numeratorExclusions"
+                uuid="122efa27-ba96-479d-b744-14fa481173f7"/>
+        <clause displayName="denominatorExceptions" isInGrouping="false" type="denominatorExceptions"
+                uuid="43f9eac0-b0d9-4c9c-92b9-211189b9d6e3"/>
+    </group>
+</measureGrouping>

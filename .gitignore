@@ -27,5 +27,12 @@ hs_err_pid*
 /mat-server-commons/target/
 /vsac-mat-conversion/target/
 /qdm-qicore-mapping-services/target/
+/cql-translation-service/target/
 
 .idea
+/cql-elm-translation/.mvn/
+/mat-rest-commons/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+/mat-rest-commons/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/mat-rest-commons/target/maven-archiver/pom.properties
+
+.DS_Store

@@ -2,6 +2,8 @@ package gov.cms.mat.fhir.services.components.mat;
 
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
+import mat.client.measurepackage.MeasurePackageDetail;
+import mat.model.cql.CQLDefinitionsWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.UncheckedIOException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MatXmlMarshallerTest implements ResourceFileUtil {
     private MatXmlMarshaller matXmlMarshaller;
@@ -21,10 +22,32 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
     }
 
     @Test
+    void toCQLDefinitions_ErrorIsBlankCheck() {
+        Assertions.assertThrows(UncheckedIOException.class, () -> {
+            matXmlMarshaller.toCQLDefinitionsSupplementalData(null);
+        });
+    }
+
+    @Test
+    void toCQLDefinitions_ErrorIsInvalidXML() {
+        Assertions.assertThrows(UncheckedIOException.class, () -> {
+            matXmlMarshaller.toCQLDefinitionsSupplementalData("Bozo|T|Clown");
+        });
+    }
+
+    @Test
+    void toCQLDefinitions_Success() {
+        String xml = getStringFromResource("/supplementalDataElements.xml");
+        CQLDefinitionsWrapper model = matXmlMarshaller.toCQLDefinitionsSupplementalData(xml);
+        assertEquals(5, model.getCqlDefinitions().size());
+    }
+
+    @Test
     void toCompositeMeasureDetail_Success() {
-        String xml = getXml("/measureDetail.xml");
+        String xml = getStringFromResource("/measureDetail.xml");
         ManageCompositeMeasureDetailModel model = matXmlMarshaller.toCompositeMeasureDetail(xml);
         assertNotNull(model.getId());
+        assertEquals("Proportion", model.getMeasScoring());
     }
 
     @Test
@@ -43,7 +66,7 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
 
     @Test
     void toQualityData_Success() {
-        String xml = getXml("/cqlLookUp.xml");
+        String xml = getStringFromResource("/cqlLookUp.xml");
         CQLQualityDataModelWrapper model = matXmlMarshaller.toQualityData(xml);
         assertFalse(model.getQualityDataDTO().isEmpty());
     }
@@ -60,5 +83,20 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
         Assertions.assertThrows(UncheckedIOException.class, () -> {
             matXmlMarshaller.toQualityData("BR-549 x234");
         });
+    }
+
+    @Test
+    void toCQLDefinitionsRiskAdjustments() {
+        String xml = getStringFromResource("/riskAdjustmentElements.xml");
+        CQLDefinitionsWrapper model = matXmlMarshaller.toCQLDefinitionsRiskAdjustments(xml);
+        assertEquals(2, model.getRiskAdjVarDTOList().size());
+    }
+
+    @Test
+    void toMeasureGrouping() {
+        String xml = getStringFromResource("/measureGrouping.xml");
+        MeasurePackageDetail model = matXmlMarshaller.toMeasureGrouping(xml);
+        assertEquals("1", model.getSequence());
+        assertEquals(9, model.getPackageClauses().size());
     }
 }

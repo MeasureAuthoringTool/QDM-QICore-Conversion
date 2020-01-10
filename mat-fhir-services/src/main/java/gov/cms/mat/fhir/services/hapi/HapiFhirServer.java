@@ -1,20 +1,22 @@
 package gov.cms.mat.fhir.services.hapi;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
+import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.r4.model.ValueSet;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Optional;
 
 import static gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator.SYSTEM_IDENTIFIER;
 
@@ -28,6 +30,7 @@ public class HapiFhirServer {
     @Getter
     IGenericClient hapiClient;
 
+    @Getter
     @Value("${fhir.r4.baseurl}")
     private String baseURL;
 
@@ -41,24 +44,45 @@ public class HapiFhirServer {
         log.info("Created hapi client for server: {} ", baseURL);
     }
 
-    public Bundle createBundle(Resource resource) {
+    public Optional<String> fetchHapiLink(String oid) {
+        Bundle bundle = isValueSetInHapi(oid);
+
+        if (bundle.hasEntry()) {
+            return Optional.of(bundle.getLink().get(0).getUrl());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public Bundle createAndExecuteBundle(Resource resource) {
+        Bundle bundle = buildBundle(resource);
+
+        return hapiClient.transaction().withBundle(bundle).execute();
+    }
+
+    Bundle buildBundle(Resource resource) {
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.TRANSACTION);
         bundle.addEntry().setResource(resource)
                 .getRequest()
                 .setUrl(baseURL + resource.getResourceType().name() + "/" + resource.getId())
                 .setMethod(Bundle.HTTPVerb.PUT);
-
-        return getHapiClient().transaction().withBundle(bundle).execute();
+        return bundle;
     }
 
     private LoggingInterceptor createLoggingInterceptor() {
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
+        loggingInterceptor.setLogger(log);
 
-        // Optionally you may configure the interceptor (by default only
-        // summary info is logged)
-        loggingInterceptor.setLogRequestSummary(true);
-        loggingInterceptor.setLogRequestBody(true);
+        // Optionally you may configure the interceptor (by default only summary info is logged)
+        loggingInterceptor.setLogRequestBody(false);
+        loggingInterceptor.setLogRequestSummary(false);
+        loggingInterceptor.setLogRequestHeaders(false);
+
+        loggingInterceptor.setLogResponseBody(false);
+        loggingInterceptor.setLogResponseHeaders(false);
+        loggingInterceptor.setLogResponseSummary(false);
+
         return loggingInterceptor;
     }
 
@@ -70,10 +94,40 @@ public class HapiFhirServer {
                 .execute();
     }
 
+    public String persist(IBaseResource resource) {
+        MethodOutcome outcome = hapiClient.create()
+                .resource(resource)
+                .prettyPrint()
+                .encodedJson()
+                .execute();
+
+        if (BooleanUtils.isTrue(outcome.getCreated()) && outcome.getId() != null) {
+            return outcome.getId().toVersionless().getValue();
+        } else {
+            throw new HapiFhirCreateException(resource.getIdElement().getValue());
+        }
+    }
+
     public Bundle isValueSetInHapi(String oid) {
         return hapiClient.search()
                 .forResource(ValueSet.class)
                 .where(ValueSet.IDENTIFIER.exactly().systemAndCode(SYSTEM_IDENTIFIER, oid))
+                .returnBundle(Bundle.class)
+                .execute();
+    }
+
+    public Bundle getMeasure(String id) {
+        return hapiClient.search()
+                .forResource(Measure.class)
+                .where(Measure.URL.matches().value(baseURL + "Measure/" + id))
+                .returnBundle(Bundle.class)
+                .execute();
+    }
+
+    public Bundle getLibrary(String id) {
+        return hapiClient.search()
+                .forResource(Library.class)
+                .where(Measure.URL.matches().value(baseURL + "Library/" + id))
                 .returnBundle(Bundle.class)
                 .execute();
     }

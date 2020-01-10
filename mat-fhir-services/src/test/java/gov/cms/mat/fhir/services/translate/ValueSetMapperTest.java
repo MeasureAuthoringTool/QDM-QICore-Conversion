@@ -2,6 +2,8 @@ package gov.cms.mat.fhir.services.translate;
 
 import ca.uhn.fhir.context.FhirContext;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.MatConcept;
@@ -11,7 +13,7 @@ import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.hl7.fhir.r4.model.*;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,8 +43,16 @@ class ValueSetMapperTest {
     private MatXmlConverter matXmlConverter;
     @Mock
     private HapiFhirServer hapiFhirServer;
+    @Mock
+    private ConversionResultsService conversionResultsService;
+
     @InjectMocks
     private ValueSetMapper valueSetMapper;
+
+    @BeforeEach
+    void setUp() {
+        ConversionReporter.setInThreadLocal("measureId", conversionResultsService);
+    }
 
     @Test
     void count() {
@@ -125,15 +135,8 @@ class ValueSetMapperTest {
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
-        ValueSet valueSet = new ValueSet();
-        valueSet.setId("ID");
-        Bundle bundle = createBundle(valueSet);
-
-        when(hapiFhirServer.createBundle(any())).thenReturn(bundle);
-
         List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML);
         assertEquals(1, valueSets.size());
-        assertEquals(valueSet, valueSets.get(0));
 
         String encoded = ctx.newXmlParser().setPrettyPrint(true)
                 .encodeResourceToString(valueSets.get(0));
@@ -145,23 +148,17 @@ class ValueSetMapperTest {
 
     @Test
     void translateToFhir_EmptyBundle() {
+
         CQLQualityDataModelWrapper wrapper = new CQLQualityDataModelWrapper();
         wrapper.setQualityDataDTO(Collections.singletonList(create()));
 
         VSACValueSetWrapper vsacValueSetWrapper = new VSACValueSetWrapper();
         vsacValueSetWrapper.setValueSetList(createValueSetList());
-        when(vsacService.getData(OID)).thenReturn(vsacValueSetWrapper);
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
-        Bundle bundle = new Bundle();
-        when(hapiFhirServer.createBundle(any())).thenReturn(bundle);
+        valueSetMapper.translateToFhir(XML);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            valueSetMapper.translateToFhir(XML);
-        });
-
-        verify(hapiFhirServer).createBundle(any());
     }
 
     /* Need all this data set to get past bundle.isEmpty() */

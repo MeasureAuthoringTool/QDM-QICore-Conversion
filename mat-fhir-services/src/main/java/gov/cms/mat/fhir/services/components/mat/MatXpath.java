@@ -2,32 +2,37 @@ package gov.cms.mat.fhir.services.components.mat;
 
 import mat.server.util.XmlProcessor;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Node;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 
 @Component
 class MatXpath {
-    private static final String CQL_LOOKUP = "cqlLookUp";
-    private final XPath xPath = XPathFactory.newInstance().newXPath();
+    static final String MEASURE_DETAILS_TAG = "measureDetails";
+    static final String CQL_LOOK_UP_TAG = "cqlLookUp";
+    static final String SUPPLEMENTAL_DATA_TAG = "supplementalDataElements";
+    static final String RISK_ADJUSTMENTS_TAG = "riskAdjustmentVariables";
+    static final String MEASURE_GROUPING_TAG = "measureGrouping";
 
-    String toCompositeMeasureDetail(String xml) throws XPathExpressionException {
-        XmlProcessor processor = new XmlProcessor(xml);
-        String componentMeasuresXPath = "/measure/measureDetails";
-
-        Node measureDetailsNode =
-                (Node) xPath.evaluate(componentMeasuresXPath,
-                        processor.getOriginalDoc().getDocumentElement(),
-                        XPathConstants.NODE);
-
-        return processor.transform(measureDetailsNode);
+    String toCompositeMeasureDetail(String xml) {
+        return processXmlTag(xml, MEASURE_DETAILS_TAG);
     }
 
     String toQualityData(String xml) {
-        return new XmlProcessor(xml).getXmlByTagName(CQL_LOOKUP);
+        return processXmlTag(xml, CQL_LOOK_UP_TAG);
     }
+
+    String toCQLDefinitionsSupplementalData(String xml) {
+        return processXmlTag(xml, SUPPLEMENTAL_DATA_TAG);
+    }
+
+    String toCQLDefinitionsRiskAdjustments(String xml) {
+        return processXmlTag(xml, RISK_ADJUSTMENTS_TAG);
+    }
+
+    String toMeasureGrouping(String xml) {
+        return processXmlTag(xml, MEASURE_GROUPING_TAG);
+    }
+
+    private String processXmlTag(String xml, String tag) {
+        return new XmlProcessor(xml).getXmlByTagName(tag);
+    }
+
 }
