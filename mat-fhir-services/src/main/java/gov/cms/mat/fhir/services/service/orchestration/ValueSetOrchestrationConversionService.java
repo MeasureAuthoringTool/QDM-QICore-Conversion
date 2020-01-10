@@ -57,6 +57,7 @@ public class ValueSetOrchestrationConversionService {
             ConversionReporter.setValueSetsValidationLink(valueSet.getId(), optional.get(), "Exists");
             return false;
         } else {
+            ConversionReporter.setValueSetInit(valueSet.getId(), "Hapi valueSet does NOT exist");
             return true;
         }
     }

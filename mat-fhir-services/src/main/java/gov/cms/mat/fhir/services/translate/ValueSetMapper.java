@@ -72,7 +72,6 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
         }
     }
 
-
     private void processFhir(CQLQualityDataSetDTO cqlQualityDataSetDTO,
                              List<ValueSet> valueSets) {
         String oid;
@@ -87,11 +86,11 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
 
         if (vsacValueSetWrapper == null) {
             log.debug("VsacService returned null for oid: {}", oid);
-            ConversionReporter.setValueSetFailResult(oid, "Not Found in VSAC");
+            ConversionReporter.setValueSetInit(oid, "Not Found in VSAC");
         } else {
             List<ValueSet> valueSetsCreated = createFhirValueSetList(cqlQualityDataSetDTO, vsacValueSetWrapper);
             valueSets.addAll(valueSetsCreated);
-            ConversionReporter.setValueSetSuccessResult(oid, "Found in VSAC");
+            ConversionReporter.setValueSetInit(oid, "Found in VSAC");
         }
     }
 

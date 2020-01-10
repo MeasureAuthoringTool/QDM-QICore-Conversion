@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +19,7 @@ public class ConversionResultsService {
         this.conversionResultRepository = conversionResultRepository;
     }
 
-    ConversionResult addValueSetResult(String measureId, String oid, String reason, boolean success, String link) {
+    ConversionResult addValueSetResult(String measureId, String oid, String reason, Boolean success, String link) {
         ConversionResult conversionResult = findOrCreate(measureId);
 
         ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
@@ -187,7 +188,6 @@ public class ConversionResultsService {
         ConversionResult conversionResult = findOrCreate(measureId);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
-        libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
         libraryConversionResults.getCqlConversionResult().getCqlConversionErrors().addAll(errors);
 
         conversionResultRepository.save(conversionResult);
@@ -252,7 +252,8 @@ public class ConversionResultsService {
         conversionResultRepository.save(conversionResult);
     }
 
-    public synchronized void addValueSetValidationResults(String measureId, String oid,
+    public synchronized void addValueSetValidationResults(String measureId,
+                                                          String oid,
                                                           List<FhirValidationResult> list) {
         ConversionResult conversionResult = findOrCreate(measureId);
         ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
@@ -265,39 +266,24 @@ public class ConversionResultsService {
     public synchronized void addValueSetValidationResult(String measureId,
                                                          String oid,
                                                          FhirValidationResult fhirValidationResult) {
-        ConversionResult conversionResult = findOrCreate(measureId);
-        ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
-        valueSetConversionResults.getValueSetFhirValidationResults().add(fhirValidationResult);
-
-        conversionResultRepository.save(conversionResult);
+        addValueSetValidationResults(measureId, oid, Collections.singletonList(fhirValidationResult));
     }
 
-    public synchronized void addValueSetValidationError(String measureId,
-                                                        String oid,
-                                                        String error) {
+    public synchronized void addValueSetValidation(String measureId,
+                                                   String oid,
+                                                   String error,
+                                                   String link,
+                                                   Boolean success) {
         ConversionResult conversionResult = findOrCreate(measureId);
         ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
 
-        valueSetConversionResults.setSuccess(Boolean.FALSE);
+        valueSetConversionResults.setSuccess(success);
         valueSetConversionResults.setReason(error);
-        valueSetConversionResults.setLink(null);
-
-        conversionResultRepository.save(conversionResult);
-    }
-
-    public synchronized void addValueSetValidationLink(String measureId,
-                                                       String oid,
-                                                       String link,
-                                                       String message) {
-        ConversionResult conversionResult = findOrCreate(measureId);
-        ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
-
-        valueSetConversionResults.setSuccess(Boolean.TRUE);
-        valueSetConversionResults.setReason(message);
         valueSetConversionResults.setLink(link);
 
         conversionResultRepository.save(conversionResult);
     }
+
 
     public synchronized void addLibraryValidationLink(String measureId,
                                                       String link,
@@ -347,50 +333,6 @@ public class ConversionResultsService {
         conversionResult.setErrorReason(message);
         conversionResultRepository.save(conversionResult);
     }
-
-//    public ValueSetResult findValueSetValueSetResult(String oid, ConversionResult conversionResult) {
-//        return conversionResult.getValueSetConversionResults()
-//                .stream()
-//                .filter(v -> v.getOid().equals(oid))
-//                .findFirst()
-//                .orElseGet(() -> createValueSetValueSetResult(oid, conversionResult));
-//    }
-
-//    public ValueSetResult createValueSetValueSetResult(String oid, ConversionResult conversionResult) {
-//        ValueSetResult valueSetResult = ValueSetResult.builder().oid(oid).build();
-//
-//        conversionResult.getValueSetConversionResults().getValueSetResults().add(valueSetResult);
-//
-//        return valueSetResult;
-//    }
-
-
-//    public ValueSetValidationResult findValueSetValidationResult(String oid, ConversionResult conversionResult) {
-//
-//        return conversionResult.getValueSetConversionResults()
-//                .getValueSetFhirValidationResults()
-//                .stream()
-//                .filter(v -> v.getOid().equals(oid))
-//                .findFirst()
-//                .orElseGet(() -> createValueSetValidationResult(oid, conversionResult));
-//    }
-
-//    public ValueSetValidationResult createValueSetValidationResult(String oid, ConversionResult conversionResult) {
-//        ValueSetValidationResult validationResult = new ValueSetValidationResult(oid);
-//
-//        conversionResult.getValueSetConversionResults().getValueSetFhirValidationResults().add(validationResult);
-//
-//        return validationResult;
-//    }
-
-//    public ConversionResult getConversionResultWithValueSetConversionResults(String measureId) {
-//        ConversionResult conversionResult = findOrCreate(measureId);
-//
-//        if (conversionResult.getValueSetConversionResults() == null) {
-//            conversionResult.setValueSetConversionResults(new ValueSetConversionResults());
-//        }
-//        return conversionResult;
-//    }
 
 
 }

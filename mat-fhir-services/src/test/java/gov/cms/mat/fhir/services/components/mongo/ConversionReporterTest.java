@@ -71,7 +71,7 @@ class ConversionReporterTest {
 
     @Test
     void setValueSetResult_NoThreadLocal() {
-        ConversionReporter.setValueSetFailResult("OID", REASON);
+        ConversionReporter.setValueSetInit("OID", REASON);
 
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
@@ -79,7 +79,7 @@ class ConversionReporterTest {
     @Test
     void setValueSetResult_ThreadLocal() {
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
-        ConversionReporter.setValueSetFailResult("OID", REASON);
+        ConversionReporter.setValueSetInit("OID", REASON);
 
         // verify(conversionResultsService).addValueSetResult(anyString(), any(ValueSetResult.class));
     }

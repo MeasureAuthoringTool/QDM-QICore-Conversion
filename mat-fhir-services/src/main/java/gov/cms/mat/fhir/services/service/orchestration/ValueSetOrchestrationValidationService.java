@@ -70,9 +70,11 @@ class ValueSetOrchestrationValidationService implements ErrorSeverityChecker {
     private boolean haveError(Boolean success, AtomicInteger errorCount) {
         if (BooleanUtils.isTrue(success)) {
             return false;
-        } else {
+        } else if (BooleanUtils.isFalse(success)) {
             errorCount.incrementAndGet();
             return true;
+        } else {
+            return false;
         }
     }
 

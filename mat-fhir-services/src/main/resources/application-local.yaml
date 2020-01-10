@@ -11,7 +11,7 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl    
     generate-ddl: false
-    show-sql: true
+    show-sql: false
   data:
     mongodb:
       database: mat_conversion_results

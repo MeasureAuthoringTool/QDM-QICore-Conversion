@@ -48,7 +48,12 @@ public class HapiFhirServer {
         Bundle bundle = isValueSetInHapi(oid);
 
         if (bundle.hasEntry()) {
-            return Optional.of(bundle.getLink().get(0).getUrl());
+            if (bundle.getEntry().isEmpty()) {
+                return Optional.of(bundle.getLink().get(0).getUrl());
+            } else {
+                return Optional.of(bundle.getEntry().get(0).getFullUrl());
+            }
+
         } else {
             return Optional.empty();
         }

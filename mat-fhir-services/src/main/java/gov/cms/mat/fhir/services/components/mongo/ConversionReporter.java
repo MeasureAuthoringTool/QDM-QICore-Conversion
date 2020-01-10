@@ -115,20 +115,19 @@ public class ConversionReporter {
         conversionReporter.saveConversionResultToMongo(conversionResult);
     }
 
-    public static void setValueSetFailResult(String oid, String reason) {
+    public static void setValueSetInit(String oid, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter != null) {
-            conversionReporter.addValueSetFailResult(oid, reason);
+            conversionReporter.addValueSetInit(oid, reason);
         }
     }
 
-    public static void setValueSetSuccessResult(String oid, String reason) {
-        ConversionReporter conversionReporter = getFromThreadLocal();
-
-        if (conversionReporter != null) {
-            conversionReporter.addValueSetSuccessResult(oid, reason);
-        }
+    public static void setValueSetsValidationLink(String oid,
+                                                  String link,
+                                                  String reason) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addValueSetValidationLink(oid, link, reason);
     }
 
     static void removeInThreadLocal() {
@@ -178,12 +177,7 @@ public class ConversionReporter {
         conversionReporter.addValueSetValidationError(oid, error);
     }
 
-    public static void setValueSetsValidationLink(String oid,
-                                                  String link,
-                                                  String reason) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetValidationLink(oid, link, reason);
-    }
+
 
 
     public static void setLibraryValidationLink(String link,
@@ -223,13 +217,13 @@ public class ConversionReporter {
         conversionResultsService.addErrorMessage(measureId, message);
     }
 
-    private void addValueSetFailResult(String oid, String reason) {
-        conversionResultsService.addValueSetResult(measureId, oid, reason, Boolean.FALSE, null);
+    private void addValueSetInit(String oid, String reason) {
+        conversionResultsService.addValueSetResult(measureId, oid, reason, null, null);
     }
 
-    private void addValueSetSuccessResult(String oid, String reason) {
+    private void addValueSetSuccessResult(String oid, String reason, String link) {
         //todo add link and result
-        conversionResultsService.addValueSetResult(measureId, oid, reason, Boolean.TRUE, null);
+        conversionResultsService.addValueSetResult(measureId, oid, reason, Boolean.TRUE, link);
     }
 
     private void addMeasureResult(String field, String destination, String reason) {
@@ -320,11 +314,11 @@ public class ConversionReporter {
     }
 
     private void addValueSetValidationError(String oid, String error) {
-        conversionResultsService.addValueSetValidationError(measureId, oid, error);
+        conversionResultsService.addValueSetValidation(measureId, oid, error, null, Boolean.FALSE);
     }
 
     private void addValueSetValidationLink(String oid, String link, String reason) {
-        conversionResultsService.addValueSetValidationLink(measureId, oid, link, reason);
+        conversionResultsService.addValueSetValidation(measureId, oid, link, reason, Boolean.TRUE);
     }
 
     private void addLibraryValidationLink(String link, String reason, String matLibraryId) {

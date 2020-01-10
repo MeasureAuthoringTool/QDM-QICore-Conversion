@@ -27,8 +27,6 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
     private static final String CONVERSION_RESULTS_TEMPLATE =
             "Found %d CqlLibraries to process, successfully processed %d";
 
-    private static final String NO_LIBRARIES_FOUND = "No CqlLibraries found for the measure";
-    private static final String TOO_MANY_LIBRARIES_FOUND_TEMPLATE = "No CqlLibraries found for the measure count: %d";
     private final MeasureDataService measureDataService;
     private final CqlLibraryRepository cqlLibraryRepository;
     private final CqlConversionClient cqlConversionClient;
@@ -75,15 +73,23 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
         if (cqlLibraries.isEmpty()) {
             return true;
         } else {
-            AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
-            cqlLibraries.forEach(c -> processCqlLibrary(c, atomicBoolean));
-
-            if (!atomicBoolean.get()) {
-                ConversionReporter.setErrorMessage("CQLLibraryTranslationService failed");
-            }
-
-            return atomicBoolean.get();
+            return processLibs(id, cqlLibraries);
         }
+    }
+
+    private boolean processLibs(String id, List<CqlLibrary> cqlLibraries) {
+        log.info("CQLLibraryTranslationService processing measure id: {}", id);
+        ConversionReporter.setInThreadLocal(id, conversionResultsService);
+
+        AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
+        cqlLibraries.forEach(c -> processCqlLibrary(c, atomicBoolean));
+
+        if (!atomicBoolean.get()) {
+            ConversionReporter.setErrorMessage("CQLLibraryTranslationService failed");
+        }
+
+        return atomicBoolean.get();
+
     }
 
     private void processCqlLibrary(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean) {
@@ -185,6 +191,6 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
     }
 
     public boolean validate(OrchestrationProperties properties) {
-        return process(properties.getMeasureId());
+        return processLibs(properties.getMeasureId(), properties.getCqlLibraries());
     }
 }
