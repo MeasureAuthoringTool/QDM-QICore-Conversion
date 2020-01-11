@@ -22,12 +22,12 @@ public class LibraryOrchestrationValidationService {
 
     boolean validate(OrchestrationProperties properties) {
 
-        properties.getCqlLibraries().forEach(p -> doShit(p));
+        properties.getCqlLibraries().forEach(p -> convert(p));
 
         return true;
     }
 
-    private void doShit(CqlLibrary cqlLibrary) {
+    private void convert(CqlLibrary cqlLibrary) {
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
         LibraryConversionResults results = conversionResult.findLibraryConversionResultsRequired(cqlLibrary.getId());
 
@@ -37,7 +37,7 @@ public class LibraryOrchestrationValidationService {
                 hapiFhirServer.getBaseURL());
 
         Library fhirLibrary = libraryTranslator.translateToFhir();
-        results.setFhirLibrary(fhirLibrary);
+        //results.setFhirLibrary(fhirLibrary); todo save json creates error in jvm
 
         ConversionReporter.saveConversionResult(conversionResult);
 
