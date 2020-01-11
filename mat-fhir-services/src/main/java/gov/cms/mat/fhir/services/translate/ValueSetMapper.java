@@ -59,7 +59,7 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
     }
 
     private boolean inHapi(String oid) {
-        Optional<String> optional = hapiFhirServer.fetchHapiLink(oid);
+        Optional<String> optional = hapiFhirServer.fetchHapiLinkValueSet(oid);
 
         if (optional.isPresent()) {
             log.debug("ValueSet {} is in hapi: {}", oid, optional.get());

@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.rest.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hl7.fhir.r4.model.Library;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,4 +26,6 @@ public class LibraryConversionResults {
     public LibraryConversionResults(String matId) {
         this.matId = matId;
     }
+
+    Library fhirLibrary;
 }

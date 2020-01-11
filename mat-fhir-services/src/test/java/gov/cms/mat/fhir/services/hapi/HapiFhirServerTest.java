@@ -112,7 +112,7 @@ class HapiFhirServerTest {
         when(iQuery.returnBundle(Bundle.class)).thenReturn(iQuery);
         when(iQuery.execute()).thenReturn(toReturn);
 
-        Bundle returned = hapiFhirServer.isValueSetInHapi("OID");
+        Bundle returned = hapiFhirServer.getValueSetBundle("OID");
         assertEquals(toReturn, returned);
 
         verify(hapiClient).search();

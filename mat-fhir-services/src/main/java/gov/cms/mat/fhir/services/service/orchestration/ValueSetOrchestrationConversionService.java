@@ -50,7 +50,7 @@ public class ValueSetOrchestrationConversionService {
     }
 
     public boolean filterValueSet(ValueSet valueSet) {
-        Optional<String> optional = hapiFhirServer.fetchHapiLink(valueSet.getId());
+        Optional<String> optional = hapiFhirServer.fetchHapiLinkValueSet(valueSet.getId());
 
         if (optional.isPresent()) {
             log.info("Hapi valueSet exists for oid: {}", valueSet.getId());
@@ -64,7 +64,7 @@ public class ValueSetOrchestrationConversionService {
 
 
     private void processPersisting(ValueSet valueSet) {
-        Optional<String> optional = hapiFhirServer.fetchHapiLink(valueSet.getId());
+        Optional<String> optional = hapiFhirServer.fetchHapiLinkValueSet(valueSet.getId());
 
         if (optional.isPresent()) {
             log.info("ValueSet already in hapiFhir: {}", optional.get());

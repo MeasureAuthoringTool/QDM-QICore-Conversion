@@ -232,7 +232,7 @@ public class MeasureController implements FhirValidatorProcessor {
             @RequestParam("id") String id) {
         String res = "";
         try {
-            Bundle bundle = hapiFhirServer.getMeasure(id);
+            Bundle bundle = hapiFhirServer.getMeasureBundle(id);
             res = hapiFhirServer.getCtx().newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
 
         } catch (Exception ex) {

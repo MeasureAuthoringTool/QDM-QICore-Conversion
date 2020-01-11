@@ -9,7 +9,6 @@ import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.LibraryTranslator;
 import lombok.extern.slf4j.Slf4j;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +28,6 @@ public class LibraryOrchestrationConversionService {
     }
 
     boolean convert(OrchestrationProperties properties) {
-
         properties.getCqlLibraries().forEach(cqlLibrary -> processPersisting(cqlLibrary));
 
         return true; //todo
@@ -69,7 +67,7 @@ public class LibraryOrchestrationConversionService {
     }
 
     public boolean filterValueSet(CqlLibrary cqlLibrary) {
-        Optional<String> optional = fetchHapiLink(cqlLibrary.getId());
+        Optional<String> optional = hapiFhirServer.fetchHapiLinkLibrary(cqlLibrary.getId());
 
         if (optional.isPresent()) {
             log.warn("Hapi cqlLibrary exists for id: {}, link: {}", cqlLibrary.getId(), optional.get());
@@ -78,17 +76,6 @@ public class LibraryOrchestrationConversionService {
         } else {
             ConversionReporter.setLibraryNotFoundInHapi(cqlLibrary.getId());
             return true;
-        }
-    }
-
-
-    public Optional<String> fetchHapiLink(String id) {
-        Bundle bundle = hapiFhirServer.getLibrary(id);
-
-        if (bundle.hasEntry()) {
-            return Optional.of(bundle.getLink().get(0).getUrl());
-        } else {
-            return Optional.empty();
         }
     }
 }

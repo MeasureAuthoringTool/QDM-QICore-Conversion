@@ -19,6 +19,12 @@ public class ConversionReporter {
         this.conversionResultsService = conversionResultsService;
     }
 
+    public static void saveConversionResult(ConversionResult conversionResult) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.saveConversionResultToMongo(conversionResult);
+    }
+
+
     public static void setMeasureResult(String field, String destination, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
@@ -27,11 +33,11 @@ public class ConversionReporter {
         }
     }
 
-    public static void setLibraryResult(String field, String destination, String reason, String matLibraryId) {
+    public static void setLibraryFieldConversionResult(String field, String destination, String reason, String matLibraryId) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter != null) {
-            conversionReporter.addLibraryResult(field, destination, reason, matLibraryId);
+            conversionReporter.addLibraryFieldConversionResult(field, destination, reason, matLibraryId);
         }
     }
 
@@ -70,17 +76,9 @@ public class ConversionReporter {
         conversionReporter.addElm(json, matLibraryId);
     }
 
-
-    public static void resetCqlConversionResult(ConversionType conversionType) {
+    public static void resetValueSetResults() {
         ConversionReporter conversionReporter = getConversionReporter();
-
-        conversionReporter.clearCqlConversionResult(conversionType);
-    }
-
-    public static void resetValueSetResults(ConversionType conversionType) {
-        ConversionReporter conversionReporter = getConversionReporter();
-
-        conversionReporter.clearValueSetResults(conversionType);
+        conversionReporter.clearValueSetResults();
     }
 
     public static void resetMeasure(ConversionType conversionType) {
@@ -110,16 +108,11 @@ public class ConversionReporter {
         return conversionReporter.findConversionResult();
     }
 
-    public static void saveConversionResult(ConversionResult conversionResult) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.saveConversionResultToMongo(conversionResult);
-    }
-
     public static void setValueSetInit(String oid, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter != null) {
-            conversionReporter.addValueSetInit(oid, reason);
+            conversionReporter.addValueSetResult(oid, null, null, reason);
         }
     }
 
@@ -127,7 +120,7 @@ public class ConversionReporter {
                                                   String link,
                                                   String reason) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetValidationLink(oid, link, reason);
+        conversionReporter.addValueSetResult(oid, Boolean.TRUE, link, reason);
     }
 
     static void removeInThreadLocal() {
@@ -165,37 +158,30 @@ public class ConversionReporter {
         conversionReporter.addValueSetValidationResults(oid, list);
     }
 
-    public static void setValueSetsValidationResult(String oid,
-                                                    FhirValidationResult fhirValidationResult) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetValidationResult(oid, fhirValidationResult);
-    }
 
     public static void setValueSetsValidationError(String oid,
                                                    String error) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetValidationError(oid, error);
+        conversionReporter.addValueSetResult(oid, Boolean.FALSE, null, error);
     }
-
-
 
 
     public static void setLibraryValidationLink(String link,
                                                 String reason,
                                                 String matCqlId) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addLibraryValidationLink(link, reason, matCqlId);
+        conversionReporter.addLibraryConversionResult(link, reason, Boolean.TRUE, matCqlId);
     }
 
     public static void setLibraryValidationError(String reason,
                                                  String matCqlId) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addLibraryValidationError(reason, matCqlId);
+        conversionReporter.addLibraryConversionResult(null, reason, Boolean.FALSE, matCqlId);
     }
 
     public static void setLibraryNotFoundInHapi(String matCqlId) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addLibraryNotFoundInHapi(matCqlId);
+        conversionReporter.addLibraryConversionResult(null, "Not Found in Hapi", Boolean.FALSE, matCqlId);
     }
 
     public static void resetLibrary(ConversionType conversionType) {
@@ -217,15 +203,6 @@ public class ConversionReporter {
         conversionResultsService.addErrorMessage(measureId, message);
     }
 
-    private void addValueSetInit(String oid, String reason) {
-        conversionResultsService.addValueSetResult(measureId, oid, reason, null, null);
-    }
-
-    private void addValueSetSuccessResult(String oid, String reason, String link) {
-        //todo add link and result
-        conversionResultsService.addValueSetResult(measureId, oid, reason, Boolean.TRUE, link);
-    }
-
     private void addMeasureResult(String field, String destination, String reason) {
         FieldConversionResult result =
                 FieldConversionResult.builder()
@@ -237,19 +214,18 @@ public class ConversionReporter {
         conversionResultsService.addMeasureResult(measureId, result);
     }
 
-    private void addLibraryResult(String field, String destination, String reason, String matCqlId) {
-
+    private void addLibraryFieldConversionResult(String field, String destination, String reason, String matCqlId) {
         FieldConversionResult result = FieldConversionResult.builder()
                 .field(field)
                 .destination(destination)
                 .reason(reason)
                 .build();
 
-        conversionResultsService.addLibraryResult(measureId, result, matCqlId);
+        conversionResultsService.addLibraryFieldConversionResult(measureId, result, matCqlId);
     }
 
 
-    private void clearValueSetResults(ConversionType conversionType) {
+    private void clearValueSetResults() {
         conversionResultsService.clearValueSetResults(measureId);
     }
 
@@ -268,10 +244,6 @@ public class ConversionReporter {
         conversionResultsService.setLibraryConversionType(measureId, conversionType);
     }
 
-    private void clearCqlConversionResult(ConversionType conversionType) {
-        // conversionResultsService.clearCqlConversionResult(measureId);
-        conversionResultsService.setCqlConversionResult(measureId, conversionType);
-    }
 
     private void addCqlConversionResultSuccess(String matLibraryId) {
         conversionResultsService.addCqlConversionResultSuccess(measureId, matLibraryId);
@@ -309,35 +281,22 @@ public class ConversionReporter {
         conversionResultsService.addValueSetValidationResults(measureId, oid, list);
     }
 
-    private void addValueSetValidationResult(String oid, FhirValidationResult fhirValidationResult) {
-        conversionResultsService.addValueSetValidationResult(measureId, oid, fhirValidationResult);
+    private void addValueSetResult(String oid, Boolean success, String link, String reason) {
+        conversionResultsService.addValueSetResult(measureId, oid, reason, success, link);
     }
 
-    private void addValueSetValidationError(String oid, String error) {
-        conversionResultsService.addValueSetValidation(measureId, oid, error, null, Boolean.FALSE);
-    }
-
-    private void addValueSetValidationLink(String oid, String link, String reason) {
-        conversionResultsService.addValueSetValidation(measureId, oid, link, reason, Boolean.TRUE);
-    }
-
-    private void addLibraryValidationLink(String link, String reason, String matLibraryId) {
-        conversionResultsService.addLibraryValidationLink(measureId, link, reason, matLibraryId);
-    }
-
-    private void addLibraryValidationError(String reason, String matLibraryId) {
-        conversionResultsService.addLibraryValidationError(measureId, reason, matLibraryId);
-    }
-
-    private void addLibraryNotFoundInHapi(String matLibraryId) {
-        conversionResultsService.addLibraryNotFoundInHapi(measureId, matLibraryId);
-    }
-
-    private void saveConversionResultToMongo(ConversionResult conversionResult) {
-        conversionResultsService.save(conversionResult);
+    private void addLibraryConversionResult(String link,
+                                            String reason,
+                                            Boolean success,
+                                            String matLibraryId) {
+        conversionResultsService.addLibraryConversionResult(measureId, link, reason, success, matLibraryId);
     }
 
     private ConversionResult findConversionResult() {
         return conversionResultsService.findConversionResult(measureId);
+    }
+
+    private void saveConversionResultToMongo(ConversionResult conversionResult) {
+        conversionResultsService.save(conversionResult);
     }
 }
