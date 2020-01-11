@@ -166,4 +166,10 @@ public class HapiFhirServer {
                 .next(bundle)
                 .execute();
     }
+
+    public String toJson(IBaseResource resource) {
+        return getCtx().newJsonParser()
+                .setPrettyPrint(true)
+                .encodeResourceToString(resource);
+    }
 }

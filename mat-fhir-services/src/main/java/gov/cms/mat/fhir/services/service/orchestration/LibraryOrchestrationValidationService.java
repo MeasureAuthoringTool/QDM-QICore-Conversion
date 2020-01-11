@@ -37,7 +37,10 @@ public class LibraryOrchestrationValidationService {
                 hapiFhirServer.getBaseURL());
 
         Library fhirLibrary = libraryTranslator.translateToFhir();
-        //results.setFhirLibrary(fhirLibrary); todo save json creates error in jvm
+
+        results.setFhirLibraryJson(hapiFhirServer.toJson(fhirLibrary));
+
+        //todo validate the fhir object
 
         ConversionReporter.saveConversionResult(conversionResult);
 
