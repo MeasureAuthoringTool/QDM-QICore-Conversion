@@ -108,6 +108,6 @@ public class OrchestrationService {
     public boolean validate(OrchestrationProperties properties) {
         return valueSetOrchestrationValidationService.validate(properties) &&
                 cqlLibraryTranslationService.validate(properties) &&
-                libraryOrchestrationValidationService.validate(properties);
+                libraryOrchestrationValidationService.validateLibrary(properties);
     }
 }
