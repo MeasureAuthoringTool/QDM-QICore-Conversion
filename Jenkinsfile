@@ -43,8 +43,8 @@ pipeline {
         sh "sudo \$(aws ecr get-login --no-include-email --region us-east-1)"
         sh "cd ${WORKSPACE}/qdm-qicore-mapping-services"
         sh "sudo docker build --build-arg JAR_FILE=target/*.jar -t ${ECR_REPO}/qdm-qicore-mapping-services ."
-        sh "sudo docker tag ${ECR_REPO}/qdm-qicore-mapping-services:latest ${ECR_URL}/${ECR_REPO}/qdm-qicore-mapping-services:latest"
-        sh "sudo docker push ${ECR_URL}/${ECR_REPO}/qdm-qicore-mapping-services:latest"
+        // sh "sudo docker tag ${ECR_REPO}/qdm-qicore-mapping-services:latest ${ECR_URL}/${ECR_REPO}/qdm-qicore-mapping-services:latest"
+        // sh "sudo docker push ${ECR_URL}/${ECR_REPO}/qdm-qicore-mapping-services:latest"
       }   
     }
   }
