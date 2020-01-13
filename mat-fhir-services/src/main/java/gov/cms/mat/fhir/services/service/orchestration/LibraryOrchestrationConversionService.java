@@ -1,15 +1,11 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
-import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
-import gov.cms.mat.fhir.services.translate.LibraryTranslator;
 import lombok.extern.slf4j.Slf4j;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
@@ -29,30 +25,20 @@ public class LibraryOrchestrationConversionService {
     }
 
     boolean convert(OrchestrationProperties properties) {
-
-        properties.getCqlLibraries().forEach(cqlLibrary -> processPersisting(cqlLibrary));
+        properties.getCqlLibraries()
+                .forEach(matLib -> processPersisting(matLib, properties.findFhirLibrary(matLib.getId())));
 
         return true; //todo
     }
 
-    private void processPersisting(CqlLibrary cqlLib) {
-
-        ConversionResult conversionResult = ConversionReporter.getConversionResult();
-        LibraryConversionResults libraryConversionResults = conversionResult.findLibraryConversionResultsRequired(cqlLib.getId());
-
-        String elm = libraryConversionResults.getCqlConversionResult().getElm();
-        String cql = libraryConversionResults.getCqlConversionResult().getCql();
-
-        LibraryTranslator fhirMapper = new LibraryTranslator(cqlLib, cql.getBytes(), elm.getBytes(), hapiFhirServer.getBaseURL());
-        Library fhirLibrary = fhirMapper.translateToFhir();
-
+    private void processPersisting(CqlLibrary matCqlLibrary, Library fhirLibrary) {
         try {
             String link = hapiFhirServer.persist(fhirLibrary);
-            ConversionReporter.setLibraryValidationLink(link, "Created", cqlLib.getId());
-
+            log.debug("Persisted library to Hapi link : {}", link);
+            ConversionReporter.setLibraryValidationLink(link, "Created", matCqlLibrary.getId());
         } catch (Exception e) {
-            log.warn("Error Persisting to Hapi, id is for cqlLib: {}", cqlLib.getId(), e);
-            ConversionReporter.setLibraryValidationError("HAPI Exception: " + e.getMessage(), cqlLib.getId());
+            log.warn("Error Persisting to Hapi, id is for cqlLib: {}", matCqlLibrary.getId(), e);
+            ConversionReporter.setLibraryValidationError("HAPI Exception: " + e.getMessage(), matCqlLibrary.getId());
         }
     }
 
@@ -69,7 +55,7 @@ public class LibraryOrchestrationConversionService {
     }
 
     public boolean filterValueSet(CqlLibrary cqlLibrary) {
-        Optional<String> optional = fetchHapiLink(cqlLibrary.getId());
+        Optional<String> optional = hapiFhirServer.fetchHapiLinkLibrary(cqlLibrary.getId());
 
         if (optional.isPresent()) {
             log.warn("Hapi cqlLibrary exists for id: {}, link: {}", cqlLibrary.getId(), optional.get());
@@ -78,17 +64,6 @@ public class LibraryOrchestrationConversionService {
         } else {
             ConversionReporter.setLibraryNotFoundInHapi(cqlLibrary.getId());
             return true;
-        }
-    }
-
-
-    public Optional<String> fetchHapiLink(String id) {
-        Bundle bundle = hapiFhirServer.getLibrary(id);
-
-        if (bundle.hasEntry()) {
-            return Optional.of(bundle.getLink().get(0).getUrl());
-        } else {
-            return Optional.empty();
         }
     }
 }

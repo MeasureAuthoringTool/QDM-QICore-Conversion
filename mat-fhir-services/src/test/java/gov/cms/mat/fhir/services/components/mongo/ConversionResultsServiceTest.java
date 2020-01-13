@@ -71,7 +71,7 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result, MAT_LIBRARY_ID);
+        ConversionResult conversionResultReturned = conversionResultsService.addLibraryFieldConversionResult(MEASURE_ID, result, MAT_LIBRARY_ID);
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
@@ -110,7 +110,7 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addLibraryResult(MEASURE_ID, result, MAT_LIBRARY_ID);
+        ConversionResult conversionResultReturned = conversionResultsService.addLibraryFieldConversionResult(MEASURE_ID, result, MAT_LIBRARY_ID);
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 

@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
+import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +18,12 @@ public class LibraryTranslator implements FhirCreator {
     static final String ELM_CONTENT_TYPE = "application/elm+xml";
     static final String CQL_CONTENT_TYPE = "text/cql";
 
-    private final gov.cms.mat.fhir.commons.model.CqlLibrary cqlLibrary;
+    private final CqlLibrary cqlLibrary;
     private final byte[] cql;
     private final byte[] elm;
     private final String baseURL;
 
-    public LibraryTranslator(gov.cms.mat.fhir.commons.model.CqlLibrary cqlLibrary, byte[] cql, byte[] elm, String baseURL) {
+    public LibraryTranslator(CqlLibrary cqlLibrary, byte[] cql, byte[] elm, String baseURL) {
         this.cqlLibrary = cqlLibrary;
         this.cql = cql;
         this.elm = elm;
@@ -46,7 +47,7 @@ public class LibraryTranslator implements FhirCreator {
 
         fhirLibrary.setContent(createContent());
         if (fhirLibrary.getContent().isEmpty()) {
-            ConversionReporter.setLibraryResult("MAT.cql", "Library.content",
+            ConversionReporter.setLibraryFieldConversionResult("MAT.cql", "Library.content",
                     "No CQL or ELM to process", cqlLibrary.getId());
         }
 

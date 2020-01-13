@@ -23,7 +23,6 @@ import static gov.cms.mat.fhir.services.translate.creators.FhirValueSetCreator.S
 @Component
 @Slf4j
 public class HapiFhirServer {
-    // Performance: This class is expensive to instantiate, why in component which will create once
     @Getter
     FhirContext ctx;
 
@@ -44,16 +43,25 @@ public class HapiFhirServer {
         log.info("Created hapi client for server: {} ", baseURL);
     }
 
-    public Optional<String> fetchHapiLink(String oid) {
-        Bundle bundle = isValueSetInHapi(oid);
+    public Optional<String> fetchHapiLinkValueSet(String oid) {
+        Bundle bundle = getValueSetBundle(oid);
 
+        return processBundleLink(bundle);
+    }
+
+    public Optional<String> fetchHapiLinkLibrary(String id) {
+        Bundle bundle = getLibraryBundle(id);
+
+        return processBundleLink(bundle);
+    }
+
+    public Optional<String> processBundleLink(Bundle bundle) {
         if (bundle.hasEntry()) {
             if (bundle.getEntry().isEmpty()) {
                 return Optional.of(bundle.getLink().get(0).getUrl());
             } else {
                 return Optional.of(bundle.getEntry().get(0).getFullUrl());
             }
-
         } else {
             return Optional.empty();
         }
@@ -113,7 +121,7 @@ public class HapiFhirServer {
         }
     }
 
-    public Bundle isValueSetInHapi(String oid) {
+    public Bundle getValueSetBundle(String oid) {
         return hapiClient.search()
                 .forResource(ValueSet.class)
                 .where(ValueSet.IDENTIFIER.exactly().systemAndCode(SYSTEM_IDENTIFIER, oid))
@@ -121,7 +129,7 @@ public class HapiFhirServer {
                 .execute();
     }
 
-    public Bundle getMeasure(String id) {
+    public Bundle getMeasureBundle(String id) {
         return hapiClient.search()
                 .forResource(Measure.class)
                 .where(Measure.URL.matches().value(baseURL + "Measure/" + id))
@@ -129,7 +137,7 @@ public class HapiFhirServer {
                 .execute();
     }
 
-    public Bundle getLibrary(String id) {
+    public Bundle getLibraryBundle(String id) {
         return hapiClient.search()
                 .forResource(Library.class)
                 .where(Measure.URL.matches().value(baseURL + "Library/" + id))
@@ -157,5 +165,11 @@ public class HapiFhirServer {
         return hapiClient.loadPage()
                 .next(bundle)
                 .execute();
+    }
+
+    public String toJson(IBaseResource resource) {
+        return getCtx().newJsonParser()
+                .setPrettyPrint(true)
+                .encodeResourceToString(resource);
     }
 }

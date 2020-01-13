@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,11 +18,14 @@ public class ConversionResultsService {
         this.conversionResultRepository = conversionResultRepository;
     }
 
-    ConversionResult addValueSetResult(String measureId, String oid, String reason, Boolean success, String link) {
+    ConversionResult addValueSetResult(String measureId,
+                                       String oid,
+                                       String reason,
+                                       Boolean success,
+                                       String link) {
         ConversionResult conversionResult = findOrCreate(measureId);
 
         ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
-        valueSetConversionResults.setLink(null);
         valueSetConversionResults.setSuccess(success);
         valueSetConversionResults.setReason(reason);
         valueSetConversionResults.setLink(link);
@@ -31,6 +33,7 @@ public class ConversionResultsService {
 
         return conversionResultRepository.save(conversionResult);
     }
+
 
     ConversionResult addMeasureResult(String measureId, FieldConversionResult result) {
         ConversionResult conversionResult = findOrCreate(measureId);
@@ -42,7 +45,7 @@ public class ConversionResultsService {
         return conversionResultRepository.save(conversionResult);
     }
 
-    ConversionResult addLibraryResult(String measureId, FieldConversionResult result, String matLibraryId) {
+    ConversionResult addLibraryFieldConversionResult(String measureId, FieldConversionResult result, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(measureId);
 
         LibraryConversionResults libraryConversionResult = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
@@ -202,14 +205,6 @@ public class ConversionResultsService {
         conversionResultRepository.save(conversionResult);
     }
 
-    public synchronized void setCqlConversionResult(String measureId, ConversionType conversionType) {
-        ConversionResult conversionResult = findOrCreate(measureId);
-
-
-        //todo remove
-
-        conversionResultRepository.save(conversionResult);
-    }
 
     public synchronized void setMeasureConversionType(String measureId, ConversionType conversionType) {
         ConversionResult conversionResult = findOrCreate(measureId);
@@ -263,63 +258,17 @@ public class ConversionResultsService {
     }
 
 
-    public synchronized void addValueSetValidationResult(String measureId,
-                                                         String oid,
-                                                         FhirValidationResult fhirValidationResult) {
-        addValueSetValidationResults(measureId, oid, Collections.singletonList(fhirValidationResult));
-    }
-
-    public synchronized void addValueSetValidation(String measureId,
-                                                   String oid,
-                                                   String error,
-                                                   String link,
-                                                   Boolean success) {
-        ConversionResult conversionResult = findOrCreate(measureId);
-        ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
-
-        valueSetConversionResults.setSuccess(success);
-        valueSetConversionResults.setReason(error);
-        valueSetConversionResults.setLink(link);
-
-        conversionResultRepository.save(conversionResult);
-    }
-
-
-    public synchronized void addLibraryValidationLink(String measureId,
-                                                      String link,
-                                                      String message,
-                                                      String matLibraryId) {
+    public synchronized void addLibraryConversionResult(String measureId,
+                                                        String link,
+                                                        String message,
+                                                        Boolean success,
+                                                        String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(measureId);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
 
         libraryConversionResults.setLink(link);
         libraryConversionResults.setReason(message);
-        libraryConversionResults.setSuccess(Boolean.TRUE);
-
-        conversionResultRepository.save(conversionResult);
-    }
-
-    public synchronized void addLibraryValidationError(String measureId,
-                                                       String message,
-                                                       String matLibraryId) {
-        ConversionResult conversionResult = findOrCreate(measureId);
-        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
-
-        libraryConversionResults.setLink(null);
-        libraryConversionResults.setReason(message);
-        libraryConversionResults.setSuccess(Boolean.FALSE);
-
-        conversionResultRepository.save(conversionResult);
-    }
-
-    public synchronized void addLibraryNotFoundInHapi(String measureId,
-                                                      String matLibraryId) {
-        ConversionResult conversionResult = findOrCreate(measureId);
-        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
-
-        libraryConversionResults.setLink(null);
-        libraryConversionResults.setReason("Not found in Hapi");
-        libraryConversionResults.setSuccess(Boolean.FALSE);
+        libraryConversionResults.setSuccess(success);
 
         conversionResultRepository.save(conversionResult);
     }
@@ -333,6 +282,4 @@ public class ConversionResultsService {
         conversionResult.setErrorReason(message);
         conversionResultRepository.save(conversionResult);
     }
-
-
 }

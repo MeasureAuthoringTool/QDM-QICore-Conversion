@@ -13,12 +13,12 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ConversionReporterTest {
+    private static final String OID = "oid";
     private static final String MEASURE_ID = "measureId";
     private static final String FIELD = "field";
     private static final String DESTINATION = "destination";
     private static final String REASON = "reason";
     private static final String MAT_LIBRARY_ID = "matLibraryId";
-
     ConversionResultsService conversionResultsService;
 
     @BeforeEach
@@ -50,7 +50,7 @@ class ConversionReporterTest {
 
     @Test
     void setLibraryResult_NoThreadLocal() {
-        ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
+        ConversionReporter.setLibraryFieldConversionResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
 
         assertNull(ConversionReporter.getFromThreadLocal());
 
@@ -59,19 +59,19 @@ class ConversionReporterTest {
 
     @Test
     void setLibraryResult_Success() {
-        when(conversionResultsService.addLibraryResult(anyString(), any(FieldConversionResult.class), anyString()))
+        when(conversionResultsService.addLibraryFieldConversionResult(anyString(), any(FieldConversionResult.class), anyString()))
                 .thenReturn(new ConversionResult());
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
         ConversionReporter.resetLibrary(ConversionType.VALIDATION);
-        ConversionReporter.setLibraryResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
+        ConversionReporter.setLibraryFieldConversionResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
 
-        verify(conversionResultsService).addLibraryResult(anyString(), any(FieldConversionResult.class), anyString());
+        verify(conversionResultsService).addLibraryFieldConversionResult(anyString(), any(FieldConversionResult.class), anyString());
     }
 
     @Test
     void setValueSetResult_NoThreadLocal() {
-        ConversionReporter.setValueSetInit("OID", REASON);
+        ConversionReporter.setValueSetInit(OID, REASON);
 
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
@@ -79,14 +79,14 @@ class ConversionReporterTest {
     @Test
     void setValueSetResult_ThreadLocal() {
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
-        ConversionReporter.setValueSetInit("OID", REASON);
+        ConversionReporter.setValueSetInit(OID, REASON);
 
-        // verify(conversionResultsService).addValueSetResult(anyString(), any(ValueSetResult.class));
+        verify(conversionResultsService).addValueSetResult(MEASURE_ID, OID, REASON, null, null);
     }
 
     @Test
     void resetValueSetResults_NoThreadLocal() {
-        Assertions.assertThrows(ThreadLocalNotFoundException.class, () -> ConversionReporter.resetValueSetResults(ConversionType.VALIDATION));
+        Assertions.assertThrows(ThreadLocalNotFoundException.class, ConversionReporter::resetValueSetResults);
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
 
