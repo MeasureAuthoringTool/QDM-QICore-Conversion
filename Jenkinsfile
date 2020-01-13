@@ -2,6 +2,11 @@ pipeline {
   agent any
 
   stages {
+    stage('Install dependencies') {
+      steps { 
+        sh "mvn install:install-file -Dfile=./lib/vsac-1.0.jar -DgroupId=mat -DartifactId=vsac -Dversion=1.0 -Dpackaging=jar"
+      }
+    }
     stage('Build MAT mat-fhir-services services') {
       steps { 
         dir("mat-fhir-services") {
