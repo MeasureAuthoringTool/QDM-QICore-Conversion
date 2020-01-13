@@ -7,7 +7,7 @@ pipeline {
         sh "mvn install:install-file -Dfile=./lib/vsac-1.0.jar -DgroupId=mat -DartifactId=vsac -Dversion=1.0 -Dpackaging=jar"
       }
     }
-/*     stage('Build MAT mat-fhir-services services') {
+    stage('Build MAT mat-fhir-services services') {
       steps { 
         dir("mat-fhir-commons") {
           sh "mvn clean install -DskipTests"   
@@ -25,7 +25,7 @@ pipeline {
           sh "mvn clean compile package -DskipTests"   
         }
       }
-    } */
+    } 
     stage('Build MAT cql-elm-translation services') {
       steps {
         dir("mat-rest-commons") {
@@ -43,7 +43,7 @@ pipeline {
         }
       }
     }
-/*     stage('Push mat-fhir-services to ECR') {
+    stage('Push mat-fhir-services to ECR') {
       steps {
         sh "sudo \$(aws ecr get-login --no-include-email --region us-east-1)"
         dir("mat-fhir-services") {
@@ -52,7 +52,7 @@ pipeline {
           //sh "sudo docker push ${ECR_URL}/${ECR_REPO}/mat-fhir-services:latest"
         }
       }   
-    } */
+    }
     stage('Push cql-elm-translation to ECR') {
       steps {
         sh "sudo \$(aws ecr get-login --no-include-email --region us-east-1)"
