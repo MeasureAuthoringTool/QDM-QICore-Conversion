@@ -15,7 +15,7 @@ pipeline {
       }
     } */
     stage('Build MAT qdm-qicore-mapping-services services') {
-      stages {
+      stage {
         dir("qdm-qicore-mapping-services") {
           sh "mvn clean compile package -DskipTests"
         }
