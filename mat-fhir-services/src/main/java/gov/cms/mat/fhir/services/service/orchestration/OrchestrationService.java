@@ -21,19 +21,22 @@ public class OrchestrationService {
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
     private final LibraryOrchestrationConversionService libraryOrchestrationConversionService;
     private final LibraryOrchestrationValidationService libraryOrchestrationValidationService;
+    private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
 
     public OrchestrationService(ConversionResultsService conversionResultsService,
                                 ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
                                 ValueSetOrchestrationConversionService valueSetOrchestrationConversionService,
                                 CQLLibraryTranslationService cqlLibraryTranslationService,
                                 LibraryOrchestrationConversionService libraryOrchestrationConversionService,
-                                LibraryOrchestrationValidationService libraryOrchestrationValidationService) {
+                                LibraryOrchestrationValidationService libraryOrchestrationValidationService,
+                                MeasureOrchestrationValidationService measureOrchestrationValidationService) {
         this.conversionResultsService = conversionResultsService;
         this.valueSetOrchestrationValidationService = valueSetOrchestrationValidationService;
         this.valueSetOrchestrationConversionService = valueSetOrchestrationConversionService;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
         this.libraryOrchestrationConversionService = libraryOrchestrationConversionService;
         this.libraryOrchestrationValidationService = libraryOrchestrationValidationService;
+        this.measureOrchestrationValidationService = measureOrchestrationValidationService;
     }
 
     public boolean process(OrchestrationProperties properties) {
@@ -108,6 +111,7 @@ public class OrchestrationService {
     public boolean validate(OrchestrationProperties properties) {
         return valueSetOrchestrationValidationService.validate(properties) &&
                 cqlLibraryTranslationService.validate(properties) &&
-                libraryOrchestrationValidationService.validateLibrary(properties);
+                libraryOrchestrationValidationService.validate(properties) &&
+                measureOrchestrationValidationService.validate(properties);
     }
 }

@@ -93,7 +93,7 @@ public class MeasureController implements FhirValidatorProcessor {
 
             String narrative = getNarrative(measureExport);
 
-            org.hl7.fhir.r4.model.Measure fhirMeasure = getMeasure(qdmMeasure, xmlBytes, narrative);
+            org.hl7.fhir.r4.model.Measure fhirMeasure = createMeasure(qdmMeasure, xmlBytes, narrative);
 
             Bundle bundle = hapiFhirServer.createAndExecuteBundle(fhirMeasure);
             log.debug("bundle: {}", bundle);
@@ -212,7 +212,7 @@ public class MeasureController implements FhirValidatorProcessor {
             //human-readable may exist not an error if it doesn't
             String narrative = getNarrative(measureExport);
 
-            org.hl7.fhir.r4.model.Measure fhirMeasure = getMeasure(qdmMeasure, xmlBytes, narrative);
+            org.hl7.fhir.r4.model.Measure fhirMeasure = createMeasure(qdmMeasure, xmlBytes, narrative);
             validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
 
             processConversionResult(response);
@@ -264,7 +264,7 @@ public class MeasureController implements FhirValidatorProcessor {
         }
     }
 
-    public org.hl7.fhir.r4.model.Measure getMeasure(Measure qdmMeasure, byte[] xmlBytes, String narrative) {
+    public org.hl7.fhir.r4.model.Measure createMeasure(Measure qdmMeasure, byte[] xmlBytes, String narrative) {
         ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);
 
         MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());

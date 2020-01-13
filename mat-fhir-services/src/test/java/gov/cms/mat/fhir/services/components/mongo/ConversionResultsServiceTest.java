@@ -53,9 +53,7 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildMeasureResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addMeasureResult(MEASURE_ID, result);
-
-        assertEquals(conversionResultToReturn, conversionResultReturned);
+        conversionResultsService.addMeasureResult(MEASURE_ID, result);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository).save(any(ConversionResult.class));
@@ -71,9 +69,7 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addLibraryFieldConversionResult(MEASURE_ID, result, MAT_LIBRARY_ID);
-
-        assertEquals(conversionResultToReturn, conversionResultReturned);
+        conversionResultsService.addLibraryFieldConversionResult(MEASURE_ID, result, MAT_LIBRARY_ID);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository).save(any(ConversionResult.class));
@@ -91,9 +87,8 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildMeasureResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addMeasureResult(MEASURE_ID, result);
+        conversionResultsService.addMeasureResult(MEASURE_ID, result);
 
-        assertEquals(conversionResultToReturn, conversionResultReturned);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository).save(conversionResultToReturn);
@@ -110,9 +105,8 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addLibraryFieldConversionResult(MEASURE_ID, result, MAT_LIBRARY_ID);
+        conversionResultsService.addLibraryFieldConversionResult(MEASURE_ID, result, MAT_LIBRARY_ID);
 
-        assertEquals(conversionResultToReturn, conversionResultReturned);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository).save(conversionResultToReturn);
@@ -126,12 +120,8 @@ class ConversionResultsServiceTest {
         when(conversionResultRepository.save(any(ConversionResult.class)))
                 .thenReturn(conversionResultToReturn);
 
-        // ValueSetResult result = buildValueSetResult();
+        conversionResultsService.addValueSetResult(MEASURE_ID, "oid", "reason", true, null);
 
-        ConversionResult conversionResultReturned =
-                conversionResultsService.addValueSetResult(MEASURE_ID, "oid", "reason", true, null);
-
-        assertEquals(conversionResultToReturn, conversionResultReturned);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository).save(any(ConversionResult.class));
@@ -149,9 +139,7 @@ class ConversionResultsServiceTest {
 
         ValueSetResult result = buildValueSetResult();
 
-        ConversionResult conversionResultReturned = conversionResultsService.addValueSetResult(MEASURE_ID, "oid", "reason", Boolean.TRUE, null);
-
-        assertEquals(conversionResultToReturn, conversionResultReturned);
+        conversionResultsService.addValueSetResult(MEASURE_ID, "oid", "reason", Boolean.TRUE, null);
 
         verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
         verify(conversionResultRepository).save(conversionResultToReturn);

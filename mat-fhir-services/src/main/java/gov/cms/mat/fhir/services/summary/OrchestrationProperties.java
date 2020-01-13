@@ -7,6 +7,7 @@ import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundException;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.ValueSet;
@@ -24,6 +25,10 @@ public class OrchestrationProperties {
     final List<Library> fhirLibraries = new ArrayList<>();
 
     Measure matMeasure;
+
+    @Setter
+    org.hl7.fhir.r4.model.Measure fhirMeasure;
+
     ConversionType conversionType;
     XmlSource xmlSource;
 

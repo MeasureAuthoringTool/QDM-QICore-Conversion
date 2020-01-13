@@ -25,9 +25,11 @@ import java.util.List;
 @Slf4j
 public class ConversionResult implements LibraryResultsHelper, ValueSetHelper {
     MeasureConversionResults measureConversionResults;
+    String fhirMeasureJson;
 
     List<ValueSetConversionResults> valueSetConversionResults = new ArrayList<>();
     List<LibraryConversionResults> libraryConversionResults = new ArrayList<>();
+
 
     @Id
     private String id;

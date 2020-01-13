@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.services.exceptions;
 
 public class ThreadLocalNotFoundException extends RuntimeException {
     public ThreadLocalNotFoundException(String message) {

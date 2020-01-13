@@ -26,7 +26,7 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
         this.hapiFhirServer = hapiFhirServer;
     }
 
-    boolean validateLibrary(OrchestrationProperties properties) {
+    boolean validate(OrchestrationProperties properties) {
 
         List<Library> libraryList = properties.getCqlLibraries().stream()
                 .map(this::translateCqlLib)
@@ -35,7 +35,7 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
         properties.getFhirLibraries().addAll(libraryList);
 
         properties.getCqlLibraries()
-                .forEach(matLib -> validateLibrary(matLib, properties.findFhirLibrary(matLib.getId())));
+                .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId())));
 
 
         return true; //todo add logic to get results once conversion is fixed
@@ -60,7 +60,7 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
     }
 
 
-    private FhirLibraryResourceValidationResult validateLibrary(CqlLibrary matCqlLibrary, Library fhirLibrary) {
+    private FhirLibraryResourceValidationResult validate(CqlLibrary matCqlLibrary, Library fhirLibrary) {
         FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(matCqlLibrary.getId());
         response.setMeasureId(matCqlLibrary.getMeasureId());
 

@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.service;
 
 
 import gov.cms.mat.fhir.commons.model.MeasureExport;
+import gov.cms.mat.fhir.services.exceptions.MeasureExportNotFoundException;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;
 import lombok.extern.slf4j.Slf4j;
@@ -30,5 +31,11 @@ public class MeasureExportDataService {
 
     public Optional<MeasureExport> findById(String id) {
         return measureExportRepository.findById(id);
+    }
+
+    public MeasureExport findByIdRequired(String id) {
+        Optional<MeasureExport> optional = measureExportRepository.findByMeasureId(id);
+
+        return optional.orElseThrow(() -> new MeasureExportNotFoundException(id));
     }
 }

@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.components.mongo;
 
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
+import gov.cms.mat.fhir.services.exceptions.ThreadLocalNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,8 +39,6 @@ class ConversionReporterTest {
 
     @Test
     void setMeasureResult_Success() {
-        when(conversionResultsService.addMeasureResult(anyString(), any(FieldConversionResult.class)))
-                .thenReturn(new ConversionResult());
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
         ConversionReporter.resetMeasure(ConversionType.VALIDATION);
@@ -59,9 +58,6 @@ class ConversionReporterTest {
 
     @Test
     void setLibraryResult_Success() {
-        when(conversionResultsService.addLibraryFieldConversionResult(anyString(), any(FieldConversionResult.class), anyString()))
-                .thenReturn(new ConversionResult());
-
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
         ConversionReporter.resetLibrary(ConversionType.VALIDATION);
         ConversionReporter.setLibraryFieldConversionResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);

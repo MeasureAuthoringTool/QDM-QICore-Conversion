@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
 import gov.cms.mat.fhir.rest.dto.*;
+import gov.cms.mat.fhir.services.exceptions.ThreadLocalNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -30,6 +31,14 @@ public class ConversionReporter {
 
         if (conversionReporter != null) {
             conversionReporter.addMeasureResult(field, destination, reason);
+        }
+    }
+
+    public static void setFhirMeasureJson(String json) {
+        ConversionReporter conversionReporter = getFromThreadLocal();
+
+        if (conversionReporter != null) {
+            conversionReporter.addFhirMeasureJson(json);
         }
     }
 
@@ -283,6 +292,10 @@ public class ConversionReporter {
 
     private void addValueSetResult(String oid, Boolean success, String link, String reason) {
         conversionResultsService.addValueSetResult(measureId, oid, reason, success, link);
+    }
+
+    private void addFhirMeasureJson(String json) {
+        conversionResultsService.addFhirMeasureJson(measureId, json);
     }
 
     private void addLibraryConversionResult(String link,
