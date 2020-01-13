@@ -95,7 +95,7 @@ public class OrchestrationService {
             return false;
         } else { // we are valid full steam ahead
             log.debug("Validation has passed for measureId: {}", properties.getMeasureId());
-            return convert(properties);
+            return true;
         }
     }
 

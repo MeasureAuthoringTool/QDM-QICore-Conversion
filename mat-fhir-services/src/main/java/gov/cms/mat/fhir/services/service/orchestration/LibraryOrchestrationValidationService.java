@@ -31,12 +31,14 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
         List<Library> libraryList = properties.getCqlLibraries().stream()
                 .map(this::translateCqlLib)
                 .collect(Collectors.toList());
+
         properties.getFhirLibraries().addAll(libraryList);
 
         properties.getCqlLibraries()
-                .forEach(c -> validateLibrary(c, properties.findFhirLibrary(c.getId())));
+                .forEach(matLib -> validateLibrary(matLib, properties.findFhirLibrary(matLib.getId())));
 
-        return true;
+
+        return true; //todo add logic to get results once conversion is fixed
     }
 
     private Library translateCqlLib(CqlLibrary cqlLibrary) {
