@@ -10,16 +10,16 @@ pipeline {
     stage('Build MAT mat-fhir-services services') {
       steps { 
         dir("mat-fhir-commons") {
-          sh "mvn clean compile package -DskipTests"   
+          sh "mvn clean install -DskipTests"   
         }
         dir("mat-server-commons") {
-          sh "mvn clean compile package -DskipTests"   
+          sh "mvn clean install -DskipTests"   
         }
         dir("mat-rest-commons") {
-          sh "mvn clean compile package -DskipTests"   
+          sh "mvn clean install -DskipTests"   
         }
         dir("vsac-mat-conversion") {
-          sh "mvn clean compile package -DskipTests"   
+          sh "mvn clean install -DskipTests"   
         }
         dir("mat-fhir-services") {
           sh "mvn clean compile package -DskipTests"   
