@@ -27,7 +27,10 @@ pipeline {
       }
     } */
     stage('Build MAT cql-elm-translation services') {
-      steps { 
+      steps {
+        dir("mat-rest-commons") {
+          sh "mvn clean install -DskipTests"   
+        }
         dir("cql-elm-translation") {
           sh "mvn clean compile package -DskipTests"
         }
