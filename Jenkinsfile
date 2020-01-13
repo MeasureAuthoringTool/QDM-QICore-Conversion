@@ -15,8 +15,10 @@ pipeline {
       }
     } */
     stage('Build MAT qdm-qicore-mapping-services services') {
-      dir("qdm-qicore-mapping-services") {
-        sh "mvn clean compile package -DskipTests"
+      stages {
+        dir("qdm-qicore-mapping-services") {
+          sh "mvn clean compile package -DskipTests"
+        }
       }
     }
 /*     stage('Push mat-fhir-services to ECR') {
