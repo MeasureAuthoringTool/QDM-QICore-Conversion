@@ -6,7 +6,7 @@ import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.SupplementalDataProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
-import gov.cms.mat.fhir.services.translate.MeasureMapper;
+import gov.cms.mat.fhir.services.translate.MeasureTranslator;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import org.apache.commons.lang3.ArrayUtils;
@@ -36,7 +36,7 @@ public class FhirMeasureCreator {
     public org.hl7.fhir.r4.model.Measure create(Measure matMeasure, byte[] xmlBytes, String narrative) {
         ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, matMeasure);
 
-        MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());
+        MeasureTranslator fhirMapper = new MeasureTranslator(model, narrative, hapiFhirServer.getBaseURL());
         org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
 
         if (ArrayUtils.isNotEmpty(xmlBytes)) {

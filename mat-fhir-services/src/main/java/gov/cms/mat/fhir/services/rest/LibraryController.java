@@ -7,7 +7,6 @@ import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.objects.CQLSourceForTranslation;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
-import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
@@ -70,7 +69,7 @@ public class LibraryController implements FhirValidatorProcessor {
     public TranslationOutcome translateLibraryByMeasureId(@RequestParam String id) {
         TranslationOutcome res = new TranslationOutcome();
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetLibrary(ConversionType.CONVERSION);
+        ConversionReporter.resetLibrary();
 
         try {
             List<CqlLibrary> cqlLibs = cqlLibraryDataService.getCqlLibrariesByMeasureIdRequired(id);
@@ -106,7 +105,7 @@ public class LibraryController implements FhirValidatorProcessor {
             List<CqlLibrary> cqlLibs = cqlLibraryDataService.getCqlLibrariesByMeasureIdRequired(id);
 
             ConversionReporter.setInThreadLocal(id, conversionResultsService);
-            ConversionReporter.resetLibrary(ConversionType.VALIDATION);
+            ConversionReporter.resetLibrary();
 
             return cqlLibs.stream()
                     .map(this::validate)

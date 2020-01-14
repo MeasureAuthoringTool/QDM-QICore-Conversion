@@ -1,6 +1,9 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.dto.*;
+import gov.cms.mat.fhir.rest.dto.CqlConversionError;
+import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
+import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
+import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
 import gov.cms.mat.fhir.services.exceptions.ThreadLocalNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -90,10 +93,10 @@ public class ConversionReporter {
         conversionReporter.clearValueSetResults();
     }
 
-    public static void resetMeasure(ConversionType conversionType) {
+    public static void resetMeasure() {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.clearMeasure(conversionType);
+        conversionReporter.clearMeasure();
     }
 
     public static void resetOrchestration() {
@@ -174,6 +177,12 @@ public class ConversionReporter {
         conversionReporter.addValueSetResult(oid, Boolean.FALSE, null, error);
     }
 
+    public static void setMeasureValidationLink(String link,
+                                                String reason) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addMeasureConversionResult(Boolean.TRUE, link, reason);
+    }
+
 
     public static void setLibraryValidationLink(String link,
                                                 String reason,
@@ -193,10 +202,10 @@ public class ConversionReporter {
         conversionReporter.addLibraryConversionResult(null, "Not Found in Hapi", Boolean.FALSE, matCqlId);
     }
 
-    public static void resetLibrary(ConversionType conversionType) {
+    public static void resetLibrary() {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.clearLibrary(conversionType);
+        conversionReporter.clearLibrary();
     }
 
     public static void setErrorMessage(String errorMessage) {
@@ -243,14 +252,12 @@ public class ConversionReporter {
     }
 
 
-    private void clearMeasure(ConversionType conversionType) {
+    private void clearMeasure() {
         conversionResultsService.clearMeasure(measureId);
-        conversionResultsService.setMeasureConversionType(measureId, conversionType);
     }
 
-    private void clearLibrary(ConversionType conversionType) {
+    private void clearLibrary() {
         conversionResultsService.clearLibrary(measureId);
-        conversionResultsService.setLibraryConversionType(measureId, conversionType);
     }
 
 
@@ -292,6 +299,10 @@ public class ConversionReporter {
 
     private void addValueSetResult(String oid, Boolean success, String link, String reason) {
         conversionResultsService.addValueSetResult(measureId, oid, reason, success, link);
+    }
+
+    private void addMeasureConversionResult(Boolean success, String link, String reason) {
+        conversionResultsService.addMeasureConversionResult(measureId, link, reason, success);
     }
 
     private void addFhirMeasureJson(String json) {

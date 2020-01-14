@@ -1,35 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gov.cms.mat.fhir.services.translate;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
-import org.hl7.fhir.r4.model.Measure;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.BeforeEach;
-
-import org.junit.jupiter.api.Test;
-import gov.cms.mat.fhir.services.translate.MeasureMapper;
-import java.util.ArrayList;
-import java.util.List;
 import mat.client.measure.PeriodModel;
+import org.hl7.fhir.r4.model.Measure;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-/**
- *
- * @author duanedecouteau
- */
-class MeasureMapperTest {
-    
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class MeasureTranslatorTest {
+
     private ManageCompositeMeasureDetailModel compositeModel;
     private String humanReadable;
     private String baseURL;
     private String measureURL;
-    private MeasureMapper measureMapper;
-    
+    private MeasureTranslator measureTranslator;
+
     @BeforeEach
     void setup() {
         compositeModel = new ManageCompositeMeasureDetailModel();
@@ -87,17 +78,17 @@ class MeasureMapperTest {
         pModel.setStopDate("2020-11-05 00:00:00");
         compositeModel.setPeriodModel(pModel);
         
-        measureURL = baseURL + "Measure/402803826529d99f0165d33515622e23"; 
-        
-        measureMapper = new MeasureMapper(compositeModel, humanReadable, baseURL);
+        measureURL = baseURL + "Measure/402803826529d99f0165d33515622e23";
+
+        measureTranslator = new MeasureTranslator(compositeModel, humanReadable, baseURL);
         
         
     }
     
     @Test
     void testTranslateToFhir_MeasureIdentity() {
-        
-        Measure fhirMeasure = measureMapper.translateToFhir();
+
+        Measure fhirMeasure = measureTranslator.translateToFhir();
         
         assertEquals("402803826529d99f0165d33515622e23", fhirMeasure.getId());
         assertEquals("Hospital ReAdmits", fhirMeasure.getName());
@@ -109,7 +100,7 @@ class MeasureMapperTest {
     
     @Test
     void testTranslateToFhir_MeasureClinicalGuidance() {
-        Measure fhirMeasure = measureMapper.translateToFhir();
+        Measure fhirMeasure = measureTranslator.translateToFhir();
 
         assertEquals("this is rationale", fhirMeasure.getRationale());
         assertEquals("This is the measures guidance", fhirMeasure.getGuidance());

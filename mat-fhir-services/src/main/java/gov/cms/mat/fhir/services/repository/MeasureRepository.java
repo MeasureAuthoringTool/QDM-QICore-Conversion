@@ -8,11 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * /**
- *
- * @author duanedecouteau
- */
 public interface MeasureRepository extends JpaRepository<Measure, String> {
     @Query("select a from Measure a where a.id = :id")
     Measure getMeasureById(String id);

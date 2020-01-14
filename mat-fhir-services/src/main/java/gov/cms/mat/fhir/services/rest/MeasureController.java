@@ -5,7 +5,6 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
-import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
@@ -22,6 +21,7 @@ import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.summary.FhirMeasureResourceValidationResult;
 import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
 import gov.cms.mat.fhir.services.translate.MeasureMapper;
+import gov.cms.mat.fhir.services.translate.MeasureTranslator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +48,7 @@ public class MeasureController implements FhirValidatorProcessor {
     private final MeasureGroupingDataProcessor measureGroupingDataProcessor;
 
     private final MatXmlProcessor matXmlProcessor;
+    private final MeasureMapper measureMapper;
 
     public MeasureController(MeasureDataService measureDataService,
                              MeasureExportRepository measureExportRepository,
@@ -57,7 +58,7 @@ public class MeasureController implements FhirValidatorProcessor {
                              SupplementalDataProcessor supplementalDataProcessor,
                              RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor,
                              MeasureGroupingDataProcessor measureGroupingDataProcessor,
-                             MatXmlProcessor matXmlProcessor) {
+                             MatXmlProcessor matXmlProcessor, MeasureMapper measureMapper) {
         this.measureDataService = measureDataService;
 
         this.measureExportRepo = measureExportRepository;
@@ -68,6 +69,7 @@ public class MeasureController implements FhirValidatorProcessor {
         this.riskAdjustmentsDataProcessor = riskAdjustmentsDataProcessor;
         this.measureGroupingDataProcessor = measureGroupingDataProcessor;
         this.matXmlProcessor = matXmlProcessor;
+        this.measureMapper = measureMapper;
     }
 
 
@@ -80,7 +82,7 @@ public class MeasureController implements FhirValidatorProcessor {
 
         TranslationOutcome res = new TranslationOutcome();
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetMeasure(ConversionType.CONVERSION);
+        ConversionReporter.resetMeasure();
 
         try {
             Measure qdmMeasure = measureDataService.findOneValid(id);
@@ -200,7 +202,7 @@ public class MeasureController implements FhirValidatorProcessor {
         FhirMeasureResourceValidationResult response = new FhirMeasureResourceValidationResult(id, "Measure");
 
         ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetMeasure(ConversionType.VALIDATION);
+        ConversionReporter.resetMeasure();
 
         try {
             Measure qdmMeasure = measureDataService.findOneValid(id);
@@ -241,6 +243,19 @@ public class MeasureController implements FhirValidatorProcessor {
         return res;
     }
 
+    @Operation(summary = "Count of persisted FHIR Measures.",
+            description = "The count of all the Measures in the HAPI FHIR Database.")
+    @GetMapping(path = "/count")
+    public int countMeasures() {
+        return measureMapper.count();
+    }
+
+    @Operation(summary = "Delete all persisted FHIR Measures.",
+            description = "Delete all the Measures in the HAPI FHIR Database.")
+    @DeleteMapping(path = "/deleteAll")
+    public int deleteMeasures() {
+        return measureMapper.deleteAll();
+    }
 
     public void deleteMeasure(String measureId) {
         try {
@@ -267,7 +282,7 @@ public class MeasureController implements FhirValidatorProcessor {
     public org.hl7.fhir.r4.model.Measure createMeasure(Measure qdmMeasure, byte[] xmlBytes, String narrative) {
         ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, qdmMeasure);
 
-        MeasureMapper fhirMapper = new MeasureMapper(model, narrative, hapiFhirServer.getBaseURL());
+        MeasureTranslator fhirMapper = new MeasureTranslator(model, narrative, hapiFhirServer.getBaseURL());
         org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
 
         if (ArrayUtils.isNotEmpty(xmlBytes)) {

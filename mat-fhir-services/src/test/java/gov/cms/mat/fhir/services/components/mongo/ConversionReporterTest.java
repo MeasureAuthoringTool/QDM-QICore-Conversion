@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
 import gov.cms.mat.fhir.services.exceptions.ThreadLocalNotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -41,7 +40,7 @@ class ConversionReporterTest {
     void setMeasureResult_Success() {
 
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
-        ConversionReporter.resetMeasure(ConversionType.VALIDATION);
+        ConversionReporter.resetMeasure();
         ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 
         verify(conversionResultsService).addMeasureResult(anyString(), any(FieldConversionResult.class));
@@ -59,7 +58,7 @@ class ConversionReporterTest {
     @Test
     void setLibraryResult_Success() {
         ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService);
-        ConversionReporter.resetLibrary(ConversionType.VALIDATION);
+        ConversionReporter.resetLibrary();
         ConversionReporter.setLibraryFieldConversionResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
 
         verify(conversionResultsService).addLibraryFieldConversionResult(anyString(), any(FieldConversionResult.class), anyString());
@@ -88,13 +87,13 @@ class ConversionReporterTest {
 
     @Test
     void resetMeasure_NoThreadLocal() {
-        Assertions.assertThrows(ThreadLocalNotFoundException.class, () -> ConversionReporter.resetMeasure(ConversionType.VALIDATION));
+        Assertions.assertThrows(ThreadLocalNotFoundException.class, ConversionReporter::resetMeasure);
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
 
     @Test
     void resetLibrary_NoThreadLocal() {
-        Assertions.assertThrows(ThreadLocalNotFoundException.class, () -> ConversionReporter.resetLibrary(null));
+        Assertions.assertThrows(ThreadLocalNotFoundException.class, ConversionReporter::resetLibrary);
         verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
     }
 }

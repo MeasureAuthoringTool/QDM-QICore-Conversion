@@ -22,6 +22,7 @@ public class OrchestrationService {
     private final LibraryOrchestrationConversionService libraryOrchestrationConversionService;
     private final LibraryOrchestrationValidationService libraryOrchestrationValidationService;
     private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
+    private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
 
     public OrchestrationService(ConversionResultsService conversionResultsService,
                                 ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
@@ -29,7 +30,8 @@ public class OrchestrationService {
                                 CQLLibraryTranslationService cqlLibraryTranslationService,
                                 LibraryOrchestrationConversionService libraryOrchestrationConversionService,
                                 LibraryOrchestrationValidationService libraryOrchestrationValidationService,
-                                MeasureOrchestrationValidationService measureOrchestrationValidationService) {
+                                MeasureOrchestrationValidationService measureOrchestrationValidationService,
+                                MeasureOrchestrationConversionService measureOrchestrationConversionService) {
         this.conversionResultsService = conversionResultsService;
         this.valueSetOrchestrationValidationService = valueSetOrchestrationValidationService;
         this.valueSetOrchestrationConversionService = valueSetOrchestrationConversionService;
@@ -37,6 +39,7 @@ public class OrchestrationService {
         this.libraryOrchestrationConversionService = libraryOrchestrationConversionService;
         this.libraryOrchestrationValidationService = libraryOrchestrationValidationService;
         this.measureOrchestrationValidationService = measureOrchestrationValidationService;
+        this.measureOrchestrationConversionService = measureOrchestrationConversionService;
     }
 
     public boolean process(OrchestrationProperties properties) {
@@ -104,7 +107,8 @@ public class OrchestrationService {
 
     public boolean convert(OrchestrationProperties properties) {
         return valueSetOrchestrationConversionService.convert(properties) &&
-                libraryOrchestrationConversionService.convert(properties);
+                libraryOrchestrationConversionService.convert(properties) &&
+                measureOrchestrationConversionService.convert(properties);
     }
 
 
