@@ -51,6 +51,7 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
                 hapiFhirServer.getBaseURL());
 
         Library fhirLibrary = libraryTranslator.translateToFhir();
+        
 
         results.setFhirLibraryJson(hapiFhirServer.toJson(fhirLibrary));
 

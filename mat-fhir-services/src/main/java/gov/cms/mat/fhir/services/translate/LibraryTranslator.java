@@ -10,6 +10,7 @@ import org.hl7.fhir.r4.model.Library;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.hl7.fhir.r4.model.Enumerations;
 
 @Slf4j
 public class LibraryTranslator implements FhirCreator {
@@ -50,6 +51,8 @@ public class LibraryTranslator implements FhirCreator {
             ConversionReporter.setLibraryFieldConversionResult("MAT.cql", "Library.content",
                     "No CQL or ELM to process", cqlLibrary.getId());
         }
+        //set library status assume this is active 
+        fhirLibrary.setStatus(Enumerations.PublicationStatus.ACTIVE);
 
         log.debug("Converted library: {}", fhirLibrary);
 

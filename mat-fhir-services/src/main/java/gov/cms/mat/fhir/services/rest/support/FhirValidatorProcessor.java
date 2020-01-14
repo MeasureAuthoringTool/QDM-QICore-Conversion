@@ -1,8 +1,11 @@
 package gov.cms.mat.fhir.services.rest.support;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.validation.IValidatorModule;
+import ca.uhn.fhir.validation.SchemaBaseValidator;
 import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
+import ca.uhn.fhir.validation.schematron.SchematronBaseValidator;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
@@ -15,8 +18,11 @@ import java.util.stream.Collectors;
 public interface FhirValidatorProcessor {
     default void validateResource(FhirResourceValidationResult res, IBaseResource resource, FhirContext ctx) {
         ca.uhn.fhir.validation.FhirValidator validator = ctx.newValidator();
-        validator.registerValidatorModule(new FhirInstanceValidator());
+        FhirInstanceValidator instanceValidator = new FhirInstanceValidator();
+        validator.registerValidatorModule(instanceValidator);
+        instanceValidator.setNoTerminologyChecks(true);
 
+      
         ValidationResult result = validator.validateWithResult(resource);
 
         for (SingleValidationMessage next : result.getMessages()) {
