@@ -47,9 +47,9 @@ pipeline {
       steps {
         sh "sudo \$(aws ecr get-login --no-include-email --region us-east-1)"
         dir("mat-fhir-services") {
-          sh "sudo docker build --build-arg JAR_FILE=target/*.jar -t ${ECR_REPO}/mat-fhir-services ."
-          //sh "sudo docker tag ${ECR_REPO}/mat-fhir-services:latest ${ECR_URL}/${ECR_REPO}/mat-fhir-services:latest"
-          //sh "sudo docker push ${ECR_URL}/${ECR_REPO}/mat-fhir-services:latest"
+          sh "sudo docker build --build-arg JAR_FILE=target/*.jar -t ${ECR_REPO}mat-fhir-services-ecr ."
+          sh "sudo docker tag ${ECR_REPO}mat-fhir-services-ecr:latest ${ECR_URL}/${ECR_REPO}mat-fhir-services-ecr:latest"
+          sh "sudo docker push ${ECR_URL}/${ECR_REPO}mat-fhir-services-ecr:latest"
         }
       }   
     }
@@ -57,9 +57,9 @@ pipeline {
       steps {
         sh "sudo \$(aws ecr get-login --no-include-email --region us-east-1)"
         dir("cql-elm-translation") {
-          sh "sudo docker build --build-arg JAR_FILE=target/*.jar -t ${ECR_REPO}/cql-elm-translation ."
-          //sh "sudo docker tag ${ECR_REPO}/cql-elm-translation:latest ${ECR_URL}/${ECR_REPO}/cql-elm-translation:latest"
-          //sh "sudo docker push ${ECR_URL}/${ECR_REPO}/cql-elm-translation:latest"
+          sh "sudo docker build --build-arg JAR_FILE=target/*.jar -t ${ECR_REPO}cql-elm-translation-ecr ."
+          sh "sudo docker tag ${ECR_REPO}cql-elm-translation-ecr:latest ${ECR_URL}/${ECR_REPO}cql-elm-translation-ecr:latest"
+          sh "sudo docker push ${ECR_URL}/${ECR_REPO}cql-elm-translation-ecr:latest"
         }
       }   
     } 
@@ -67,9 +67,9 @@ pipeline {
       steps {
         sh "sudo \$(aws ecr get-login --no-include-email --region us-east-1)"
         dir("qdm-qicore-mapping-services") {
-          sh "sudo docker build --build-arg JAR_FILE=target/*.jar -t ${ECR_REPO}/qdm-qicore-mapping-services ."
-          // sh "sudo docker tag ${ECR_REPO}/qdm-qicore-mapping-services:latest ${ECR_URL}/${ECR_REPO}/qdm-qicore-mapping-services:latest"
-          // sh "sudo docker push ${ECR_URL}/${ECR_REPO}/qdm-qicore-mapping-services:latest"
+          sh "sudo docker build --build-arg JAR_FILE=target/*.jar -t ${ECR_REPO}qdm-qicore-mapping-services-ecr ."
+          sh "sudo docker tag ${ECR_REPO}qdm-qicore-mapping-services-ecr:latest ${ECR_URL}/${ECR_REPO}qdm-qicore-mapping-services-ecr:latest"
+          sh "sudo docker push ${ECR_URL}/${ECR_REPO}qdm-qicore-mapping-services-ecr:latest"
         }
       }   
     }
