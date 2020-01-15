@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
+import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
+
 @Component
 @Slf4j
 public class LibraryOrchestrationConversionService {
@@ -35,7 +38,7 @@ public class LibraryOrchestrationConversionService {
         try {
             String link = hapiFhirServer.persist(fhirLibrary);
             log.debug("Persisted library to Hapi link : {}", link);
-            ConversionReporter.setLibraryValidationLink(link, "Created", matCqlLibrary.getId());
+            ConversionReporter.setLibraryValidationLink(link, CREATED, matCqlLibrary.getId());
         } catch (Exception e) {
             log.warn("Error Persisting to Hapi, id is for cqlLib: {}", matCqlLibrary.getId(), e);
             ConversionReporter.setLibraryValidationError("HAPI Exception: " + e.getMessage(), matCqlLibrary.getId());
@@ -59,7 +62,7 @@ public class LibraryOrchestrationConversionService {
 
         if (optional.isPresent()) {
             log.warn("Hapi cqlLibrary exists for id: {}, link: {}", cqlLibrary.getId(), optional.get());
-            ConversionReporter.setLibraryValidationLink(optional.get(), "Exists", cqlLibrary.getId());
+            ConversionReporter.setLibraryValidationLink(optional.get(), EXISTS, cqlLibrary.getId());
             return false;
         } else {
             ConversionReporter.setLibraryNotFoundInHapi(cqlLibrary.getId());

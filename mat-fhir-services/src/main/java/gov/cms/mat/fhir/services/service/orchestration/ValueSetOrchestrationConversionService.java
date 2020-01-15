@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
+import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
+
 @Component
 @Slf4j
 public class ValueSetOrchestrationConversionService {
@@ -54,7 +57,7 @@ public class ValueSetOrchestrationConversionService {
 
         if (optional.isPresent()) {
             log.info("Hapi valueSet exists for oid: {}", valueSet.getId());
-            ConversionReporter.setValueSetsValidationLink(valueSet.getId(), optional.get(), "Exists");
+            ConversionReporter.setValueSetsValidationLink(valueSet.getId(), optional.get(), EXISTS);
             return false;
         } else {
             ConversionReporter.setValueSetInit(valueSet.getId(), "Hapi valueSet does NOT exist");
@@ -77,7 +80,7 @@ public class ValueSetOrchestrationConversionService {
         try {
             String link = hapiFhirServer.persist(valueSetIn);
             log.debug("Persisted valueSet to Hapi link : {}", link);
-            ConversionReporter.setValueSetsValidationLink(valueSetIn.getId(), link, "Created");
+            ConversionReporter.setValueSetsValidationLink(valueSetIn.getId(), link, CREATED);
         } catch (Exception e) {
             log.warn("Error Persisting to Hapi, id is for valueSet: {}", valueSetIn.getId(), e);
             ConversionReporter.setValueSetsValidationError(valueSetIn.getId(), "HAPI Exception: " + e.getMessage());

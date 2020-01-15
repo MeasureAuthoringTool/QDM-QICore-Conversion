@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
+
 @Component
 @Slf4j
 public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
@@ -63,7 +65,7 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
 
         if (optional.isPresent()) {
             log.debug("ValueSet {} is in hapi: {}", oid, optional.get());
-            ConversionReporter.setValueSetsValidationLink(oid, optional.get(), "Exists");
+            ConversionReporter.setValueSetsValidationLink(oid, optional.get(), EXISTS);
             return true;
         } else {
             log.debug("ValueSet {} is NOT in hapi", oid);

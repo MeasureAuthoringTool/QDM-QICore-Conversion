@@ -130,9 +130,9 @@ public class ConversionReporter {
 
     public static void setValueSetsValidationLink(String oid,
                                                   String link,
-                                                  String reason) {
+                                                  HapiResourcePersistedState state) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetResult(oid, Boolean.TRUE, link, reason);
+        conversionReporter.addValueSetResult(oid, Boolean.TRUE, link, state.value);
     }
 
     static void removeInThreadLocal() {
@@ -178,17 +178,17 @@ public class ConversionReporter {
     }
 
     public static void setMeasureValidationLink(String link,
-                                                String reason) {
+                                                HapiResourcePersistedState state) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addMeasureConversionResult(Boolean.TRUE, link, reason);
+        conversionReporter.addMeasureConversionResult(Boolean.TRUE, link, state.value);
     }
 
 
     public static void setLibraryValidationLink(String link,
-                                                String reason,
+                                                HapiResourcePersistedState reason,
                                                 String matCqlId) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addLibraryConversionResult(link, reason, Boolean.TRUE, matCqlId);
+        conversionReporter.addLibraryConversionResult(link, reason.value, Boolean.TRUE, matCqlId);
     }
 
     public static void setLibraryValidationError(String reason,

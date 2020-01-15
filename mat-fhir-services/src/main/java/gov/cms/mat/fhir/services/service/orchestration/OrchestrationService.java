@@ -46,6 +46,7 @@ public class OrchestrationService {
         ConversionReporter.setInThreadLocal(properties.getMatMeasure().getId(), conversionResultsService);
         ConversionReporter.resetOrchestration();
 
+        processFhirMeasure(properties);
         processAndGetValueSets(properties);
         processAndGetCqlLibraries(properties);
 
@@ -57,16 +58,22 @@ public class OrchestrationService {
         }
     }
 
+    private void processFhirMeasure(OrchestrationProperties properties) {
+        measureOrchestrationConversionService.processExistingFhirMeasure(properties);
+    }
+
     public void processAndGetCqlLibraries(OrchestrationProperties properties) {
         List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesNotInHapi(properties);
 
-        properties.getCqlLibraries().addAll(cqlLibraries);
+        properties.getCqlLibraries()
+                .addAll(cqlLibraries);
     }
 
     public void processAndGetValueSets(OrchestrationProperties properties) {
         List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties);
 
-        properties.getValueSets().addAll(valueSets);
+        properties.getValueSets()
+                .addAll(valueSets);
     }
 
     /* Should be called only when validation has succeeded */

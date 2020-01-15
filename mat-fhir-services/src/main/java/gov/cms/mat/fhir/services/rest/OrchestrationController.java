@@ -47,6 +47,7 @@ public class OrchestrationController {
             @RequestParam String id,
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
+
         Measure matMeasure = measureDataService.findOneValid(id);
 
         OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()

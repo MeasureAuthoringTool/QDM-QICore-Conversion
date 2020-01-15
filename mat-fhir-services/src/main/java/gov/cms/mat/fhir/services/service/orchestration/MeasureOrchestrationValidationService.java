@@ -19,11 +19,9 @@ import java.util.List;
 @Component
 @Slf4j
 public class MeasureOrchestrationValidationService implements FhirValidatorProcessor {
-
     private final MeasureExportDataService measureExportDataService;
     private final MatXmlProcessor matXmlProcessor;
     private final HapiFhirServer hapiFhirServer;
-
 
     private final FhirMeasureCreator fhirMeasureCreator;
 
@@ -38,6 +36,16 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
     }
 
     boolean validate(OrchestrationProperties properties) {
+        if (ConversionReporter.getConversionResult().measureExistsInHapi()) {
+            log.info("No Validation performed already in hapi measureId: {}", properties.getMeasureId());
+            return true;
+        } else {
+            log.info("Validating measure hapi measureId: {}", properties.getMeasureId());
+            return validateMeasure(properties);
+        }
+    }
+
+    private boolean validateMeasure(OrchestrationProperties properties) {
         org.hl7.fhir.r4.model.Measure fhirMeasure = processFhirMeasure(properties);
 
         FhirMeasureResourceValidationResult response =
@@ -62,7 +70,6 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
 
     }
 
-
     private org.hl7.fhir.r4.model.Measure buildFhirMeasure(OrchestrationProperties properties) {
         byte[] xmlBytes = matXmlProcessor.getXml(properties.getMatMeasure(), properties.getXmlSource());
 
@@ -79,7 +86,7 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         try {
             return new String(measureExport.getHumanReadable());
         } catch (Exception ex) {
-            log.error("Narrative not found: {}", ex.getMessage());
+            log.warn("Narrative not found: {}", ex.getMessage());
             return "";
         }
     }
