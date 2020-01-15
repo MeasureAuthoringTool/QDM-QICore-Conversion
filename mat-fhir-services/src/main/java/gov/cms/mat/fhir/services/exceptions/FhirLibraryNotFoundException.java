@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.exceptions;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,6 +12,5 @@ public class FhirLibraryNotFoundException extends RuntimeException {
     public FhirLibraryNotFoundException(String measureId) {
         super(String.format(NOT_FOUND_BY_ID, measureId));
         log.warn(getMessage());
-        ConversionReporter.setErrorMessage(getMessage());
     }
 }

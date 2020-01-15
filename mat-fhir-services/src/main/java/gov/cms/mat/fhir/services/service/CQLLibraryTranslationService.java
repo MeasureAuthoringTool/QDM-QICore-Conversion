@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.CQL_LIBRARY_TRANSLATION_FAILED;
+
 @Service
 @Slf4j
 public class CQLLibraryTranslationService implements ErrorSeverityChecker {
@@ -85,7 +87,8 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
         cqlLibraries.forEach(c -> processCqlLibrary(c, atomicBoolean));
 
         if (!atomicBoolean.get()) {
-            ConversionReporter.setErrorMessage("CQLLibraryTranslationService failed");
+            ConversionReporter.setTerminalMessage("CQLLibraryTranslationService failed",
+                    CQL_LIBRARY_TRANSLATION_FAILED);
         }
 
         return atomicBoolean.get();

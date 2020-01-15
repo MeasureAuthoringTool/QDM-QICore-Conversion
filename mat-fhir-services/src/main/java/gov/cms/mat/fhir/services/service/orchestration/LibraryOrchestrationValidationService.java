@@ -19,9 +19,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.LIBRARY_VALIDATION_FAILED;
+
 @Component
 @Slf4j
 public class LibraryOrchestrationValidationService implements FhirValidatorProcessor, ErrorSeverityChecker {
+    private static final String FAILURE_MESSAGE = "Library validation failed";
     private final HapiFhirServer hapiFhirServer;
 
     public LibraryOrchestrationValidationService(HapiFhirServer hapiFhirServer) {
@@ -40,6 +43,10 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
 
         properties.getCqlLibraries()
                 .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
+
+        if (!atomicBoolean.get()) {
+            ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
+        }
 
         return atomicBoolean.get();
     }

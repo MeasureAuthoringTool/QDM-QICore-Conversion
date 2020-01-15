@@ -12,12 +12,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.VALUESET_CONVERSION_FAILED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
 
 @Component
 @Slf4j
 public class ValueSetOrchestrationConversionService {
+    private static final String FAILURE_MESSAGE = "ValueSet conversion failed";
     private final HapiFhirServer hapiFhirServer;
 
     public ValueSetOrchestrationConversionService(HapiFhirServer hapiFhirServer) {
@@ -30,7 +32,8 @@ public class ValueSetOrchestrationConversionService {
         long errorCount = countValueSetResultErrors();
 
         if (errorCount > 0) {
-            log.info("ValueSet error processing FAILED, count: {} ", errorCount);
+            log.info("{} count: {}", FAILURE_MESSAGE, errorCount);
+            ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, VALUESET_CONVERSION_FAILED);
         } else {
             log.debug("ValueSet error processing PASSED");
         }

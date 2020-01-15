@@ -1,9 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
-import gov.cms.mat.fhir.rest.dto.MeasureConversionResults;
-import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
+import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.components.mongo.helpers.LibraryResultsHelper;
 import gov.cms.mat.fhir.services.components.mongo.helpers.MeasureResultsHelper;
 import gov.cms.mat.fhir.services.components.mongo.helpers.ValueSetResultsHelper;
@@ -43,6 +40,9 @@ public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHe
     private String measureId;
 
     private String errorReason;
+    private ConversionOutcome outcome;
 
     private ConversionType conversionType;
+
+    private Instant finished;
 }

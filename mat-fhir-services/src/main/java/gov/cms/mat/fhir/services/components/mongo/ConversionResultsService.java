@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,6 +108,7 @@ public class ConversionResultsService {
         ConversionResult conversionResult = findOrCreate(measureId);
 
         conversionResult.getValueSetConversionResults().clear();
+        conversionResult.setOutcome(null);
 
         conversionResult.setMeasureConversionResults(new MeasureConversionResults());
         conversionResult.getLibraryConversionResults().clear();
@@ -248,9 +250,10 @@ public class ConversionResultsService {
         conversionResultRepository.save(conversionResult);
     }
 
-    public void addErrorMessage(String measureId, String message) {
+    public void addErrorMessage(String measureId, String message, ConversionOutcome outcome) {
         ConversionResult conversionResult = findOrCreate(measureId);
         conversionResult.setErrorReason(message);
+        conversionResult.setOutcome(outcome);
         save(conversionResult);
     }
 
@@ -284,6 +287,12 @@ public class ConversionResultsService {
         measureConversionResults.setReason(reason);
         measureConversionResults.setSuccess(success);
 
+        save(conversionResult);
+    }
+
+    public void complete(String measureId) {
+        ConversionResult conversionResult = findOrCreate(measureId);
+        conversionResult.setFinished(Instant.now());
         save(conversionResult);
     }
 }

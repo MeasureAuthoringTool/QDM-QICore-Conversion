@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -75,12 +74,6 @@ public class HapiFhirServer {
         validatePersistedBundle(resource, bundle);
 
         Optional<String> optionalLink = fetchLinkByResourceType(resource.getResourceType().name(), resource.getId());
-
-        try {
-            TimeUnit.MILLISECONDS.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         return optionalLink
                 .orElseThrow(() -> new HapiFhirCreateException(resource.getIdElement().getValue()));

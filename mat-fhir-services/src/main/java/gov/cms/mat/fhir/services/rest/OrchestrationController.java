@@ -3,8 +3,11 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
+import gov.cms.mat.fhir.services.exceptions.MeasureReleaseVersionInvalidException;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.service.orchestration.OrchestrationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
@@ -17,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSION_INVALID;
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.SUCCESS;
+
 @RestController
 @RequestMapping(path = "/orchestration/measure")
 @Tag(name = "Orchestration-Controller",
@@ -26,13 +32,16 @@ public class OrchestrationController {
     private final OrchestrationService orchestrationService;
     private final ConversionResultProcessorService conversionResultProcessorService;
     private final MeasureDataService measureDataService;
+    private final ConversionResultsService conversionResultsService;
 
     public OrchestrationController(OrchestrationService orchestrationService,
                                    ConversionResultProcessorService conversionResultProcessorService,
-                                   MeasureDataService measureDataService) {
+                                   MeasureDataService measureDataService,
+                                   ConversionResultsService conversionResultsService) {
         this.orchestrationService = orchestrationService;
         this.conversionResultProcessorService = conversionResultProcessorService;
         this.measureDataService = measureDataService;
+        this.conversionResultsService = conversionResultsService;
     }
 
     @Operation(summary = "Orchestrate Measure in MAT to FHIR.",
@@ -48,17 +57,40 @@ public class OrchestrationController {
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
 
-        Measure matMeasure = measureDataService.findOneValid(id);
+        ConversionReporter.setInThreadLocal(id, conversionResultsService);
+        ConversionReporter.resetOrchestration();
 
-        OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()
-                .matMeasure(matMeasure)
-                .conversionType(conversionType)
-                .xmlSource(xmlSource)
-                .build();
+        try {
+            Measure matMeasure;
 
+            try {
+                matMeasure = measureDataService.findOneValid(id);
+            } catch (MeasureReleaseVersionInvalidException e) {
+                ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_RELEASE_VERSION_INVALID);
+                return conversionResultProcessorService.process(id);
+            }
+
+            OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()
+                    .matMeasure(matMeasure)
+                    .conversionType(conversionType)
+                    .xmlSource(xmlSource)
+                    .build();
+
+
+            return process(id, orchestrationProperties);
+        } finally {
+            ConversionReporter.removeInThreadLocalAndComplete();
+        }
+    }
+
+    public ConversionResultDto process(@RequestParam String id, OrchestrationProperties orchestrationProperties) {
         log.info("Orchestrating Measure: {}", orchestrationProperties);
 
         orchestrationService.process(orchestrationProperties);
+
+        if (ConversionReporter.getConversionResult().getOutcome() == null) {
+            ConversionReporter.setTerminalMessage(SUCCESS.name(), SUCCESS);
+        }
 
         return conversionResultProcessorService.process(id);
     }

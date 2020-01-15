@@ -1,12 +1,10 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.dto.CqlConversionError;
-import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
-import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
-import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
+import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.exceptions.ThreadLocalNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Instant;
 import java.util.List;
 
 @Slf4j
@@ -15,12 +13,18 @@ public class ConversionReporter {
 
     private static final ThreadLocal<ConversionReporter> threadLocal = new ThreadLocal<>();
 
+    private final ConversionKey key;
+
     private final String measureId;
+    private final Instant start;
     private final ConversionResultsService conversionResultsService;
 
     private ConversionReporter(String measureId, ConversionResultsService conversionResultsService) {
         this.measureId = measureId;
         this.conversionResultsService = conversionResultsService;
+        start = Instant.now();
+
+        key = ConversionKey.builder().measureId(measureId).start(Instant.now()).build();
     }
 
     public static void saveConversionResult(ConversionResult conversionResult) {
@@ -74,7 +78,6 @@ public class ConversionReporter {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addMatCqlConversionErrors(errors, matLibraryId);
     }
-
 
     public static void setCql(String cql, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
@@ -135,7 +138,14 @@ public class ConversionReporter {
         conversionReporter.addValueSetResult(oid, Boolean.TRUE, link, state.value);
     }
 
-    static void removeInThreadLocal() {
+    public static void removeInThreadLocalAndComplete() {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.complete();
+
+        removeInThreadLocal();
+    }
+
+    public static void removeInThreadLocal() {
         threadLocal.remove();
     }
 
@@ -156,7 +166,6 @@ public class ConversionReporter {
     public static void setFhirMeasureValidationResults(List<FhirValidationResult> list) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addFhirMeasureValidationResults(list);
-
     }
 
     public static void setFhirLibraryValidationResults(List<FhirValidationResult> list, String matLibraryId) {
@@ -170,7 +179,6 @@ public class ConversionReporter {
         conversionReporter.addValueSetValidationResults(oid, list);
     }
 
-
     public static void setValueSetsValidationError(String oid,
                                                    String error) {
         ConversionReporter conversionReporter = getConversionReporter();
@@ -182,7 +190,6 @@ public class ConversionReporter {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addMeasureConversionResult(Boolean.TRUE, link, state.value);
     }
-
 
     public static void setLibraryValidationLink(String link,
                                                 HapiResourcePersistedState reason,
@@ -208,17 +215,21 @@ public class ConversionReporter {
         conversionReporter.clearLibrary();
     }
 
-    public static void setErrorMessage(String errorMessage) {
+    public static void setTerminalMessage(String errorMessage, ConversionOutcome outcome) {
         try {
             ConversionReporter conversionReporter = getConversionReporter();
-            conversionReporter.addErrorMessage(errorMessage);
+            conversionReporter.addErrorMessage(errorMessage, outcome);
+            log.warn("Setting error message outcome: {}, message: {}", errorMessage, outcome);
         } catch (Exception e) {
-            log.warn("Cannot find ConversionReporter: {}, setting error message: {} ", e.getMessage(), errorMessage);
+            log.warn("Cannot find ConversionReporter: {}, outcome: {} setting error message: {} ",
+                    e.getMessage(),
+                    outcome,
+                    errorMessage);
         }
     }
 
-    private void addErrorMessage(String message) {
-        conversionResultsService.addErrorMessage(measureId, message);
+    private void addErrorMessage(String message, ConversionOutcome outcome) {
+        conversionResultsService.addErrorMessage(measureId, message, outcome);
     }
 
     private void addMeasureResult(String field, String destination, String reason) {
@@ -242,7 +253,6 @@ public class ConversionReporter {
         conversionResultsService.addLibraryFieldConversionResult(measureId, result, matCqlId);
     }
 
-
     private void clearValueSetResults() {
         conversionResultsService.clearValueSetResults(measureId);
     }
@@ -251,7 +261,6 @@ public class ConversionReporter {
         conversionResultsService.clearMeasureOrchestration(measureId);
     }
 
-
     private void clearMeasure() {
         conversionResultsService.clearMeasure(measureId);
     }
@@ -259,7 +268,6 @@ public class ConversionReporter {
     private void clearLibrary() {
         conversionResultsService.clearLibrary(measureId);
     }
-
 
     private void addCqlConversionResultSuccess(String matLibraryId) {
         conversionResultsService.addCqlConversionResultSuccess(measureId, matLibraryId);
@@ -322,5 +330,9 @@ public class ConversionReporter {
 
     private void saveConversionResultToMongo(ConversionResult conversionResult) {
         conversionResultsService.save(conversionResult);
+    }
+
+    private void complete() {
+        conversionResultsService.complete(measureId);
     }
 }

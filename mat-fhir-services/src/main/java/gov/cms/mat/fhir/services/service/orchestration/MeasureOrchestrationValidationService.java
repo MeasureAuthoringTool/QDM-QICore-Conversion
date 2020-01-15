@@ -18,9 +18,13 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_VALIDATION_FAILED;
+
 @Component
 @Slf4j
 public class MeasureOrchestrationValidationService implements FhirValidatorProcessor, ErrorSeverityChecker {
+    private static final String FAILURE_MESSAGE = "Measure validation failed";
+
     private final MeasureExportDataService measureExportDataService;
     private final MatXmlProcessor matXmlProcessor;
     private final HapiFhirServer hapiFhirServer;
@@ -60,6 +64,11 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
 
         AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
         list.forEach(v -> isValid(v, atomicBoolean));
+
+        if (!atomicBoolean.get()) {
+            ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, MEASURE_VALIDATION_FAILED);
+        }
+
         return atomicBoolean.get();
     }
 

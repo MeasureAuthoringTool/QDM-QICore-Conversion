@@ -11,14 +11,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.LIBRARY_CONVERSION_FAILED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
 
 @Component
 @Slf4j
 public class LibraryOrchestrationConversionService {
+    private static final String FAILURE_MESSAGE = "Library conversion failed";
     private final CqlLibraryDataService cqlLibraryDataService;
     private final HapiFhirServer hapiFhirServer;
 
@@ -28,13 +31,19 @@ public class LibraryOrchestrationConversionService {
     }
 
     boolean convert(OrchestrationProperties properties) {
-        properties.getCqlLibraries()
-                .forEach(matLib -> processPersisting(matLib, properties.findFhirLibrary(matLib.getId())));
+        AtomicBoolean atomicBoolean = new AtomicBoolean(true);
 
-        return true; //todo
+        properties.getCqlLibraries()
+                .forEach(matLib -> processPersisting(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
+
+        if (!atomicBoolean.get()) {
+            ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, LIBRARY_CONVERSION_FAILED);
+        }
+
+        return atomicBoolean.get();
     }
 
-    private void processPersisting(CqlLibrary matCqlLibrary, Library fhirLibrary) {
+    private void processPersisting(CqlLibrary matCqlLibrary, Library fhirLibrary, AtomicBoolean atomicBoolean) {
         try {
             String link = hapiFhirServer.persist(fhirLibrary);
             log.debug("Persisted library to Hapi link : {}", link);
@@ -42,6 +51,7 @@ public class LibraryOrchestrationConversionService {
         } catch (Exception e) {
             log.warn("Error Persisting to Hapi, id is for cqlLib: {}", matCqlLibrary.getId(), e);
             ConversionReporter.setLibraryValidationError("HAPI Exception: " + e.getMessage(), matCqlLibrary.getId());
+            atomicBoolean.set(false);
         }
     }
 

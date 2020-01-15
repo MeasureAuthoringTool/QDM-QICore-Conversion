@@ -8,12 +8,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_CONVERSION_FAILED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
 
 @Component
 @Slf4j
 public class MeasureOrchestrationConversionService {
+    private static final String FAILURE_MESSAGE = "Measure conversion failed";
     private final HapiFhirServer hapiFhirServer;
 
     public MeasureOrchestrationConversionService(HapiFhirServer hapiFhirServer) {
@@ -42,10 +44,17 @@ public class MeasureOrchestrationConversionService {
     }
 
     private boolean convertMeasure(OrchestrationProperties properties) {
-        String link = hapiFhirServer.persist(properties.getFhirMeasure());
+        try {
+            String link = hapiFhirServer.persist(properties.getFhirMeasure());
 
-        ConversionReporter.setMeasureValidationLink(link, CREATED);
+            ConversionReporter.setMeasureValidationLink(link, CREATED);
 
-        return true;
+            return true;
+        } catch (Exception e) {
+            log.error(FAILURE_MESSAGE, e);
+            ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, MEASURE_CONVERSION_FAILED);
+
+            return false;
+        }
     }
 }

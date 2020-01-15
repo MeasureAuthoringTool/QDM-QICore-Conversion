@@ -2,8 +2,6 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +13,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class OrchestrationService {
-    private final ConversionResultsService conversionResultsService;
+
     private final ValueSetOrchestrationValidationService valueSetOrchestrationValidationService;
     private final ValueSetOrchestrationConversionService valueSetOrchestrationConversionService;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
@@ -24,15 +22,13 @@ public class OrchestrationService {
     private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
     private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
 
-    public OrchestrationService(ConversionResultsService conversionResultsService,
-                                ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
+    public OrchestrationService(ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
                                 ValueSetOrchestrationConversionService valueSetOrchestrationConversionService,
                                 CQLLibraryTranslationService cqlLibraryTranslationService,
                                 LibraryOrchestrationConversionService libraryOrchestrationConversionService,
                                 LibraryOrchestrationValidationService libraryOrchestrationValidationService,
                                 MeasureOrchestrationValidationService measureOrchestrationValidationService,
                                 MeasureOrchestrationConversionService measureOrchestrationConversionService) {
-        this.conversionResultsService = conversionResultsService;
         this.valueSetOrchestrationValidationService = valueSetOrchestrationValidationService;
         this.valueSetOrchestrationConversionService = valueSetOrchestrationConversionService;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
@@ -43,9 +39,6 @@ public class OrchestrationService {
     }
 
     public boolean process(OrchestrationProperties properties) {
-        ConversionReporter.setInThreadLocal(properties.getMatMeasure().getId(), conversionResultsService);
-        ConversionReporter.resetOrchestration();
-
         processFhirMeasure(properties);
         processAndGetValueSets(properties);
         processAndGetCqlLibraries(properties);
