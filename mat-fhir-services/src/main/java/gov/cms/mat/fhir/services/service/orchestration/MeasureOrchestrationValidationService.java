@@ -9,16 +9,18 @@ import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.MeasureExportDataService;
+import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
 import gov.cms.mat.fhir.services.summary.FhirMeasureResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
-public class MeasureOrchestrationValidationService implements FhirValidatorProcessor {
+public class MeasureOrchestrationValidationService implements FhirValidatorProcessor, ErrorSeverityChecker {
     private final MeasureExportDataService measureExportDataService;
     private final MatXmlProcessor matXmlProcessor;
     private final HapiFhirServer hapiFhirServer;
@@ -56,7 +58,9 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
 
         ConversionReporter.setFhirMeasureValidationResults(list);
 
-        return true; //todo most will fail miserably let pass for now todo look for weeoe MeasureConversionResults
+        AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
+        list.forEach(v -> isValid(v, atomicBoolean));
+        return atomicBoolean.get();
     }
 
 

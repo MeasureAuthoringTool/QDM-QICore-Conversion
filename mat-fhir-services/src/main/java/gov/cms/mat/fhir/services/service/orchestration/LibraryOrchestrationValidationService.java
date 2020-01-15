@@ -7,6 +7,7 @@ import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
+import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
 import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.LibraryTranslator;
@@ -15,11 +16,12 @@ import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class LibraryOrchestrationValidationService implements FhirValidatorProcessor {
+public class LibraryOrchestrationValidationService implements FhirValidatorProcessor, ErrorSeverityChecker {
     private final HapiFhirServer hapiFhirServer;
 
     public LibraryOrchestrationValidationService(HapiFhirServer hapiFhirServer) {
@@ -34,11 +36,12 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
 
         properties.getFhirLibraries().addAll(libraryList);
 
+        AtomicBoolean atomicBoolean = new AtomicBoolean(true);
+
         properties.getCqlLibraries()
-                .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId())));
+                .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
 
-
-        return true; //todo add logic to get results once conversion is fixed
+        return atomicBoolean.get();
     }
 
     private Library translateCqlLib(CqlLibrary cqlLibrary) {
@@ -51,7 +54,6 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
                 hapiFhirServer.getBaseURL());
 
         Library fhirLibrary = libraryTranslator.translateToFhir();
-        
 
         results.setFhirLibraryJson(hapiFhirServer.toJson(fhirLibrary));
 
@@ -61,7 +63,7 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
     }
 
 
-    private FhirLibraryResourceValidationResult validate(CqlLibrary matCqlLibrary, Library fhirLibrary) {
+    private FhirLibraryResourceValidationResult validate(CqlLibrary matCqlLibrary, Library fhirLibrary, AtomicBoolean atomicBoolean) {
         FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(matCqlLibrary.getId());
         response.setMeasureId(matCqlLibrary.getMeasureId());
 
@@ -69,6 +71,9 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
 
         List<FhirValidationResult> list = buildResults(response);
         ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibrary.getId());
+
+
+        list.forEach(v -> isValid(v, atomicBoolean));
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
         conversionResult.findOrCreateLibraryConversionResults(matCqlLibrary.getId());
