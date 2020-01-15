@@ -43,6 +43,9 @@ public class ConversionResultProcessorService {
                 .valueSetConversionResults(conversionResult.getValueSetConversionResults())
                 .measureConversionResults(conversionResult.getMeasureConversionResults())
                 .libraryConversionResults(conversionResult.getLibraryConversionResults())
+                .errorReason(conversionResult.getErrorReason())
+                .outcome(conversionResult.getOutcome())
+                .conversionType(conversionResult.getConversionType())
                 .build();
     }
 

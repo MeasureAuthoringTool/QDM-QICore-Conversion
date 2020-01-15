@@ -15,6 +15,10 @@ public class ConversionResultDto {
     String measureId;
     String modified;
 
+    private String errorReason;
+    private ConversionOutcome outcome;
+    private ConversionType conversionType;
+
     List<ValueSetConversionResults> valueSetConversionResults;
 
     MeasureConversionResults measureConversionResults;
