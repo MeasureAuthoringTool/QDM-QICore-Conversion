@@ -30,6 +30,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,8 +82,7 @@ public class MeasureController implements FhirValidatorProcessor {
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
 
         TranslationOutcome res = new TranslationOutcome();
-        ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetMeasure();
+        ConversionReporter.setInThreadLocal(id, conversionResultsService, Instant.now());
 
         try {
             Measure qdmMeasure = measureDataService.findOneValid(id);
@@ -201,8 +201,7 @@ public class MeasureController implements FhirValidatorProcessor {
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
         FhirMeasureResourceValidationResult response = new FhirMeasureResourceValidationResult(id, "Measure");
 
-        ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetMeasure();
+        ConversionReporter.setInThreadLocal(id, conversionResultsService, Instant.now());
 
         try {
             Measure qdmMeasure = measureDataService.findOneValid(id);

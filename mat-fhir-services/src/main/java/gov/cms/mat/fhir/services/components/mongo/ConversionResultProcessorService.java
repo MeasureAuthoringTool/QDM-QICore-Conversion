@@ -26,13 +26,13 @@ public class ConversionResultProcessorService {
                 .collect(Collectors.toList());
     }
 
-    public ConversionResultDto process(String measureId) {
-        Optional<ConversionResult> optional = conversionResultsService.findByMeasureId(measureId);
+    public ConversionResultDto process(ConversionKey key) {
+        Optional<ConversionResult> optional = conversionResultsService.findByMeasureId(key);
 
         if (optional.isPresent()) {
             return buildDto(optional.get());
         } else {
-            throw new ConversionResultsNotFoundException(measureId);
+            throw new ConversionResultsNotFoundException(key);
         }
     }
 

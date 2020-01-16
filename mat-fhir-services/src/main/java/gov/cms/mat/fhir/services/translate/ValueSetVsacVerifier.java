@@ -43,8 +43,6 @@ public class ValueSetVsacVerifier {
                     properties.getMeasureId());
         }
 
-        ConversionReporter.setInThreadLocal(properties.getMatMeasure().getId(), conversionResultsService);
-        ConversionReporter.resetValueSetResults();
 
         AtomicBoolean atomicSuccessFlag = new AtomicBoolean(true);
 

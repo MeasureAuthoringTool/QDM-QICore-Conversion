@@ -4,12 +4,14 @@ import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +22,8 @@ import static org.mockito.Mockito.when;
 class ConversionResultProcessorServiceTest {
     private static final String MEASURE_ID = "measure_id";
 
+    private ConversionKey conversionKey;
+
     @Mock
     private QdmQiCoreDataService qdmQiCoreDataService;
     @Mock
@@ -27,6 +31,15 @@ class ConversionResultProcessorServiceTest {
 
     @InjectMocks
     private ConversionResultProcessorService conversionResultProcessorService;
+
+    @BeforeEach
+    public void setUp() {
+        conversionKey = ConversionKey.builder()
+                .measureId(MEASURE_ID)
+                .start(Instant.now())
+                .build();
+    }
+
 
     @Test
     void processAll_HappyPath() {
@@ -52,26 +65,26 @@ class ConversionResultProcessorServiceTest {
 
     @Test
     void processSearchData_NotFound() {
-        when(conversionResultsService.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
+        when(conversionResultsService.findByMeasureId(conversionKey)).thenReturn(Optional.empty());
 
         ConversionResultsNotFoundException thrown =
                 Assertions.assertThrows(ConversionResultsNotFoundException.class, () -> {
-                    conversionResultProcessorService.process(MEASURE_ID);
+                    conversionResultProcessorService.process(conversionKey);
                 });
 
         assertTrue(thrown.getMessage().contains(MEASURE_ID));
-        verify(conversionResultsService).findByMeasureId(MEASURE_ID);
+        verify(conversionResultsService).findByMeasureId(conversionKey);
     }
 
     @Test
     void processSearchData_HappyPath() {
-        when(conversionResultsService.findByMeasureId(MEASURE_ID)).thenReturn(Optional.of(createConversionResult(true)));
+        when(conversionResultsService.findByMeasureId(conversionKey)).thenReturn(Optional.of(createConversionResult(true)));
 
-        ConversionResultDto dto = conversionResultProcessorService.process(MEASURE_ID);
+        ConversionResultDto dto = conversionResultProcessorService.process(conversionKey);
         verifyResult(dto);
         // dto.getMeasureResults().forEach(r -> assertNull(r.getErrorMessage()));
 
-        verify(conversionResultsService).findByMeasureId(MEASURE_ID);
+        verify(conversionResultsService).findByMeasureId(conversionKey);
 
     }
 

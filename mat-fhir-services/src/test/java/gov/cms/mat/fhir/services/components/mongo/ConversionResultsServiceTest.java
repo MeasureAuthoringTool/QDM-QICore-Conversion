@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.components.mongo;
 
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
 import gov.cms.mat.fhir.rest.dto.ValueSetResult;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,23 +11,37 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ConversionResultsServiceTest {
     private static final String MEASURE_ID = "measureId";
     private static final String MAT_LIBRARY_ID = "matLibraryId";
 
+    private ConversionKey conversionKey;
+
+
     @Mock
     private ConversionResultRepository conversionResultRepository;
     @InjectMocks
     private ConversionResultsService conversionResultsService;
+
+    @BeforeEach
+    public void setUp() {
+        conversionKey = ConversionKey.builder()
+                .measureId(MEASURE_ID)
+                .start(Instant.now())
+                .build();
+    }
+
 
     @Test
     void findAll() {
@@ -45,7 +60,8 @@ class ConversionResultsServiceTest {
 
     @Test
     void addMeasureResult_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
+        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(),
+                conversionKey.getStart())).thenReturn(Optional.empty());
         ConversionResult conversionResultToReturn = new ConversionResult();
 
         when(conversionResultRepository.save(any(ConversionResult.class)))
@@ -53,15 +69,16 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildMeasureResult();
 
-        conversionResultsService.addMeasureResult(MEASURE_ID, result);
+        conversionResultsService.addMeasureResult(conversionKey, result);
 
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
 
     @Test
     void addLibraryResult_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
+        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
+                .thenReturn(Optional.empty());
         ConversionResult conversionResultToReturn = new ConversionResult();
 
         when(conversionResultRepository.save(any(ConversionResult.class)))
@@ -69,9 +86,9 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        conversionResultsService.addLibraryFieldConversionResult(MEASURE_ID, result, MAT_LIBRARY_ID);
+        conversionResultsService.addLibraryFieldConversionResult(conversionKey, result, MAT_LIBRARY_ID);
 
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
 
@@ -79,7 +96,7 @@ class ConversionResultsServiceTest {
     @Test
     void addMeasureResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID))
+        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
         when(conversionResultRepository.save(conversionResultToReturn))
@@ -87,17 +104,17 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildMeasureResult();
 
-        conversionResultsService.addMeasureResult(MEASURE_ID, result);
+        conversionResultsService.addMeasureResult(conversionKey, result);
 
 
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
 
     @Test
     void addLibraryResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID))
+        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
         when(conversionResultRepository.save(conversionResultToReturn))
@@ -105,25 +122,26 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        conversionResultsService.addLibraryFieldConversionResult(MEASURE_ID, result, MAT_LIBRARY_ID);
+        conversionResultsService.addLibraryFieldConversionResult(conversionKey, result, MAT_LIBRARY_ID);
 
 
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
 
     @Test
     void addValueSetResult_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
+        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
+                .thenReturn(Optional.empty());
         ConversionResult conversionResultToReturn = new ConversionResult();
 
         when(conversionResultRepository.save(any(ConversionResult.class)))
                 .thenReturn(conversionResultToReturn);
 
-        conversionResultsService.addValueSetResult(MEASURE_ID, "oid", "reason", true, null);
+        conversionResultsService.addValueSetResult(conversionKey, "oid", "reason", true, null);
 
 
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
 
@@ -131,7 +149,7 @@ class ConversionResultsServiceTest {
     @Test
     void addValueSetResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID))
+        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
         when(conversionResultRepository.save(conversionResultToReturn))
@@ -139,76 +157,10 @@ class ConversionResultsServiceTest {
 
         ValueSetResult result = buildValueSetResult();
 
-        conversionResultsService.addValueSetResult(MEASURE_ID, "oid", "reason", Boolean.TRUE, null);
+        conversionResultsService.addValueSetResult(conversionKey, "oid", "reason", Boolean.TRUE, null);
 
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
+        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
         verify(conversionResultRepository).save(conversionResultToReturn);
-    }
-
-    @Test
-    void clearValueSetResults_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
-
-        conversionResultsService.clearValueSetResults(MEASURE_ID);
-
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
-        verify(conversionResultRepository, never()).save(any(ConversionResult.class));
-    }
-
-    @Test
-    void clearValueSetResults_FoundInDb() {
-        ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID))
-                .thenReturn(Optional.of(conversionResultToReturn));
-
-        conversionResultsService.clearValueSetResults(MEASURE_ID);
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
-    }
-
-    @Test
-    void clearMeasure_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
-
-        conversionResultsService.clearMeasure(MEASURE_ID);
-
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
-        verify(conversionResultRepository, never()).save(any(ConversionResult.class));
-    }
-
-    @Test
-    void clearLibrary_NotFoundInDb() {
-
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID)).thenReturn(Optional.empty());
-
-        conversionResultsService.clearLibrary(MEASURE_ID);
-
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
-        verify(conversionResultRepository, never()).save(any(ConversionResult.class));
-    }
-
-
-    @Test
-    void clearMeasure_FoundInDb() {
-        ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID))
-                .thenReturn(Optional.of(conversionResultToReturn));
-
-
-        conversionResultsService.clearMeasure(MEASURE_ID);
-
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
-    }
-
-    @Test
-    void clearLibrary_FoundInDb() {
-        ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureId(MEASURE_ID))
-                .thenReturn(Optional.of(conversionResultToReturn));
-
-
-        conversionResultsService.clearLibrary(MEASURE_ID);
-
-        verify(conversionResultRepository).findByMeasureId(MEASURE_ID);
     }
 
 

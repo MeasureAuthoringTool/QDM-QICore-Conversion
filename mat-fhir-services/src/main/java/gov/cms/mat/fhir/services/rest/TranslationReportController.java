@@ -34,7 +34,8 @@ public class TranslationReportController {
             description = "Find and return a error report for a measure.")
     @GetMapping(path = "/find")
     public ConversionResultDto findSearchData(String measureId) {
-        return conversionResultProcessorService.process(measureId);
+        // return conversionResultProcessorService.process(measureId);
+        throw new UnsupportedOperationException("TODO"); // needs to be list or get last
     }
 
     @Operation(summary = "Find all Reports.",

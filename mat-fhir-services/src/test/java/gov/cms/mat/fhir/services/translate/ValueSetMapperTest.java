@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -51,7 +52,7 @@ class ValueSetMapperTest {
 
     @BeforeEach
     void setUp() {
-        ConversionReporter.setInThreadLocal("measureId", conversionResultsService);
+        ConversionReporter.setInThreadLocal("measureId", conversionResultsService, Instant.now());
     }
 
     @Test

@@ -68,7 +68,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
 
     private boolean process(String id) {
         log.info("CQLLibraryTranslationService processing measure id: {}", id);
-        ConversionReporter.setInThreadLocal(id, conversionResultsService);
+
 
         List<CqlLibrary> cqlLibraries = cqlLibraryRepository.getCqlLibraryByMeasureId(id);
 
@@ -81,7 +81,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
 
     private boolean processLibs(String id, List<CqlLibrary> cqlLibraries) {
         log.info("CQLLibraryTranslationService processing measure id: {}", id);
-        ConversionReporter.setInThreadLocal(id, conversionResultsService);
+
 
         AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
         cqlLibraries.forEach(c -> processCqlLibrary(c, atomicBoolean));

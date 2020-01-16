@@ -1,12 +1,8 @@
 package gov.cms.mat.fhir.services.rest;
 
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
-import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.objects.CQLSourceForTranslation;
-import gov.cms.mat.fhir.commons.objects.TranslationOutcome;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
@@ -23,11 +19,11 @@ import gov.cms.mat.fhir.services.translate.LibraryTranslator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -63,38 +59,6 @@ public class LibraryController implements FhirValidatorProcessor {
     }
 
 
-    @Operation(summary = "Translate Library in MAT to FHIR.",
-            description = "Translate one Library in the MAT Database and persist to the HAPI FHIR Database.")
-    @PutMapping(path = "/translateLibraryByMeasureId")
-    public TranslationOutcome translateLibraryByMeasureId(@RequestParam String id) {
-        TranslationOutcome res = new TranslationOutcome();
-        ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetLibrary();
-
-        try {
-            List<CqlLibrary> cqlLibs = cqlLibraryDataService.getCqlLibrariesByMeasureIdRequired(id);
-
-            for (CqlLibrary cqlLib : cqlLibs) {
-                Library fhirLibrary = translateLibrary(cqlLib);
-
-                Bundle bundle = hapiFhirServer.createAndExecuteBundle(fhirLibrary);
-
-                IGenericClient client = hapiFhirServer.getHapiClient();
-                Bundle resp = client.transaction().withBundle(bundle).execute();
-
-                log.info(hapiFhirServer.getCtx().newXmlParser().setPrettyPrint(true).encodeResourceToString(resp));
-            }
-        } catch (Exception ex) {
-            res.setSuccessful(Boolean.FALSE);
-            if (ex.getMessage() == null) {
-                res.setMessage("/library/translateLibrary Failed " + id + " Missing");
-            } else {
-                res.setMessage("/library/translateLibrary Failed " + id + " " + ex.getMessage());
-            }
-            log.error("Failed to Translate Library: {}", ex.getMessage());
-        }
-        return res;
-    }
 
 
     @Operation(summary = "Validate Library in MAT to FHIR.",
@@ -104,8 +68,7 @@ public class LibraryController implements FhirValidatorProcessor {
         try {
             List<CqlLibrary> cqlLibs = cqlLibraryDataService.getCqlLibrariesByMeasureIdRequired(id);
 
-            ConversionReporter.setInThreadLocal(id, conversionResultsService);
-            ConversionReporter.resetLibrary();
+            ConversionReporter.setInThreadLocal(id, conversionResultsService, Instant.now());
 
             return cqlLibs.stream()
                     .map(this::validate)
@@ -204,51 +167,6 @@ public class LibraryController implements FhirValidatorProcessor {
         return dest;
     }
 
-
-    @Operation(summary = "Translate all Libraries in MAT to FHIR.",
-            description = "Translate all the Libraries in the MAT Database and persist to the HAPI FHIR Database.")
-    @PutMapping(path = "/translateAllLibraries")
-    public List<TranslationOutcome> translateAllLibraries() {
-        List<TranslationOutcome> res = new ArrayList<>();
-        try {
-            List<Measure> measureList = measureDataService.findAllValid();
-
-            for (Measure measure : measureList) {
-                String measureId = measure.getId().trim();
-                TranslationOutcome result = translateLibraryByMeasureId(measureId);
-                res.add(result);
-            }
-        } catch (Exception ex) {
-            TranslationOutcome tOut = new TranslationOutcome();
-            tOut.setSuccessful(Boolean.FALSE);
-            tOut.setMessage("/library/translateAllLibraries Failed " + ex.getMessage());
-            res.add(tOut);
-            log.error("Failed Batch Translation of Libraries ALL:", ex);
-        }
-
-        return res;
-    }
-
-    @Operation(summary = "Delete all persisted FHIR Libraries.",
-            description = "Delete all the Libraries in the HAPI FHIR Database.")
-    @DeleteMapping(path = "/removeAllLibraries")
-    public TranslationOutcome removeAllLibraries() {
-        TranslationOutcome res = new TranslationOutcome();
-        try {
-            List<CqlLibraryExport> exportList = cqlLibraryExportRepo.findAll();
-
-            for (CqlLibraryExport library : exportList) {
-                deleteLibrary(library.getCqlLibraryId());
-            }
-        } catch (Exception ex) {
-            res.setSuccessful(Boolean.FALSE);
-            res.setMessage("/library/removeAllLibraries removeAllLibraries Failed " + ex.getMessage());
-            log.error("Failed Batch Delete of Libraries ALL: ", ex);
-        }
-
-        return res;
-    }
-
     @Operation(summary = "Count of persisted FHIR ValueSets.",
             description = "The count of all the ValueSets in the HAPI FHIR Database.")
     @GetMapping(path = "/count")
@@ -257,18 +175,11 @@ public class LibraryController implements FhirValidatorProcessor {
     }
 
     @Operation(summary = "Delete all persisted FHIR L.",
-            description = "Delete all the ValueSets in the HAPI FHIR Database.")
+            description = "Delete all the ValueSets in the HAPI FHIR Database. (chiefly used for testing)")
     @DeleteMapping(path = "/deleteAll")
     public int deleteValueSets() {
         return libraryMapper.deleteAll();
     }
 
-    public void deleteLibrary(String cqlId) {
-        try {
-            IGenericClient client = hapiFhirServer.getHapiClient();
-            client.delete().resourceById(new IdDt("Library", cqlId)).execute();
-        } catch (Exception e) {
-            log.trace("Error deleting library with cqlId : {}", cqlId, e);
-        }
-    }
+
 }

@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.summary;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mongo.ConversionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundException;
 import lombok.Builder;
@@ -23,6 +24,8 @@ public class OrchestrationProperties {
     final List<CqlLibrary> cqlLibraries = new ArrayList<>();
 
     final List<Library> fhirLibraries = new ArrayList<>();
+
+    ConversionKey threadLocalKey;
 
     Measure matMeasure;
 

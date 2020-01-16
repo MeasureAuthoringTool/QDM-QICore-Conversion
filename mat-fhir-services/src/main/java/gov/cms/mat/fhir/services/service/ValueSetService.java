@@ -123,7 +123,7 @@ public class ValueSetService {
 
     private List<ValueSet> translateToFhir(String measureId,
                                            byte[] xmlBytes) {
-        ConversionReporter.setInThreadLocal(measureId, conversionResultsService);
+        ConversionReporter.setInThreadLocal(measureId, conversionResultsService, Instant.now());
 
         return valueSetMapper.translateToFhir(new String(xmlBytes));
     }

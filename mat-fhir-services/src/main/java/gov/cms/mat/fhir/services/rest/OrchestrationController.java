@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mongo.ConversionKey;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSION_INVALID;
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.SUCCESS;
@@ -57,8 +60,8 @@ public class OrchestrationController {
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
 
-        ConversionReporter.setInThreadLocal(id, conversionResultsService);
-        ConversionReporter.resetOrchestration();
+        ConversionKey threadLocalKey = ConversionReporter.setInThreadLocal(id, conversionResultsService, Instant.now());
+
 
         try {
             Measure matMeasure;
@@ -67,23 +70,24 @@ public class OrchestrationController {
                 matMeasure = measureDataService.findOneValid(id);
             } catch (MeasureReleaseVersionInvalidException e) {
                 ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_RELEASE_VERSION_INVALID);
-                return conversionResultProcessorService.process(id);
+                return conversionResultProcessorService.process(threadLocalKey);
             }
 
             OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()
                     .matMeasure(matMeasure)
                     .conversionType(conversionType)
                     .xmlSource(xmlSource)
+                    .threadLocalKey(threadLocalKey)
                     .build();
 
 
-            return process(id, orchestrationProperties);
+            return process(orchestrationProperties);
         } finally {
             ConversionReporter.removeInThreadLocalAndComplete();
         }
     }
 
-    public ConversionResultDto process(@RequestParam String id, OrchestrationProperties orchestrationProperties) {
+    public ConversionResultDto process(OrchestrationProperties orchestrationProperties) {
         log.info("Orchestrating Measure: {}", orchestrationProperties);
 
         orchestrationService.process(orchestrationProperties);
@@ -92,6 +96,6 @@ public class OrchestrationController {
             ConversionReporter.setTerminalMessage(SUCCESS.name(), SUCCESS);
         }
 
-        return conversionResultProcessorService.process(id);
+        return conversionResultProcessorService.process(orchestrationProperties.getThreadLocalKey());
     }
 }

@@ -41,7 +41,7 @@ public class CqlLibraryVerifyController {
     public ConversionResultDto translateOne(@RequestParam String measureId) {
         cqlLibraryTranslationService.processOne(measureId);
 
-        return conversionResultProcessorService.process(measureId);
+        return null; //conversionResultProcessorService.process(measureId); TODO this needs to die
     }
 }
 
