@@ -28,6 +28,11 @@ pipeline {
     } 
     stage('Build MAT cql-elm-translation services') {
       steps {
+        sh "echo 'Copy cql-elm-translation YAML for tomcat-dev use'"
+        sh "cp ${WORKSPACE}/cql-elm-translation/src/main/resources/application-tomcat-local.yaml ${WORKSPACE}/cql-elm-translation/src/main/resources/application-tomcat-dev.yaml"
+        sh "echo 'Changes to the YAML file'"
+        sh "sed -ri 's/^(\s*)(active\s*:\s*local\s*$)/\1active: tomcat-dev/' ${WORKSPACE}/cql-elm-translation/src/main/resources/application.yaml"
+        sh "sed -ri 's|^(\s*)(baseurl\s*:\s*http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/\s*$)|\1baseurl: http://internal-mat-dev-ecs-lb-1195232407.us-east-1.elb.amazonaws.com/mat-fhir-services/|' ${WORKSPACE}/cql-elm-translation/src/main/resources/application-tomcat-dev.yaml"
         dir("mat-rest-commons") {
           sh "mvn clean install -DskipTests"   
         }
