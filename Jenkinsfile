@@ -23,7 +23,7 @@ pipeline {
         }
         sh "echo 'Copy mat-fhir-services YAML for tomcat-dev use'"
         sh "cp ${WORKSPACE}/mat-fhir-services/src/main/resources/application-tomcat-local.yaml ${WORKSPACE}/mat-fhir-services/src/main/resources/application-tomcat-dev.yaml"
-        sh label: 'Tomcat specific changes to the YAML file', script: '''sed -ri \'s|^(\\s*)(url\\s*:\\s*jdbc:mysql://localhost:3306/mat\\?serverTimezone=UTC&max_allowed_packet=16777216\\s*$)|\\1url: jdbc:mysql://localhost:3306/MAT_APP_BLANK\\?serverTimezone=UTC\\&max_allowed_packet=16777216|\' ${WORKSPACE}/mat-fhir-services/src/main/resources/application-tomcat-dev.yaml
+        sh label: 'Tomcat specific changes to the YAML file', script: '''sed -ri \'s|^(\\s*)(url\\s*:\\s*jdbc:mysql://localhost:3306/mat\\?serverTimezone=UTC&max_allowed_packet=16777216\\s*$)|\\1url: jdbc:mysql://dev-data-rds.cichbigzeylu.us-east-1.rds.amazonaws.com:3306:3306/MAT_dev\\?serverTimezone=UTC\\&max_allowed_packet=16777216|\' ${WORKSPACE}/mat-fhir-services/src/main/resources/application-tomcat-dev.yaml
           sed -ri \'s/^(\\s*)(username\\s*:\\s*mat\\s*$)/\\1username: default/\' ${WORKSPACE}/mat-fhir-services/src/main/resources/application-tomcat-dev.yaml
           sed -ri \'s/^(\\s*)(password\\s*:\\s*mat\\s*$)/\\1password: default/\' ${WORKSPACE}/mat-fhir-services/src/main/resources/application-tomcat-dev.yaml
           sed -ri \'s|^(\\s*)(baseurl\\s*:\\s*http://localhost:8080/qdm-qicore-mapping-services-0.0.1-SNAPSHOT/\\s*$)|\\1baseurl: http://internal-mat-dev-ecs-lb-1195232407.us-east-1.elb.amazonaws.com/qdm-qicore-mapping-services/|\' ${WORKSPACE}/mat-fhir-services/src/main/resources/application-tomcat-dev.yaml
