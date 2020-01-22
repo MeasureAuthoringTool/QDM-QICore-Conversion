@@ -23,6 +23,8 @@ logging:
     gov.cms.mat: DEBUG
     org.hl7.fhir.r4.hapi.ctx: WARN
     org.exolab: WARN
+  file:
+    name: mat-fhir-services.log
 
 fhir:
   r4:

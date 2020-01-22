@@ -9,9 +9,9 @@ spring:
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl    
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
     generate-ddl: false
-    show-sql: true
+    show-sql: false
     data:
     mongodb:
       database: mat_conversion_results
@@ -23,6 +23,8 @@ logging:
     gov.cms.mat: DEBUG
     org.hl7.fhir.r4.hapi.ctx: WARN
     org.exolab: WARN
+  file:
+    name: mat-fhir-services.log
 
 fhir:
   r4:
