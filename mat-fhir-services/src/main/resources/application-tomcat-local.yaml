@@ -12,7 +12,7 @@ spring:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
     generate-ddl: false
     show-sql: false
-    data:
+  data:
     mongodb:
       database: mat_conversion_results
       uri: mongodb://localhost
