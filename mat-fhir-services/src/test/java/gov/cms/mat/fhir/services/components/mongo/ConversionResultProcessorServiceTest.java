@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 class ConversionResultProcessorServiceTest {
     private static final String MEASURE_ID = "measure_id";
 
-    private ConversionKey conversionKey;
+    private ThreadSessionKey threadSessionKey;
 
     @Mock
     private QdmQiCoreDataService qdmQiCoreDataService;
@@ -34,7 +34,7 @@ class ConversionResultProcessorServiceTest {
 
     @BeforeEach
     public void setUp() {
-        conversionKey = ConversionKey.builder()
+        threadSessionKey = ThreadSessionKey.builder()
                 .measureId(MEASURE_ID)
                 .start(Instant.now())
                 .build();
@@ -65,26 +65,26 @@ class ConversionResultProcessorServiceTest {
 
     @Test
     void processSearchData_NotFound() {
-        when(conversionResultsService.findByMeasureId(conversionKey)).thenReturn(Optional.empty());
+        when(conversionResultsService.findByMeasureId(threadSessionKey)).thenReturn(Optional.empty());
 
         ConversionResultsNotFoundException thrown =
                 Assertions.assertThrows(ConversionResultsNotFoundException.class, () -> {
-                    conversionResultProcessorService.process(conversionKey);
+                    conversionResultProcessorService.process(threadSessionKey);
                 });
 
         assertTrue(thrown.getMessage().contains(MEASURE_ID));
-        verify(conversionResultsService).findByMeasureId(conversionKey);
+        verify(conversionResultsService).findByMeasureId(threadSessionKey);
     }
 
     @Test
     void processSearchData_HappyPath() {
-        when(conversionResultsService.findByMeasureId(conversionKey)).thenReturn(Optional.of(createConversionResult(true)));
+        when(conversionResultsService.findByMeasureId(threadSessionKey)).thenReturn(Optional.of(createConversionResult(true)));
 
-        ConversionResultDto dto = conversionResultProcessorService.process(conversionKey);
+        ConversionResultDto dto = conversionResultProcessorService.process(threadSessionKey);
         verifyResult(dto);
         // dto.getMeasureResults().forEach(r -> assertNull(r.getErrorMessage()));
 
-        verify(conversionResultsService).findByMeasureId(conversionKey);
+        verify(conversionResultsService).findByMeasureId(threadSessionKey);
 
     }
 

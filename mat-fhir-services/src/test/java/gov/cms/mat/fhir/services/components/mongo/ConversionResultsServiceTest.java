@@ -26,7 +26,7 @@ class ConversionResultsServiceTest {
     private static final String MEASURE_ID = "measureId";
     private static final String MAT_LIBRARY_ID = "matLibraryId";
 
-    private ConversionKey conversionKey;
+    private ThreadSessionKey threadSessionKey;
 
 
     @Mock
@@ -36,7 +36,7 @@ class ConversionResultsServiceTest {
 
     @BeforeEach
     public void setUp() {
-        conversionKey = ConversionKey.builder()
+        threadSessionKey = ThreadSessionKey.builder()
                 .measureId(MEASURE_ID)
                 .start(Instant.now())
                 .build();
@@ -60,8 +60,8 @@ class ConversionResultsServiceTest {
 
     @Test
     void addMeasureResult_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(),
-                conversionKey.getStart())).thenReturn(Optional.empty());
+        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(),
+                threadSessionKey.getStart())).thenReturn(Optional.empty());
         ConversionResult conversionResultToReturn = new ConversionResult();
 
         when(conversionResultRepository.save(any(ConversionResult.class)))
@@ -69,15 +69,15 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildMeasureResult();
 
-        conversionResultsService.addMeasureResult(conversionKey, result);
+        conversionResultsService.addMeasureResult(threadSessionKey, result);
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
+        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
 
     @Test
     void addLibraryResult_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
+        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
                 .thenReturn(Optional.empty());
         ConversionResult conversionResultToReturn = new ConversionResult();
 
@@ -86,9 +86,9 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        conversionResultsService.addLibraryFieldConversionResult(conversionKey, result, MAT_LIBRARY_ID);
+        conversionResultsService.addLibraryFieldConversionResult(threadSessionKey, result, MAT_LIBRARY_ID);
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
+        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
 
@@ -96,7 +96,7 @@ class ConversionResultsServiceTest {
     @Test
     void addMeasureResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
+        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
         when(conversionResultRepository.save(conversionResultToReturn))
@@ -104,17 +104,17 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildMeasureResult();
 
-        conversionResultsService.addMeasureResult(conversionKey, result);
+        conversionResultsService.addMeasureResult(threadSessionKey, result);
 
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
+        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
 
     @Test
     void addLibraryResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
+        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
         when(conversionResultRepository.save(conversionResultToReturn))
@@ -122,26 +122,26 @@ class ConversionResultsServiceTest {
 
         FieldConversionResult result = buildLibraryResult();
 
-        conversionResultsService.addLibraryFieldConversionResult(conversionKey, result, MAT_LIBRARY_ID);
+        conversionResultsService.addLibraryFieldConversionResult(threadSessionKey, result, MAT_LIBRARY_ID);
 
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
+        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
 
     @Test
     void addValueSetResult_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
+        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
                 .thenReturn(Optional.empty());
         ConversionResult conversionResultToReturn = new ConversionResult();
 
         when(conversionResultRepository.save(any(ConversionResult.class)))
                 .thenReturn(conversionResultToReturn);
 
-        conversionResultsService.addValueSetResult(conversionKey, "oid", "reason", true, null);
+        conversionResultsService.addValueSetResult(threadSessionKey, "oid", "reason", true, null);
 
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
+        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
 
@@ -149,7 +149,7 @@ class ConversionResultsServiceTest {
     @Test
     void addValueSetResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart()))
+        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
         when(conversionResultRepository.save(conversionResultToReturn))
@@ -157,9 +157,9 @@ class ConversionResultsServiceTest {
 
         ValueSetResult result = buildValueSetResult();
 
-        conversionResultsService.addValueSetResult(conversionKey, "oid", "reason", Boolean.TRUE, null);
+        conversionResultsService.addValueSetResult(threadSessionKey, "oid", "reason", Boolean.TRUE, null);
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(conversionKey.getMeasureId(), conversionKey.getStart());
+        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
 

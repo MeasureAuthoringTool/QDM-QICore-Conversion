@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.components.mongo;
 import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.exceptions.ThreadLocalNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
 import java.util.List;
@@ -12,13 +13,13 @@ public class ConversionReporter {
     private static final String NOT_FOUND_THREAD_LOCAL_MESSAGE = "Cannot get (null)conversionReporter from threadLocal";
     private static final ThreadLocal<ConversionReporter> threadLocal = new ThreadLocal<>();
 
-    private final ConversionKey key;
+    private final ThreadSessionKey key;
     private final ConversionResultsService conversionResultsService;
 
     private ConversionReporter(String measureId, ConversionResultsService conversionResultsService, Instant start) {
         this.conversionResultsService = conversionResultsService;
 
-        key = ConversionKey.builder()
+        key = ThreadSessionKey.builder()
                 .measureId(measureId)
                 .start(start)
                 .build();
@@ -103,11 +104,11 @@ public class ConversionReporter {
         return conversionReporter.findConversionResult();
     }
 
-    public static void setValueSetInit(String oid, String reason) {
+    public static void setValueSetInit(String oid, String reason, Boolean success) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
         if (conversionReporter != null) {
-            conversionReporter.addValueSetResult(oid, null, null, reason);
+            conversionReporter.addValueSetResult(oid, success, null, reason);
         }
     }
 
@@ -116,6 +117,11 @@ public class ConversionReporter {
                                                   HapiResourcePersistedState state) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addValueSetResult(oid, Boolean.TRUE, link, state.value);
+    }
+
+    public static void setValueSetJson(String oid, String json) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addValueSetJson(oid, json);
     }
 
     public static void removeInThreadLocalAndComplete() {
@@ -129,15 +135,16 @@ public class ConversionReporter {
         threadLocal.remove();
     }
 
-    public static ConversionKey setInThreadLocal(String measureId,
-                                                 ConversionResultsService conversionResultsService,
-                                                 Instant instant) {
+    public static ThreadSessionKey setInThreadLocal(String measureId,
+                                                    ConversionResultsService conversionResultsService,
+                                                    Instant instant, ConversionType conversionType) {
         removeInThreadLocal();
         threadLocal.set(new ConversionReporter(measureId, conversionResultsService, instant));
+        setConversionType(conversionType);
         return getKey();
     }
 
-    static ConversionKey getKey() {
+    static ThreadSessionKey getKey() {
         return getConversionReporter().key;
     }
 
@@ -176,7 +183,14 @@ public class ConversionReporter {
     public static void setMeasureValidationLink(String link,
                                                 HapiResourcePersistedState state) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addMeasureConversionResult(Boolean.TRUE, link, state.value);
+
+        Boolean result = Boolean.TRUE;
+
+        if (StringUtils.isEmpty(link)) {
+            result = null;
+        }
+
+        conversionReporter.addMeasureConversionResult(result, link, state.value);
     }
 
     public static void setLibraryValidationLink(String link,
@@ -210,8 +224,17 @@ public class ConversionReporter {
         }
     }
 
+    public static void setConversionType(ConversionType conversionType) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addConversionType(conversionType);
+    }
+
     private void addErrorMessage(String message, ConversionOutcome outcome) {
         conversionResultsService.addErrorMessage(key, message, outcome);
+    }
+
+    private void addConversionType(ConversionType conversionType) {
+        conversionResultsService.addConversionType(key, conversionType);
     }
 
     private void addMeasureResult(String field, String destination, String reason) {
@@ -274,6 +297,10 @@ public class ConversionReporter {
 
     private void addValueSetResult(String oid, Boolean success, String link, String reason) {
         conversionResultsService.addValueSetResult(key, oid, reason, success, link);
+    }
+
+    private void addValueSetJson(String oid, String json) {
+        conversionResultsService.addValueSetJson(key, oid, json);
     }
 
     private void addMeasureConversionResult(Boolean success, String link, String reason) {

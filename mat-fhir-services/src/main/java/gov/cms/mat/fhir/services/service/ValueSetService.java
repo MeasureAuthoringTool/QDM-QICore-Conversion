@@ -3,7 +3,6 @@ package gov.cms.mat.fhir.services.service;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
@@ -77,7 +76,7 @@ public class ValueSetService {
             log.warn(XML_NOT_FOUND_MESSAGE, matMeasure.getId(), properties.getXmlSource());
             throw new ValueSetConversionException("No value sets found for measure id: " + matMeasure.getId());
         } else {
-            return translateToFhir(matMeasure.getId(), xml);
+            return valueSetMapper.translateToFhir(new String(xml));
         }
     }
 
@@ -116,17 +115,12 @@ public class ValueSetService {
         if (xmlBytes == null) {
             log.warn(XML_NOT_FOUND_MESSAGE, measureExport.getMeasureId(), xmlSource);
         } else {
-            List<ValueSet> valueSets = translateToFhir(measureExport.getMeasureId(), xmlBytes);
+            List<ValueSet> valueSets = valueSetMapper.translateToFhir(new String(xmlBytes));
             outcomes.addAll(valueSets);
         }
     }
 
-    private List<ValueSet> translateToFhir(String measureId,
-                                           byte[] xmlBytes) {
-        ConversionReporter.setInThreadLocal(measureId, conversionResultsService, Instant.now());
 
-        return valueSetMapper.translateToFhir(new String(xmlBytes));
-    }
 
     private byte[] getXmlBytesBySource(String measureId, XmlSource xmlSource) {
         return matXmlProcessor.getXmlById(measureId, xmlSource);

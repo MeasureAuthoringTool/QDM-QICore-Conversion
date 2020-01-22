@@ -19,8 +19,7 @@ public class ConversionResultsService {
         this.conversionResultRepository = conversionResultRepository;
     }
 
-
-    void addValueSetResult(ConversionKey key,
+    void addValueSetResult(ThreadSessionKey key,
                            String oid,
                            String reason,
                            Boolean success,
@@ -36,8 +35,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-
-    void addMeasureResult(ConversionKey key, FieldConversionResult result) {
+    void addMeasureResult(ThreadSessionKey key, FieldConversionResult result) {
         ConversionResult conversionResult = findOrCreate(key);
 
         findOrCreateMeasureConversionResults(conversionResult).getMeasureResults().add(result);
@@ -45,7 +43,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    void addLibraryFieldConversionResult(ConversionKey key, FieldConversionResult result, String matLibraryId) {
+    void addLibraryFieldConversionResult(ThreadSessionKey key, FieldConversionResult result, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
 
         LibraryConversionResults libraryConversionResult = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
@@ -55,7 +53,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    public Optional<ConversionResult> findByMeasureId(ConversionKey key) {
+    public Optional<ConversionResult> findByMeasureId(ThreadSessionKey key) {
         return conversionResultRepository.findByMeasureIdAndStart(key.getMeasureId(), key.getStart());
     }
 
@@ -63,7 +61,7 @@ public class ConversionResultsService {
         return conversionResultRepository.findAll(Sort.by(Sort.Direction.DESC, "modified"));
     }
 
-    private ConversionResult findOrCreate(ConversionKey key) {
+    private ConversionResult findOrCreate(ThreadSessionKey key) {
         Optional<ConversionResult> optional = findByMeasureId(key);
 
         if (optional.isPresent()) {
@@ -76,8 +74,7 @@ public class ConversionResultsService {
         }
     }
 
-
-    public ConversionResult findConversionResult(ConversionKey key) {
+    public ConversionResult findConversionResult(ThreadSessionKey key) {
         Optional<ConversionResult> optional = findByMeasureId(key);
 
         return optional
@@ -85,18 +82,15 @@ public class ConversionResultsService {
                         new LibraryConversionException("Cannot find ConversionResult with key: " + key));
     }
 
-
-    public void addCqlConversionResultSuccess(ConversionKey key, String matLibraryId) {
+    public void addCqlConversionResultSuccess(ThreadSessionKey key, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.TRUE);
 
-
         save(conversionResult);
     }
 
-
-    public void addCqlConversionErrorMessage(ConversionKey key, String error, String matLibraryId) {
+    public void addCqlConversionErrorMessage(ThreadSessionKey key, String error, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
 
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
@@ -106,7 +100,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    public void addCql(ConversionKey key, String cql, String matLibraryId) {
+    public void addCql(ThreadSessionKey key, String cql, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
 
@@ -115,7 +109,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    public void addElm(ConversionKey key, String json, String matLibraryId) {
+    public void addElm(ThreadSessionKey key, String json, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
 
@@ -124,7 +118,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    public void addCqlConversionErrors(ConversionKey key, List<CqlConversionError> errors, String matLibraryId) {
+    public void addCqlConversionErrors(ThreadSessionKey key, List<CqlConversionError> errors, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
@@ -133,7 +127,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    public void addMatCqlConversionErrors(ConversionKey key, List<MatCqlConversionException> errors, String matLibraryId) {
+    public void addMatCqlConversionErrors(ThreadSessionKey key, List<MatCqlConversionException> errors, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
@@ -142,8 +136,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-
-    public void addFhirMeasureValidationResults(ConversionKey key,
+    public void addFhirMeasureValidationResults(ThreadSessionKey key,
                                                 List<FhirValidationResult> list) {
         ConversionResult conversionResult = findOrCreate(key);
 
@@ -152,7 +145,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    public void addLibraryValidationResults(ConversionKey key,
+    public void addLibraryValidationResults(ThreadSessionKey key,
                                             List<FhirValidationResult> list,
                                             String matLibraryId) {
 
@@ -164,7 +157,15 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    public void addValueSetValidationResults(ConversionKey key,
+    public void addValueSetJson(ThreadSessionKey key, String oid, String json) {
+        ConversionResult conversionResult = findOrCreate(key);
+
+        ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
+        valueSetConversionResults.setJson(json);
+        save(conversionResult);
+    }
+
+    public void addValueSetValidationResults(ThreadSessionKey key,
                                              String oid,
                                              List<FhirValidationResult> list) {
         ConversionResult conversionResult = findOrCreate(key);
@@ -175,7 +176,7 @@ public class ConversionResultsService {
     }
 
 
-    public void addLibraryConversionResult(ConversionKey key,
+    public void addLibraryConversionResult(ThreadSessionKey key,
                                            String link,
                                            String message,
                                            Boolean success,
@@ -194,14 +195,14 @@ public class ConversionResultsService {
         conversionResultRepository.save(conversionResult);
     }
 
-    public void addErrorMessage(ConversionKey key, String message, ConversionOutcome outcome) {
+    public void addErrorMessage(ThreadSessionKey key, String message, ConversionOutcome outcome) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setErrorReason(message);
         conversionResult.setOutcome(outcome);
         save(conversionResult);
     }
 
-    public void addFhirMeasureJson(ConversionKey key, String json) {
+    public void addFhirMeasureJson(ThreadSessionKey key, String json) {
         ConversionResult conversionResult = findOrCreate(key);
 
         findOrCreateMeasureConversionResults(conversionResult).setFhirMeasureJson(json);
@@ -218,7 +219,7 @@ public class ConversionResultsService {
     }
 
 
-    public void addMeasureConversionResult(ConversionKey key,
+    public void addMeasureConversionResult(ThreadSessionKey key,
                                            String link,
                                            String reason,
                                            Boolean success) {
@@ -234,9 +235,15 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    public void complete(ConversionKey key) {
+    public void complete(ThreadSessionKey key) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setFinished(Instant.now());
+        save(conversionResult);
+    }
+
+    public void addConversionType(ThreadSessionKey key, ConversionType conversionType) {
+        ConversionResult conversionResult = findOrCreate(key);
+        conversionResult.setConversionType(conversionType);
         save(conversionResult);
     }
 }

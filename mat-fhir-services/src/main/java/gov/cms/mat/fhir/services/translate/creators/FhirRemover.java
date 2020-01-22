@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.translate.creators;
 
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Resource;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,7 +10,7 @@ import static org.hl7.fhir.instance.model.api.IBaseBundle.LINK_NEXT;
 
 public interface FhirRemover {
 
-    default int deleteAllResource(HapiFhirServer hapiFhirServer, Class<? extends IBaseResource> resourceClass) {
+    default int deleteAllResource(HapiFhirServer hapiFhirServer, Class<? extends Resource> resourceClass) {
         Bundle bundle = hapiFhirServer.getAll(resourceClass);
 
         AtomicInteger count = new AtomicInteger();

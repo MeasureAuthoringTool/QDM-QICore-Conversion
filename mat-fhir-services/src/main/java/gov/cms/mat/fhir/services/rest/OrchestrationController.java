@@ -3,11 +3,12 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mongo.ConversionKey;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
+import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.MeasureReleaseVersionInvalidException;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.service.orchestration.OrchestrationService;
@@ -21,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Min;
 import java.time.Instant;
 
-import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSION_INVALID;
-import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.SUCCESS;
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.*;
 
 @RestController
 @RequestMapping(path = "/orchestration/measure")
@@ -56,13 +57,11 @@ public class OrchestrationController {
                     @ApiResponse(responseCode = "404", description = "Measure is not found in the mat db using the id")})
     @PutMapping
     public ConversionResultDto translateMeasureById(
-            @RequestParam String id,
+            @RequestParam @Min(10) String id,
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
-
-        ConversionKey threadLocalKey = ConversionReporter.setInThreadLocal(id, conversionResultsService, Instant.now());
-
-
+        ThreadSessionKey threadSessionKey =
+                ConversionReporter.setInThreadLocal(id, conversionResultsService, Instant.now(), conversionType);
         try {
             Measure matMeasure;
 
@@ -70,16 +69,18 @@ public class OrchestrationController {
                 matMeasure = measureDataService.findOneValid(id);
             } catch (MeasureReleaseVersionInvalidException e) {
                 ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_RELEASE_VERSION_INVALID);
-                return conversionResultProcessorService.process(threadLocalKey);
+                return conversionResultProcessorService.process(threadSessionKey);
+            } catch (MeasureNotFoundException e) {
+                ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_NOT_FOUND);
+                throw e;
             }
 
             OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()
                     .matMeasure(matMeasure)
                     .conversionType(conversionType)
                     .xmlSource(xmlSource)
-                    .threadLocalKey(threadLocalKey)
+                    .threadSessionKey(threadSessionKey)
                     .build();
-
 
             return process(orchestrationProperties);
         } finally {
@@ -96,6 +97,6 @@ public class OrchestrationController {
             ConversionReporter.setTerminalMessage(SUCCESS.name(), SUCCESS);
         }
 
-        return conversionResultProcessorService.process(orchestrationProperties.getThreadLocalKey());
+        return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
     }
 }

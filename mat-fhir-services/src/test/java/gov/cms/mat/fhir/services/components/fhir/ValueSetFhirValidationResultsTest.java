@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.components.fhir;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionKey;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ValueSetValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 class ValueSetFhirValidationResultsTest {
     private static final String MEASURE_ID = "measure_id";
 
-    private ConversionKey conversionKey;
+    private ThreadSessionKey threadSessionKey;
 
     @Mock
     private HapiFhirServer hapiFhirServer;
@@ -34,7 +34,7 @@ class ValueSetFhirValidationResultsTest {
 
     @BeforeEach
     public void setUp() {
-        conversionKey = ConversionKey.builder()
+        threadSessionKey = ThreadSessionKey.builder()
                 .measureId(MEASURE_ID)
                 .start(Instant.now())
                 .build();

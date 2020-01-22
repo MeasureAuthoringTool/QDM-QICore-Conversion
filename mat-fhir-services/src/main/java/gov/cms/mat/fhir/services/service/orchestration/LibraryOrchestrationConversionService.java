@@ -58,11 +58,11 @@ public class LibraryOrchestrationConversionService {
     public List<CqlLibrary> getCqlLibrariesNotInHapi(OrchestrationProperties properties) {
         List<CqlLibrary> libraries = cqlLibraryDataService.getCqlLibrariesByMeasureIdRequired(properties.getMeasureId());
 
-        return filterValueSets(libraries);
+        return filterCqlLibraries(libraries);
     }
 
-    public List<CqlLibrary> filterValueSets(List<CqlLibrary> valueSets) {
-        return valueSets.stream()
+    public List<CqlLibrary> filterCqlLibraries(List<CqlLibrary> cqlLibraries) {
+        return cqlLibraries.stream()
                 .filter(this::filterValueSet)
                 .collect(Collectors.toList());
     }

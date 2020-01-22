@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.exceptions;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionKey;
+import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ConversionResultsNotFoundException extends RuntimeException {
     private static final String MESSAGE = "Cannot find ConversionResults with measureId: %s";
 
-    public ConversionResultsNotFoundException(ConversionKey key) {
+    public ConversionResultsNotFoundException(ThreadSessionKey key) {
         super(String.format(MESSAGE, key == null ? "null" : key.toString()));
         log.warn(getMessage());
     }

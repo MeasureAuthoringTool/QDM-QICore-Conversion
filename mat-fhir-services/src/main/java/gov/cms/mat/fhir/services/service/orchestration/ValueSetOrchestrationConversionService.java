@@ -1,6 +1,9 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState;
+import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateException;
+import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +11,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.VALUESET_CONVERSION_FAILED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
@@ -19,21 +20,24 @@ import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedSt
 @Component
 @Slf4j
 public class ValueSetOrchestrationConversionService {
-    private static final String FAILURE_MESSAGE = "ValueSet conversion failed";
+    private static final String FAILURE_ERROR_MESSAGE = "ValueSet conversion failed";
     private final HapiFhirServer hapiFhirServer;
+    private final HapiFhirLinkProcessor hapiFhirLinkProcessor;
 
-    public ValueSetOrchestrationConversionService(HapiFhirServer hapiFhirServer) {
+    public ValueSetOrchestrationConversionService(HapiFhirServer hapiFhirServer, HapiFhirLinkProcessor hapiFhirLinkProcessor) {
         this.hapiFhirServer = hapiFhirServer;
+        this.hapiFhirLinkProcessor = hapiFhirLinkProcessor;
     }
 
     boolean convert(OrchestrationProperties properties) {
-        properties.getValueSets().forEach(this::processPersisting);
+        properties.getValueSets()
+                .forEach(this::processPersisting);
 
         long errorCount = countValueSetResultErrors();
 
         if (errorCount > 0) {
-            log.info("{} count: {}", FAILURE_MESSAGE, errorCount);
-            ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, VALUESET_CONVERSION_FAILED);
+            log.info("{} count: {}", FAILURE_ERROR_MESSAGE, errorCount);
+            ConversionReporter.setTerminalMessage(FAILURE_ERROR_MESSAGE, VALUESET_CONVERSION_FAILED);
         } else {
             log.debug("ValueSet error processing PASSED");
         }
@@ -49,41 +53,39 @@ public class ValueSetOrchestrationConversionService {
                 .count();
     }
 
-    public List<ValueSet> filterValueSets(List<ValueSet> valueSets) {
-        return valueSets.stream()
-                .filter(this::filterValueSet)
-                .collect(Collectors.toList());
-    }
-
-    public boolean filterValueSet(ValueSet valueSet) {
-        Optional<String> optional = hapiFhirServer.fetchHapiLinkValueSet(valueSet.getId());
+    private void processPersisting(ValueSet valueSetIn) {
+        String url = hapiFhirServer.buildResourceUrl(valueSetIn);
+        Optional<ValueSet> optional = hapiFhirLinkProcessor.fetchValueSetByUrl(url);
 
         if (optional.isPresent()) {
-            log.info("Hapi valueSet exists for oid: {}", valueSet.getId());
-            ConversionReporter.setValueSetsValidationLink(valueSet.getId(), optional.get(), EXISTS);
-            return false;
+            log.debug("ValueSet already in hapiFhir: {}", url);
+            addToReport(url, optional.get(), EXISTS);
         } else {
-            ConversionReporter.setValueSetInit(valueSet.getId(), "Hapi valueSet does NOT exist");
-            return true;
+            persistToFhir(valueSetIn);
         }
     }
 
+    private void addToReport(String url, ValueSet valueSet, HapiResourcePersistedState state) {
+        String id = valueSet.getIdElement().getIdPart();
+        log.debug("Value set id: {} ", id);
 
-    private void processPersisting(ValueSet valueSet) {
-        Optional<String> optional = hapiFhirServer.fetchHapiLinkValueSet(valueSet.getId());
-
-        if (optional.isPresent()) {
-            log.info("ValueSet already in hapiFhir: {}", optional.get());
-        } else {
-            persistToFhir(valueSet);
-        }
+        ConversionReporter.setValueSetsValidationLink(id, url, state);
+        ConversionReporter.setValueSetJson(id, hapiFhirServer.toJson(valueSet));
     }
 
     private void persistToFhir(ValueSet valueSetIn) {
         try {
             String link = hapiFhirServer.persist(valueSetIn);
-            log.debug("Persisted valueSet to Hapi link : {}", link);
-            ConversionReporter.setValueSetsValidationLink(valueSetIn.getId(), link, CREATED);
+
+            Optional<ValueSet> optional = hapiFhirLinkProcessor.fetchValueSetByUrl(link);
+
+            if (optional.isPresent()) {
+                log.debug("Persisted valueSet to Hapi link : {}", link);
+                addToReport(link, optional.get(), CREATED);
+            } else {
+                throw new HapiFhirCreateException("Cannot find ValueSet json for url: " + link);
+            }
+
         } catch (Exception e) {
             log.warn("Error Persisting to Hapi, id is for valueSet: {}", valueSetIn.getId(), e);
             ConversionReporter.setValueSetsValidationError(valueSetIn.getId(), "HAPI Exception: " + e.getMessage());

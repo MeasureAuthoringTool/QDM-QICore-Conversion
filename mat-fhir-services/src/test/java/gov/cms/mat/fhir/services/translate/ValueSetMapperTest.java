@@ -1,9 +1,11 @@
 package gov.cms.mat.fhir.services.translate;
 
 import ca.uhn.fhir.context.FhirContext;
+import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.MatConcept;
@@ -45,14 +47,16 @@ class ValueSetMapperTest {
     @Mock
     private HapiFhirServer hapiFhirServer;
     @Mock
-    private ConversionResultsService conversionResultsService;
+    private HapiFhirLinkProcessor hapiFhirLinkProcessor;
+    @Mock
+    private ConversionResultsService conversionResultsService; // injected into  ConversionReporter
 
     @InjectMocks
     private ValueSetMapper valueSetMapper;
 
     @BeforeEach
     void setUp() {
-        ConversionReporter.setInThreadLocal("measureId", conversionResultsService, Instant.now());
+        ConversionReporter.setInThreadLocal("measureId", conversionResultsService, Instant.now(), ConversionType.CONVERSION);
     }
 
     @Test

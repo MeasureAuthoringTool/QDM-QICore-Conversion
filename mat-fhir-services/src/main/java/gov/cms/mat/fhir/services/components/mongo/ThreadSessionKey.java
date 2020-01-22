@@ -9,7 +9,7 @@ import java.time.Instant;
 @Builder
 @Getter
 @ToString
-public class ConversionKey {
+public class ThreadSessionKey {
     private final String measureId;
     private final Instant start;
 }

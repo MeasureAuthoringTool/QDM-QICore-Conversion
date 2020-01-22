@@ -13,7 +13,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class OrchestrationService {
-
     private final ValueSetOrchestrationValidationService valueSetOrchestrationValidationService;
     private final ValueSetOrchestrationConversionService valueSetOrchestrationConversionService;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
@@ -39,9 +38,9 @@ public class OrchestrationService {
     }
 
     public boolean process(OrchestrationProperties properties) {
-        processFhirMeasure(properties);
         processAndGetValueSets(properties);
         processAndGetCqlLibraries(properties);
+        processFhirMeasure(properties);
 
         if (!processValidation(properties)) {
             log.debug("Conversion Stopped due to validation errors measureId: {}", properties.getMeasureId());
@@ -110,7 +109,6 @@ public class OrchestrationService {
                 libraryOrchestrationConversionService.convert(properties) &&
                 measureOrchestrationConversionService.convert(properties);
     }
-
 
     public boolean validate(OrchestrationProperties properties) {
         return valueSetOrchestrationValidationService.validate(properties) &&

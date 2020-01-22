@@ -58,10 +58,10 @@ public class ValueSetVsacVerifier {
         if (vsacValueSetWrapper == null) {
             log.debug("VsacService returned null for oid: {}", oid);
             atomicSuccessFlag.set(false);
-            ConversionReporter.setValueSetInit(oid, "Not Found in VSAC");
+            ConversionReporter.setValueSetInit(oid, "Not Found in VSAC", Boolean.FALSE);
         } else {
             log.debug("VsacService returned SUCCESS for oid: {}", oid);
-            ConversionReporter.setValueSetInit(oid, "Found in VSAC");
+            ConversionReporter.setValueSetInit(oid, "Found in VSAC", null);
         }
     }
 }

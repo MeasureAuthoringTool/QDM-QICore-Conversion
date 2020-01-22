@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
-import gov.cms.mat.fhir.services.components.mongo.ConversionKey;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
+import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 class TranslationReportControllerTest {
     private static final String MEASURE_ID = "measure_id";
 
-    private ConversionKey conversionKey;
+    private ThreadSessionKey threadSessionKey;
 
     @Mock
     private ConversionResultProcessorService conversionResultProcessorService;
@@ -34,7 +34,7 @@ class TranslationReportControllerTest {
 
     @BeforeEach
     public void setUp() {
-        conversionKey = ConversionKey.builder()
+        threadSessionKey = ThreadSessionKey.builder()
                 .measureId(MEASURE_ID)
                 .start(Instant.now())
                 .build();

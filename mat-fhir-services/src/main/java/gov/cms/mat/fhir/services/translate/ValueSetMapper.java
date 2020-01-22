@@ -2,8 +2,8 @@ package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.exceptions.HapiValueSetException;
 import gov.cms.mat.fhir.services.exceptions.ValueSetValidationException;
+import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
 import gov.cms.mat.fhir.services.translate.creators.FhirRemover;
@@ -14,7 +14,6 @@ import mat.model.cql.CQLQualityDataModelWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
+import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.NEW;
 
 @Component
 @Slf4j
@@ -32,11 +32,16 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
     private final VsacService vsacService;
     private final MatXmlConverter matXmlConverter;
     private final HapiFhirServer hapiFhirServer;
+    private final HapiFhirLinkProcessor hapiFhirLinkProcessor;
 
-    public ValueSetMapper(VsacService vsacService, MatXmlConverter matXmlConverter, HapiFhirServer hapiFhirServer) {
+    public ValueSetMapper(VsacService vsacService,
+                          MatXmlConverter matXmlConverter,
+                          HapiFhirServer hapiFhirServer,
+                          HapiFhirLinkProcessor hapiFhirLinkProcessor) {
         this.vsacService = vsacService;
         this.matXmlConverter = matXmlConverter;
         this.hapiFhirServer = hapiFhirServer;
+        this.hapiFhirLinkProcessor = hapiFhirLinkProcessor;
     }
 
     public int count() {
@@ -61,11 +66,13 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
     }
 
     private boolean inHapi(String oid) {
-        Optional<String> optional = hapiFhirServer.fetchHapiLinkValueSet(oid);
+        String url = hapiFhirServer.buildHapiFhirUrl("ValueSet", oid);
+        Optional<ValueSet> optional = hapiFhirLinkProcessor.fetchValueSetByUrl(url);
 
         if (optional.isPresent()) {
             log.debug("ValueSet {} is in hapi: {}", oid, optional.get());
-            ConversionReporter.setValueSetsValidationLink(oid, optional.get(), EXISTS);
+            ConversionReporter.setValueSetsValidationLink(oid, optional.get().getUrl(), EXISTS);
+            ConversionReporter.setValueSetJson(oid, hapiFhirServer.toJson(optional.get()));
             return true;
         } else {
             log.debug("ValueSet {} is NOT in hapi", oid);
@@ -88,12 +95,21 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
 
         if (vsacValueSetWrapper == null) {
             log.debug("VsacService returned null for oid: {}", oid);
-            ConversionReporter.setValueSetInit(oid, "Not Found in VSAC");
+            ConversionReporter.setValueSetInit(oid, "Not Found in VSAC", Boolean.FALSE);
         } else {
             List<ValueSet> valueSetsCreated = createFhirValueSetList(cqlQualityDataSetDTO, vsacValueSetWrapper);
+
+            valueSetsCreated.forEach(this::addJsonToReport);
+
             valueSets.addAll(valueSetsCreated);
-            ConversionReporter.setValueSetInit(oid, "Found in VSAC");
+
+            ConversionReporter.setValueSetInit(oid, "Found in VSAC", null);
         }
+    }
+
+    private void addJsonToReport(ValueSet valueSet) {
+        ConversionReporter.setValueSetsValidationLink(valueSet.getId(), null, NEW);
+        ConversionReporter.setValueSetJson(valueSet.getId(), hapiFhirServer.toJson(valueSet));
     }
 
     private List<ValueSet> createFhirValueSetList(CQLQualityDataSetDTO cqlQualityDataSetDTO,
@@ -104,15 +120,6 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
                 .collect(Collectors.toList());
     }
 
-    public ValueSet persistFhirValueSet(ValueSet valueSet) {
-        Bundle bundle = hapiFhirServer.createAndExecuteBundle(valueSet);
-
-        if (bundle.isEmpty()) {
-            throw new HapiValueSetException(valueSet.getId());
-        } else {
-            return (ValueSet) bundle.getEntry().get(0).getResource();
-        }
-    }
 
     public int deleteAll() {
         return deleteAllResource(hapiFhirServer, ValueSet.class);

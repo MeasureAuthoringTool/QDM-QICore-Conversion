@@ -26,7 +26,7 @@ public class ConversionResultProcessorService {
                 .collect(Collectors.toList());
     }
 
-    public ConversionResultDto process(ConversionKey key) {
+    public ConversionResultDto process(ThreadSessionKey key) {
         Optional<ConversionResult> optional = conversionResultsService.findByMeasureId(key);
 
         if (optional.isPresent()) {
