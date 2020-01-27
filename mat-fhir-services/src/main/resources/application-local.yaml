@@ -39,4 +39,7 @@ cql:
     baseurl: http://localhost:7070
 
 
+self:
+  health:
+    baseurl: http://localhost:${server.port}
 

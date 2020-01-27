@@ -39,4 +39,6 @@ cql:
     baseurl: http://localhost:8080/cql-elm-translation-0.0.1-SNAPSHOT/
 
 
-
+self:
+  health:
+    baseurl: http://localhost:${server.port}/mat-fhir-serives

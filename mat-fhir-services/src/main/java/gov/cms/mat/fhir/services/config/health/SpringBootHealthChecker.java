@@ -1,10 +1,13 @@
 package gov.cms.mat.fhir.services.config.health;
 
 import gov.cms.mat.fhir.services.exceptions.HealthNullStatusException;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -32,12 +35,19 @@ public abstract class SpringBootHealthChecker extends HealthCheckerBase {
         String actuatorHealthUrl = getBaseUrl() + "/actuator/health";
         log.debug("{} actuatorHealthUrl: {}", getClass().getSimpleName(), actuatorHealthUrl);
 
-        return restTemplate.getForObject(actuatorHealthUrl, HealthJson.class);
+        try {
+            return restTemplate.getForObject(actuatorHealthUrl, HealthJson.class);
+        } catch (RestClientException e) {
+            log.debug("{} rest FAILURE", getClass().getSimpleName(), e);
+            return new HealthJson(Status.DOWN);
+        }
     }
 
     abstract String getBaseUrl();
 
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     private static class HealthJson {
         Status status;
     }

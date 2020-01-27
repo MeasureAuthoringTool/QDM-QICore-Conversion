@@ -73,7 +73,6 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         }
 
         return atomicBoolean.get();
-
     }
 
     private org.hl7.fhir.r4.model.Measure processFhirMeasure(OrchestrationProperties properties) {
@@ -108,7 +107,6 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
     }
 
     public org.hl7.fhir.r4.model.Measure createFhirMeasure(Measure matMeasure, byte[] xmlBytes, String narrative) {
-
         try {
             return fhirMeasureCreator.create(matMeasure, xmlBytes, narrative);
         } catch (MatXmlException e) {
