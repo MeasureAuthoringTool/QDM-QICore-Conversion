@@ -66,30 +66,42 @@ public class OrchestrationBatchController {
 
         if (isRunning.compareAndSet(false, true)) {
             try {
+                List<String> matIdsToProcess = processRequestData(batchId, matIds);
 
-                createRunningInfo(batchId);
-
-                if (CollectionUtils.isEmpty(matIds)) {
-                    matIds = measureDataService.findAllIds();
-                }
-
-                checkBatch(batchId);
-
-                matIds.parallelStream()
+                matIdsToProcess.parallelStream()
                         .forEach((id -> orchestrate(conversionType, xmlSource, batchId, id)));
 
-                log.info("Finished OrchestrationBatch with batchId: {} ", batchId);
+                log.info("Completed orchestrating {} ids with batchId: {} in {} seconds",
+                        matIdsToProcess.size(),
+                        batchId,
+                        runningBatchJobInfo.computeRunningSeconds());
 
-                return createAggregationBatchReport(batchId);
+                Map<ConversionOutcome, BatchResult> results = createAggregationBatchReport(batchId);
+
+                log.info("Finished OrchestrationBatch with batchId: {} in {} seconds",
+                        batchId,
+                        runningBatchJobInfo.computeRunningSeconds());
+
+                return results;
             } finally {
                 isRunning.set(false);
             }
         } else {
-            Long seconds = runningBatchJobInfo.computeSeconds();
+            Long runningSeconds = runningBatchJobInfo.computeRunningSeconds();
             log.info("Another batch job is already running: {}", runningBatchJobInfo);
-            throw new OrchestrationBatchJobAlreadyRunningException(runningBatchJobInfo.batchId, seconds);
+            throw new OrchestrationBatchJobAlreadyRunningException(runningBatchJobInfo.batchId, runningSeconds);
         }
+    }
 
+    public List<String> processRequestData(String batchId, List<String> matIds) {
+        createRunningInfo(batchId);
+        checkBatch(batchId);
+
+        if (CollectionUtils.isEmpty(matIds)) {
+            return measureDataService.findAllIds();
+        } else {
+            return matIds;
+        }
     }
 
     @GetMapping
@@ -132,12 +144,11 @@ public class OrchestrationBatchController {
         final String batchId;
         Long seconds;
 
-
         private RunningBatchJobInfo(String batchId) {
             this.batchId = batchId;
         }
 
-        public long computeSeconds() {
+        public long computeRunningSeconds() {
             seconds = Duration.between(startTime, Instant.now()).getSeconds();
             return seconds;
         }
