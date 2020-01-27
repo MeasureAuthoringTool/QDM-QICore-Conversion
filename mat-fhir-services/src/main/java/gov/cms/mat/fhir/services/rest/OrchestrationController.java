@@ -59,9 +59,10 @@ public class OrchestrationController {
     public ConversionResultDto translateMeasureById(
             @RequestParam @Min(10) String id,
             @RequestParam ConversionType conversionType,
-            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
+            @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId) {
         ThreadSessionKey threadSessionKey =
-                ConversionReporter.setInThreadLocal(id, conversionResultsService, Instant.now(), conversionType);
+                ConversionReporter.setInThreadLocal(id, batchId, conversionResultsService, Instant.now(), conversionType);
         try {
             Measure matMeasure;
 
@@ -72,7 +73,7 @@ public class OrchestrationController {
                 return conversionResultProcessorService.process(threadSessionKey);
             } catch (MeasureNotFoundException e) {
                 ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_NOT_FOUND);
-                throw e;
+                return conversionResultProcessorService.process(threadSessionKey);
             }
 
             OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()

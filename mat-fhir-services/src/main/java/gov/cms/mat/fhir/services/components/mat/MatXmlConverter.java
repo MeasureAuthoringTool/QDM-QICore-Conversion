@@ -39,7 +39,6 @@ public class MatXmlConverter {
         }
     }
 
-
     public ManageCompositeMeasureDetailModel toCompositeMeasureDetail(String xml) {
         try {
             String xpathXml = matXpath.toCompositeMeasureDetail(xml);

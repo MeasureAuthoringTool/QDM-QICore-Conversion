@@ -3,10 +3,10 @@ package gov.cms.mat.fhir.services.hapi;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Measure;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ValueSet;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +24,10 @@ public class HapiFhirLinkProcessor {
         this.hapiFhirServer = hapiFhirServer;
     }
 
+    public Optional<Bundle> fetchBundleByUrl(String url) {
+        return fetch(Bundle.class, url);
+    }
+
     public Optional<ValueSet> fetchValueSetByUrl(String url) {
         return fetch(ValueSet.class, url);
     }
@@ -33,7 +37,7 @@ public class HapiFhirLinkProcessor {
     }
 
     private <T extends Resource> Optional<T> fetch(Class<T> resourceClass, String url) {
-        log.debug("Fetching HAPI_FHIR object {} url: {}", resourceClass.getSimpleName(), url);
+        log.debug("Fetching HAPI_FHIR {} url: {}", resourceClass.getSimpleName(), url);
         Optional<String> optionalJson = fetchJson(url);
 
         if (!optionalJson.isPresent()) {
@@ -70,12 +74,9 @@ public class HapiFhirLinkProcessor {
     }
 
     private Optional<String> handleRestClientError(String url, HttpClientErrorException e) {
-        if (e.getStatusCode().equals(HttpStatus.GONE)) {
-            log.debug("Cannot find hapiFhir json: {}", url);
-            return Optional.empty();
-        } else {
-            throw new HapiResourceNotFoundException(url, e);
-        }
+        log.debug("Cannot find hapiFhir object status: {} url: {}", e.getStatusCode(), url);
+
+        return Optional.empty();
     }
 
     private Optional<String> fetchRestJson(String url) {

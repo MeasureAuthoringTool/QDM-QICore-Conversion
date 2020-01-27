@@ -4,3 +4,16 @@ server:
 spring:
   profiles:
     active: local
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+info:
+  app:
+    name: Cql Elm Translation Services

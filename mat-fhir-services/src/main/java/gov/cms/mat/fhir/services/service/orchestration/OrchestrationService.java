@@ -2,6 +2,9 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
+import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
+import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -38,15 +41,30 @@ public class OrchestrationService {
     }
 
     public boolean process(OrchestrationProperties properties) {
-        processAndGetValueSets(properties);
-        processAndGetCqlLibraries(properties);
-        processFhirMeasure(properties);
+        boolean processPrerequisitesFlag = processPrerequisites(properties);
 
-        if (!processValidation(properties)) {
+        if (!processPrerequisitesFlag) {
+            log.debug("Conversion Stopped due to Prerequisites failures measureId: {}", properties.getMeasureId());
+            return false;
+        } else if (!processValidation(properties)) {
             log.debug("Conversion Stopped due to validation errors measureId: {}", properties.getMeasureId());
             return false;
         } else {
             return processConversion(properties);
+        }
+    }
+
+    public boolean processPrerequisites(OrchestrationProperties properties) {
+        try {
+            processAndGetValueSets(properties);
+            processAndGetCqlLibraries(properties);
+            processFhirMeasure(properties);
+            return true;
+        } catch (ValueSetConversionException | MeasureNotFoundException | CqlLibraryNotFoundException e) {
+            return false;
+        } catch (Exception e) {
+            log.info("Error for id: {}", properties.getMeasureId(), e);
+            return false;
         }
     }
 

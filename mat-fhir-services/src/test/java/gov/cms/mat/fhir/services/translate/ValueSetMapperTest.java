@@ -56,7 +56,7 @@ class ValueSetMapperTest {
 
     @BeforeEach
     void setUp() {
-        ConversionReporter.setInThreadLocal("measureId", conversionResultsService, Instant.now(), ConversionType.CONVERSION);
+        ConversionReporter.setInThreadLocal("measureId", "TEST", conversionResultsService, Instant.now(), ConversionType.CONVERSION);
     }
 
     @Test

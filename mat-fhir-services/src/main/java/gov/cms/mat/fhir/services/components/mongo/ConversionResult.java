@@ -39,6 +39,8 @@ public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHe
     @NotBlank
     private String measureId;
 
+    private String batchId;
+
     private String errorReason;
     private ConversionOutcome outcome;
 

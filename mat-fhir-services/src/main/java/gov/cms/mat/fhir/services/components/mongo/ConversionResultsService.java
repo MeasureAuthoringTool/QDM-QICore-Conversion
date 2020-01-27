@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -17,6 +19,23 @@ public class ConversionResultsService {
 
     public ConversionResultsService(ConversionResultRepository conversionResultRepository) {
         this.conversionResultRepository = conversionResultRepository;
+    }
+
+    public boolean checkBatchId(String batchId) {
+        return conversionResultRepository.countByBatchId(batchId) == 0;
+    }
+
+    public List<ConversionResult> findByBatchId(String batchId) {
+        return conversionResultRepository.findByBatchId(batchId);
+    }
+
+
+    public Set<String> findBatchIds() {
+        List<ConversionResult> conversionResults = conversionResultRepository.findByBatchIds();
+
+        return conversionResults.stream()
+                .map(ConversionResult::getBatchId)
+                .collect(Collectors.toSet());
     }
 
     void addValueSetResult(ThreadSessionKey key,
@@ -246,4 +265,12 @@ public class ConversionResultsService {
         conversionResult.setConversionType(conversionType);
         save(conversionResult);
     }
+
+    public void addBatchId(ThreadSessionKey key, String batchId) {
+        ConversionResult conversionResult = findOrCreate(key);
+        conversionResult.setBatchId(batchId);
+        save(conversionResult);
+    }
+
+
 }

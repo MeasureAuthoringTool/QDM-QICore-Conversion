@@ -1,0 +1,26 @@
+version: '3.6'
+
+services:
+  cql-elm-translation:
+    image: cql-elm-translation
+    container_name: cql-elm-translation
+    build:
+      context: ../cql-elm-translation/
+      dockerfile: Dockerfile
+    ports:
+      - 7070:7070
+
+  qdm-qicore-mapping-services:
+    image: qdm-qicore-mapping-services
+    container_name: qdm-qicore-mapping-services
+    build:
+      context: ../qdm-qicore-mapping-services
+      dockerfile: Dockerfile
+    ports:
+      - 9090:9090
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017

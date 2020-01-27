@@ -28,6 +28,10 @@ public class MeasureDataService {
         return measureRepository.findAllIdsWithAllowedVersions(allowedVersions);
     }
 
+    public List<String> findAllIds() {
+        return measureRepository.findAllIds();
+    }
+
     public List<Measure> findAllValid() {
         return measureRepository.findByReleaseVersionIn(allowedVersions);
     }
@@ -61,5 +65,9 @@ public class MeasureDataService {
 
     public List<Measure> getMeasuresByStatus(String measureStatus) {
         return measureRepository.getMeasuresByStatusWithAllowedVersions(measureStatus, allowedVersions);
+    }
+
+    public List<String> findBatchIds() {
+        return null; // measureRepository.findBatchIds();
     }
 }

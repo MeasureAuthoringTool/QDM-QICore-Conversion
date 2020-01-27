@@ -55,6 +55,7 @@ class MatXmlMarshaller {
             return (MeasurePackageDetail) xmlMarshalUtil.convertXMLToObject(fileName,
                     xml,
                     MeasurePackageDetail.class);
+
         } catch (Exception e) {
             throw new UncheckedIOException(new IOException(e));
         }
@@ -88,6 +89,7 @@ class MatXmlMarshaller {
             return (ManageCompositeMeasureDetailModel) xmlMarshalUtil.convertXMLToObject(fileName,
                     xml,
                     ManageCompositeMeasureDetailModel.class);
+
         } catch (Exception e) {
             throw new UncheckedIOException(new IOException(e));
         }

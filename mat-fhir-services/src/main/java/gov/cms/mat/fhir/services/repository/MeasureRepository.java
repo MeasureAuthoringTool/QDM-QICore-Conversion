@@ -27,7 +27,12 @@ public interface MeasureRepository extends JpaRepository<Measure, String> {
     @Query("select ms.id from Measure ms where ms.releaseVersion in :allowedVersions")
     List<String> findAllIdsWithAllowedVersions(Collection<String> allowedVersions);
 
+    @Query("select ms.id from Measure ms")
+    List<String> findAllIds();
+
     Optional<Measure> findByIdAndReleaseVersionIn(String measureId, List<String> allowedVersions);
 
     List<Measure> findByReleaseVersionIn(List<String> allowedVersions);
+
+
 }
