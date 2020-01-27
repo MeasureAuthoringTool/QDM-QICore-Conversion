@@ -113,7 +113,17 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
 
     private boolean processJsonForError(String json, String matLibraryId) {
         ElmErrorExtractor extractor = new ElmErrorExtractor(json);
-        List<CqlConversionError> cqlConversionErrors = extractor.parseForAnnotations();
+
+        List<CqlConversionError> cqlConversionErrors = null;
+
+        try {
+            cqlConversionErrors = extractor.parseForAnnotations();
+        } catch (CqlConversionException e) {
+            ConversionReporter.setTerminalMessage(e.getMessage(), CQL_LIBRARY_TRANSLATION_FAILED);
+            throw e;
+        }
+
+
         List<MatCqlConversionException> matCqlConversionExceptions = extractor.parseForErrorExceptions();
 
         if (cqlConversionErrors.isEmpty() && matCqlConversionExceptions.isEmpty()) {

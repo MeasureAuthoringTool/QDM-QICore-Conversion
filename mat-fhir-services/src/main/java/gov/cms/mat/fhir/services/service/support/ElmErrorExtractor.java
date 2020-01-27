@@ -28,7 +28,7 @@ public class ElmErrorExtractor {
         } catch (JsonProcessingException e) {
             log.warn("Error in parse", e);
             log.trace(json);
-            throw new CqlConversionException("Error processing json", e);
+            throw new CqlConversionException("Error processing json: " + e.getMessage(), e);
         }
     }
 
