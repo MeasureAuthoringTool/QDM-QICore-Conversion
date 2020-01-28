@@ -20,15 +20,15 @@ public class MeasureTranslator implements FhirCreator {
     public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-task";
 
 
-    private ManageCompositeMeasureDetailModel mModel;
-    private String humanReadible;
+    private final ManageCompositeMeasureDetailModel matCompositeMeasureModel;
+    private final String humanReadable;
 
-    private String baseURL;
+    private final String baseURL;
 
 
-    public MeasureTranslator(ManageCompositeMeasureDetailModel measureCompositeModel, String humanReadible, String baseURL) {
-        this.mModel = measureCompositeModel;
-        this.humanReadible = humanReadible;
+    public MeasureTranslator(ManageCompositeMeasureDetailModel measureCompositeModel, String humanReadable, String baseURL) {
+        this.matCompositeMeasureModel = measureCompositeModel;
+        this.humanReadable = humanReadable;
         this.baseURL = baseURL;
     }
 
@@ -36,23 +36,23 @@ public class MeasureTranslator implements FhirCreator {
         org.hl7.fhir.r4.model.Measure fhirMeasure = new org.hl7.fhir.r4.model.Measure();
 
         //set measure id
-        fhirMeasure.setId(mModel.getId());
+        fhirMeasure.setId(matCompositeMeasureModel.getId());
         //measure meta
         Meta measureMeta = new Meta();
         measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
-        measureMeta.setVersionId(mModel.getVersionNumber());
+        measureMeta.setVersionId(matCompositeMeasureModel.getVersionNumber());
         measureMeta.setLastUpdated(new Date());
 
         fhirMeasure.setMeta(measureMeta);
 
 
         //set narrative
-        if (!humanReadible.isEmpty()) {
+        if (!humanReadable.isEmpty()) {
             try {
                 Narrative measureText = new Narrative();
                 measureText.setStatusAsString("generated");
                 //just encode it
-                byte[] encodedText = Base64.getEncoder().encode(humanReadible.getBytes());
+                byte[] encodedText = Base64.getEncoder().encode(humanReadable.getBytes());
                 measureText.setDivAsString(new String(encodedText));
                 fhirMeasure.setText(measureText);
                 ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Base64 Encoded Due to Format Issues");
@@ -63,7 +63,8 @@ public class MeasureTranslator implements FhirCreator {
 //                    fhirMeasure.setText(measureText);
             }
         } else {
-            ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Is Empty");
+            // ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Is Empty");
+            log.debug("humanReadable is empty");
         }
 
         //set Extensions if any known, QICore Extension below
@@ -73,41 +74,38 @@ public class MeasureTranslator implements FhirCreator {
         //RAND Appropriateness Score Extension
         List<Extension> extensionList = new ArrayList<>();
         fhirMeasure.setExtension(extensionList);
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.meta.extension", "No mapping available");
+
+        //ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.meta.extension", "No mapping available");
 
 
         //set the URL
         fhirMeasure.setUrl(baseURL + "Measure/" + fhirMeasure.getId());
-        ConversionReporter.setMeasureResult("MAT.Id", "Measure.url", "Generated From MAT Measure id (UUID)");
+        // ConversionReporter.setMeasureResult("MAT.Id", "Measure.url", "Generated From MAT Measure id (UUID)");
 
         //set identifiers cms and nqf if available
         List<Identifier> idList = new ArrayList<>();
         Identifier cms = null;
         Identifier nqf = null;
-        if (mModel.geteMeasureId() != 0) {
-            cms = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms", new Integer(mModel.geteMeasureId()).toString());
+        if (matCompositeMeasureModel.geteMeasureId() != 0) {
+            cms = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms", new Integer(matCompositeMeasureModel.geteMeasureId()).toString());
             idList.add(cms);
         }
-        if (mModel.getEndorseByNQF()) {
-            nqf = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf", new String(mModel.getNqfId()));
+        if (matCompositeMeasureModel.getEndorseByNQF()) {
+            nqf = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf", new String(matCompositeMeasureModel.getNqfId()));
             idList.add(nqf);
         }
         fhirMeasure.setIdentifier(idList);
-        if (idList.isEmpty()) {
-            ConversionReporter.setMeasureResult("MAT.eMeasureId", "Measure.identifier", "Not Available");
-            ConversionReporter.setMeasureResult("MAT.nqfId", "Measure.identifier", "Not Available");
-        }
 
-        fhirMeasure.setVersion(mModel.getVersionNumber());
+        fhirMeasure.setVersion(matCompositeMeasureModel.getVersionNumber());
 
-        fhirMeasure.setName(mModel.getMeasureName());
+        fhirMeasure.setName(matCompositeMeasureModel.getMeasureName());
 
-        fhirMeasure.setTitle(mModel.getShortName());  //measure title
+        fhirMeasure.setTitle(matCompositeMeasureModel.getShortName());  //measure title
 
         //set measure status mat qdm does not have all status types
-        if (mModel.isDraft()) {
+        if (matCompositeMeasureModel.isDraft()) {
             fhirMeasure.setStatus(Enumerations.PublicationStatus.DRAFT);
-        } else if (mModel.isDeleted()) {
+        } else if (matCompositeMeasureModel.isDeleted()) {
             fhirMeasure.setStatus(Enumerations.PublicationStatus.RETIRED);
         } else {
             fhirMeasure.setStatus(Enumerations.PublicationStatus.ACTIVE);
@@ -120,14 +118,14 @@ public class MeasureTranslator implements FhirCreator {
         fhirMeasure.setExperimental(experimental);
         ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.experimental", "Default to false");
 
-        if (mModel.getFinalizedDate() != null) {
-            fhirMeasure.setApprovalDate(convertDateTimeString(mModel.getFinalizedDate()));
+        if (matCompositeMeasureModel.getFinalizedDate() != null) {
+            fhirMeasure.setApprovalDate(convertDateTimeString(matCompositeMeasureModel.getFinalizedDate()));
         } else {
             ConversionReporter.setMeasureResult("MAT.finalizedDate", "Measure.approvalDate", "Finalized Date is NULL");
         }
 
         //set Publisher
-        fhirMeasure.setPublisher(mModel.getStewardValue());
+        fhirMeasure.setPublisher(matCompositeMeasureModel.getStewardValue());
 
 
         //TODO No  Contact Mapping
@@ -135,7 +133,7 @@ public class MeasureTranslator implements FhirCreator {
         ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.contact", "No Mapping default to cms.gov");
 
         //Set Measure Description
-        fhirMeasure.setDescription(mModel.getDescription());
+        fhirMeasure.setDescription(matCompositeMeasureModel.getDescription());
 
 
         //set Use Context
@@ -153,16 +151,16 @@ public class MeasureTranslator implements FhirCreator {
 
 
         //copyright
-        fhirMeasure.setCopyright(mModel.getCopyright());
+        fhirMeasure.setCopyright(matCompositeMeasureModel.getCopyright());
 
         //approval date
-        fhirMeasure.setApprovalDate(convertDateTimeString(mModel.getFinalizedDate()));
+        fhirMeasure.setApprovalDate(convertDateTimeString(matCompositeMeasureModel.getFinalizedDate()));
 
         //TODO No concept of last reviewed date
 
 
         //set effective period
-        PeriodModel pModel = mModel.getPeriodModel();
+        PeriodModel pModel = matCompositeMeasureModel.getPeriodModel();
         Period effectivePeriod = buildPeriod(convertDateTimeString(pModel.getStartDate()), convertDateTimeString(pModel.getStopDate()));
         fhirMeasure.setEffectivePeriod(effectivePeriod);
 
@@ -175,7 +173,7 @@ public class MeasureTranslator implements FhirCreator {
 
         //related artifacts
         List<RelatedArtifact> relatedArtifacts = new ArrayList<>();
-        List<String> referenceList = mModel.getReferencesList();
+        List<String> referenceList = matCompositeMeasureModel.getReferencesList();
         if (referenceList != null) {
             Iterator iter = referenceList.iterator();
             while (iter.hasNext()) {
@@ -193,15 +191,15 @@ public class MeasureTranslator implements FhirCreator {
 
 
         //set disclaimer
-        fhirMeasure.setDisclaimer(mModel.getDisclaimer());
+        fhirMeasure.setDisclaimer(matCompositeMeasureModel.getDisclaimer());
 
         //set scoring
-        CodeableConcept scoringConcept = buildCodeableConcept(mModel.getMeasScoring(), "http://hl7.org/fhir/measure-scoring", "");
+        CodeableConcept scoringConcept = buildCodeableConcept(matCompositeMeasureModel.getMeasScoring(), "http://hl7.org/fhir/measure-scoring", "");
         fhirMeasure.setScoring(scoringConcept);
 
         //Measure Type(s)
         List<CodeableConcept> typeList = new ArrayList<>();
-        List<mat.model.MeasureType> matTypeList = mModel.getMeasureTypeSelectedList();
+        List<mat.model.MeasureType> matTypeList = matCompositeMeasureModel.getMeasureTypeSelectedList();
         if (matTypeList != null) {
             Iterator mIter = matTypeList.iterator();
             while (mIter.hasNext()) {
@@ -234,13 +232,13 @@ public class MeasureTranslator implements FhirCreator {
         }
 
         //set rationale
-        fhirMeasure.setRationale(mModel.getRationale());
+        fhirMeasure.setRationale(matCompositeMeasureModel.getRationale());
 
         //set clinical recommendation
-        fhirMeasure.setClinicalRecommendationStatement(mModel.getClinicalRecomms());
+        fhirMeasure.setClinicalRecommendationStatement(matCompositeMeasureModel.getClinicalRecomms());
 
         //set guidance
-        fhirMeasure.setGuidance(mModel.getGuidance());
+        fhirMeasure.setGuidance(matCompositeMeasureModel.getGuidance());
 
 
         return fhirMeasure;

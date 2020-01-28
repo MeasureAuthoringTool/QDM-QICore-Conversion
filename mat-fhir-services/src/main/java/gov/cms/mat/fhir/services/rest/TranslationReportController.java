@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,22 +27,26 @@ public class TranslationReportController {
     @Operation(summary = "Display all missing ValueSets.",
             description = "Display the OID's of the ValueSets that could not be located in VSAC.")
     @GetMapping(path = "/missingValueSets")
-    public Set<String> findMissingValueSets() {
-        return conversionResultProcessorService.findMissingValueSets();
+    public Set<String> findMissingValueSets(@RequestParam String batchId) {
+        return conversionResultProcessorService.findMissingValueSets(batchId);
     }
 
     @Operation(summary = "Find report for a measure.",
             description = "Find and return a error report for a measure.")
     @GetMapping(path = "/find")
-    public ConversionResultDto findSearchData(String measureId) {
-        // return conversionResultProcessorService.process(measureId);
-        throw new UnsupportedOperationException("TODO"); // needs to be list or get last
+    public List<ConversionResultDto> findSearchData(String measureId, DocumentsToFind find) {
+        return conversionResultProcessorService.processOne(measureId, find);
+
     }
 
-    @Operation(summary = "Find all Reports.",
-            description = "Find and return the error reports for all the measures.")
+    @Operation(summary = "Find all Reports for batch.",
+            description = "Find and return the reports for all the measures in the batch.")
     @GetMapping(path = "/findAll")
-    public List<ConversionResultDto> findAll() {
-        return conversionResultProcessorService.processAll();
+    public List<ConversionResultDto> findAll(@RequestParam String batchId) {
+        return conversionResultProcessorService.processAllForBatch(batchId);
+    }
+
+    public enum DocumentsToFind {
+        ALL, LAST
     }
 }

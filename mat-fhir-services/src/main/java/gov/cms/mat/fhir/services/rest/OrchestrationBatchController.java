@@ -131,7 +131,7 @@ public class OrchestrationBatchController {
     }
 
     private void checkBatch(String batchId) {
-        if (conversionResultsService.checkBatchId(batchId)) {
+        if (conversionResultsService.checkBatchIdNotUsed(batchId)) {
             log.info("Starting OrchestrationBatch with batchId: {} ", batchId);
         } else {
             throw new BatchIdConflictException(batchId);

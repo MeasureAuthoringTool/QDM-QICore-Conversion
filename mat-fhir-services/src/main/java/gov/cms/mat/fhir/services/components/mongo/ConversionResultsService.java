@@ -21,8 +21,12 @@ public class ConversionResultsService {
         this.conversionResultRepository = conversionResultRepository;
     }
 
-    public boolean checkBatchId(String batchId) {
+    public boolean checkBatchIdNotUsed(String batchId) {
         return conversionResultRepository.countByBatchId(batchId) == 0;
+    }
+
+    public boolean checkBatchIdUsed(String batchId) {
+        return conversionResultRepository.countByBatchId(batchId) > 0;
     }
 
     public List<ConversionResult> findByBatchId(String batchId) {
@@ -31,7 +35,7 @@ public class ConversionResultsService {
 
 
     public Set<String> findBatchIds() {
-        List<ConversionResult> conversionResults = conversionResultRepository.findByBatchIds();
+        List<ConversionResult> conversionResults = conversionResultRepository.findAllBatchIds();
 
         return conversionResults.stream()
                 .map(ConversionResult::getBatchId)
@@ -74,6 +78,14 @@ public class ConversionResultsService {
 
     public Optional<ConversionResult> findByMeasureId(ThreadSessionKey key) {
         return conversionResultRepository.findByMeasureIdAndStart(key.getMeasureId(), key.getStart());
+    }
+
+    public List<ConversionResult> findAllByMeasureId(String measureId) {
+        return conversionResultRepository.findByMeasureId(measureId);
+    }
+
+    public Optional<ConversionResult> findTopByMeasureId(String measureId) {
+        return conversionResultRepository.findTopByMeasureIdOrderByCreatedDesc(measureId);
     }
 
     public List<ConversionResult> findAll() {

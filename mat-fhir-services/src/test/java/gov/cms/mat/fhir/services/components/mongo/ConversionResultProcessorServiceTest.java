@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ConversionResultProcessorServiceTest {
     private static final String MEASURE_ID = "measure_id";
+    private static final String BATCH_ID = "batch_id";
 
     private ThreadSessionKey threadSessionKey;
 
@@ -40,24 +41,23 @@ class ConversionResultProcessorServiceTest {
                 .build();
     }
 
-
     @Test
     void processAll_HappyPath() {
-        when(conversionResultsService.findAll())
+        when(conversionResultsService.findByBatchId(BATCH_ID))
                 .thenReturn(Collections.singletonList(createConversionResult(true)));
 
-        List<ConversionResultDto> conversionResults = conversionResultProcessorService.processAll();
+        List<ConversionResultDto> conversionResults = conversionResultProcessorService.processAllForBatch(BATCH_ID);
         ConversionResultDto dto = verifyResults(conversionResults);
 
-        verify(conversionResultsService).findAll();
+        verify(conversionResultsService).findByBatchId(BATCH_ID);
     }
 
     @Test
     void findMissingValueSets() {
-        when(conversionResultsService.findAll())
+        when(conversionResultsService.findByBatchId(BATCH_ID))
                 .thenReturn(Collections.singletonList(createConversionResult(false)));
 
-        Set<String> set = conversionResultProcessorService.findMissingValueSets();
+        Set<String> set = conversionResultProcessorService.findMissingValueSets(BATCH_ID);
 
         assertEquals(1, set.size());
       //  assertEquals("OID", set.iterator().next());

@@ -28,7 +28,7 @@ public class ConversionDataService {
     public List<ConversionMapping> find(SearchData searchData) {
         return fhirQdmMappingData.getAll()
                 .stream()
-                .filter(c -> filter(c, searchData))
+                .filter(conversionEntry -> filter(conversionEntry, searchData))
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }

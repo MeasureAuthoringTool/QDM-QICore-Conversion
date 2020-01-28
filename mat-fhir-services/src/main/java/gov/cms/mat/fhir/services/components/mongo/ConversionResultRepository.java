@@ -11,10 +11,14 @@ public interface ConversionResultRepository extends MongoRepository<ConversionRe
 
     Optional<ConversionResult> findByMeasureIdAndStart(String measureId, Instant start);
 
+    List<ConversionResult> findByMeasureId(String measureId);
+
+    Optional<ConversionResult> findTopByMeasureIdOrderByCreatedDesc(String measureId);
+
     Long countByBatchId(String batchId);
 
     List<ConversionResult> findByBatchId(String batchId);
 
     @Query(value = "{}", fields = "{'batchId' : 1}")
-    List<ConversionResult> findByBatchIds();
+    List<ConversionResult> findAllBatchIds();
 }

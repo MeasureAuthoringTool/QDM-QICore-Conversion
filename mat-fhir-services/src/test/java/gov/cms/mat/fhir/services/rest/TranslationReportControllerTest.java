@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TranslationReportControllerTest {
     private static final String MEASURE_ID = "measure_id";
+    private static final String BATCH_ID = "measure_id";
 
     private ThreadSessionKey threadSessionKey;
 
@@ -42,11 +43,11 @@ class TranslationReportControllerTest {
 
     @Test
     void findMissingValueSets() {
-        when(conversionResultProcessorService.findMissingValueSets()).thenReturn(new HashSet<>(Arrays.asList("1", "2", "3")));
+        when(conversionResultProcessorService.findMissingValueSets(BATCH_ID)).thenReturn(new HashSet<>(Arrays.asList("1", "2", "3")));
 
-        assertEquals(3, translationReportController.findMissingValueSets().size());
+        assertEquals(3, translationReportController.findMissingValueSets(BATCH_ID).size());
 
-        verify(conversionResultProcessorService).findMissingValueSets();
+        verify(conversionResultProcessorService).findMissingValueSets(BATCH_ID);
 
     }
 
@@ -66,13 +67,12 @@ class TranslationReportControllerTest {
     @Test
     void findAll() {
         ConversionResultDto conversionResultToReturn = ConversionResultDto.builder().build();
-        when(conversionResultProcessorService.processAll()).thenReturn(Collections.singletonList(conversionResultToReturn));
+        when(conversionResultProcessorService.processAllForBatch(BATCH_ID)).thenReturn(Collections.singletonList(conversionResultToReturn));
 
-        List<ConversionResultDto> conversionResults = translationReportController.findAll();
+        List<ConversionResultDto> conversionResults = translationReportController.findAll(BATCH_ID);
         assertEquals(1, conversionResults.size());
         assertEquals(conversionResultToReturn, conversionResults.get(0));
 
-        verify(conversionResultProcessorService).processAll();
-
+        verify(conversionResultProcessorService).processAllForBatch(BATCH_ID);
     }
 }
