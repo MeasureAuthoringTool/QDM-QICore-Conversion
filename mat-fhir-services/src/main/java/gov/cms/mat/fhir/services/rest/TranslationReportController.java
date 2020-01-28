@@ -32,11 +32,11 @@ public class TranslationReportController {
     }
 
     @Operation(summary = "Find report for a measure.",
-            description = "Find and return a error report for a measure.")
+            description = "Find and return a conversion report for a measure.")
     @GetMapping(path = "/find")
-    public List<ConversionResultDto> findSearchData(String measureId, DocumentsToFind find) {
+    public List<ConversionResultDto> findConversionResults(@RequestParam String measureId,
+                                                           @RequestParam DocumentsToFind find) {
         return conversionResultProcessorService.processOne(measureId, find);
-
     }
 
     @Operation(summary = "Find all Reports for batch.",
