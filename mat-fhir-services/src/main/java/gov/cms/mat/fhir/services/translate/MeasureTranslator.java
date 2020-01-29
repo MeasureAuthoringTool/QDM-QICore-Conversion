@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
+import mat.model.MeasureType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
@@ -176,7 +177,7 @@ public class MeasureTranslator implements FhirCreator {
         //set scoring
         CodeableConcept scoringConcept = buildCodeableConcept(matCompositeMeasureModel.getMeasScoring(), "http://hl7.org/fhir/measure-scoring", "");
         fhirMeasure.setScoring(scoringConcept);
-        doShit(fhirMeasure);
+        processTypes(fhirMeasure);
 
         //set rationale
         fhirMeasure.setRationale(matCompositeMeasureModel.getRationale());
@@ -191,54 +192,44 @@ public class MeasureTranslator implements FhirCreator {
         return fhirMeasure;
     }
 
-    public void doShit(Measure fhirMeasure) {
+    public void processTypes(Measure fhirMeasure) {
         //Measure Type(s)
-        List<CodeableConcept> typeList = new ArrayList<>();
-        List<mat.model.MeasureType> matTypeList = matCompositeMeasureModel.getMeasureTypeSelectedList();
-        if (CollectionUtils.isNotEmpty(matTypeList)) {
-            for (mat.model.MeasureType mType : matTypeList) {
-                String abbrName = mType.getAbbrName();
-                doMoreShit(typeList, abbrName);
+        List<mat.model.MeasureType> matMeasureTypeTypeList = matCompositeMeasureModel.getMeasureTypeSelectedList();
+
+        if (CollectionUtils.isNotEmpty(matMeasureTypeTypeList)) {
+            List<CodeableConcept> typeList = new ArrayList<>();
+            for (MeasureType measureType : matMeasureTypeTypeList) {
+                typeList.add(doMoreShit(measureType.getAbbrName()));
             }
             fhirMeasure.setType(typeList);
         } else {
-            log.info("No Measure Types Found");
+            log.info("No Mat Measure Types Found");
             // ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "No Measure Types Found");
         }
     }
 
-    public void doMoreShit(List<CodeableConcept> typeList, String abbrName) {
+    public CodeableConcept doMoreShit(String abbrName) {
         switch (abbrName) {
             case "COMPOSITE":
-                CodeableConcept compositeConcept = buildCodeableConcept("composite", MEASURE_TYPE, "");
-                typeList.add(compositeConcept);
-                break;
+                return buildCodeableConcept("composite", MEASURE_TYPE, "");
             case "INTERM-OM":
             case "OUTCOME":
-                CodeableConcept outcomeConcept = buildCodeableConcept("outcome", MEASURE_TYPE, "");
-                typeList.add(outcomeConcept);
-                break;
+                return buildCodeableConcept("outcome", MEASURE_TYPE, "");
             case "PRO-PM":
-                CodeableConcept patientConcept = buildCodeableConcept("patient-report-outcome", MEASURE_TYPE, "");
-                typeList.add(patientConcept);
-                break;
+                return buildCodeableConcept("patient-report-outcome", MEASURE_TYPE, "");
             case "STRUCTURE":
             case "RESOURCE":
-                CodeableConcept structureConcept = buildCodeableConcept("structure", MEASURE_TYPE, "");
-                typeList.add(structureConcept);
-                break;
+                return buildCodeableConcept("structure", MEASURE_TYPE, "");
             case "APPROPRIATE":
             case "EFFICIENCY":
             case "PROCESS":
-                CodeableConcept processConcept = buildCodeableConcept("process", MEASURE_TYPE, "");
-                typeList.add(processConcept);
-                break;
+                return buildCodeableConcept("process", MEASURE_TYPE, "");
             default:
-                CodeableConcept unk = buildCodeableConcept("unknown", MEASURE_TYPE, "");
-                typeList.add(unk);
-                // todo how to do
-                // ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "Default to unknown not matching Abbr name");
-                break;
+                return buildCodeableConcept("unknown", MEASURE_TYPE, "");
+
+            // TODO talk to Duane  -- Could make enum and when....
+            // ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "Default to unknown not matching Abbr name");
+            //break;
         }
     }
 
