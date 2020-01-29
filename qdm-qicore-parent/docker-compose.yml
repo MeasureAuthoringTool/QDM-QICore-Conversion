@@ -1,6 +1,21 @@
 version: '3.6'
 
 services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+      
+  mat-fhir-services:
+    image: mat-fhir-services
+    container_name: mat-fhir-services
+    build:
+        context: ../mat-fhir-services
+        dockerfile: Dockerfile
+    ports:
+      - 9080:9080      
+      
   cql-elm-translation:
     image: cql-elm-translation
     container_name: cql-elm-translation
@@ -18,9 +33,4 @@ services:
       dockerfile: Dockerfile
     ports:
       - 9090:9090
-
-  mongo:
-    image: mongo
-    restart: always
-    ports:
-      - 27017:27017
+      

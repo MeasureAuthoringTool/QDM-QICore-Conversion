@@ -28,7 +28,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.hl7.fhir.r4.model.api.IBaseBundle.LINK_NEXT;
+//import static org.hl7.fhir.r4.model.api.IBaseBundle.LINK_NEXT;
+import static org.hl7.fhir.r4.model.Bundle.LINK_NEXT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
