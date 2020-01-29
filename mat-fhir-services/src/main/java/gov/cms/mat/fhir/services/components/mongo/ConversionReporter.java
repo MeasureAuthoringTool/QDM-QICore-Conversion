@@ -219,7 +219,7 @@ public class ConversionReporter {
         try {
             ConversionReporter conversionReporter = getConversionReporter();
             conversionReporter.addErrorMessage(errorMessage, outcome);
-            log.warn("Setting error message outcome: {}, message: {}", errorMessage, outcome);
+            log.debug("Setting error message outcome: {}, message: {}", errorMessage, outcome);
         } catch (Exception e) {
             log.warn("Cannot find ConversionReporter: {}, outcome: {} setting error message: {} ",
                     e.getMessage(),

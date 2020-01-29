@@ -1,23 +1,28 @@
 package gov.cms.mat.fhir.services.translate;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
 
 
 @Slf4j
 public class MeasureTranslator implements FhirCreator {
     //this should be something that MAT provides but doesn't there are many possibilites
     public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-task";
+
+    public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
 
 
     private final ManageCompositeMeasureDetailModel matCompositeMeasureModel;
@@ -37,35 +42,10 @@ public class MeasureTranslator implements FhirCreator {
 
         //set measure id
         fhirMeasure.setId(matCompositeMeasureModel.getId());
-        //measure meta
-        Meta measureMeta = new Meta();
-        measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
-        measureMeta.setVersionId(matCompositeMeasureModel.getVersionNumber());
-        measureMeta.setLastUpdated(new Date());
 
-        fhirMeasure.setMeta(measureMeta);
+        proessMeta(fhirMeasure);
+        processHumanReadable(fhirMeasure);
 
-
-        //set narrative
-        if (!humanReadable.isEmpty()) {
-            try {
-                Narrative measureText = new Narrative();
-                measureText.setStatusAsString("generated");
-                //just encode it
-                byte[] encodedText = Base64.getEncoder().encode(humanReadable.getBytes());
-                measureText.setDivAsString(new String(encodedText));
-                fhirMeasure.setText(measureText);
-                ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Base64 Encoded Due to Format Issues");
-            } catch (Exception ex) {
-//                    Narrative measureText = new Narrative();
-//                    measureText.setStatusAsString("generated");
-//                    measureText.setDivAsString("[<![CDATA["+humanReadible+"]]>");
-//                    fhirMeasure.setText(measureText);
-            }
-        } else {
-            // ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Is Empty");
-            log.debug("humanReadable is empty");
-        }
 
         //set Extensions if any known, QICore Extension below
         //QICore Not Done Extension
@@ -109,19 +89,20 @@ public class MeasureTranslator implements FhirCreator {
             fhirMeasure.setStatus(Enumerations.PublicationStatus.RETIRED);
         } else {
             fhirMeasure.setStatus(Enumerations.PublicationStatus.ACTIVE);
-            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.status", "Defaulting to ACTIVE neither draft or deleted");
+            // ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.status", "Defaulting to ACTIVE neither draft or deleted");
         }
 
         //TODO measure experimental mat does not have concept
 
         boolean experimental = false;
         fhirMeasure.setExperimental(experimental);
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.experimental", "Default to false");
+        // ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.experimental", "Default to false");
 
         if (matCompositeMeasureModel.getFinalizedDate() != null) {
             fhirMeasure.setApprovalDate(convertDateTimeString(matCompositeMeasureModel.getFinalizedDate()));
         } else {
-            ConversionReporter.setMeasureResult("MAT.finalizedDate", "Measure.approvalDate", "Finalized Date is NULL");
+            // ConversionReporter.setMeasureResult("MAT.finalizedDate", "Measure.approvalDate", "Finalized Date is NULL");
+            log.debug("No approval date");
         }
 
         //set Publisher
@@ -130,7 +111,7 @@ public class MeasureTranslator implements FhirCreator {
 
         //TODO No  Contact Mapping
         fhirMeasure.setContact(createContactDetailUrl("https://cms.gov"));
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.contact", "No Mapping default to cms.gov");
+        //  ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.contact", "No Mapping default to cms.gov");
 
         //Set Measure Description
         fhirMeasure.setDescription(matCompositeMeasureModel.getDescription());
@@ -143,11 +124,11 @@ public class MeasureTranslator implements FhirCreator {
         List<CodeableConcept> jurisdictionList = new ArrayList<>();
         jurisdictionList.add(buildCodeableConcept("US", "urn:iso:std:iso:3166", ""));
         fhirMeasure.setJurisdiction(jurisdictionList);
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.jurisdiction", "No Mapping defaulting to US");
+        // ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.jurisdiction", "No Mapping defaulting to US");
 
         //purpose
         fhirMeasure.setPurpose("Unknown");
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.purpose", "No Mapping defaulting to Unknown");
+        // ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.purpose", "No Mapping defaulting to Unknown");
 
 
         //copyright
@@ -169,15 +150,13 @@ public class MeasureTranslator implements FhirCreator {
         CodeableConcept topicCC = buildCodeableConcept("57024-2", "http://loinc.org", "Health Quality Measure Document");
         topicList.add(topicCC);
         fhirMeasure.setTopic(topicList);
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.topic", "No Mapping default Health Quality Measure Document");
+        // ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.topic", "No Mapping default Health Quality Measure Document");
 
         //related artifacts
         List<RelatedArtifact> relatedArtifacts = new ArrayList<>();
         List<String> referenceList = matCompositeMeasureModel.getReferencesList();
         if (referenceList != null) {
-            Iterator iter = referenceList.iterator();
-            while (iter.hasNext()) {
-                String ref = (String) iter.next();
+            for (String ref : referenceList) {
                 RelatedArtifact art = new RelatedArtifact();
                 art.setCitation(ref);
                 art.setType(RelatedArtifact.RelatedArtifactType.CITATION);
@@ -185,9 +164,10 @@ public class MeasureTranslator implements FhirCreator {
             }
             fhirMeasure.setRelatedArtifact(relatedArtifacts);
         }
-        if (relatedArtifacts.isEmpty()) {
-            ConversionReporter.setMeasureResult("MAT.referencesList", "Measure.relatedArtifact", "NO Citations");
-        }
+
+        // if (relatedArtifacts.isEmpty()) {
+        //    ConversionReporter.setMeasureResult("MAT.referencesList", "Measure.relatedArtifact", "NO Citations");
+        // }
 
 
         //set disclaimer
@@ -196,40 +176,7 @@ public class MeasureTranslator implements FhirCreator {
         //set scoring
         CodeableConcept scoringConcept = buildCodeableConcept(matCompositeMeasureModel.getMeasScoring(), "http://hl7.org/fhir/measure-scoring", "");
         fhirMeasure.setScoring(scoringConcept);
-
-        //Measure Type(s)
-        List<CodeableConcept> typeList = new ArrayList<>();
-        List<mat.model.MeasureType> matTypeList = matCompositeMeasureModel.getMeasureTypeSelectedList();
-        if (matTypeList != null) {
-            Iterator mIter = matTypeList.iterator();
-            while (mIter.hasNext()) {
-                mat.model.MeasureType mType = (mat.model.MeasureType) mIter.next();
-                String abbrName = mType.getAbbrName();
-                if (abbrName.equals("COMPOSITE")) {
-                    CodeableConcept compositeConcept = buildCodeableConcept("composite", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(compositeConcept);
-                } else if (abbrName.equals("INTERM-OM") || abbrName.equals("OUTCOME")) {
-                    CodeableConcept outcomeConcept = buildCodeableConcept("outcome", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(outcomeConcept);
-                } else if (abbrName.equals("PRO-PM")) {
-                    CodeableConcept patientConcept = buildCodeableConcept("patient-report-outcome", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(patientConcept);
-                } else if (abbrName.equals("STRUCTURE") || abbrName.equals("RESOURCE")) {
-                    CodeableConcept structureConcept = buildCodeableConcept("structure", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(structureConcept);
-                } else if (abbrName.equals("APPROPRIATE") || abbrName.equals("EFFICIENCY") || abbrName.equals("PROCESS")) {
-                    CodeableConcept processConcept = buildCodeableConcept("process", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(processConcept);
-                } else {
-                    CodeableConcept unk = buildCodeableConcept("unknown", "http://hl7.org/fhir/measure-type", "");
-                    typeList.add(unk);
-                    ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "Default to unknown not matching Abbr name");
-                }
-            }
-            fhirMeasure.setType(typeList);
-        } else {
-            ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "No Measure Types Found");
-        }
+        doShit(fhirMeasure);
 
         //set rationale
         fhirMeasure.setRationale(matCompositeMeasureModel.getRationale());
@@ -242,6 +189,89 @@ public class MeasureTranslator implements FhirCreator {
 
 
         return fhirMeasure;
+    }
+
+    public void doShit(Measure fhirMeasure) {
+        //Measure Type(s)
+        List<CodeableConcept> typeList = new ArrayList<>();
+        List<mat.model.MeasureType> matTypeList = matCompositeMeasureModel.getMeasureTypeSelectedList();
+        if (CollectionUtils.isNotEmpty(matTypeList)) {
+            for (mat.model.MeasureType mType : matTypeList) {
+                String abbrName = mType.getAbbrName();
+                doMoreShit(typeList, abbrName);
+            }
+            fhirMeasure.setType(typeList);
+        } else {
+            log.info("No Measure Types Found");
+            // ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "No Measure Types Found");
+        }
+    }
+
+    public void doMoreShit(List<CodeableConcept> typeList, String abbrName) {
+        switch (abbrName) {
+            case "COMPOSITE":
+                CodeableConcept compositeConcept = buildCodeableConcept("composite", MEASURE_TYPE, "");
+                typeList.add(compositeConcept);
+                break;
+            case "INTERM-OM":
+            case "OUTCOME":
+                CodeableConcept outcomeConcept = buildCodeableConcept("outcome", MEASURE_TYPE, "");
+                typeList.add(outcomeConcept);
+                break;
+            case "PRO-PM":
+                CodeableConcept patientConcept = buildCodeableConcept("patient-report-outcome", MEASURE_TYPE, "");
+                typeList.add(patientConcept);
+                break;
+            case "STRUCTURE":
+            case "RESOURCE":
+                CodeableConcept structureConcept = buildCodeableConcept("structure", MEASURE_TYPE, "");
+                typeList.add(structureConcept);
+                break;
+            case "APPROPRIATE":
+            case "EFFICIENCY":
+            case "PROCESS":
+                CodeableConcept processConcept = buildCodeableConcept("process", MEASURE_TYPE, "");
+                typeList.add(processConcept);
+                break;
+            default:
+                CodeableConcept unk = buildCodeableConcept("unknown", MEASURE_TYPE, "");
+                typeList.add(unk);
+                // todo how to do
+                // ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "Default to unknown not matching Abbr name");
+                break;
+        }
+    }
+
+    public void proessMeta(Measure fhirMeasure) {
+        //measure meta
+        Meta measureMeta = new Meta();
+        measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
+        measureMeta.setVersionId(matCompositeMeasureModel.getVersionNumber());
+        measureMeta.setLastUpdated(new Date());
+        fhirMeasure.setMeta(measureMeta);
+    }
+
+    public void processHumanReadable(Measure fhirMeasure) {
+        //set narrative
+        if (!humanReadable.isEmpty()) {
+            try {
+                Narrative measureText = new Narrative();
+                measureText.setStatusAsString("generated");
+                //just encode it
+                byte[] encodedText = Base64.getEncoder().encode(humanReadable.getBytes());
+                measureText.setDivAsString(new String(encodedText));
+                fhirMeasure.setText(measureText);
+                //  ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Base64 Encoded Due to Format Issues");
+            } catch (Exception ex) {
+//                    Narrative measureText = new Narrative();
+//                    measureText.setStatusAsString("generated");
+//                    measureText.setDivAsString("[<![CDATA["+humanReadible+"]]>");
+//                    fhirMeasure.setText(measureText);
+            }
+        } else {
+            // ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Is Empty");
+            log.debug("humanReadable is empty");
+        }
     }
 
     private Identifier createIdentifierOfficial(String system, String code) {
@@ -260,56 +290,55 @@ public class MeasureTranslator implements FhirCreator {
         ContactPointSystem cPS = ContactPointSystem.URL;
         cP.setValue(url);
         cP.setSystem(cPS);
-        List<ContactPoint> lCP = new ArrayList();
+        List<ContactPoint> lCP = new ArrayList<>();
         lCP.add(cP);
         contactDetail.setTelecom(lCP);
 
-        List<ContactDetail> lCD = new ArrayList();
+        List<ContactDetail> lCD = new ArrayList<>();
         lCD.add(contactDetail);
 
         return lCD;
     }
 
     private List<UsageContext> createUsageContext(String code, String system, String display) {
-        UsageContext uC = new UsageContext();
+        UsageContext usageContext = new UsageContext();
         Coding coding = new Coding();
         coding.setCode(code);
         coding.setSystem(system);
         coding.setDisplay(display);
-        uC.setCode(coding);
+        usageContext.setCode(coding);
 
-        List<UsageContext> lUC = new ArrayList<>();
-        lUC.add(uC);
+        List<UsageContext> usageContextList = new ArrayList<>();
+        usageContextList.add(usageContext);
 
-        return lUC;
+        return usageContextList;
     }
 
 
-    private Period buildPeriod(Date startdate, Date enddate) {
+    private Period buildPeriod(Date startDate, Date endDate) {
         Period p = new Period();
-        p.setStart(startdate);
-        p.setEnd(enddate);
-
+        p.setStart(startDate);
+        p.setEnd(endDate);
         return p;
     }
 
     private Date convertDateTimeString(String dString) {
-        Date dt = new Date();
+        // Date dt = new Date();
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            dt = sdf.parse(dString);
+            return sdf.parse(dString);
         } catch (Exception ex) {
             try {
                 SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd/yyyy HH:mm a");
-                dString.replaceAll("AM", "A");
-                dString.replaceAll("PM", "P");
-                dt = sdf2.parse(dString);
+                //dString.replaceAll("AM", "A"); // TODO duane
+                // dString.replaceAll("PM", "P");
+                return sdf2.parse(dString);
             } catch (Exception ex2) {
                 LocalDate epoch = LocalDate.ofEpochDay(0L);
                 long epochLong = epoch.toEpochDay();
-                dt = new Date(epochLong);
+                return new Date(epochLong);
             }
         }
-        return dt;
+
     }
 }

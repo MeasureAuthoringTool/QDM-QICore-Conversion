@@ -90,7 +90,7 @@ public class OrchestrationController {
     }
 
     public ConversionResultDto process(OrchestrationProperties orchestrationProperties) {
-        log.info("Orchestrating Measure: {}", orchestrationProperties);
+        log.info("Started Orchestrating Measure key: {}", orchestrationProperties.getThreadSessionKey());
 
         orchestrationService.process(orchestrationProperties);
 
@@ -98,6 +98,9 @@ public class OrchestrationController {
             ConversionReporter.setTerminalMessage(SUCCESS.name(), SUCCESS);
         }
 
-        return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
+        ConversionResultDto conversionResultDto = conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
+        // TODO log how long it took
+
+        return conversionResultDto;
     }
 }

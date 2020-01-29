@@ -188,12 +188,12 @@ public class HapiFhirServer {
 
         // Optionally you may configure the interceptor (by default only summary info is logged)
         loggingInterceptor.setLogRequestBody(false);
-        loggingInterceptor.setLogRequestSummary(true);
+        loggingInterceptor.setLogRequestSummary(false);
         loggingInterceptor.setLogRequestHeaders(false);
 
         loggingInterceptor.setLogResponseBody(false);
         loggingInterceptor.setLogResponseHeaders(false);
-        loggingInterceptor.setLogResponseSummary(true);
+        loggingInterceptor.setLogResponseSummary(false);
 
         return loggingInterceptor;
     }
