@@ -40,7 +40,7 @@ public class ConversionResultProcessorService {
         if (results.size() > MAX_RECORDS) {
             throw new ConversionResultsTooLargeException(MAX_RECORDS, results.size());
         } else {
-            return convertToDto(conversionResultsService.findByBatchId(batchId));
+            return convertToDto(results);
         }
     }
 

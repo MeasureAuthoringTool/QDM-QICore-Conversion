@@ -43,6 +43,7 @@ class ConversionResultProcessorServiceTest {
 
     @Test
     void processAll_HappyPath() {
+        when(conversionResultsService.checkBatchIdUsed(BATCH_ID)).thenReturn(Boolean.TRUE);
         when(conversionResultsService.findByBatchId(BATCH_ID))
                 .thenReturn(Collections.singletonList(createConversionResult(true)));
 
@@ -54,13 +55,16 @@ class ConversionResultProcessorServiceTest {
 
     @Test
     void findMissingValueSets() {
+        when(conversionResultsService.checkBatchIdUsed(BATCH_ID)).thenReturn(Boolean.TRUE);
         when(conversionResultsService.findByBatchId(BATCH_ID))
                 .thenReturn(Collections.singletonList(createConversionResult(false)));
 
         Set<String> set = conversionResultProcessorService.findMissingValueSets(BATCH_ID);
 
         assertEquals(1, set.size());
-      //  assertEquals("OID", set.iterator().next());
+
+        verify(conversionResultsService).checkBatchIdUsed(BATCH_ID);
+        verify(conversionResultsService).findByBatchId(BATCH_ID);
     }
 
     @Test

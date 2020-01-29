@@ -36,3 +36,4 @@ hs_err_pid*
 /mat-rest-commons/target/maven-archiver/pom.properties
 
 .DS_Store
+/qdm-qicore-parent/docker-compose-mike.yml
