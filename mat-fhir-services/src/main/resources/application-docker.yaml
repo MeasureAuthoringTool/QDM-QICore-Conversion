@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://host.docker.internal:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
+    username: mat
+    password: mat
+  jpa:
+    hibernate.ddl-auto: none
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl    
+    generate-ddl: false
+    show-sql: false
+  data:
+    mongodb:
+      database: mat_conversion_results
+      uri: mongodb://docker.for.mac.localhost
+
+logging:
+  level:
+    root: INFO
+    gov.cms.mat: DEBUG
+    org.hl7.fhir.r4.hapi.ctx: WARN
+    org.exolab: WARN
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+  file:
+    name: mat-fhir-services.log
+
+fhir:
+  r4:
+    baseurl: http://docker.for.mac.localhost:8080/hapi-fhir-jpaserver/fhir/
+
+qdmqicore:
+  conversion:
+    baseurl: http://docker.for.mac.localhost:9090
+
+cql:
+  conversion:
+    baseurl: http://docker.for.mac.localhost:7070
+
+
+self:
+  health:
+    baseurl: http://docker.for.mac.localhost:${server.port}
+
