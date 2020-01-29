@@ -68,7 +68,7 @@ class ValueSetOrchestrationValidationService implements ErrorSeverityChecker {
 
             valueSetConversionResults.forEach(v -> haveError(v.getSuccess(), errorCount));
 
-            log.info("Measure: {} contains {} errors", measureId, errorCount.get());
+            log.info("Measure: {} valueSetConversionResults contains {} errors", measureId, errorCount.get());
 
             return errorCount.get() == 0;
         }

@@ -199,7 +199,7 @@ public class MeasureTranslator implements FhirCreator {
         if (CollectionUtils.isNotEmpty(matMeasureTypeTypeList)) {
             List<CodeableConcept> typeList = new ArrayList<>();
             for (MeasureType measureType : matMeasureTypeTypeList) {
-                typeList.add(doMoreShit(measureType.getAbbrName()));
+                typeList.add(buildTypeFromAbbreviation(measureType.getAbbrName()));
             }
             fhirMeasure.setType(typeList);
         } else {
@@ -208,7 +208,7 @@ public class MeasureTranslator implements FhirCreator {
         }
     }
 
-    public CodeableConcept doMoreShit(String abbrName) {
+    public CodeableConcept buildTypeFromAbbreviation(String abbrName) {
         switch (abbrName) {
             case "COMPOSITE":
                 return buildCodeableConcept("composite", MEASURE_TYPE, "");
