@@ -29,7 +29,7 @@ logging:
 
 fhir:
   r4:
-    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+    baseurl: http://localhost:6060/hapi-fhir-jpaserver/fhir/
 
 qdmqicore:
   conversion:

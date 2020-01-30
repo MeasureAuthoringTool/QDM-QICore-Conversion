@@ -6,16 +6,14 @@ import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
 import mat.model.MeasureType;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @Slf4j
@@ -62,20 +60,8 @@ public class MeasureTranslator implements FhirCreator {
         //set the URL
         fhirMeasure.setUrl(baseURL + "Measure/" + fhirMeasure.getId());
         // ConversionReporter.setMeasureResult("MAT.Id", "Measure.url", "Generated From MAT Measure id (UUID)");
+        processIdentifiers(fhirMeasure);
 
-        //set identifiers cms and nqf if available
-        List<Identifier> idList = new ArrayList<>();
-        Identifier cms = null;
-        Identifier nqf = null;
-        if (matCompositeMeasureModel.geteMeasureId() != 0) {
-            cms = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms", new Integer(matCompositeMeasureModel.geteMeasureId()).toString());
-            idList.add(cms);
-        }
-        if (matCompositeMeasureModel.getEndorseByNQF()) {
-            nqf = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf", new String(matCompositeMeasureModel.getNqfId()));
-            idList.add(nqf);
-        }
-        fhirMeasure.setIdentifier(idList);
 
         fhirMeasure.setVersion(matCompositeMeasureModel.getVersionNumber());
 
@@ -192,6 +178,24 @@ public class MeasureTranslator implements FhirCreator {
         return fhirMeasure;
     }
 
+    public void processIdentifiers(Measure fhirMeasure) {
+        fhirMeasure.setIdentifier(new ArrayList<>());
+
+        if (matCompositeMeasureModel.geteMeasureId() != 0) {
+            Identifier cms = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms",
+                    Integer.toString(matCompositeMeasureModel.geteMeasureId()));
+            fhirMeasure.getIdentifier().add(cms);
+        }
+
+
+        if (BooleanUtils.isTrue(matCompositeMeasureModel.getEndorseByNQF())) {
+            Identifier nqf = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf",
+                    matCompositeMeasureModel.getNqfId());
+            fhirMeasure.getIdentifier().add(nqf);
+        }
+
+    }
+
     public void processTypes(Measure fhirMeasure) {
         //Measure Type(s)
         List<mat.model.MeasureType> matMeasureTypeTypeList = matCompositeMeasureModel.getMeasureTypeSelectedList();
@@ -209,27 +213,12 @@ public class MeasureTranslator implements FhirCreator {
     }
 
     public CodeableConcept buildTypeFromAbbreviation(String abbrName) {
-        switch (abbrName) {
-            case "COMPOSITE":
-                return buildCodeableConcept("composite", MEASURE_TYPE, "");
-            case "INTERM-OM":
-            case "OUTCOME":
-                return buildCodeableConcept("outcome", MEASURE_TYPE, "");
-            case "PRO-PM":
-                return buildCodeableConcept("patient-report-outcome", MEASURE_TYPE, "");
-            case "STRUCTURE":
-            case "RESOURCE":
-                return buildCodeableConcept("structure", MEASURE_TYPE, "");
-            case "APPROPRIATE":
-            case "EFFICIENCY":
-            case "PROCESS":
-                return buildCodeableConcept("process", MEASURE_TYPE, "");
-            default:
-                return buildCodeableConcept("unknown", MEASURE_TYPE, "");
+        Optional<MatMeasureType> optional = MatMeasureType.findByMatAbbreviation(abbrName);
 
-            // TODO talk to Duane  -- Could make enum and when....
-            // ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "Default to unknown not matching Abbr name");
-            //break;
+        if (optional.isPresent()) {
+            return buildCodeableConcept(optional.get().fhirCode, MEASURE_TYPE, "");
+        } else {
+            return buildCodeableConcept("unknown", MEASURE_TYPE, "");
         }
     }
 

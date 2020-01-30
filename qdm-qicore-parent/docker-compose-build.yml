@@ -1,15 +1,33 @@
 version: '3.6'
 
 services:
-
-  mat-fhir-services:
-    image: mat-fhir-services
-    container_name: mat-fhir-services
-    environment:
-      VSAC_USER: ${VSAC_USER}
-      VSAC_PASS: ${VSAC_PASS}
-      MAT_DB: ${MAT_DB}
-      MAT_DB_PASS: ${MAT_DB_PASS}
-      MAT_DB_USER: ${MAT_DB_USER}
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
     ports:
-      - 9080:9080
+      - 27017:27017
+
+  hapi-fhir-jpaserver:
+    image: hapi-fhir-jpaserver
+    container_name: hapi-fhir-jpaserver
+    ports:
+      - 6060:8080
+
+  cql-elm-translation:
+    image: cql-elm-translation
+    container_name: cql-elm-translation
+    build:
+      context: ../cql-elm-translation/
+      dockerfile: Dockerfile
+    ports:
+      - 7070:7070
+
+  qdm-qicore-mapping-services:
+    image: qdm-core-mapping-services
+    container_name: qdm-qicore-mapping-services
+    build:
+      context: ../qdm-qicore-mapping-services
+      dockerfile: Dockerfile
+    ports:
+      - 9090:9090

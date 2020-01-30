@@ -3,8 +3,11 @@ package gov.cms.mat.fhir.services.translate;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
+import mat.model.MeasureType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.Measure;
+
+import java.util.Optional;
 
 @Slf4j
 public class MeasureResultProcessor {
@@ -75,8 +78,21 @@ public class MeasureResultProcessor {
 
         if (CollectionUtils.isEmpty(matCompositeMeasureModel.getMeasureTypeSelectedList())) {
             ConversionReporter.setMeasureResult("MAT.measureType", "Measure.type", "No Measure Types Found");
+        } else {
+            matCompositeMeasureModel.getMeasureTypeSelectedList()
+                    .forEach(this::checkType);
         }
 
+    }
+
+    private void checkType(MeasureType m) {
+        Optional<MatMeasureType> optional = MatMeasureType.findByMatAbbreviation(m.getAbbrName());
+
+        if (!optional.isPresent()) {
+            ConversionReporter.setMeasureResult("MAT.measureType",
+                    "Measure.type",
+                    "No Measure Type Found for " + m.getAbbrName());
+        }
     }
 
 }

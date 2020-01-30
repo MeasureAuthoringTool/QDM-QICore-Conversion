@@ -3,14 +3,16 @@ version: '3.6'
 services:
   mongo:
     image: mongo
+    container_name: mongo
     restart: always
     ports:
       - 27017:27017
 
   hapi-fhir-jpaserver:
     image: greenemcg/hapi-fhir-jpaserver
+    container_name: hapi-fhir-jpaserver
     ports:
-      - "8080:8080"
+      - 8080:6060
 
   cql-elm-translation:
     image: greenemcg/cql-elm-translation

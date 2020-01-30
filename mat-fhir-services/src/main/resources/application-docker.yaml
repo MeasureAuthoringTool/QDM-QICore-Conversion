@@ -15,7 +15,7 @@ spring:
   data:
     mongodb:
       database: mat_conversion_results
-      uri: mongodb://docker.for.mac.localhost
+      uri: mongodb://mongo
 
 logging:
   level:
@@ -29,16 +29,15 @@ logging:
 
 fhir:
   r4:
-    baseurl: http://docker.for.mac.localhost:8080/hapi-fhir-jpaserver/fhir/
+    baseurl: http://hapi-fhir-jpaserver:8080/hapi-fhir-jpaserver/fhir/
 
 qdmqicore:
   conversion:
-    baseurl: http://docker.for.mac.localhost:9090
+    baseurl: http://qdm-qicore-mapping-services:9090
 
 cql:
   conversion:
-    baseurl: http://docker.for.mac.localhost:7070
-
+    baseurl: http://cql-elm-translation:7070
 
 self:
   health:
