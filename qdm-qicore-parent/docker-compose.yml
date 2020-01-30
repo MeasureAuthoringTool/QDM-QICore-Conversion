@@ -10,7 +10,16 @@ services:
   hapi-fhir-jpaserver:
     image: greenemcg/hapi-fhir-jpaserver
     ports:
-      - 8080:8080
+      - "8080:8080"
+
+  mat-fhir-services:
+    image: greenemcg/mat-fhir-services
+    container_name: mat-fhir-services
+    environment:
+        VSAC_USER: ${VSAC_USER}
+        VSAC_PASS: ${VSAC_PASS}
+    ports:
+      - 9080:9080
 
   cql-elm-translation:
     image: greenemcg/cql-elm-translation
