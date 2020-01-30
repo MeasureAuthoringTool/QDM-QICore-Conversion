@@ -1,10 +1,12 @@
 version: '3.6'
 
 services:
-
   mat-fhir-services:
     image: mat-fhir-services
     container_name: mat-fhir-services
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       VSAC_USER: ${VSAC_USER}
       VSAC_PASS: ${VSAC_PASS}

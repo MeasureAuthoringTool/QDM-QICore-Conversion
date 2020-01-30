@@ -4,19 +4,17 @@ import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+// @SpringBootTest
 @ActiveProfiles("test")
 class VsacOperationTest {
     // when the vsac connect timeout's the groovy client will retry, making testing impossible.
-    private final static boolean RUN_VSAC_INTEGRATION_TESTS = true;
+    private final static boolean RUN_VSAC_INTEGRATION_TESTS = false;
 
     @Autowired
     private VsacConfig vsacConfig;
@@ -25,7 +23,7 @@ class VsacOperationTest {
     @Autowired
     private Environment environment;
 
-    @Test
+    // @Test
     void testConfigProperties() {
 
 
@@ -37,7 +35,7 @@ class VsacOperationTest {
         assertEquals("https://vsac.nlm.nih.gov/vsac", vsacConfig.getVsacServerDrcUrl());
     }
 
-    @Test
+    // @Test
     void testValidateUser() {
         if (haveVsacCredentialsInEnvironmentAndFlag()) {
             assertTrue(vsacService.validateUser());
@@ -45,7 +43,7 @@ class VsacOperationTest {
         }
     }
 
-    @Test
+    // @Test
     void testValidateData() {
         if (haveVsacCredentialsInEnvironmentAndFlag()) {
             CQLQualityDataSetDTO cqlQualityDataSetDTO = new CQLQualityDataSetDTO();
