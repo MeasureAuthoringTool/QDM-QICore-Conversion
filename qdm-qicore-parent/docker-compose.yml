@@ -15,6 +15,9 @@ services:
   mat-fhir-services:
     image: greenemcg/mat-fhir-services
     container_name: mat-fhir-services
+    environment:
+        VSAC_USER: ${VSAC_USER}
+        VSAC_PASS: ${VSAC_PASS}
     ports:
       - 9080:9080
 
