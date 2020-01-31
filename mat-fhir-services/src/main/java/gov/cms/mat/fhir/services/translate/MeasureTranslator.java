@@ -10,6 +10,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
+import org.hl7.fhir.r4.model.Measure.MeasureSupplementalDataComponent;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -18,14 +19,9 @@ import java.util.*;
 
 @Slf4j
 public class MeasureTranslator implements FhirCreator {
-    //this should be something that MAT provides but doesn't there are many possibilities
-    // TODO VALIDATION
-    /*
-      "severity" : "ERROR",
-                "locationField" : "Measure",
-                "errorDescription" : "Unable to locate profile http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-task"
-     */
-    public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-task";
+    //this should be something that MAT provides but doesn't there are many possibilites
+    public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/proportion-measure-cqfm";
+    public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
 
     public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
 
@@ -45,48 +41,90 @@ public class MeasureTranslator implements FhirCreator {
     public org.hl7.fhir.r4.model.Measure translateToFhir() {
         org.hl7.fhir.r4.model.Measure fhirMeasure = new org.hl7.fhir.r4.model.Measure();
 
-        /*
-         "severity" : "ERROR",
-                "locationField" : "Measure.supplementalData[0]",
-                "errorDescription" : "Profile http://hl7.org/fhir/StructureDefinition/Measure, Element 'Measure.supplementalData[0].criteria': minimum required = 1, but only found 0"
-        */
-
-        // For every patient evaluated by this measure also identify payer, race, ethnicity and sex
-
-
-        //  fhirMeasure.setSupplementalData();
-        // matCompositeMeasureModel.getSupplementalData();
-
         //set measure id
         fhirMeasure.setId(matCompositeMeasureModel.getId());
+
+        proessMeta(fhirMeasure);
+        processHumanReadable(fhirMeasure);
+
+
+        //set Extensions if any known, QICore Extension below
+        //QICore Not Done Extension
+        //EncounterProcedureExtension
+        //Military Service Extension
+        //RAND Appropriateness Score Extension
+        List<Extension> extensionList = new ArrayList<>();
+        fhirMeasure.setExtension(extensionList);
+
+        //ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.meta.extension", "No mapping available");
+
+
+        //set the URL
         fhirMeasure.setUrl(baseURL + "Measure/" + fhirMeasure.getId());
+        // ConversionReporter.setMeasureResult("MAT.Id", "Measure.url", "Generated From MAT Measure id (UUID)");
+        processIdentifiers(fhirMeasure);
+
+
         fhirMeasure.setVersion(matCompositeMeasureModel.getVersionNumber());
+
         fhirMeasure.setName(matCompositeMeasureModel.getMeasureName());
-        fhirMeasure.setTitle(matCompositeMeasureModel.getShortName());
+
+        fhirMeasure.setTitle(matCompositeMeasureModel.getShortName());  //measure title
+
+        //set measure status mat qdm does not have all status types
+        if (matCompositeMeasureModel.isDraft()) {
+            fhirMeasure.setStatus(Enumerations.PublicationStatus.DRAFT);
+        } else if (matCompositeMeasureModel.isDeleted()) {
+            fhirMeasure.setStatus(Enumerations.PublicationStatus.RETIRED);
+        } else {
+            fhirMeasure.setStatus(Enumerations.PublicationStatus.ACTIVE);
+            // ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.status", "Defaulting to ACTIVE neither draft or deleted");
+        }
+
+        //TODO measure experimental mat does not have concept
+
+        boolean experimental = false;
+        fhirMeasure.setExperimental(experimental);
+        // ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.experimental", "Default to false");
+
+        if (matCompositeMeasureModel.getFinalizedDate() != null) {
+            fhirMeasure.setApprovalDate(convertDateTimeString(matCompositeMeasureModel.getFinalizedDate()));
+        } else {
+            // ConversionReporter.setMeasureResult("MAT.finalizedDate", "Measure.approvalDate", "Finalized Date is NULL");
+            log.debug("No approval date");
+        }
+
+        //set Publisher
         fhirMeasure.setPublisher(matCompositeMeasureModel.getStewardValue());
-        fhirMeasure.setExperimental(false); //mat does not have experimental
+
+
+        //TODO No  Contact Mapping
+        fhirMeasure.setContact(createContactDetailUrl("https://cms.gov"));
+        //  ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.contact", "No Mapping default to cms.gov");
+
+        //Set Measure Description
         fhirMeasure.setDescription(matCompositeMeasureModel.getDescription());
 
-        fhirMeasure.setUseContext(createUsageContext("purpose", "http://hl7.org/fhir/StructureDefinition/UsageContext", "displayname"));
 
+        //set Use Context
+        fhirMeasure.setUseContext(createUsageContext("program", "eligible-provider"));
+
+        //juridiction
+        List<CodeableConcept> jurisdictionList = new ArrayList<>();
+        jurisdictionList.add(buildCodeableConcept("US", "urn:iso:std:iso:3166", ""));
+        fhirMeasure.setJurisdiction(jurisdictionList);
+        // ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.jurisdiction", "No Mapping defaulting to US");
+
+        //purpose
         fhirMeasure.setPurpose("Unknown");
+        // ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.purpose", "No Mapping defaulting to Unknown");
+
+
+        //copyright
         fhirMeasure.setCopyright(matCompositeMeasureModel.getCopyright());
+
+        //approval date
         fhirMeasure.setApprovalDate(convertDateTimeString(matCompositeMeasureModel.getFinalizedDate()));
-        fhirMeasure.setDisclaimer(matCompositeMeasureModel.getDisclaimer());
-        fhirMeasure.setRationale(matCompositeMeasureModel.getRationale());
-        fhirMeasure.setClinicalRecommendationStatement(matCompositeMeasureModel.getClinicalRecomms());
-        fhirMeasure.setGuidance(matCompositeMeasureModel.getGuidance());
-        fhirMeasure.setContact(createContactDetailUrl("https://cms.gov")); //No  Contact Mapping
-
-        processMeta(fhirMeasure);
-        processHumanReadable(fhirMeasure);
-        processIdentifiers(fhirMeasure);
-        processExtensions(fhirMeasure);
-        processStatus(fhirMeasure);
-        processFinalizedDate(fhirMeasure);
-
-        fhirMeasure.setJurisdiction(new ArrayList<>());
-        fhirMeasure.getJurisdiction().add(buildCodeableConcept("US", "urn:iso:std:iso:3166", ""));
 
         //TODO No concept of last reviewed date
 
@@ -116,43 +154,38 @@ public class MeasureTranslator implements FhirCreator {
             fhirMeasure.setRelatedArtifact(relatedArtifacts);
         }
 
+        // if (relatedArtifacts.isEmpty()) {
+        //    ConversionReporter.setMeasureResult("MAT.referencesList", "Measure.relatedArtifact", "NO Citations");
+        // }
+
+
+        //set disclaimer
+        fhirMeasure.setDisclaimer(matCompositeMeasureModel.getDisclaimer());
 
         //set scoring
         CodeableConcept scoringConcept = buildCodeableConcept(matCompositeMeasureModel.getMeasScoring(), "http://hl7.org/fhir/measure-scoring", "");
         fhirMeasure.setScoring(scoringConcept);
         processTypes(fhirMeasure);
 
+        //set rationale
+        fhirMeasure.setRationale(matCompositeMeasureModel.getRationale());
+
+        //set clinical recommendation
+        fhirMeasure.setClinicalRecommendationStatement(matCompositeMeasureModel.getClinicalRecomms());
+
+        //set guidance
+        fhirMeasure.setGuidance(matCompositeMeasureModel.getGuidance());
+        
+        //set supplementalData
+        //TODO mat return as string no processing logic
+        //just add all for now
+        fhirMeasure.setSupplementalData(processAllSupplementalData());
+
+        
+        
+
 
         return fhirMeasure;
-    }
-
-    public void processFinalizedDate(Measure fhirMeasure) {
-        if (matCompositeMeasureModel.getFinalizedDate() != null) {
-            fhirMeasure.setApprovalDate(convertDateTimeString(matCompositeMeasureModel.getFinalizedDate()));
-        } else {
-            log.debug("No approval date");
-        }
-    }
-
-    public void processStatus(Measure fhirMeasure) {
-        //set measure status mat qdm does not have all status types
-        if (matCompositeMeasureModel.isDraft()) {
-            fhirMeasure.setStatus(Enumerations.PublicationStatus.DRAFT);
-        } else if (matCompositeMeasureModel.isDeleted()) {
-            fhirMeasure.setStatus(Enumerations.PublicationStatus.RETIRED);
-        } else {
-            fhirMeasure.setStatus(Enumerations.PublicationStatus.ACTIVE);
-        }
-    }
-
-    public void processExtensions(Measure fhirMeasure) {
-        //set Extensions if any known, QICore Extension below
-        //QICore Not Done Extension
-        //EncounterProcedureExtension
-        //Military Service Extension
-        //RAND Appropriateness Score Extension
-        List<Extension> extensionList = new ArrayList<>();
-        fhirMeasure.setExtension(extensionList);
     }
 
     public void processIdentifiers(Measure fhirMeasure) {
@@ -199,9 +232,10 @@ public class MeasureTranslator implements FhirCreator {
         }
     }
 
-    public void processMeta(Measure fhirMeasure) {
+    public void proessMeta(Measure fhirMeasure) {
+        //measure meta
         Meta measureMeta = new Meta();
-        // measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
+        measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
         measureMeta.setVersionId(matCompositeMeasureModel.getVersionNumber());
         measureMeta.setLastUpdated(new Date());
         fhirMeasure.setMeta(measureMeta);
@@ -256,22 +290,15 @@ public class MeasureTranslator implements FhirCreator {
         return lCD;
     }
 
-    private List<UsageContext> createUsageContext(String code, String system, String display) {
+    private List<UsageContext> createUsageContext(String code, String value) {
         UsageContext usageContext = new UsageContext();
         Coding coding = new Coding();
         coding.setCode(code);
-        coding.setSystem(system);
-        coding.setDisplay(display);
-
-        /* TODO validation
-            {
-                "severity" : "ERROR",
-                "locationField" : "Measure.useContext[0]",
-                "errorDescription" : "Profile http://hl7.org/fhir/StructureDefinition/UsageContext, Element 'Measure.useContext[0].value[x]': minimum required = 1, but only found 0"
-            },
-         */
-
-        // usageContext.setValue()
+        usageContext.setCode(coding);
+        
+        CodeableConcept cc = new CodeableConcept();
+        cc.setText(value);
+        usageContext.setValue(cc);
 
         List<UsageContext> usageContextList = new ArrayList<>();
         usageContextList.add(usageContext);
@@ -306,4 +333,67 @@ public class MeasureTranslator implements FhirCreator {
         }
 
     }
+    
+    //TODO change this to process string returned MAT to determine whats required FOR fhir
+    private List<MeasureSupplementalDataComponent> processAllSupplementalData() {
+        List<MeasureSupplementalDataComponent> lSDE = new ArrayList<MeasureSupplementalDataComponent>();
+        //process SDE ethinicity 
+        MeasureSupplementalDataComponent sdeEth = new MeasureSupplementalDataComponent();
+        sdeEth.setCode(processSupplementalDataCode("sde-ethnicity"));
+        sdeEth.setUsage(processSupplementalDataUsage());
+        sdeEth.setCriteria(processSupplementalDataCriteria("text/cql","SDE Ethnicity"));
+        lSDE.add(sdeEth);
+        //process SDE payer
+        MeasureSupplementalDataComponent sdePayer = new MeasureSupplementalDataComponent();
+        sdePayer.setCode(processSupplementalDataCode("sde-payer"));
+        sdePayer.setUsage(processSupplementalDataUsage());
+        sdePayer.setCriteria(processSupplementalDataCriteria("text/cql","SDE Payer"));
+        lSDE.add(sdePayer);
+        
+        //process SDE Race
+        MeasureSupplementalDataComponent sdeRace = new MeasureSupplementalDataComponent();
+        sdeRace.setCode(processSupplementalDataCode("sde-race"));
+        sdeRace.setUsage(processSupplementalDataUsage());
+        sdeRace.setCriteria(processSupplementalDataCriteria("text/cql","SDE Race"));
+        lSDE.add(sdeRace);
+        
+        //process SDE Sex
+        MeasureSupplementalDataComponent sdeSex = new MeasureSupplementalDataComponent();
+        sdeSex.setCode(processSupplementalDataCode("sde-sex"));
+        sdeSex.setUsage(processSupplementalDataUsage());
+        sdeSex.setCriteria(processSupplementalDataCriteria("text/cql","SDE Sex"));
+        lSDE.add(sdeSex);       
+        return lSDE;
+    }
+    
+    private CodeableConcept processSupplementalDataCode(String code) {
+
+        CodeableConcept sdeCode = new CodeableConcept();
+        sdeCode.setText(code); 
+        return sdeCode;
+    }
+    
+    private List<CodeableConcept> processSupplementalDataUsage() {
+        List<CodeableConcept> mList = new ArrayList<CodeableConcept>();
+        CodeableConcept cc = new CodeableConcept();
+        Coding c = new Coding();
+        c.setSystem(MEASURE_DATA_USAGE);
+        c.setCode("supplemental-data");
+        cc.addCoding(c);
+        mList.add(cc);
+        return mList;
+    }
+    
+    private Expression processSupplementalDataCriteria(String language, String expression) {
+        Expression criteria = new Expression();
+        criteria.setLanguage(language);
+        criteria.setExpression(expression);
+        
+        return criteria;
+    }
+    
+    
+    
+
+    
 }
