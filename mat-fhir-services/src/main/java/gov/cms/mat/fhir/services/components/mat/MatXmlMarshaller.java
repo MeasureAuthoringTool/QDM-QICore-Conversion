@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.mat;
 
+import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measurepackage.MeasurePackageDetail;
@@ -44,8 +45,7 @@ class MatXmlMarshaller {
 
     private void checkXML(String xml, String message) {
         if (StringUtils.isBlank(xml)) {
-            log.warn(message);
-            throw new UncheckedIOException(new IOException(message));
+            throw new MatXmlMarshalException(message);
         }
     }
 
@@ -68,7 +68,7 @@ class MatXmlMarshaller {
                     xml,
                     CQLDefinitionsWrapper.class);
         } catch (Exception e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new MatXmlMarshalException(e);
         }
     }
 
@@ -79,7 +79,7 @@ class MatXmlMarshaller {
                     xml,
                     CQLDefinitionsWrapper.class);
         } catch (Exception e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new MatXmlMarshalException(e);
         }
     }
 
@@ -91,7 +91,7 @@ class MatXmlMarshaller {
                     ManageCompositeMeasureDetailModel.class);
 
         } catch (Exception e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new MatXmlMarshalException(e);
         }
     }
 
@@ -101,7 +101,7 @@ class MatXmlMarshaller {
                     xml,
                     CQLQualityDataModelWrapper.class);
         } catch (Exception e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new MatXmlMarshalException(e);
         }
     }
 }

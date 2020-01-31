@@ -120,7 +120,7 @@ public class HapiFhirServer {
         try {
             TimeUnit.MILLISECONDS.sleep(500);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.debug("InterruptedException", e);
         }
 
         return buildResourceUrl(resource);

@@ -7,7 +7,6 @@ import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,14 +27,6 @@ public class CqlLibraryDataService {
         } else {
             return cqlLibs;
         }
-    }
-
-    public CqlLibrary getCqlLibraryById(String id) {
-        return cqlLibraryRepo.getCqlLibraryById(id);
-    }
-
-    public CqlLibrary getCqlLibraryByNameAndVersion(String cqlName, BigDecimal version) {
-        return cqlLibraryRepo.getCqlLibraryByNameAndVersion(cqlName, version);
     }
 
     public CqlLibrary findCqlLibrary(CqlLibraryFindData cqlLibraryFindData) {  //todo MCG return array can be multiples

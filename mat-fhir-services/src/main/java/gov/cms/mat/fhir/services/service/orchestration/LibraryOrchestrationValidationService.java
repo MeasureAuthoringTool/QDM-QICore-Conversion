@@ -74,7 +74,9 @@ public class LibraryOrchestrationValidationService implements FhirValidatorProce
         FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(matCqlLibrary.getId());
         response.setMeasureId(matCqlLibrary.getMeasureId());
 
+        log.info("VALIDATE-RESOURCE-START Library");
         validateResource(response, fhirLibrary, hapiFhirServer.getCtx());
+        log.info("VALIDATE-RESOURCE-END Library");
 
         List<FhirValidationResult> list = buildResults(response);
         ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibrary.getId());

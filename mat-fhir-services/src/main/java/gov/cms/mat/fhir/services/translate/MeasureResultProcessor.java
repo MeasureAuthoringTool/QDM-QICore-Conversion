@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Slf4j
 public class MeasureResultProcessor {
+    private static final String UNKNOWN = "MAT.Unknown";
 
     private final ManageCompositeMeasureDetailModel matCompositeMeasureModel;
     private final String humanReadable;
@@ -29,19 +30,19 @@ public class MeasureResultProcessor {
             ConversionReporter.setMeasureResult("MAT.humanReadible", "Measure.text", "Is Empty");
         }
 
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.meta.extension", "No mapping available");
+        ConversionReporter.setMeasureResult(UNKNOWN, "Measure.meta.extension", "No mapping available");
         ConversionReporter.setMeasureResult("MAT.Id", "Measure.url", "Generated From MAT Measure id (UUID)");
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.contact", "No Mapping default to cms.gov");
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.jurisdiction", "No Mapping defaulting to US");
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.purpose", "No Mapping defaulting to Unknown");
-        ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.topic", "No Mapping default Health Quality Measure Document");
+        ConversionReporter.setMeasureResult(UNKNOWN, "Measure.contact", "No Mapping default to cms.gov");
+        ConversionReporter.setMeasureResult(UNKNOWN, "Measure.jurisdiction", "No Mapping defaulting to US");
+        ConversionReporter.setMeasureResult(UNKNOWN, "Measure.purpose", "No Mapping defaulting to Unknown");
+        ConversionReporter.setMeasureResult(UNKNOWN, "Measure.topic", "No Mapping default Health Quality Measure Document");
 
 
         //set measure status mat qdm does not have all status types
         if (matCompositeMeasureModel.isDraft() || matCompositeMeasureModel.isDeleted()) {
             log.info("Status is OKAY");
         } else {
-            ConversionReporter.setMeasureResult("MAT.Unknown", "Measure.status", "Defaulting to ACTIVE neither draft or deleted");
+            ConversionReporter.setMeasureResult(UNKNOWN, "Measure.status", "Defaulting to ACTIVE neither draft or deleted");
         }
 
         if (matCompositeMeasureModel.getFinalizedDate() == null) {

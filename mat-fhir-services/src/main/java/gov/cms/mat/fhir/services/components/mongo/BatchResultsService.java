@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
 import gov.cms.mat.fhir.services.summary.BatchResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ public class BatchResultsService {
         this.conversionResultsService = conversionResultsService;
     }
 
-    public Map<ConversionOutcome, BatchResult> generateAggregationReport(String batchId) {
+    public Map<String, BatchResult> generateAggregationReport(String batchId) {
 
         List<ConversionResult> conversionResults = conversionResultsService.findByBatchId(batchId);
 
@@ -33,13 +32,13 @@ public class BatchResultsService {
     static class Aggregator {
         final List<ConversionResult> conversionResults;
 
-        Map<ConversionOutcome, BatchResult> map = new HashMap<>();
+        Map<String, BatchResult> map = new HashMap<>();
 
         Aggregator(List<ConversionResult> conversionResults) {
             this.conversionResults = conversionResults;
         }
 
-        Map<ConversionOutcome, BatchResult> process() {
+        Map<String, BatchResult> process() {
 
             conversionResults.forEach(this::processResult);
 
@@ -54,11 +53,11 @@ public class BatchResultsService {
                 c.setOutcome(OUTCOME_MISSING);
             }
 
-            if (!map.containsKey(c.getOutcome())) {
-                map.put(c.getOutcome(), new BatchResult());
+            if (!map.containsKey(c.getOutcome().name())) {
+                map.put(c.getOutcome().name(), new BatchResult());
             }
 
-            BatchResult value = map.get(c.getOutcome());
+            BatchResult value = map.get(c.getOutcome().name());
             value.getIds().add(c.getMeasureId());
 
             if (c.getStart() != null && c.getFinished() != null) {

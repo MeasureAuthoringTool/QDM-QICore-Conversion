@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.rest;
 
-import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.BatchResultsService;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
@@ -56,7 +55,7 @@ public class OrchestrationBatchController {
     }
 
     @PutMapping
-    public Map<ConversionOutcome, BatchResult> translateMeasures(
+    public Map<String, BatchResult> translateMeasures(
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam String batchId,
@@ -76,7 +75,7 @@ public class OrchestrationBatchController {
                         batchId,
                         runningBatchJobInfo.computeRunningSeconds());
 
-                Map<ConversionOutcome, BatchResult> results = createAggregationBatchReport(batchId);
+                Map<String, BatchResult> results = createAggregationBatchReport(batchId);
 
                 log.info("Finished OrchestrationBatch with batchId: {} in {} seconds",
                         batchId,
@@ -110,11 +109,11 @@ public class OrchestrationBatchController {
     }
 
     @GetMapping(path = "/findReport")
-    public Map<ConversionOutcome, BatchResult> findBatchResults(@RequestParam String batchId) {
+    public Map<String, BatchResult> findBatchResults(@RequestParam String batchId) {
         return createAggregationBatchReport(batchId);
     }
 
-    private Map<ConversionOutcome, BatchResult> createAggregationBatchReport(String batchId) {
+    private Map<String, BatchResult> createAggregationBatchReport(String batchId) {
         return batchResultsService.generateAggregationReport(batchId);
     }
 

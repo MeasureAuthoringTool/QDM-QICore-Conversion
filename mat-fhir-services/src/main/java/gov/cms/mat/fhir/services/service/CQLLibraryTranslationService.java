@@ -1,13 +1,11 @@
 package gov.cms.mat.fhir.services.service;
 
-
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.CqlConversionError;
 import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
 import gov.cms.mat.fhir.services.components.cql.CqlConversionClient;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.service.support.ElmErrorExtractor;
@@ -26,45 +24,18 @@ import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.CQL_LIBRARY_TRANSLATIO
 @Service
 @Slf4j
 public class CQLLibraryTranslationService implements ErrorSeverityChecker {
-    private static final String CONVERSION_RESULTS_TEMPLATE =
-            "Found %d CqlLibraries to process, successfully processed %d";
-
     private final MeasureDataService measureDataService;
     private final CqlLibraryRepository cqlLibraryRepository;
     private final CqlConversionClient cqlConversionClient;
-    private final ConversionResultsService conversionResultsService;
 
     public CQLLibraryTranslationService(MeasureDataService measureDataService,
                                         CqlLibraryRepository cqlLibraryRepository,
-                                        CqlConversionClient cqlConversionClient,
-                                        ConversionResultsService conversionResultsService) {
+                                        CqlConversionClient cqlConversionClient) {
         this.measureDataService = measureDataService;
         this.cqlLibraryRepository = cqlLibraryRepository;
         this.cqlConversionClient = cqlConversionClient;
-        this.conversionResultsService = conversionResultsService;
     }
 
-    public String processAll() {
-        List<String> all = measureDataService.findAllValidIds();
-
-        int successfulConversions = all.stream()
-                .map(this::processCount)
-                .mapToInt(Integer::intValue)
-                .sum();
-
-        String resultMessage = String.format(CONVERSION_RESULTS_TEMPLATE, all.size(), successfulConversions);
-        log.info("Conversion results: {}", resultMessage);
-        return resultMessage;
-    }
-
-    private int processCount(String id) {
-        try {
-            process(id);
-            return 1;
-        } catch (Exception e) {
-            return 0;
-        }
-    }
 
     private boolean process(String id) {
         log.info("CQLLibraryTranslationService processing measure id: {}", id);

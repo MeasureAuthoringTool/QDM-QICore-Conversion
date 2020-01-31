@@ -39,9 +39,13 @@ public enum MatMeasureType {
         }
     }
 
+
     static class FhirCodes {
         static final String PROCESS = "process";
         static final String OUTCOME = "outcome";
         static final String STRUCTURE = "structure";
+
+        private FhirCodes() {
+        }
     }
 }

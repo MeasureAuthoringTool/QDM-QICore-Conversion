@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.service.orchestration;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
+import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
 import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
@@ -60,7 +61,7 @@ public class OrchestrationService {
             processAndGetCqlLibraries(properties);
             processFhirMeasure(properties);
             return true;
-        } catch (ValueSetConversionException | MeasureNotFoundException | CqlLibraryNotFoundException e) {
+        } catch (ValueSetConversionException | MeasureNotFoundException | CqlLibraryNotFoundException | MatXmlMarshalException e) {
             return false;
         } catch (Exception e) {
             log.info("Error for id: {}", properties.getMeasureId(), e);

@@ -15,11 +15,9 @@ public class ConversionReporter {
 
     private final ThreadSessionKey key;
     private final ConversionResultsService conversionResultsService;
-    private final String batchId;
 
-    private ConversionReporter(String measureId, String batchId, ConversionResultsService conversionResultsService, Instant start) {
+    private ConversionReporter(String measureId, ConversionResultsService conversionResultsService, Instant start) {
         this.conversionResultsService = conversionResultsService;
-        this.batchId = batchId;
 
         key = ThreadSessionKey.builder()
                 .measureId(measureId)
@@ -142,7 +140,7 @@ public class ConversionReporter {
                                                     ConversionResultsService conversionResultsService,
                                                     Instant instant, ConversionType conversionType) {
         removeInThreadLocal();
-        threadLocal.set(new ConversionReporter(measureId, batchId, conversionResultsService, instant));
+        threadLocal.set(new ConversionReporter(measureId, conversionResultsService, instant));
         setConversionType(conversionType);
         setBatchId(batchId);
         return getKey();

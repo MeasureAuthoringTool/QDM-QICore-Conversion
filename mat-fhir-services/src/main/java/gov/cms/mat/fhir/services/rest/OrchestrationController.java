@@ -98,9 +98,7 @@ public class OrchestrationController {
             ConversionReporter.setTerminalMessage(SUCCESS.name(), SUCCESS);
         }
 
-        ConversionResultDto conversionResultDto = conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
-        // TODO log how long it took
+        return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
 
-        return conversionResultDto;
     }
 }

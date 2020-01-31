@@ -60,7 +60,10 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         FhirMeasureResourceValidationResult response =
                 new FhirMeasureResourceValidationResult(properties.getMeasureId(), "Measure");
 
+        log.info("VALIDATE-RESOURCE-START Measure");
         validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
+        log.info("VALIDATE-RESOURCE-END Measure");
+
         List<FhirValidationResult> list = buildResults(response);
 
         ConversionReporter.setFhirMeasureValidationResults(list);
