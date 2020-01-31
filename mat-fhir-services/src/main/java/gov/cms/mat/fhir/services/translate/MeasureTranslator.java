@@ -10,6 +10,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
+import org.hl7.fhir.r4.model.Measure.MeasureSupplementalDataComponent;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -19,7 +20,8 @@ import java.util.*;
 @Slf4j
 public class MeasureTranslator implements FhirCreator {
     //this should be something that MAT provides but doesn't there are many possibilites
-    public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-task";
+    public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/proportion-measure-cqfm";
+    public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
 
     public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
 
@@ -105,7 +107,7 @@ public class MeasureTranslator implements FhirCreator {
 
 
         //set Use Context
-        fhirMeasure.setUseContext(createUsageContext("purpose", "codesystem", "displayname"));
+        fhirMeasure.setUseContext(createUsageContext("program", "eligible-provider"));
 
         //juridiction
         List<CodeableConcept> jurisdictionList = new ArrayList<>();
@@ -173,6 +175,14 @@ public class MeasureTranslator implements FhirCreator {
 
         //set guidance
         fhirMeasure.setGuidance(matCompositeMeasureModel.getGuidance());
+        
+        //set supplementalData
+        //TODO mat return as string no processing logic
+        //just add all for now
+        fhirMeasure.setSupplementalData(processAllSupplementalData());
+
+        
+        
 
 
         return fhirMeasure;
@@ -280,13 +290,15 @@ public class MeasureTranslator implements FhirCreator {
         return lCD;
     }
 
-    private List<UsageContext> createUsageContext(String code, String system, String display) {
+    private List<UsageContext> createUsageContext(String code, String value) {
         UsageContext usageContext = new UsageContext();
         Coding coding = new Coding();
         coding.setCode(code);
-        coding.setSystem(system);
-        coding.setDisplay(display);
         usageContext.setCode(coding);
+        
+        CodeableConcept cc = new CodeableConcept();
+        cc.setText(value);
+        usageContext.setValue(cc);
 
         List<UsageContext> usageContextList = new ArrayList<>();
         usageContextList.add(usageContext);
@@ -321,4 +333,67 @@ public class MeasureTranslator implements FhirCreator {
         }
 
     }
+    
+    //TODO change this to process string returned MAT to determine whats required FOR fhir
+    private List<MeasureSupplementalDataComponent> processAllSupplementalData() {
+        List<MeasureSupplementalDataComponent> lSDE = new ArrayList<MeasureSupplementalDataComponent>();
+        //process SDE ethinicity 
+        MeasureSupplementalDataComponent sdeEth = new MeasureSupplementalDataComponent();
+        sdeEth.setCode(processSupplementalDataCode("sde-ethnicity"));
+        sdeEth.setUsage(processSupplementalDataUsage());
+        sdeEth.setCriteria(processSupplementalDataCriteria("text/cql","SDE Ethnicity"));
+        lSDE.add(sdeEth);
+        //process SDE payer
+        MeasureSupplementalDataComponent sdePayer = new MeasureSupplementalDataComponent();
+        sdePayer.setCode(processSupplementalDataCode("sde-payer"));
+        sdePayer.setUsage(processSupplementalDataUsage());
+        sdePayer.setCriteria(processSupplementalDataCriteria("text/cql","SDE Payer"));
+        lSDE.add(sdePayer);
+        
+        //process SDE Race
+        MeasureSupplementalDataComponent sdeRace = new MeasureSupplementalDataComponent();
+        sdeRace.setCode(processSupplementalDataCode("sde-race"));
+        sdeRace.setUsage(processSupplementalDataUsage());
+        sdeRace.setCriteria(processSupplementalDataCriteria("text/cql","SDE Race"));
+        lSDE.add(sdeRace);
+        
+        //process SDE Sex
+        MeasureSupplementalDataComponent sdeSex = new MeasureSupplementalDataComponent();
+        sdeSex.setCode(processSupplementalDataCode("sde-sex"));
+        sdeSex.setUsage(processSupplementalDataUsage());
+        sdeSex.setCriteria(processSupplementalDataCriteria("text/cql","SDE Sex"));
+        lSDE.add(sdeSex);       
+        return lSDE;
+    }
+    
+    private CodeableConcept processSupplementalDataCode(String code) {
+
+        CodeableConcept sdeCode = new CodeableConcept();
+        sdeCode.setText(code); 
+        return sdeCode;
+    }
+    
+    private List<CodeableConcept> processSupplementalDataUsage() {
+        List<CodeableConcept> mList = new ArrayList<CodeableConcept>();
+        CodeableConcept cc = new CodeableConcept();
+        Coding c = new Coding();
+        c.setSystem(MEASURE_DATA_USAGE);
+        c.setCode("supplemental-data");
+        cc.addCoding(c);
+        mList.add(cc);
+        return mList;
+    }
+    
+    private Expression processSupplementalDataCriteria(String language, String expression) {
+        Expression criteria = new Expression();
+        criteria.setLanguage(language);
+        criteria.setExpression(expression);
+        
+        return criteria;
+    }
+    
+    
+    
+
+    
 }
