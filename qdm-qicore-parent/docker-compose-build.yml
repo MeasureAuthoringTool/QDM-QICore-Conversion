@@ -12,7 +12,8 @@ services:
     image: hapi-fhir-jpaserver
     container_name: hapi-fhir-jpaserver
     ports:
-      - 6060:8080
+      - 6060:6060
+
 
   cql-elm-translation:
     image: cql-elm-translation
@@ -31,3 +32,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - 9090:9090
+
+volumes:
+  hapi-fhir-mysql:

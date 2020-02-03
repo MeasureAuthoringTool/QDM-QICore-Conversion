@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.rest.support;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.validation.SingleValidationMessage;
+import ca.uhn.fhir.validation.ValidationOptions;
 import ca.uhn.fhir.validation.ValidationResult;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
@@ -15,11 +16,16 @@ import java.util.stream.Collectors;
 public interface FhirValidatorProcessor {
     default void validateResource(FhirResourceValidationResult res, IBaseResource resource, FhirContext ctx) {
         ca.uhn.fhir.validation.FhirValidator validator = ctx.newValidator();
+
         FhirInstanceValidator instanceValidator = new FhirInstanceValidator();
         validator.registerValidatorModule(instanceValidator);
         instanceValidator.setNoTerminologyChecks(true);
 
-        ValidationResult result = validator.validateWithResult(resource);
+
+        ValidationOptions options = new ValidationOptions();
+        //options.addProfile( "http://build.fhir.org/ig/HL7/cqf-measures/branches/R4_Lift/StructureDefinition-library-cqfm.json");
+
+        ValidationResult result = validator.validateWithResult(resource, options);
 
         for (SingleValidationMessage next : result.getMessages()) {
             FhirResourceValidationError error =

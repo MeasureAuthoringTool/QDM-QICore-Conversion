@@ -61,6 +61,7 @@ public class ValueSetOrchestrationConversionService {
             log.debug("ValueSet already in hapiFhir: {}", url);
             addToReport(url, optional.get(), EXISTS);
         } else {
+            valueSetIn.setUrl(url);
             persistToFhir(valueSetIn);
         }
     }

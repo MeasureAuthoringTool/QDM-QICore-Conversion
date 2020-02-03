@@ -43,10 +43,12 @@ public class FhirMeasureCreator {
             String xml = new String(xmlBytes);
 
             fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(xml));
+
             fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
 
             fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
         }
+
         return fhirMeasure;
     }
 }

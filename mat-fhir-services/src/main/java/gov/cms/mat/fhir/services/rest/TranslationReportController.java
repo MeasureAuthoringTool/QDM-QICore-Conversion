@@ -2,9 +2,11 @@ package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
+import gov.cms.mat.fhir.services.exceptions.MeasureJsonNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +39,27 @@ public class TranslationReportController {
     public List<ConversionResultDto> findConversionResults(@RequestParam String measureId,
                                                            @RequestParam DocumentsToFind find) {
         return conversionResultProcessorService.processOne(measureId, find);
+    }
+
+    @Operation(summary = "Find last json for a measure.",
+            description = "Find and return json for a measure.")
+    @GetMapping(path = "/findLastFhirMeasureJson")
+    public String findLastFhirMeasureJson(@RequestParam String measureId) {
+        List<ConversionResultDto> resultDtoList = conversionResultProcessorService.processOne(measureId, DocumentsToFind.LAST);
+
+        if (resultDtoList.isEmpty()) {
+            throw new MeasureJsonNotFoundException(measureId);
+        }
+
+        ConversionResultDto last = resultDtoList.get(0);
+
+        if (last.getMeasureConversionResults() == null ||
+                StringUtils.isEmpty(last.getMeasureConversionResults().getFhirMeasureJson())) {
+            throw new MeasureJsonNotFoundException(measureId, "Conversion outcome was: " + last.getOutcome());
+        }
+
+        return last.getMeasureConversionResults().getFhirMeasureJson();
+
     }
 
     @Operation(summary = "Find all Reports for batch.",
