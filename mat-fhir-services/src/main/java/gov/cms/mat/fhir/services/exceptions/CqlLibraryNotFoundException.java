@@ -27,7 +27,7 @@ public class CqlLibraryNotFoundException extends RuntimeException {
     public CqlLibraryNotFoundException(CqlLibraryFindData cqlLibraryFindData) {
         super(String.format(NOT_FOUND_BY_FIND_DATA, cqlLibraryFindData.getName(),
                 cqlLibraryFindData.getQdmVersion(),
-                cqlLibraryFindData.getVersion()));
+                cqlLibraryFindData.getMatVersion()));
         log.warn(getMessage());
 
     }

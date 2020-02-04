@@ -4,13 +4,15 @@ import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Attachment;
+import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Library;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.hl7.fhir.r4.model.Enumerations;
 
 @Slf4j
 public class LibraryTranslator implements FhirCreator {
@@ -31,13 +33,15 @@ public class LibraryTranslator implements FhirCreator {
         this.baseURL = baseURL;
     }
 
-    public Library translateToFhir() {
+    public Library translateToFhir(@Nullable String version) {
         Library fhirLibrary = new Library();
         fhirLibrary.setId(cqlLibrary.getId());
         fhirLibrary.setDate(new Date());
         fhirLibrary.setApprovalDate(cqlLibrary.getFinalizedDate());
 
-        if (cqlLibrary.getVersion() != null) {
+        if (StringUtils.isNotEmpty(version)) {
+            fhirLibrary.setVersion(version);
+        } else if (cqlLibrary.getVersion() != null) {
             fhirLibrary.setVersion(cqlLibrary.getVersion().toString());
         }
 

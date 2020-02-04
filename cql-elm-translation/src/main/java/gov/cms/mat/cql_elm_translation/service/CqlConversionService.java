@@ -19,6 +19,7 @@ import java.util.List;
 public class CqlConversionService {
     private static final String LOG_MESSAGE_TEMPLATE = "ErrorSeverity: %s, Message: %s";
     private final FhirServicesService fhirServicesService;
+    private TranslationResource translationResource;
 
     public CqlConversionService(FhirServicesService fhirServicesService) {
         this.fhirServicesService = fhirServicesService;

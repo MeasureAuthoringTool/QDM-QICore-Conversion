@@ -131,9 +131,12 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    public void addCql(ThreadSessionKey key, String cql, String matLibraryId) {
+    public void addCql(ThreadSessionKey key, String cql, String name, String version, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+
+        libraryConversionResults.setName(name);
+        libraryConversionResults.setVersion(version);
 
         libraryConversionResults.getCqlConversionResult().setCql(cql);
 

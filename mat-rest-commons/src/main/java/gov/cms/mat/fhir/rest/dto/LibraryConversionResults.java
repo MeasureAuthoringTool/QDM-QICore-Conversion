@@ -11,8 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LibraryConversionResults {
-
     String matId;
+    String name;
+    String version;
     String reason;
     Boolean success;
     String link;
@@ -24,4 +25,5 @@ public class LibraryConversionResults {
     public LibraryConversionResults(String matId) {
         this.matId = matId;
     }
+
 }

@@ -17,8 +17,8 @@ public interface ErrorSeverityChecker {
         }
     }
 
-    default void isValid(FhirValidationResult v, AtomicBoolean atomicBoolean) {
-        boolean haveErrorsOrHigher = checkSeverity(v.getSeverity());
+    default void isValid(FhirValidationResult result, AtomicBoolean atomicBoolean) {
+        boolean haveErrorsOrHigher = checkSeverity(result.getSeverity());
 
         if (haveErrorsOrHigher) {
             atomicBoolean.set(false);

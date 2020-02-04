@@ -33,7 +33,8 @@ public class LibraryFinderController implements CqlVersionConverter {
         CqlLibraryFindData data = CqlLibraryFindData.builder()
                 .qdmVersion(qdmVersion)
                 .name(name)
-                .version(convertVersionToBigDecimal(version))
+                .matVersion(convertVersionToBigDecimal(version))
+                .version(version)
                 .build();
 
         CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);

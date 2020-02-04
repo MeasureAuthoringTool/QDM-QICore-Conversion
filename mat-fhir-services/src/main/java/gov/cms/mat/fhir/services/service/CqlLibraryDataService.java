@@ -35,7 +35,7 @@ public class CqlLibraryDataService {
                 cqlLibraryRepo.findByQdmVersionAndCqlNameAndVersionAndFinalizedDateIsNotNull(
                         cqlLibraryFindData.getQdmVersion(),
                         cqlLibraryFindData.getName(),
-                        cqlLibraryFindData.getVersion());
+                        cqlLibraryFindData.getMatVersion());
 
         if (libraries.isEmpty()) {
             throw new CqlLibraryNotFoundException(cqlLibraryFindData);

@@ -2,13 +2,13 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
-import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
-import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
-import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
+import gov.cms.mat.fhir.services.components.cql.CqlParser;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.exceptions.*;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Service;
 
@@ -76,9 +76,28 @@ public class OrchestrationService {
     public void processAndGetCqlLibraries(OrchestrationProperties properties) {
         List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesNotInHapi(properties);
 
+        cqlLibraries.forEach(this::processCqlLibrary);
+
         properties.getCqlLibraries()
                 .addAll(cqlLibraries);
     }
+
+    private void processCqlLibrary(CqlLibrary cqlLibrary) {
+
+        if (StringUtils.isEmpty(cqlLibrary.getCqlXml())) {
+            throw new CqlConversionException("oops");
+        }
+
+        String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml());
+        ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
+
+        libraryOrchestrationValidationService.processIncludes(cql);
+    }
+
+    private void processInclude(CqlParser.IncludeProperties include, CqlParser.UsingProperties using) {
+        libraryOrchestrationValidationService.processIncludedLibrary(include, using);
+    }
+
 
     public void processAndGetValueSets(OrchestrationProperties properties) {
         List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties);

@@ -188,12 +188,12 @@ public class HapiFhirServer {
 
         // Optionally you may configure the interceptor (by default only summary info is logged)
         loggingInterceptor.setLogRequestBody(false);
-        loggingInterceptor.setLogRequestSummary(false);
         loggingInterceptor.setLogRequestHeaders(false);
+        loggingInterceptor.setLogRequestSummary(true);
 
         loggingInterceptor.setLogResponseBody(false);
         loggingInterceptor.setLogResponseHeaders(false);
-        loggingInterceptor.setLogResponseSummary(false);
+        loggingInterceptor.setLogResponseSummary(true);
 
         return loggingInterceptor;
     }
@@ -225,7 +225,16 @@ public class HapiFhirServer {
     public Bundle getLibraryBundle(String id) {
         return hapiClient.search()
                 .forResource(Library.class)
-                .where(Measure.URL.matches().value(baseURL + "Library/" + id))
+                .where(Library.URL.matches().value(baseURL + "Library/" + id))
+                .returnBundle(Bundle.class)
+                .execute();
+    }
+
+    public Bundle getLibraryBundleByNameAndVersion(String version, String name) {
+        return hapiClient.search()
+                .forResource(Library.class)
+                .where(Library.VERSION.exactly().code(version))
+                .and(Library.NAME.matches().value(name))
                 .returnBundle(Bundle.class)
                 .execute();
     }

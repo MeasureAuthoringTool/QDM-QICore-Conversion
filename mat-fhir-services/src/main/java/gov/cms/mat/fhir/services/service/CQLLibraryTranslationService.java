@@ -68,8 +68,14 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
 
     private void processCqlLibrary(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean) {
         String cql = convertMatXmlToCql(cqlLibrary.getCqlXml(), cqlLibrary.getId());
-        ConversionReporter.setCql(cql, cqlLibrary.getId());
+        ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId()); //todo no need for this done in processAndGetCqlLibraries
 
+        String json = convertToJson(cqlLibrary, atomicBoolean, cql);
+
+        ConversionReporter.setElm(json, cqlLibrary.getId());
+    }
+
+    public String convertToJson(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean, String cql) {
         String json = convertCqlToJson(cql);
 
         boolean success = processJsonForError(json, cqlLibrary.getId());
@@ -78,9 +84,8 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
             atomicBoolean.set(Boolean.FALSE);
         }
 
-        ConversionReporter.setElm(json, cqlLibrary.getId());
+        return json;
     }
-
 
     private boolean processJsonForError(String json, String matLibraryId) {
         ElmErrorExtractor extractor = new ElmErrorExtractor(json);
@@ -136,17 +141,21 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
         }
     }
 
-    private String convertMatXmlToCql(String cqlXml, String matLibraryId) {
+    public String convertMatXmlToCql(String cqlXml, String matLibraryId) {
         if (StringUtils.isEmpty(cqlXml)) {
             String message = "CqlXml is missing";
-            ConversionReporter.setCqlConversionErrorMessage(message, matLibraryId);
+
+            if (matLibraryId != null) {
+                ConversionReporter.setCqlConversionErrorMessage(message, matLibraryId);
+            }
+
             throw new CqlConversionException(message);
         } else {
             return convertToCql(cqlXml);
         }
     }
 
-    private String convertToCql(String xml) {
+    public String convertToCql(String xml) {
         try {
             ResponseEntity<String> entity = cqlConversionClient.getCql(xml);
             return entity.getBody();

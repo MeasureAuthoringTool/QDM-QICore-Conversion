@@ -63,7 +63,7 @@ public class CqlLibrary implements Serializable {
     private User lastModifiedBy;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cqlId")
     private Collection<RecentCqlActivityLog> recentCqlActivityLogCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cqlLibraryId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cqlLibraryId", fetch = FetchType.EAGER)
     private Collection<CqlLibraryExport> cqlLibraryExportCollection;
     @OneToMany(mappedBy = "libraryId")
     private Collection<CqlLibraryHistory> cqlLibraryHistoryCollection;

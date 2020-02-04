@@ -43,7 +43,7 @@ class LibraryTranslatorTest {
 
     @Test
     void testTranslateToFhir_verifyCqlLibrary() {
-        Library library = libraryTranslator.translateToFhir();
+        Library library = libraryTranslator.translateToFhir(null);
 
         assertEquals(library.getDate().getTime(), new Date().getTime(), 10L);
         assertEquals(cqlName,  library.getName());
@@ -60,7 +60,7 @@ class LibraryTranslatorTest {
     void testTranslateToFhir_verifyAttachments() {
 
 
-        Library library = libraryTranslator.translateToFhir();
+        Library library = libraryTranslator.translateToFhir(null);
 
         assertEquals(2, library.getContent().size());
 

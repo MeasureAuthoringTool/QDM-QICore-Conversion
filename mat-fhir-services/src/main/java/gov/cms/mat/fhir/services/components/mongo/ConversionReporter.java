@@ -5,6 +5,7 @@ import gov.cms.mat.fhir.services.exceptions.ThreadLocalNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -76,10 +77,12 @@ public class ConversionReporter {
         conversionReporter.addMatCqlConversionErrors(errors, matLibraryId);
     }
 
-    public static void setCql(String cql, String matLibraryId) {
+    public static void setCql(String cql, String name, BigDecimal version, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.addCql(cql, matLibraryId);
+        String versionString = version == null ? "null" : version.toString();
+
+        conversionReporter.addCql(cql, name, versionString, matLibraryId);
     }
 
     public static void setElm(String json, String matLibraryId) {
@@ -278,8 +281,8 @@ public class ConversionReporter {
         conversionResultsService.addCqlConversionErrorMessage(key, error, matLibraryId);
     }
 
-    private void addCql(String cql, String matLibraryId) {
-        conversionResultsService.addCql(key, cql, matLibraryId);
+    private void addCql(String cql, String name, String version, String matLibraryId) {
+        conversionResultsService.addCql(key, cql, name, version, matLibraryId);
     }
 
     private void addElm(String json, String matLibraryId) {
