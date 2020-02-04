@@ -14,7 +14,6 @@ services:
     ports:
       - 6060:6060
 
-
   cql-elm-translation:
     image: cql-elm-translation
     container_name: cql-elm-translation
@@ -25,7 +24,7 @@ services:
       - 7070:7070
 
   qdm-qicore-mapping-services:
-    image: qdm-core-mapping-services
+    image: qdm-qicore-mapping-services
     container_name: qdm-qicore-mapping-services
     build:
       context: ../qdm-qicore-mapping-services

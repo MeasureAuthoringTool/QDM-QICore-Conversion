@@ -81,13 +81,11 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                     json.getBytes(),
                     hapiFhirServer.getBaseURL());
 
-
             Library fhirLibrary = libraryTranslator.translateToFhir(include.getVersion());
 
             validate(cqlLibrary, fhirLibrary, atomicBoolean);
 
             if (!atomicBoolean.get()) {
-                ConversionResult result = ConversionReporter.getConversionResult();
                 atomicBoolean.set(Boolean.TRUE);
                 //throw new CqlConversionException("oops");
             }
