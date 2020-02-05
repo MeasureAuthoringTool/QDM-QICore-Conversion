@@ -97,7 +97,7 @@ public class OrchestrationBatchController {
         checkBatch(batchId);
 
         if (CollectionUtils.isEmpty(matIds)) {
-            return measureDataService.findAllIds();
+            return measureDataService.findAllValidIds();
         } else {
             return matIds;
         }

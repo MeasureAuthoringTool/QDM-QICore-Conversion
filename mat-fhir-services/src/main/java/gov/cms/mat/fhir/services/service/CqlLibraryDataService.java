@@ -1,6 +1,8 @@
 package gov.cms.mat.fhir.services.service;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
+import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
@@ -45,6 +47,8 @@ public class CqlLibraryDataService {
                     .map(CqlLibrary::getId)
                     .collect(Collectors.joining(", "));
 
+            ConversionReporter.setTerminalMessage("To many cql libraries found ids: " + ids,
+                    ConversionOutcome.CQL_LIBRARY_TRANSLATION_FAILED);
             throw new CqlLibraryNotFoundException("To many cql libraries found ids: ", ids);
         } else {
             return libraries.get(0);

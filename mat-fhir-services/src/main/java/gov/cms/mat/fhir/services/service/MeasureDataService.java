@@ -28,6 +28,10 @@ public class MeasureDataService {
         return measureRepository.findAllIds();
     }
 
+    public List<String> findAllValidIds() {
+        return measureRepository.findAllIdsWithAllowedVersions(allowedVersions);
+    }
+
     public Measure findOneValid(String measureId) {
         Optional<Measure> optional = measureRepository.findById(measureId);
 
