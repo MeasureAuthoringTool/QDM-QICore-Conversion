@@ -43,7 +43,7 @@ public class CqlConversionController {
                 .validateUnits(validateUnits)
                 .build();
 
-        processLibraries(cqlData);
+        cqlConversionService.setUpMatLibrarySourceProvider(cqlData);
 
         return cqlConversionService.processCqlDataWithErrors(requestData);
     }
@@ -61,7 +61,7 @@ public class CqlConversionController {
 
         String cqlData = matXmlConversionService.processCqlXml(xml);
 
-        processLibraries(cqlData);
+        cqlConversionService.setUpMatLibrarySourceProvider(cqlData);
 
         RequestData requestData = RequestData.builder()
                 .cqlData(cqlData)
@@ -75,9 +75,5 @@ public class CqlConversionController {
                 .build();
 
         return cqlConversionService.processCqlDataWithErrors(requestData);
-    }
-
-    private void processLibraries(String cqlData) {
-        cqlConversionService.processQdmVersion(cqlData);
     }
 }
