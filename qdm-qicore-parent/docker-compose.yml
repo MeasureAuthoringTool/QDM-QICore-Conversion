@@ -12,7 +12,7 @@ services:
     image: greenemcg/hapi-fhir-jpaserver
     container_name: hapi-fhir-jpaserver
     ports:
-      - 6060:8080
+      - 6060:6060
 
   cql-elm-translation:
     image: greenemcg/cql-elm-translation
@@ -25,4 +25,15 @@ services:
     container_name: qdm-qicore-mapping-services
     ports:
       - 9090:9090
-      
+
+  mat-fhir-services:
+    image: greenemcg/mat-fhir-services
+    container_name: mat-fhir-services
+    environment:
+      VSAC_USER: ${VSAC_USER}
+      VSAC_PASS: ${VSAC_PASS}
+      MAT_DB: ${MAT_DB}
+      MAT_DB_PASS: ${MAT_DB_PASS}
+      MAT_DB_USER: ${MAT_DB_USER}
+    ports:
+      - 9080:9080
