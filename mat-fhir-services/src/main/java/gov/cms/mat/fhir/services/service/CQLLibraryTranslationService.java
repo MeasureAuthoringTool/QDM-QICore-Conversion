@@ -78,7 +78,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
     public String convertToJson(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean, String cql) {
         String json = convertCqlToJson(cql);
 
-        boolean success = processJsonForError(json, cqlLibrary.getId());
+        boolean success = processJsonForError(json, cqlLibrary == null ? null : cqlLibrary.getId());
 
         if (!success) {
             atomicBoolean.set(Boolean.FALSE);
@@ -87,6 +87,12 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
         return json;
     }
 
+    public String convertToJsonFromCql(AtomicBoolean atomicBoolean, String cql) {
+        return convertToJson(null, atomicBoolean, cql);
+    }
+
+
+    //todo mcg too complex fix
     private boolean processJsonForError(String json, String matLibraryId) {
         ElmErrorExtractor extractor = new ElmErrorExtractor(json);
 
@@ -95,7 +101,10 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
         try {
             cqlConversionErrors = extractor.parseForAnnotations();
         } catch (CqlConversionException e) {
-            ConversionReporter.setTerminalMessage(e.getMessage(), CQL_LIBRARY_TRANSLATION_FAILED);
+
+            if (matLibraryId != null)
+                ConversionReporter.setTerminalMessage(e.getMessage(), CQL_LIBRARY_TRANSLATION_FAILED);
+
             throw e;
         }
 
@@ -103,16 +112,21 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
         List<MatCqlConversionException> matCqlConversionExceptions = extractor.parseForErrorExceptions();
 
         if (cqlConversionErrors.isEmpty() && matCqlConversionExceptions.isEmpty()) {
-            ConversionReporter.setCqlConversionResultSuccess(matLibraryId);
+            if (matLibraryId != null)
+                ConversionReporter.setCqlConversionResultSuccess(matLibraryId);
+
             return true;
         } else {
 
             boolean successFull = true;
 
             if (!cqlConversionErrors.isEmpty()) {
-                ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + cqlConversionErrors.size()
-                        + " cqlConversionErrors errors.", matLibraryId);
-                ConversionReporter.setCqlConversionErrors(cqlConversionErrors, matLibraryId);
+
+                if (matLibraryId != null) {
+                    ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + cqlConversionErrors.size()
+                            + " cqlConversionErrors errors.", matLibraryId);
+                    ConversionReporter.setCqlConversionErrors(cqlConversionErrors, matLibraryId);
+                }
 
                 long errorCount = cqlConversionErrors.stream()
                         .filter(c -> checkSeverity(c.getErrorSeverity()))
@@ -124,9 +138,12 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker {
             }
 
             if (!matCqlConversionExceptions.isEmpty()) {
-                ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + matCqlConversionExceptions.size()
-                        + " matCqlConversionExceptions (errorExceptions) errors.", matLibraryId);
-                ConversionReporter.setMatCqlConversionExceptions(matCqlConversionExceptions, matLibraryId);
+
+                if (matLibraryId != null) {
+                    ConversionReporter.setCqlConversionErrorMessage("CQl conversion produced " + matCqlConversionExceptions.size()
+                            + " matCqlConversionExceptions (errorExceptions) errors.", matLibraryId);
+                    ConversionReporter.setMatCqlConversionExceptions(matCqlConversionExceptions, matLibraryId);
+                }
 
                 long errorCount = matCqlConversionExceptions.stream()
                         .filter(c -> checkSeverity(c.getErrorSeverity()))

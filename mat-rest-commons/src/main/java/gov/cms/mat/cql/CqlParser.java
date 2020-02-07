@@ -1,14 +1,16 @@
-package gov.cms.mat.fhir.services.components.cql;
+package gov.cms.mat.cql;
 
-import gov.cms.mat.fhir.services.components.cql.parsers.IncludeParser;
-import gov.cms.mat.fhir.services.components.cql.parsers.UsingParser;
+
+import gov.cms.mat.cql.parsers.IncludeParser;
+import gov.cms.mat.cql.parsers.LibraryParser;
+import gov.cms.mat.cql.parsers.UsingParser;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CqlParser implements IncludeParser, UsingParser {
+public class CqlParser implements IncludeParser, UsingParser, LibraryParser {
     final String cql;
 
     @Getter
@@ -24,6 +26,14 @@ public class CqlParser implements IncludeParser, UsingParser {
     @Getter
     @ToString
     public static class IncludeProperties {
+        String name;
+        String version;
+    }
+
+    @Builder
+    @Getter
+    @ToString
+    public static class LibraryProperties {
         String name;
         String version;
     }

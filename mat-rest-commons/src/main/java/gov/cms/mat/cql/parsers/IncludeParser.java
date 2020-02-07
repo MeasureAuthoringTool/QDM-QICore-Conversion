@@ -1,6 +1,6 @@
-package gov.cms.mat.fhir.services.components.cql.parsers;
+package gov.cms.mat.cql.parsers;
 
-import gov.cms.mat.fhir.services.components.cql.CqlParser;
+import gov.cms.mat.cql.CqlParser;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;

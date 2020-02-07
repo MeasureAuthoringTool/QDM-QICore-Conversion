@@ -1,6 +1,6 @@
-package gov.cms.mat.fhir.services.components.cql.parsers;
+package gov.cms.mat.cql.parsers;
 
-import gov.cms.mat.fhir.services.components.cql.CqlParser;
+import gov.cms.mat.cql.CqlParser;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -14,21 +14,20 @@ public interface UsingParser {
                 .map(this::buildUsingProperties)
                 .findFirst()
                 .orElse(null);
-
     }
 
     default CqlParser.UsingProperties buildUsingProperties(String line) {
         return CqlParser.UsingProperties.builder()
-                .libraryType(getLibraryType(line))
-                .version(getLibraryVersion(line))
+                .libraryType(getUsingLibraryType(line))
+                .version(getUsingLibraryVersion(line))
                 .build();
     }
 
-    default String getLibraryType(String line) {
+    default String getUsingLibraryType(String line) {
         return StringUtils.substringBetween(line, "using ", " version ");
     }
 
-    default String getLibraryVersion(String line) {
+    default String getUsingLibraryVersion(String line) {
         return StringUtils.substringBetween(line, " version '", "'");
     }
 }

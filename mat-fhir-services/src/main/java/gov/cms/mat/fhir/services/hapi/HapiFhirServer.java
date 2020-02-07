@@ -230,7 +230,7 @@ public class HapiFhirServer {
                 .execute();
     }
 
-    public Bundle getLibraryBundleByNameAndVersion(String version, String name) {
+    public Bundle getLibraryBundleByVersionAndName(String version, String name) {
         return hapiClient.search()
                 .forResource(Library.class)
                 .where(Library.VERSION.exactly().code(version))

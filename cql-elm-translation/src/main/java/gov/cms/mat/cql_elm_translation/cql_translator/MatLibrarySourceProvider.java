@@ -1,5 +1,6 @@
 package gov.cms.mat.cql_elm_translation.cql_translator;
 
+import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql_elm_translation.service.FhirServicesService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -17,15 +18,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MatLibrarySourceProvider implements LibrarySourceProvider {
 
     private static final ConcurrentHashMap<String, String> cqlLibraries = new ConcurrentHashMap<>();
-    private static final ThreadLocal<String> threadLocalValue = new ThreadLocal<>();
+    private static final ThreadLocal<CqlParser.LibraryProperties> threadLocalValue = new ThreadLocal<>();
     private static FhirServicesService fhirServicesService;
 
     public static void setFhirServicesService(FhirServicesService fhirServicesService) {
         MatLibrarySourceProvider.fhirServicesService = fhirServicesService;
     }
 
-    public static void setQdmVersion(String version) {
-        threadLocalValue.set(version);
+    public static void setQdmVersion(CqlParser.LibraryProperties libraryProperties) {
+        threadLocalValue.set(libraryProperties);
     }
 
     public static boolean isLibraryInMap(String name, String qdmVersion, String version) {
@@ -44,12 +45,16 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
     public InputStream getLibrarySource(VersionedIdentifier libraryIdentifier) {
 
         if (libraryIdentifier.getId().toLowerCase().contains("fhir")) {
-            return FhirLibrarySourceProvider.class.getResourceAsStream(String.format("/org/hl7/fhir/%s-%s.cql",
+            String resource = String.format("/org/hl7/fhir/%s-%s.cql",
                     libraryIdentifier.getId(),
-                    libraryIdentifier.getVersion()));
+                    libraryIdentifier.getVersion());
+
+            log.info("Loading FHIR library source: {}", resource);
+
+            return FhirLibrarySourceProvider.class.getResourceAsStream(resource);
         } else {
 
-            String qdmVersion = threadLocalValue.get();
+            String qdmVersion = threadLocalValue.get().getVersion();
 
             String key = createKey(libraryIdentifier.getId(), qdmVersion, libraryIdentifier.getVersion());
 

@@ -1,6 +1,6 @@
 package gov.cms.mat.cql_elm_translation.service;
 
-import gov.cms.mat.cql_elm_translation.cql_translator.MatCqlSourceParser;
+import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql_elm_translation.cql_translator.MatLibrarySourceProvider;
 import gov.cms.mat.cql_elm_translation.cql_translator.TranslationResource;
 import gov.cms.mat.cql_elm_translation.data.RequestData;
@@ -25,9 +25,11 @@ public class CqlConversionService {
     }
 
     /* MatLibrarySourceProvider places version and service in thread local */
-    public void setUpMatLibrarySourceProvider(String cqlData) {
-        String qdmVersion = new MatCqlSourceParser(cqlData).parseQdmVersion();
-        MatLibrarySourceProvider.setQdmVersion(qdmVersion);
+    public void setUpMatLibrarySourceProvider(String cql) {
+        CqlParser cqlParser = new CqlParser(cql);
+        CqlParser.LibraryProperties libraryProperties = cqlParser.getLibrary();
+
+        MatLibrarySourceProvider.setQdmVersion(libraryProperties);
         MatLibrarySourceProvider.setFhirServicesService(fhirServicesService);
     }
 

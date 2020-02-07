@@ -18,6 +18,12 @@ vsac-client:
   use-cache: on
   cache-directory: /opt/vsac/cache
 
+library:
+  unconverted:
+    directory: /opt/library/unconverted
+  fhir:
+    directory: /opt/library/fhir
+
 measures:
   allowed:
     versions: v5.5,v5.6,v5.7,v5.8,v5.9,v6.0

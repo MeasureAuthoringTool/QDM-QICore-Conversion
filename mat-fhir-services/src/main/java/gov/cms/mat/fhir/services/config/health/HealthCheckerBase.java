@@ -10,7 +10,7 @@ public abstract class HealthCheckerBase implements HealthIndicator {
     public Health health() {
         try {
             Health health = check();
-            log.info("Health for {} is {}", getClass().getSimpleName(), health.getStatus());
+            log.debug("Health for {} is {}", getClass().getSimpleName(), health.getStatus());
             return health;
         } catch (Exception e) {
             log.info("Health check for {} failed with error", getClass().getSimpleName(), e);

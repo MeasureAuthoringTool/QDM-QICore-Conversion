@@ -1,12 +1,13 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
+import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
-import gov.cms.mat.fhir.services.components.cql.CqlParser;
+import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryFileHandler;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
-import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
+import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.CQL_LIBRARY_TRANSLATION_FAILED;
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.LIBRARY_VALIDATION_FAILED;
 
 @Component
@@ -34,23 +36,27 @@ import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.LIBRARY_VALIDATION_FAI
 public class LibraryOrchestrationValidationService extends LibraryOrchestrationBase
         implements FhirValidatorProcessor, ErrorSeverityChecker, CqlVersionConverter {
 
-    private static final String FAILURE_MESSAGE = "Library validation failed";
+    private static final String VALIDATION_FAILURE_MESSAGE = "Library validation failed";
+    private static final String HAPI_FAILURE_MESSAGE = "Cannot find hapi fhir library with name: %s and version: %s";
 
     private final CqlLibraryDataService cqlLibraryDataService;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
 
+    private final UnConvertedCqlLibraryFileHandler unConvertedCqlLibraryFileHandler;
+
     public LibraryOrchestrationValidationService(HapiFhirServer hapiFhirServer,
                                                  CqlLibraryDataService cqlLibraryDataService,
-                                                 CQLLibraryTranslationService cqlLibraryTranslationService) {
+                                                 CQLLibraryTranslationService cqlLibraryTranslationService,
+                                                 UnConvertedCqlLibraryFileHandler unConvertedCqlLibraryFileHandler) {
         super(hapiFhirServer);
         this.cqlLibraryDataService = cqlLibraryDataService;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
+        this.unConvertedCqlLibraryFileHandler = unConvertedCqlLibraryFileHandler;
     }
 
     public void processIncludedLibrary(CqlParser.IncludeProperties include, CqlParser.UsingProperties using) {
-        AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
 
-        Bundle bundle = hapiFhirServer.getLibraryBundleByNameAndVersion(include.getVersion(), include.getName());
+        Bundle bundle = hapiFhirServer.getLibraryBundleByVersionAndName(include.getVersion(), include.getName());
 
         if (CollectionUtils.isEmpty(bundle.getEntry())) {
             CqlLibraryFindData data = CqlLibraryFindData.builder()
@@ -60,44 +66,17 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                     .version(include.getVersion())
                     .build();
 
-            CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);
-
-            String cql = cqlLibraryTranslationService.convertMatXmlToCql(cqlLibrary.getCqlXml(), null);
-
-            ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
-
-            String json = cqlLibraryTranslationService.convertToJson(cqlLibrary, atomicBoolean, cql);
-            ConversionReporter.setElm(json, cqlLibrary.getId());
-
-            if (!atomicBoolean.get()) {
-                log.debug("cgl : {}", cql);
-                log.debug("json : {}", json);
-                atomicBoolean.set(Boolean.TRUE);
-                // throw new CqlConversionException("Cannot convert {}-{} cql to json");
+            if (unConvertedCqlLibraryFileHandler.exists(data)) {
+                log.info("File already exists for: {}", unConvertedCqlLibraryFileHandler.makeCqlFileName(data));
+            } else {
+                CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);
+                String cql = cqlLibraryTranslationService.convertMatXmlToCql(cqlLibrary.getCqlXml(), null);
+                unConvertedCqlLibraryFileHandler.write(data, cql);
             }
 
-            LibraryTranslator libraryTranslator = new LibraryTranslator(cqlLibrary,
-                    cql.getBytes(),
-                    json.getBytes(),
-                    hapiFhirServer.getBaseURL());
-
-            Library fhirLibrary = libraryTranslator.translateToFhir(include.getVersion());
-
-            validate(cqlLibrary, fhirLibrary, atomicBoolean);
-
-            if (!atomicBoolean.get()) {
-                atomicBoolean.set(Boolean.TRUE);
-                //throw new CqlConversionException("oops");
-            }
-
-            processPersisting(cqlLibrary, fhirLibrary, atomicBoolean);
-
-            if (!atomicBoolean.get()) {
-                throw new CqlConversionException("Error persisting  ");
-            }
-
-            processIncludes(cql); // recursive call
-
+            String message = String.format(HAPI_FAILURE_MESSAGE, include.getName(), include.getVersion());
+            ConversionReporter.setTerminalMessage(message, CQL_LIBRARY_TRANSLATION_FAILED);
+            throw new LibraryConversionException(message);
         } else {
             log.debug("Included Library already in fhir: {}", include);
         }
@@ -127,7 +106,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
 
         if (!atomicBoolean.get()) {
-            ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
+            ConversionReporter.setTerminalMessage(VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
         }
 
         return atomicBoolean.get();
