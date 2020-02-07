@@ -44,3 +44,4 @@ hs_err_pid*
 /mat-rest-commons/mat-rest-commons.iml
 /mat-server-commons/mat-server-commons.iml
 /vsac-mat-conversion/vsac-mat-conversion.iml
+/mat-fhir-services/fhir/
