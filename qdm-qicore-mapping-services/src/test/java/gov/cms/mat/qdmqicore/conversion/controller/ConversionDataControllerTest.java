@@ -88,4 +88,19 @@ class ConversionDataControllerTest {
 
         verify(conversionDataService).find(any());
     }
+
+    @Test
+    void findFiltered() {
+        List<ConversionMapping> listToReturn =
+                Arrays.asList(ConversionMapping.builder().build(), ConversionMapping.builder().build());
+
+        when(conversionDataService
+                .filtered(any())).thenReturn(listToReturn);
+
+        conversionDataController.filtered(null, null,
+                null, null, null, null);
+
+
+        verify(conversionDataService).filtered(any());
+    }
 }

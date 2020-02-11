@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 @Service
 public class ConversionDataService {
     private final FhirQdmMappingData fhirQdmMappingData;
-
     private final CqlConfigProperties cqlConfigProperties;
 
     public ConversionDataService(FhirQdmMappingData fhirQdmMappingData,

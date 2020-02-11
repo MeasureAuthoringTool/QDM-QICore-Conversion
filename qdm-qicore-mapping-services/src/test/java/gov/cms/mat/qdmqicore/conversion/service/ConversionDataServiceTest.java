@@ -1,8 +1,9 @@
 package gov.cms.mat.qdmqicore.conversion.service;
 
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
+import gov.cms.mat.qdmqicore.conversion.config.CqlConfigProperties;
 import gov.cms.mat.qdmqicore.conversion.data.SearchData;
 import gov.cms.mat.qdmqicore.conversion.dto.ConversionDataBuilder;
-import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.ConversionEntry;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.FhirQdmMappingData;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,9 @@ import static org.mockito.Mockito.when;
 class ConversionDataServiceTest implements ConversionDataBuilder {
     @Mock
     private FhirQdmMappingData fhirQdmMappingData;
+    @Mock
+    private CqlConfigProperties cqlConfigProperties;
+
     @InjectMocks
     private ConversionDataService conversionDataService;
 
@@ -52,6 +56,16 @@ class ConversionDataServiceTest implements ConversionDataBuilder {
         SearchData searchData = SearchData.builder().build();
 
         List<ConversionMapping> mappingList = conversionDataService.find(searchData);
+        assertEquals(1, mappingList.size());
+
+        verify(fhirQdmMappingData).getAll();
+    }
+
+    @Test
+    void filtered_Success() {
+        SearchData searchData = SearchData.builder().build();
+
+        List<ConversionMapping> mappingList = conversionDataService.filtered(searchData);
         assertEquals(1, mappingList.size());
 
         verify(fhirQdmMappingData).getAll();
