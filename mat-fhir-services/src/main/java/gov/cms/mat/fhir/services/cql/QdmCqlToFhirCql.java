@@ -5,15 +5,12 @@
  */
 package gov.cms.mat.fhir.services.cql;
 
-import gov.cms.mat.fhir.services.translate.*;
 import com.google.common.io.Files;
 import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,10 +36,23 @@ public class QdmCqlToFhirCql {
     
 
     public QdmCqlToFhirCql() {
+        loadMappings();
+        readInput();        
+    }
+    
+    public QdmCqlToFhirCql(String cqlText) {
+        loadMappings();
+        String[] lines = cqlText.split(System.getProperty("line.separator"));
+        //pop inputList
+        for (int i = 0; i < lines.length; i++) {
+            inputList.add(lines[i]);
+        }
+    }
+    
+    
+    private void loadMappings() {
         qdmQicoreDataService = new QdmQiCoreDataService(restTemplate);
         cList = qdmQicoreDataService.findAll();
-        cList.forEach(item->System.out.println(item.getMatDataTypeDescription()+" | "+item.getMatAttributeName()+" | "+item.getFhirResource()+" | "+item.getFhirElement()));
-        System.out.println(cList.size());
     }
     /**
      * @param args the command line arguments
@@ -52,14 +62,19 @@ public class QdmCqlToFhirCql {
         
         try {
             QdmCqlToFhirCql convert = new QdmCqlToFhirCql();
-            convert.processCQL();  
+            convert.processCQLFromMain();  
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
     
-    public void processCQL() {
-        readInput();
+    public String processCQL() {
+        processLines();
+        processAttributes();
+        return sbFinal.toString();
+    }
+    
+    public void processCQLFromMain() {
         processLines();
         processAttributes();
         writeOutput();
@@ -237,6 +252,7 @@ public class QdmCqlToFhirCql {
     }
     
     private String processIncludes(String line) {
+        //need to add this when example tested
         String res = "";
         res = line;
         
