@@ -32,10 +32,10 @@ public class FhirCqlLibraryFileHandler implements FileHandler {
 
     @PostConstruct
     public void check() {
-        path = checkAndCreatePath(directoryName);
-        log.info("Cql fhir directory is: {}", directoryName);
-
-        processFhirLibraries();
+//        path = checkAndCreatePath(directoryName);
+//        log.info("Cql fhir directory is: {}", directoryName);
+//
+//        processFhirLibraries();
     }
 
     private void processFhirLibraries() {
