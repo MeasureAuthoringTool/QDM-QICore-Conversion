@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.translate.creators;
 
+import gov.cms.mat.cql.CqlParser;
 import org.hl7.fhir.r4.model.*;
 
 import java.util.ArrayList;
@@ -51,5 +52,10 @@ public interface FhirCreator {
         return new Period()
                 .setStart(startDate)
                 .setEnd(endDate);
+    }
+
+    default String createLibraryUuid(CqlParser.LibraryProperties properties) {
+        return properties.getName().replace('_', '-') + "-" +
+                properties.getVersion().replace('.', '-');
     }
 }

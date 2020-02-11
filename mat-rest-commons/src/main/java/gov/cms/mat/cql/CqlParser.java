@@ -5,6 +5,7 @@ import gov.cms.mat.cql.parsers.IncludeParser;
 import gov.cms.mat.cql.parsers.LibraryParser;
 import gov.cms.mat.cql.parsers.UsingParser;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,6 @@ public class CqlParser implements IncludeParser, UsingParser, LibraryParser {
         lines = cql.split("\\r?\\n");
     }
 
-
     @Builder
     @Getter
     @ToString
@@ -33,6 +33,7 @@ public class CqlParser implements IncludeParser, UsingParser, LibraryParser {
     @Builder
     @Getter
     @ToString
+    @EqualsAndHashCode
     public static class LibraryProperties {
         String name;
         String version;
@@ -45,6 +46,4 @@ public class CqlParser implements IncludeParser, UsingParser, LibraryParser {
         String libraryType;
         String version;
     }
-
-
 }

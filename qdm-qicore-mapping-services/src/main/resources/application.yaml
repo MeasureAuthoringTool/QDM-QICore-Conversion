@@ -12,4 +12,15 @@ json:
     url: https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json
 
 
+cql:
+  negations:
+    - Not Performed
+    - Not Ordered
+    - Not Recommended
+    - Not Administered
+    - Not Dispensed
+
+
+
+
 

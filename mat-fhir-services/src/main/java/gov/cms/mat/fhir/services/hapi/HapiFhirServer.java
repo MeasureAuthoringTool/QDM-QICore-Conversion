@@ -73,7 +73,7 @@ public class HapiFhirServer {
         }
     }
 
-    private <T extends Resource> Optional<T> findResourceFromBundle(Bundle bundle, Class<T> clazz) {
+    public <T extends Resource> Optional<T> findResourceFromBundle(Bundle bundle, Class<T> clazz) {
         Resource resource = bundle.getEntry().get(0).getResource();
 
         if (clazz.isInstance(resource)) {
@@ -230,7 +230,7 @@ public class HapiFhirServer {
                 .execute();
     }
 
-    public Bundle getLibraryBundleByVersionAndName(String version, String name) {
+    public Bundle fetchLibraryBundleByVersionAndName(String version, String name) {
         return hapiClient.search()
                 .forResource(Library.class)
                 .where(Library.VERSION.exactly().code(version))

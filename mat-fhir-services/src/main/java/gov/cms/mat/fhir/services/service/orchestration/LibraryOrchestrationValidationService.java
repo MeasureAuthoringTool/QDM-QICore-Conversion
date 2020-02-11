@@ -17,7 +17,7 @@ import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
-import gov.cms.mat.fhir.services.translate.LibraryTranslator;
+import gov.cms.mat.fhir.services.translate.MatLibraryTranslator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.Bundle;
@@ -56,7 +56,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     public void processIncludedLibrary(CqlParser.IncludeProperties include, CqlParser.UsingProperties using) {
 
-        Bundle bundle = hapiFhirServer.getLibraryBundleByVersionAndName(include.getVersion(), include.getName());
+        Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(include.getVersion(), include.getName());
 
         if (CollectionUtils.isEmpty(bundle.getEntry())) {
             CqlLibraryFindData data = CqlLibraryFindData.builder()
@@ -116,12 +116,12 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
         LibraryConversionResults results = conversionResult.findLibraryConversionResultsRequired(cqlLibrary.getId());
 
-        LibraryTranslator libraryTranslator = new LibraryTranslator(cqlLibrary,
+        MatLibraryTranslator matLibraryTranslator = new MatLibraryTranslator(cqlLibrary,
                 results.getCqlConversionResult().getElm().getBytes(),
                 results.getCqlConversionResult().getCql().getBytes(),
                 hapiFhirServer.getBaseURL());
 
-        Library fhirLibrary = libraryTranslator.translateToFhir(null);
+        Library fhirLibrary = matLibraryTranslator.translateToFhir(null);
 
         results.setFhirLibraryJson(hapiFhirServer.toJson(fhirLibrary));
 

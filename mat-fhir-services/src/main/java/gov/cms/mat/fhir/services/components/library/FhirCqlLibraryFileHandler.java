@@ -2,70 +2,80 @@ package gov.cms.mat.fhir.services.components.library;
 
 
 import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
+import gov.cms.mat.fhir.services.translate.FhirLibraryTranslator;
+import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.hl7.fhir.r4.model.Bundle;
-import org.springframework.beans.factory.annotation.Value;
+import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
-public class FhirCqlLibraryFileHandler implements FileHandler {
-    private static final String EXTENSION = ".cql";
+public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     private final HapiFhirServer hapiFhirServer;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
-    private Path path;
-    @Value("${library.fhir.directory}")
-    private String directoryName;
+    private final LibraryConversionFileConfig libraryConversionFileConfig;
 
-    public FhirCqlLibraryFileHandler(HapiFhirServer hapiFhirServer, CQLLibraryTranslationService cqlLibraryTranslationService) {
+
+    public FhirCqlLibraryFileHandler(HapiFhirServer hapiFhirServer,
+                                     CQLLibraryTranslationService cqlLibraryTranslationService,
+                                     LibraryConversionFileConfig libraryConversionFileConfig) {
         this.hapiFhirServer = hapiFhirServer;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
+        this.libraryConversionFileConfig = libraryConversionFileConfig;
     }
 
-    @PostConstruct
-    public void check() {
-//        path = checkAndCreatePath(directoryName);
-//        log.info("Cql fhir directory is: {}", directoryName);
-//
-//        processFhirLibraries();
+    public void loaLibs() {
+        Path path = checkAndCreatePath(libraryConversionFileConfig.getFhirDirectory());
+        log.info("Cql fhir directory is: {}, file order: {}",
+                libraryConversionFileConfig.getFhirDirectory(),
+                libraryConversionFileConfig.getOrder());
+
+        processFhirLibraries(path);
     }
 
-    private void processFhirLibraries() {
-
-        List<String> files = findAll(path);
-
-        files.stream()
+    private void processFhirLibraries(Path path) {
+        libraryConversionFileConfig.getOrder()
+                .stream()
                 .map(s -> findCqlInFile(path, s))
                 .forEach(this::processHapiFhir);
-
     }
 
     private void processHapiFhir(String cql) {
+
         CqlParser cqlParser = new CqlParser(cql);
         CqlParser.LibraryProperties libraryProperties = cqlParser.getLibrary();
 
-        Bundle bundle = hapiFhirServer.getLibraryBundleByVersionAndName(libraryProperties.getVersion(), libraryProperties.getName());
+        try {
+            String uuid = createLibraryUuid(libraryProperties);
 
-        AtomicBoolean atomicBoolean = new AtomicBoolean(true);
+            Optional<Library> library = hapiFhirServer.fetchHapiLibrary(uuid);
 
-        if (CollectionUtils.isEmpty(bundle.getEntry())) {
-            String json = cqlLibraryTranslationService.convertToJsonFromCql(atomicBoolean, cql);
-            log.info(json);
+            AtomicBoolean atomicBoolean = new AtomicBoolean(true);
 
-        } else {
-            log.debug("Fhir Library already in fhir: {}", libraryProperties);
+            if (library.isPresent()) {
+                log.info("Already Exists Standard Fhir cql lib url: {}, : Properties: {}",
+                        library.get().getUrl(), libraryProperties);
+            } else {
+                String elm = cqlLibraryTranslationService.convertToJsonFromCql(atomicBoolean, cql);
+
+                FhirLibraryTranslator fhirLibraryTranslator = new FhirLibraryTranslator(cql.getBytes(),
+                        elm.getBytes(),
+                        hapiFhirServer.getBaseURL());
+
+                Library hapiFhirLibrary = fhirLibraryTranslator.translateToFhir(null);
+                String url = hapiFhirServer.persist(hapiFhirLibrary);
+                log.info("Created Standard Fhir cql lib url: {}, : Properties: {}", url, libraryProperties);
+            }
+        } catch (Exception e) {
+            log.error("Error processing Standard Fhir cql lib url: {}", libraryProperties, e);
         }
-
-
     }
-
 
 }

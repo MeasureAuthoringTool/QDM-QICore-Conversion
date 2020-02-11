@@ -9,11 +9,11 @@ import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.Date;
 
-import static gov.cms.mat.fhir.services.translate.LibraryTranslator.*;
+import static gov.cms.mat.fhir.services.translate.MatLibraryTranslator.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-class LibraryTranslatorTest {
+class MatLibraryTranslatorTest {
     private String MEASURE_ID;
     private byte[] cql;
     private byte[] elm;
@@ -21,7 +21,7 @@ class LibraryTranslatorTest {
     private String baseURL;
     private String fhirResourceURL;
     private String cqlName;
-    private LibraryTranslator libraryTranslator;
+    private MatLibraryTranslator matLibraryTranslator;
 
     @BeforeEach
     void setUp() {
@@ -38,12 +38,12 @@ class LibraryTranslatorTest {
         baseURL = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
         fhirResourceURL = baseURL + "Library/" + MEASURE_ID;
         System.out.println(fhirResourceURL);
-        libraryTranslator = new LibraryTranslator(cqlLib, cql, elm, baseURL);
+        matLibraryTranslator = new MatLibraryTranslator(cqlLib, cql, elm, baseURL);
     }
 
     @Test
     void testTranslateToFhir_verifyCqlLibrary() {
-        Library library = libraryTranslator.translateToFhir(null);
+        Library library = matLibraryTranslator.translateToFhir(null);
 
         assertEquals(library.getDate().getTime(), new Date().getTime(), 10L);
         assertEquals(cqlName,  library.getName());
@@ -60,7 +60,7 @@ class LibraryTranslatorTest {
     void testTranslateToFhir_verifyAttachments() {
 
 
-        Library library = libraryTranslator.translateToFhir(null);
+        Library library = matLibraryTranslator.translateToFhir(null);
 
         assertEquals(2, library.getContent().size());
 

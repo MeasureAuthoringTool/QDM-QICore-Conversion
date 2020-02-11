@@ -18,19 +18,18 @@ import java.util.List;
 @Slf4j
 public class CqlConversionService {
     private static final String LOG_MESSAGE_TEMPLATE = "ErrorSeverity: %s, Message: %s";
-    private final FhirServicesService fhirServicesService;
+    private final MatFhirServices matFhirServices;
 
-    public CqlConversionService(FhirServicesService fhirServicesService) {
-        this.fhirServicesService = fhirServicesService;
+    public CqlConversionService(MatFhirServices matFhirServices) {
+        this.matFhirServices = matFhirServices;
     }
 
     /* MatLibrarySourceProvider places version and service in thread local */
     public void setUpMatLibrarySourceProvider(String cql) {
         CqlParser cqlParser = new CqlParser(cql);
-        CqlParser.LibraryProperties libraryProperties = cqlParser.getLibrary();
 
-        MatLibrarySourceProvider.setQdmVersion(libraryProperties);
-        MatLibrarySourceProvider.setFhirServicesService(fhirServicesService);
+        MatLibrarySourceProvider.setQdmVersion(cqlParser.getUsing());
+        MatLibrarySourceProvider.setFhirServicesService(matFhirServices);
     }
 
     public String processCqlDataWithErrors(RequestData requestData) {

@@ -18,11 +18,17 @@ vsac-client:
   use-cache: on
   cache-directory: /opt/vsac/cache
 
-library:
-  unconverted:
-    directory: /opt/library/unconverted
-  fhir:
-    directory: /opt/library/fhir
+library-files:
+  unconverted-directory: /opt/library/unconverted
+  fhir-directory: /opt/library/fhir
+  order:
+    - FHIRHelpers-4.0.0.cql
+    - SupplementalDataElements_FHIR4-1.0.0.cql
+    - AdultOutpatientEncounters_FHIR4-1.1.000.cql
+    - MATGlobalCommonFunctions_FHIR4-4.0.000.cql
+    - AdvancedIllnessandFrailtyExclusion_FHIR4
+    - TJCOverall_FHIR4-4.0.000.cql
+
 
 measures:
   allowed:

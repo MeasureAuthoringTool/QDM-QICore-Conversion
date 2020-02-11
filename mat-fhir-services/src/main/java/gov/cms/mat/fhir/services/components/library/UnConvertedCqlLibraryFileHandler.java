@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.components.library;
 
+import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,15 +15,18 @@ import java.util.List;
 @Slf4j
 public class UnConvertedCqlLibraryFileHandler implements FileHandler {
     private static final String EXTENSION = ".cql";
+    private final LibraryConversionFileConfig libraryConversionFileConfig;
     private Path path;
 
-    @Value("${library.unconverted.directory}")
-    private String directoryName;
+    public UnConvertedCqlLibraryFileHandler(LibraryConversionFileConfig libraryConversionFileConfig) {
+        this.libraryConversionFileConfig = libraryConversionFileConfig;
+    }
+
 
     @PostConstruct
     public void check() {
-        path = checkAndCreatePath(directoryName);
-        log.info("Cql unconverted directory is: {}", directoryName);
+        path = checkAndCreatePath(libraryConversionFileConfig.getUnconvertedDirectory());
+        log.info("Cql unconverted directory is: {}", libraryConversionFileConfig.getUnconvertedDirectory());
     }
 
     public boolean exists(CqlLibraryFindData findData) {
