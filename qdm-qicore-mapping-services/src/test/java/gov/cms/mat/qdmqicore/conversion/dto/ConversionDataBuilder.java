@@ -1,5 +1,6 @@
 package gov.cms.mat.qdmqicore.conversion.dto;
 
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.ConversionData;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.ConversionEntry;
 

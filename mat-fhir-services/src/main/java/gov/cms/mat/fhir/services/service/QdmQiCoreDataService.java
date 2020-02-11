@@ -12,14 +12,19 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 @Service
 @Slf4j
 public class QdmQiCoreDataService {
     private final RestTemplate restTemplate;
+    private String[] exludeList = new String[]{"Not Performed", "Not Ordered", "Not Recommended", "Not Administered", "Not Dispensed"};
 
     @Value("${qdmqicore.conversion.baseurl}")
-    private String baseURL;
+    private String baseURL = "http://localhost:9090";
 
     public QdmQiCoreDataService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -36,6 +41,43 @@ public class QdmQiCoreDataService {
             log.warn("Cannot get FhirR4QiCoreMapping: {}", fhirR4QiCoreMapping, e);
             throw new QdmQiCoreDataException(e.getMessage());
         }
+    }
+    
+    public List<ConversionMapping> findAll() {
+        URI uri = buildUriForAll();
+        List<ConversionMapping> resultList =  new ArrayList<ConversionMapping>();
+        log.debug("Finding All spreadsheet data: {}", uri);
+        try {
+           
+           ConversionMapping[] tRes = restTemplate.getForObject(uri, ConversionMapping[].class);
+
+           // for timebeing just get rid of the negation values
+
+           for (int i = 0; i < tRes.length; i++) {
+               ConversionMapping cm = tRes[i];
+               String matDataType = cm.getMatDataTypeDescription();
+               if (StringUtils.indexOfAny(matDataType, exludeList) < 0) {
+                   if (cm.getFhirResource() == null || cm.getFhirResource().isEmpty() || cm.getFhirElement() == null || cm.getFhirElement().isEmpty()) {
+                       // do nothing
+                   }
+                   else {
+                        resultList.add(cm);
+                   }
+               }
+           }
+        } catch (RestClientException e) {
+            log.warn("Cannot get FhirR4QiCoreMapping: {}", "All", e);
+            throw new QdmQiCoreDataException(e.getMessage());            
+        }
+        return resultList;
+    }
+    
+    private URI buildUriForAll() {
+        return UriComponentsBuilder
+                .fromHttpUrl(baseURL + "/all")
+                .build()
+                .encode()
+                .toUri();        
     }
 
     private URI buildUri(String matObjectWithAttribute, String fhirR4QiCoreMapping) {

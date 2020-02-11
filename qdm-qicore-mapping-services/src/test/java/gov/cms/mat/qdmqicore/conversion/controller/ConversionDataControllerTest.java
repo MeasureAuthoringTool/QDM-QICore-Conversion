@@ -1,6 +1,6 @@
 package gov.cms.mat.qdmqicore.conversion.controller;
 
-import gov.cms.mat.qdmqicore.conversion.dto.ConversionMapping;
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.exceptions.ConversionMappingDataError;
 import gov.cms.mat.qdmqicore.conversion.exceptions.ConversionMappingNotFound;
 import gov.cms.mat.qdmqicore.conversion.service.ConversionDataService;

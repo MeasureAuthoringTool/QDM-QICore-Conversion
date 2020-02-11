@@ -2,7 +2,7 @@ package gov.cms.mat.qdmqicore.conversion.service;
 
 import gov.cms.mat.qdmqicore.conversion.data.SearchData;
 import gov.cms.mat.qdmqicore.conversion.dto.ConversionDataBuilder;
-import gov.cms.mat.qdmqicore.conversion.dto.ConversionMapping;
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.ConversionEntry;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.FhirQdmMappingData;
 import org.junit.jupiter.api.BeforeEach;
