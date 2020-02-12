@@ -63,7 +63,7 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
                 log.info("Already Exists Standard Fhir cql lib url: {}, : Properties: {}",
                         library.get().getUrl(), libraryProperties);
             } else {
-                String elm = cqlLibraryTranslationService.convertToJsonFromCql(atomicBoolean, cql);
+                String elm = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, cql);
 
                 FhirLibraryTranslator fhirLibraryTranslator = new FhirLibraryTranslator(cql.getBytes(),
                         elm.getBytes(),

@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class MatLibrarySourceProvider implements LibrarySourceProvider {
-
     private static final ConcurrentHashMap<String, String> cqlLibraries = new ConcurrentHashMap<>();
     private static final ThreadLocal<CqlParser.UsingProperties> threadLocalValue = new ThreadLocal<>();
     private static MatFhirServices matFhirServices;
@@ -28,14 +27,6 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
         threadLocalValue.set(usingProperties);
     }
 
-    public static boolean isLibraryInMap(String name, String qdmVersion, String version) {
-        return cqlLibraries.contains(createKey(name, qdmVersion, version));
-    }
-
-    public static void addLibraryInMap(String name, String qdmVersion, String version, String cql) {
-        cqlLibraries.put(createKey(name, qdmVersion, version), cql);
-    }
-
     private static String createKey(String name, String qdmVersion, String version) {
         return name + "-" + qdmVersion + "-" + version;
     }
@@ -46,58 +37,33 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
         String key = createKey(libraryIdentifier.getId(), usingVersion, libraryIdentifier.getVersion());
 
         if (cqlLibraries.containsKey(key)) {
-            return getInputStream(cqlLibraries.get(key));
-        }
-
-        if (threadLocalValue.get().getLibraryType().equals("FHIR")) {
-
-            String cql = matFhirServices.getFhirCql(libraryIdentifier.getId(), libraryIdentifier.getVersion());
-
-            //  String  cql = matFhirServices.getMatCql(libraryIdentifier.getId(), libraryIdentifier.getVersion(), usingVersion);
-
-            if (StringUtils.isEmpty(cql)) {
-                log.debug("Did not find any cql");
-                return null;
-            } else {
-                cqlLibraries.put(key, cql);
-                return getInputStream(cql);
-            }
+            return getInputStream(cqlLibraries.get(key)); // do we need to expire cache ?????
         } else {
+            return processLibrary(libraryIdentifier, usingVersion, key);
+        }
+    }
+
+    public InputStream processLibrary(VersionedIdentifier libraryIdentifier, String usingVersion, String key) {
+        if (threadLocalValue.get().getLibraryType().equals("QDM")) {
+            String cql = matFhirServices.getMatCql(libraryIdentifier.getId(), libraryIdentifier.getVersion(), usingVersion);
+            return processCqlFromService(key, cql);
+        } else if (threadLocalValue.get().getLibraryType().equals("FHIR")) {
+            String cql = matFhirServices.getFhirCql(libraryIdentifier.getId(), libraryIdentifier.getVersion());
+            return processCqlFromService(key, cql);
+        } else {
+            log.error("Cannot process Library for key: {}", key);
             return null;
         }
+    }
 
-
-//        if (libraryIdentifier.getId().toLowerCase().contains("fhir")) {
-//            String resource = String.format("/org/hl7/fhir/%s-%s.cql",
-//                    libraryIdentifier.getId(),
-//                    libraryIdentifier.getVersion());
-//
-//            log.info("Loading FHIR library source: {}", resource);
-//
-//            return FhirLibrarySourceProvider.class.getResourceAsStream(resource);
-//        } else {
-//
-//
-//
-//            String key = createKey(libraryIdentifier.getId(), usingVersion, libraryIdentifier.getVersion());
-//
-//            String cql = cqlLibraries.get(key);
-//
-//            if (StringUtils.isEmpty(cql)) {
-//
-//                cql = fhirServicesService.getCql(libraryIdentifier.getId(), libraryIdentifier.getVersion(), usingVersion);
-//
-//                if (StringUtils.isEmpty(cql)) {
-//                    log.debug("Did not find any cql");
-//                    return null;
-//                } else {
-//                    cqlLibraries.put(key, cql);
-//                    return getInputStream(cql);
-//                }
-//            } else {
-//                return getInputStream(cql);
-//            }
-//        }
+    private InputStream processCqlFromService(String key, String cql) {
+        if (StringUtils.isEmpty(cql)) {
+            log.debug("Did not find any cql for key : {}", key);
+            return null;
+        } else {
+            cqlLibraries.put(key, cql);
+            return getInputStream(cql);
+        }
     }
 
     public InputStream getInputStream(String cql) {

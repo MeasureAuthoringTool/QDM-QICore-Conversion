@@ -15,11 +15,16 @@ import java.util.stream.Collectors;
 public class ConversionDataService {
     private final FhirQdmMappingData fhirQdmMappingData;
     private final CqlConfigProperties cqlConfigProperties;
+    private final String[] negations;
 
     public ConversionDataService(FhirQdmMappingData fhirQdmMappingData,
                                  CqlConfigProperties cqlConfigProperties) {
         this.fhirQdmMappingData = fhirQdmMappingData;
         this.cqlConfigProperties = cqlConfigProperties;
+
+
+        negations = cqlConfigProperties.getNegations().toArray(new String[0]);
+
     }
 
     public List<ConversionMapping> getAll() {
@@ -41,22 +46,19 @@ public class ConversionDataService {
         return fhirQdmMappingData.getAll()
                 .stream()
                 .filter(this::filterNulls)
-                .filter(s -> filterNegations(s))
+                .filter(this::filterNegations)
                 .filter(conversionEntry -> filterBySearchData(conversionEntry, searchData))
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     private boolean filterNegations(ConversionEntry cm) {
-        return StringUtils.indexOfAny(cm.getMatDataTypeDescriptionData(),
-                cqlConfigProperties.getNegations().toArray(new String[0])) < 0;
+        return StringUtils.indexOfAny(cm.getMatDataTypeDescriptionData(), negations) < 0;
     }
 
     private boolean filterNulls(ConversionEntry cm) {
         return (StringUtils.isNotEmpty(cm.getFhirResourceData()) && StringUtils.isNotEmpty(cm.getFhirElementData()));
-
     }
-
 
     private ConversionMapping mapToDto(ConversionEntry entry) {
         return ConversionMapping.builder()

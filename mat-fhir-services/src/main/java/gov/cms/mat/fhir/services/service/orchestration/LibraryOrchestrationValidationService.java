@@ -4,6 +4,7 @@ import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
+import gov.cms.mat.fhir.services.components.cql.CqlLibraryConverter;
 import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryFileHandler;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
@@ -41,17 +42,18 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     private final CqlLibraryDataService cqlLibraryDataService;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
-
     private final UnConvertedCqlLibraryFileHandler unConvertedCqlLibraryFileHandler;
+    private final CqlLibraryConverter cqlLibraryConverter;
 
     public LibraryOrchestrationValidationService(HapiFhirServer hapiFhirServer,
                                                  CqlLibraryDataService cqlLibraryDataService,
                                                  CQLLibraryTranslationService cqlLibraryTranslationService,
-                                                 UnConvertedCqlLibraryFileHandler unConvertedCqlLibraryFileHandler) {
+                                                 UnConvertedCqlLibraryFileHandler unConvertedCqlLibraryFileHandler, CqlLibraryConverter cqlLibraryConverter) {
         super(hapiFhirServer);
         this.cqlLibraryDataService = cqlLibraryDataService;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
         this.unConvertedCqlLibraryFileHandler = unConvertedCqlLibraryFileHandler;
+        this.cqlLibraryConverter = cqlLibraryConverter;
     }
 
     public void processIncludedLibrary(CqlParser.IncludeProperties include, CqlParser.UsingProperties using) {
@@ -94,22 +96,60 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     boolean validate(OrchestrationProperties properties) {
 
+        translateCqlMatLibsToFhir(properties);
+
+        return validateLibs(properties);
+    }
+
+    private boolean validateLibs(OrchestrationProperties properties) {
+        AtomicBoolean atomicBoolean = new AtomicBoolean(true);
+
+        properties.getCqlLibraries()
+                .forEach(matLib -> validateQdm(matLib, atomicBoolean));
+
+        if (!atomicBoolean.get()) {
+            log.warn("IGNORED FOR TESTING: Terminal message errorMessage: {},  ConversionOutcome:{}",
+                    VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
+            //ConversionReporter.setTerminalMessage(VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
+        }
+
+        properties.getCqlLibraries()
+                .forEach(matLib -> convertQdm(matLib));
+
+        // When no errors we would then convert to fhir and validate - for initial testing do for ALL
+
+//        properties.getCqlLibraries()
+//                .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
+
+        return atomicBoolean.get();
+    }
+
+    private void convertQdm(CqlLibrary matLib) {
+        String qdmCql = ConversionReporter.getCql(matLib.getId());
+        String fhirCql = cqlLibraryConverter.convert(qdmCql);
+        ConversionReporter.setFhirCql(fhirCql, matLib.getId());
+
+        AtomicBoolean atomicBoolean = new AtomicBoolean(true);
+        String fhirJson = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, fhirCql);
+        ConversionReporter.setFhirJson(fhirJson, matLib.getId());
+    }
+
+    private void validateQdm(CqlLibrary matLib, AtomicBoolean atomicBoolean) {
+        String cql = ConversionReporter.getCql(matLib.getId());
+        String json = cqlLibraryTranslationService.convertToJson(matLib,
+                atomicBoolean,
+                cql,
+                CQLLibraryTranslationService.ConversionType.QDM);
+
+        ConversionReporter.setElm(json, matLib.getId());
+    }
+
+    private void translateCqlMatLibsToFhir(OrchestrationProperties properties) {
         List<Library> libraryList = properties.getCqlLibraries().stream()
                 .map(this::translateCqlLib)
                 .collect(Collectors.toList());
 
         properties.getFhirLibraries().addAll(libraryList);
-
-        AtomicBoolean atomicBoolean = new AtomicBoolean(true);
-
-        properties.getCqlLibraries()
-                .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
-
-        if (!atomicBoolean.get()) {
-            ConversionReporter.setTerminalMessage(VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
-        }
-
-        return atomicBoolean.get();
     }
 
     private Library translateCqlLib(CqlLibrary cqlLibrary) {
@@ -132,7 +172,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
 
     private FhirLibraryResourceValidationResult validate(CqlLibrary matCqlLibrary, Library fhirLibrary, AtomicBoolean atomicBoolean) {
-
         FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(matCqlLibrary.getId());
         response.setMeasureId(matCqlLibrary.getMeasureId());
 
@@ -142,7 +181,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
         List<FhirValidationResult> list = buildResults(response);
         ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibrary.getId());
-
 
         list.forEach(v -> isValid(v, atomicBoolean));
 
@@ -154,5 +192,4 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
         return response;
     }
-
 }

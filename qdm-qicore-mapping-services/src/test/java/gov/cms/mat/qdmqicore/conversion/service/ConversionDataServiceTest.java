@@ -31,11 +31,9 @@ class ConversionDataServiceTest implements ConversionDataBuilder {
     @InjectMocks
     private ConversionDataService conversionDataService;
 
-    private ConversionMapping conversionMapping;
-
     @BeforeEach
     void setUp() {
-        conversionMapping = buildConversionMapping();
+        ConversionMapping conversionMapping = buildConversionMapping();
         ConversionEntry conversionEntry = createConversionEntryWithData(conversionMapping);
 
         when(fhirQdmMappingData.getAll()).thenReturn(Collections.singletonList(conversionEntry));
@@ -69,6 +67,7 @@ class ConversionDataServiceTest implements ConversionDataBuilder {
         assertEquals(1, mappingList.size());
 
         verify(fhirQdmMappingData).getAll();
+        verify(cqlConfigProperties).getNegations();
     }
 
     @Test

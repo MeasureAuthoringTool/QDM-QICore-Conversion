@@ -25,5 +25,4 @@ public class LibraryConversionResults {
     public LibraryConversionResults(String matId) {
         this.matId = matId;
     }
-
 }

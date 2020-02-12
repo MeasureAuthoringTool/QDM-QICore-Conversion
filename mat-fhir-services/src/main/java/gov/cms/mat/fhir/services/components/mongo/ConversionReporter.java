@@ -72,9 +72,20 @@ public class ConversionReporter {
         conversionReporter.addCqlConversionErrors(errors, matLibraryId);
     }
 
+    public static void setFhirCqlConversionErrors(List<CqlConversionError> errors, String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addFhirCqlConversionErrors(errors, matLibraryId);
+    }
+
     public static void setMatCqlConversionExceptions(List<MatCqlConversionException> errors, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addMatCqlConversionErrors(errors, matLibraryId);
+    }
+
+
+    public static void setFhirMatCqlConversionExceptions(List<MatCqlConversionException> errors, String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addFhirMatCqlConversionErrors(errors, matLibraryId);
     }
 
     public static void setCql(String cql, String name, BigDecimal version, String matLibraryId) {
@@ -83,6 +94,22 @@ public class ConversionReporter {
         String versionString = version == null ? "null" : version.toString();
 
         conversionReporter.addCql(cql, name, versionString, matLibraryId);
+    }
+
+    public static void setFhirCql(String fhirCql, String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addFhirCql(fhirCql, matLibraryId);
+    }
+
+    public static void setFhirJson(String fhirJson, String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addFhirJson(fhirJson, matLibraryId);
+    }
+
+    public static String getCql(String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        return conversionReporter.getCqlString(matLibraryId);
     }
 
     public static void setElm(String json, String matLibraryId) {
@@ -285,6 +312,18 @@ public class ConversionReporter {
         conversionResultsService.addCql(key, cql, name, version, matLibraryId);
     }
 
+    private void addFhirCql(String cql, String matLibraryId) {
+        conversionResultsService.addFhirCql(key, cql, matLibraryId);
+    }
+
+    private void addFhirJson(String json, String matLibraryId) {
+        conversionResultsService.addFhirJson(key, json, matLibraryId);
+    }
+
+    private String getCqlString(String matLibraryId) {
+        return conversionResultsService.getCql(key, matLibraryId);
+    }
+
     private void addElm(String json, String matLibraryId) {
         conversionResultsService.addElm(key, json, matLibraryId);
     }
@@ -293,8 +332,16 @@ public class ConversionReporter {
         conversionResultsService.addCqlConversionErrors(key, errors, matLibraryId);
     }
 
+    private void addFhirCqlConversionErrors(List<CqlConversionError> errors, String matLibraryId) {
+        conversionResultsService.addFhirCqlConversionErrors(key, errors, matLibraryId);
+    }
+
     private void addMatCqlConversionErrors(List<MatCqlConversionException> errors, String matLibraryId) {
         conversionResultsService.addMatCqlConversionErrors(key, errors, matLibraryId);
+    }
+
+    private void addFhirMatCqlConversionErrors(List<MatCqlConversionException> errors, String matLibraryId) {
+        conversionResultsService.addFhirMatCqlConversionErrors(key, errors, matLibraryId);
     }
 
     private void addFhirMeasureValidationResults(List<FhirValidationResult> list) {

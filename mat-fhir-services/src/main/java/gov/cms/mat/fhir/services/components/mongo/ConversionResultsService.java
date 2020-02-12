@@ -131,6 +131,7 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
+
     public void addCql(ThreadSessionKey key, String cql, String name, String version, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
@@ -141,6 +142,29 @@ public class ConversionResultsService {
         libraryConversionResults.getCqlConversionResult().setCql(cql);
 
         save(conversionResult);
+    }
+
+    public void addFhirCql(ThreadSessionKey key, String cql, String matLibraryId) {
+        ConversionResult conversionResult = findOrCreate(key);
+        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+
+        libraryConversionResults.getCqlConversionResult().setFhirCql(cql);
+        save(conversionResult);
+    }
+
+    public void addFhirJson(ThreadSessionKey key, String json, String matLibraryId) {
+        ConversionResult conversionResult = findOrCreate(key);
+        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+
+        libraryConversionResults.getCqlConversionResult().setFhirElm(json);
+        save(conversionResult);
+    }
+
+    public String getCql(ThreadSessionKey key, String matLibraryId) {
+        ConversionResult conversionResult = findOrCreate(key);
+        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+
+        return libraryConversionResults.getCqlConversionResult().getCql();
     }
 
     public void addElm(ThreadSessionKey key, String json, String matLibraryId) {
@@ -161,11 +185,29 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
+    public void addFhirCqlConversionErrors(ThreadSessionKey key, List<CqlConversionError> errors, String matLibraryId) {
+        ConversionResult conversionResult = findOrCreate(key);
+        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+        libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
+        libraryConversionResults.getCqlConversionResult().getFhirCqlConversionErrors().addAll(errors);
+
+        save(conversionResult);
+    }
+
     public void addMatCqlConversionErrors(ThreadSessionKey key, List<MatCqlConversionException> errors, String matLibraryId) {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
         libraryConversionResults.getCqlConversionResult().getMatCqlConversionErrors().addAll(errors);
+
+        save(conversionResult);
+    }
+
+    public void addFhirMatCqlConversionErrors(ThreadSessionKey key, List<MatCqlConversionException> errors, String matLibraryId) {
+        ConversionResult conversionResult = findOrCreate(key);
+        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+        libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
+        libraryConversionResults.getCqlConversionResult().getFhirMatCqlConversionErrors().addAll(errors);
 
         save(conversionResult);
     }

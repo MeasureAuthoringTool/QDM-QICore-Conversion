@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
-import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
@@ -91,11 +90,8 @@ public class OrchestrationService {
         String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml());
         ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
 
-        libraryOrchestrationValidationService.processIncludes(cql);
-    }
 
-    private void processInclude(CqlParser.IncludeProperties include, CqlParser.UsingProperties using) {
-        libraryOrchestrationValidationService.processIncludedLibrary(include, using);
+       // libraryOrchestrationValidationService.processIncludes(cql);
     }
 
 

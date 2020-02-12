@@ -124,8 +124,8 @@ public class OrchestrationBatchController {
         try {
             orchestrationController.translateMeasureById(id, conversionType, xmlSource, batchId);
         } catch (Exception e) {
-            log.info("Error for id: {}, reason: {}", id, e.getMessage());
-            log.debug("Error for id: {}", id, e);
+            log.warn("Error for id: {}, reason: {}", id, e.getMessage());
+            log.info("Error for id: {}", id, e);
         }
     }
 
