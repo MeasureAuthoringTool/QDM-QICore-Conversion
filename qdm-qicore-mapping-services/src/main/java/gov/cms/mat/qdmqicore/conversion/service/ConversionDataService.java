@@ -69,6 +69,7 @@ public class ConversionDataService {
                 .fhirResource(entry.getFhirResourceData())
                 .fhirElement(entry.getFhirElementData())
                 .fhirType(entry.getFhirTypeData())
+                .hashValue(entry.hashCode())
                 .build();
     }
 
