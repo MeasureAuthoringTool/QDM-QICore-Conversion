@@ -12,9 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,7 +22,7 @@ public class QdmQiCoreDataService {
     private String[] exludeList = new String[]{"Not Performed", "Not Ordered", "Not Recommended", "Not Administered", "Not Dispensed"};
 
     @Value("${qdmqicore.conversion.baseurl}")
-    private String baseURL = "http://localhost:9090";
+    private String baseURL;
 
     public QdmQiCoreDataService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -42,42 +40,49 @@ public class QdmQiCoreDataService {
             throw new QdmQiCoreDataException(e.getMessage());
         }
     }
-    
-    public List<ConversionMapping> findAll() {
-        URI uri = buildUriForAll();
-        List<ConversionMapping> resultList =  new ArrayList<ConversionMapping>();
+
+    public List<ConversionMapping> findAllFilteredByMatDataTypeDescription(String matDataTypeDescription) {
+        URI uri = buildUriForAllFilteredByMatDataTypeDescription(matDataTypeDescription);
+        log.debug("Finding All spreadsheet data by matDataTypeDescription: {}", uri);
+        return restExcchange(uri);
+    }
+
+    public List<ConversionMapping> findAllFiltered() {
+        URI uri = buildUriForAllFiltered();
         log.debug("Finding All spreadsheet data: {}", uri);
+        return restExcchange(uri);
+    }
+
+    public List<ConversionMapping> restExcchange(URI uri) {
         try {
-           
-           ConversionMapping[] tRes = restTemplate.getForObject(uri, ConversionMapping[].class);
+            ConversionMapping[] mappings = restTemplate.getForObject(uri, ConversionMapping[].class);
 
-           // for timebeing just get rid of the negation values
-
-           for (int i = 0; i < tRes.length; i++) {
-               ConversionMapping cm = tRes[i];
-               String matDataType = cm.getMatDataTypeDescription();
-               if (StringUtils.indexOfAny(matDataType, exludeList) < 0) {
-                   if (cm.getFhirResource() == null || cm.getFhirResource().isEmpty() || cm.getFhirElement() == null || cm.getFhirElement().isEmpty()) {
-                       // do nothing
-                   }
-                   else {
-                        resultList.add(cm);
-                   }
-               }
-           }
+            if (mappings == null) {
+                throw new QdmQiCoreDataException("No results found");
+            } else {
+                return Arrays.asList(mappings);
+            }
         } catch (RestClientException e) {
             log.warn("Cannot get FhirR4QiCoreMapping: {}", "All", e);
-            throw new QdmQiCoreDataException(e.getMessage());            
+            throw new QdmQiCoreDataException(e.getMessage());
         }
-        return resultList;
     }
-    
-    private URI buildUriForAll() {
+
+    private URI buildUriForAllFiltered() {
         return UriComponentsBuilder
-                .fromHttpUrl(baseURL + "/all")
+                .fromHttpUrl(baseURL + "/filtered")
                 .build()
                 .encode()
-                .toUri();        
+                .toUri();
+    }
+
+    private URI buildUriForAllFilteredByMatDataTypeDescription(String matDataTypeDescription) {
+        return UriComponentsBuilder
+                .fromHttpUrl(baseURL + "/filtered")
+                .queryParam("matDataTypeDescription", matDataTypeDescription)
+                .build()
+                .encode()
+                .toUri();
     }
 
     private URI buildUri(String matObjectWithAttribute, String fhirR4QiCoreMapping) {

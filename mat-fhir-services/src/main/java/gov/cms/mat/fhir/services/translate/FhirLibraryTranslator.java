@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.LibraryProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Library;
@@ -19,7 +20,7 @@ public class FhirLibraryTranslator extends LibraryTranslatorBase {
 
     @Override
     void translate(String version, Library fhirLibrary) {
-        CqlParser.LibraryProperties libraryProperties = cqlParser.getLibrary();
+        LibraryProperties libraryProperties = cqlParser.getLibrary();
 
         String uuid = createLibraryUuid(libraryProperties);
         log.info("uuid: {} from: {}", uuid, libraryProperties);

@@ -1,7 +1,7 @@
 package gov.cms.mat.qdmqicore.conversion.service;
 
+import gov.cms.mat.cql.CqlNegations;
 import gov.cms.mat.fhir.rest.dto.ConversionMapping;
-import gov.cms.mat.qdmqicore.conversion.config.CqlConfigProperties;
 import gov.cms.mat.qdmqicore.conversion.data.SearchData;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.ConversionEntry;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.FhirQdmMappingData;
@@ -14,17 +14,11 @@ import java.util.stream.Collectors;
 @Service
 public class ConversionDataService {
     private final FhirQdmMappingData fhirQdmMappingData;
-    private final CqlConfigProperties cqlConfigProperties;
     private final String[] negations;
 
-    public ConversionDataService(FhirQdmMappingData fhirQdmMappingData,
-                                 CqlConfigProperties cqlConfigProperties) {
+    public ConversionDataService(FhirQdmMappingData fhirQdmMappingData) {
         this.fhirQdmMappingData = fhirQdmMappingData;
-        this.cqlConfigProperties = cqlConfigProperties;
-
-
-        negations = cqlConfigProperties.getNegations().toArray(new String[0]);
-
+        negations = CqlNegations.getNegations();
     }
 
     public List<ConversionMapping> getAll() {

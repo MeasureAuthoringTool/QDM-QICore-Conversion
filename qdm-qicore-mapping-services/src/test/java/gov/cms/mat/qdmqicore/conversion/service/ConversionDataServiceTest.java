@@ -1,7 +1,6 @@
 package gov.cms.mat.qdmqicore.conversion.service;
 
 import gov.cms.mat.fhir.rest.dto.ConversionMapping;
-import gov.cms.mat.qdmqicore.conversion.config.CqlConfigProperties;
 import gov.cms.mat.qdmqicore.conversion.data.SearchData;
 import gov.cms.mat.qdmqicore.conversion.dto.ConversionDataBuilder;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.ConversionEntry;
@@ -25,8 +24,7 @@ import static org.mockito.Mockito.when;
 class ConversionDataServiceTest implements ConversionDataBuilder {
     @Mock
     private FhirQdmMappingData fhirQdmMappingData;
-    @Mock
-    private CqlConfigProperties cqlConfigProperties;
+
 
     @InjectMocks
     private ConversionDataService conversionDataService;
@@ -67,7 +65,6 @@ class ConversionDataServiceTest implements ConversionDataBuilder {
         assertEquals(1, mappingList.size());
 
         verify(fhirQdmMappingData).getAll();
-        verify(cqlConfigProperties).getNegations();
     }
 
     @Test
@@ -81,6 +78,4 @@ class ConversionDataServiceTest implements ConversionDataBuilder {
 
         verify(fhirQdmMappingData).getAll();
     }
-
-
 }

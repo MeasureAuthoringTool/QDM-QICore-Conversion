@@ -1,6 +1,6 @@
 package gov.cms.mat.cql_elm_translation.cql_translator;
 
-import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.cql_elm_translation.service.MatFhirServices;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -16,14 +16,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class MatLibrarySourceProvider implements LibrarySourceProvider {
     private static final ConcurrentHashMap<String, String> cqlLibraries = new ConcurrentHashMap<>();
-    private static final ThreadLocal<CqlParser.UsingProperties> threadLocalValue = new ThreadLocal<>();
+    private static final ThreadLocal<UsingProperties> threadLocalValue = new ThreadLocal<>();
     private static MatFhirServices matFhirServices;
 
     public static void setFhirServicesService(MatFhirServices matFhirServices) {
         MatLibrarySourceProvider.matFhirServices = matFhirServices;
     }
 
-    public static void setQdmVersion(CqlParser.UsingProperties usingProperties) {
+    public static void setQdmVersion(UsingProperties usingProperties) {
         threadLocalValue.set(usingProperties);
     }
 

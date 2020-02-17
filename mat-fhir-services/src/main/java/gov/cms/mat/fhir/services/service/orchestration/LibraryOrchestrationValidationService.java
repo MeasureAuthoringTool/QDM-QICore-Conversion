@@ -1,6 +1,8 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.IncludeProperties;
+import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
@@ -56,7 +58,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         this.cqlLibraryConverter = cqlLibraryConverter;
     }
 
-    public void processIncludedLibrary(CqlParser.IncludeProperties include, CqlParser.UsingProperties using) {
+    public void processIncludedLibrary(IncludeProperties include, UsingProperties using) {
 
         Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(include.getVersion(), include.getName());
 
@@ -87,8 +89,8 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     public void processIncludes(String cql) {
         CqlParser cqlParser = new CqlParser(cql);
-        List<CqlParser.IncludeProperties> includes = cqlParser.getIncludes();
-        CqlParser.UsingProperties using = cqlParser.getUsing();
+        List<IncludeProperties> includes = cqlParser.getIncludes();
+        UsingProperties using = cqlParser.getUsing();
 
         // when no more includes recursion will stop
         includes.forEach(includeProperties -> processIncludedLibrary(includeProperties, using));

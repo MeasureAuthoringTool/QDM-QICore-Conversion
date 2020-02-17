@@ -1,6 +1,6 @@
 package gov.cms.mat.cql.parsers;
 
-import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.UsingProperties;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 public interface UsingParser {
     String[] getLines();
 
-    default CqlParser.UsingProperties getUsing() {
+    default UsingProperties getUsing() {
         return Arrays.stream(getLines())
                 .filter(l -> l.startsWith("using"))
                 .map(this::buildUsingProperties)
@@ -16,10 +16,11 @@ public interface UsingParser {
                 .orElse(null);
     }
 
-    default CqlParser.UsingProperties buildUsingProperties(String line) {
-        return CqlParser.UsingProperties.builder()
+    default UsingProperties buildUsingProperties(String line) {
+        return UsingProperties.builder()
                 .libraryType(getUsingLibraryType(line))
                 .version(getUsingLibraryVersion(line))
+                .line(line)
                 .build();
     }
 

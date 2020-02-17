@@ -8,6 +8,8 @@ package gov.cms.mat.fhir.services.cql;
 import com.google.common.io.Files;
 import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.springframework.web.client.RestTemplate;
 
 /**
  *
@@ -52,7 +53,7 @@ public class QdmCqlToFhirCql {
     
     private void loadMappings() {
         qdmQicoreDataService = new QdmQiCoreDataService(restTemplate);
-        cList = qdmQicoreDataService.findAll();
+        cList = qdmQicoreDataService.findAllFiltered();
     }
     /**
      * @param args the command line arguments
@@ -187,14 +188,16 @@ public class QdmCqlToFhirCql {
                     }
                 }
                 res = res + "\r\n";
-            } catch(Exception ex) {
-                    System.out.println(ex.getMessage());
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
             }
             sb.append(res);
         }
-        
+
     }
-    
+
+    // igmore codesystems and valueset code , parameter context  DEFINE "SDE "
+
     private String processLibraryName(String line) {
         String res = "";
         StringTokenizer st = new StringTokenizer(line);
@@ -202,7 +205,7 @@ public class QdmCqlToFhirCql {
         String nameQDM = st.nextToken();
         String nameFHIR = nameQDM + "_FHIR";
         res = line.replace(nameQDM, nameFHIR);
-        
+
         return res;        
     }
     
@@ -261,9 +264,7 @@ public class QdmCqlToFhirCql {
     
     private String getFHIRResourceName(String matDataTypeDesc) {
         String res = "Unknown";
-        Iterator iter = cList.iterator();
-        while (iter.hasNext()) {
-            ConversionMapping cm = (ConversionMapping)iter.next();
+        for (ConversionMapping cm : cList) {
             if (cm.getMatDataTypeDescription().equals(matDataTypeDesc) && !cm.getFhirResource().isEmpty()) {
                 res = cm.getFhirResource();
                 break;
@@ -274,9 +275,7 @@ public class QdmCqlToFhirCql {
     
     private String getFHIRAttribute(String matDataType, String matAttribute) {
         String res = "Unknown";
-        Iterator iter = cList.iterator();
-        while (iter.hasNext()) {
-            ConversionMapping cm = (ConversionMapping)iter.next();
+        for (ConversionMapping cm : cList) {
             if (cm.getMatDataTypeDescription().equals(matDataType.trim()) && cm.getMatAttributeName().equals(matAttribute.trim())) {
                 res = cm.getFhirElement();
                 break;

@@ -1,6 +1,6 @@
 package gov.cms.mat.cql.parsers;
 
-import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.LibraryProperties;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 public interface LibraryParser {
     String[] getLines();
 
-    default CqlParser.LibraryProperties getLibrary() {
+    default LibraryProperties getLibrary() {
         return Arrays.stream(getLines())
                 .filter(l -> l.startsWith("library"))
                 .map(this::buildLibraryProperties)
@@ -16,10 +16,11 @@ public interface LibraryParser {
                 .orElseThrow(() -> new ParseException("Cannot find library"));
     }
 
-    default CqlParser.LibraryProperties buildLibraryProperties(String line) {
-        return CqlParser.LibraryProperties.builder()
+    default LibraryProperties buildLibraryProperties(String line) {
+        return LibraryProperties.builder()
                 .name(getLibraryName(line))
                 .version(getLibraryVersion(line))
+                .line(line)
                 .build();
     }
 

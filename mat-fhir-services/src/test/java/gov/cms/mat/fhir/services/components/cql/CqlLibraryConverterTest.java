@@ -4,18 +4,22 @@ import gov.cms.mat.fhir.services.ResourceFileUtil;
 
 class CqlLibraryConverterTest implements ResourceFileUtil {
 
-    CqlLibraryConverter cqlLibraryConverter;
+ //   CqlLibraryConverter cqlLibraryConverter;
 
 
-    void convert() {
-
-//        String sourceCql  =  getStringFromResource("/bad.cql");
-//        cqlLibraryConverter = new CqlLibraryConverter();
-//        String  convertedCql = cqlLibraryConverter.convert(sourceCql);
+  //  @Test
+  void convert() {
+//        RestTemplate restTemplate = new RestTemplate();
+//        QdmQiCoreDataService qdmQiCoreDataService = new QdmQiCoreDataService(restTemplate);
+//        ReflectionTestUtils.setField(qdmQiCoreDataService, "baseURL", "http://localhost:9090");
+//
+//        String sourceCql = getStringFromResource("/SepsisLactateClearanceRate_1.0.001.cql");
+//        cqlLibraryConverter = new CqlLibraryConverter(qdmQiCoreDataService);
+//        String convertedCql = cqlLibraryConverter.convert(sourceCql);
 //
 //        assertNotNull(convertedCql);
 //
+//        System.out.println(convertedCql);
 
-
-    }
+  }
 }

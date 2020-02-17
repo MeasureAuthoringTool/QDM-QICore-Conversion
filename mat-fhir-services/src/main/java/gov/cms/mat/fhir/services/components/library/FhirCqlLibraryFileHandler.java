@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.components.library;
 
 
 import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.LibraryProperties;
 import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
@@ -50,7 +51,7 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     private void processHapiFhir(String cql) {
 
         CqlParser cqlParser = new CqlParser(cql);
-        CqlParser.LibraryProperties libraryProperties = cqlParser.getLibrary();
+        LibraryProperties libraryProperties = cqlParser.getLibrary();
 
         try {
             String uuid = createLibraryUuid(libraryProperties);
