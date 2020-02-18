@@ -168,11 +168,15 @@ public class ConversionReporter {
     public static ThreadSessionKey setInThreadLocal(String measureId,
                                                     String batchId,
                                                     ConversionResultsService conversionResultsService,
-                                                    Instant instant, ConversionType conversionType) {
+                                                    Instant instant,
+                                                    ConversionType conversionType,
+                                                    boolean showWarnings) {
         removeInThreadLocal();
         threadLocal.set(new ConversionReporter(measureId, conversionResultsService, instant));
         setConversionType(conversionType);
         setBatchId(batchId);
+        setShowWarnings(showWarnings);
+
         return getKey();
     }
 
@@ -266,8 +270,17 @@ public class ConversionReporter {
         conversionReporter.addBatchId(batchId);
     }
 
+    public static void setShowWarnings(boolean flag) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addShowWarnings(flag);
+    }
+
     private void addBatchId(String batchId) {
         conversionResultsService.addBatchId(key, batchId);
+    }
+
+    private void addShowWarnings(boolean flag) {
+        conversionResultsService.addShowWarnings(key, flag);
     }
 
     private void addErrorMessage(String message, ConversionOutcome outcome) {

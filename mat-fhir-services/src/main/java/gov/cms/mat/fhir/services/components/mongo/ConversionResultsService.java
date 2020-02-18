@@ -329,5 +329,9 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-
+    public void addShowWarnings(ThreadSessionKey key, boolean flag) {
+        ConversionResult conversionResult = findOrCreate(key);
+        conversionResult.setShowWarnings(flag);
+        save(conversionResult);
+    }
 }

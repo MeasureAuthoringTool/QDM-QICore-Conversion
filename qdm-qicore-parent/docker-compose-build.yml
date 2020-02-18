@@ -9,7 +9,7 @@ services:
       - 27017:27017
 
   hapi-fhir-jpaserver:
-    image: hapi-fhir-jpaserver
+    image: greenemcg/hapi-fhir-jpaserver
     container_name: hapi-fhir-jpaserver
     ports:
       - 6060:6060
@@ -31,3 +31,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - 9090:9090
+
+  mat-fhir-services:
+    image: mat-fhir-services
+    container_name: mat-fhir-services
+    environment:
+      VSAC_USER: ${VSAC_USER}
+      VSAC_PASS: ${VSAC_PASS}
+      MAT_DB: ${MAT_DB}
+      MAT_DB_PASS: ${MAT_DB_PASS}
+      MAT_DB_USER: ${MAT_DB_USER}
+    ports:
+      - 9080:9080

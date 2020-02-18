@@ -60,9 +60,15 @@ public class OrchestrationController {
             @RequestParam @Min(10) String id,
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
-            @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId) {
+            @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId,
+            @RequestParam(required = false, defaultValue = "false") boolean showWarnings) {
         ThreadSessionKey threadSessionKey =
-                ConversionReporter.setInThreadLocal(id, batchId, conversionResultsService, Instant.now(), conversionType);
+                ConversionReporter.setInThreadLocal(id,
+                        batchId,
+                        conversionResultsService,
+                        Instant.now(),
+                        conversionType,
+                        showWarnings);
         try {
             Measure matMeasure;
 

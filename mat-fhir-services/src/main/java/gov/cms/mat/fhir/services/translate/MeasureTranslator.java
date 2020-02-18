@@ -29,7 +29,6 @@ public class MeasureTranslator implements FhirCreator {
 
     private final String baseURL;
 
-
     public MeasureTranslator(ManageCompositeMeasureDetailModel measureCompositeModel, String humanReadable, String baseURL) {
         this.matCompositeMeasureModel = measureCompositeModel;
         this.humanReadable = humanReadable;
@@ -74,7 +73,7 @@ public class MeasureTranslator implements FhirCreator {
         processFinalizeDate(fhirMeasure);
         processTypes(fhirMeasure);
         processJurisdiction(fhirMeasure);
-        processPersiod(fhirMeasure);
+        processPeriod(fhirMeasure);
         processTopic(fhirMeasure);
         processRelatedArtifacts(fhirMeasure);
         processScoring(fhirMeasure);
@@ -89,7 +88,7 @@ public class MeasureTranslator implements FhirCreator {
                 "Health Quality Measure Document"));
     }
 
-    public void processPersiod(Measure fhirMeasure) {
+    public void processPeriod(Measure fhirMeasure) {
         PeriodModel pModel = matCompositeMeasureModel.getPeriodModel();
         Period effectivePeriod = buildPeriod(convertDateTimeString(pModel.getStartDate()), convertDateTimeString(pModel.getStopDate()));
         fhirMeasure.setEffectivePeriod(effectivePeriod);
@@ -183,7 +182,7 @@ public class MeasureTranslator implements FhirCreator {
         }
     }
 
-    public void proessMeta(Measure fhirMeasure) {
+    public void proecssMeta(Measure fhirMeasure) {
         Meta measureMeta = new Meta();
         measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
         measureMeta.setVersionId(matCompositeMeasureModel.getVersionNumber());

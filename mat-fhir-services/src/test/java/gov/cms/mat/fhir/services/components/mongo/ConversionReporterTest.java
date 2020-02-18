@@ -40,7 +40,12 @@ class ConversionReporterTest {
     @Test
     void setMeasureResult_Success() {
 
-        ConversionReporter.setInThreadLocal(MEASURE_ID, "TEST", conversionResultsService, Instant.now(), ConversionType.CONVERSION);
+        ConversionReporter.setInThreadLocal(MEASURE_ID,
+                "TEST",
+                conversionResultsService,
+                Instant.now(),
+                ConversionType.CONVERSION,
+                Boolean.TRUE);
         ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 
         verify(conversionResultsService).addMeasureResult(any(), any(FieldConversionResult.class));
@@ -57,7 +62,13 @@ class ConversionReporterTest {
 
     @Test
     void setLibraryResult_Success() {
-        ConversionReporter.setInThreadLocal(MEASURE_ID, "TEST", conversionResultsService, Instant.now(), ConversionType.CONVERSION);
+        ConversionReporter.setInThreadLocal(MEASURE_ID,
+                "TEST",
+                conversionResultsService,
+                Instant.now(),
+                ConversionType.CONVERSION,
+                Boolean.TRUE);
+
         ConversionReporter.setLibraryFieldConversionResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
 
         verify(conversionResultsService).addLibraryFieldConversionResult(any(), any(FieldConversionResult.class), anyString());

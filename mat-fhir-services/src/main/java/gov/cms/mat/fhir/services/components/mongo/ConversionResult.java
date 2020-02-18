@@ -41,6 +41,8 @@ public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHe
 
     private String batchId;
 
+    private Boolean showWarnings;
+
     private String errorReason;
     private ConversionOutcome outcome;
 

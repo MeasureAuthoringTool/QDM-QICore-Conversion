@@ -122,7 +122,7 @@ public class OrchestrationBatchController {
                              String batchId,
                              String id) {
         try {
-            orchestrationController.translateMeasureById(id, conversionType, xmlSource, batchId);
+            orchestrationController.translateMeasureById(id, conversionType, xmlSource, batchId, Boolean.TRUE);
         } catch (Exception e) {
             log.warn("Error for id: {}, reason: {}", id, e.getMessage());
             log.info("Error for id: {}", id, e);
