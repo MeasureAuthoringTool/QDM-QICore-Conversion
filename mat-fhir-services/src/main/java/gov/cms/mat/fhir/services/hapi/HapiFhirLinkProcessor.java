@@ -3,10 +3,7 @@ package gov.cms.mat.fhir.services.hapi;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Measure;
-import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.r4.model.ValueSet;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -34,6 +31,10 @@ public class HapiFhirLinkProcessor {
 
     public Optional<Measure> fetchMeasureByUrl(String url) {
         return fetch(Measure.class, url);
+    }
+
+    public Optional<Library> fetchLibraryByUrl(String url) {
+        return fetch(Library.class, url);
     }
 
     private <T extends Resource> Optional<T> fetch(Class<T> resourceClass, String url) {
