@@ -3,7 +3,7 @@ RUN mkdir -p /opt/vsac/cache
 COPY ./cache  /opt/vsac/cache
 
 RUN mkdir -p /opt/library/fhir
-COPY ./fhir  /opt/vsac/fhir
+COPY ./fhir  /opt/library/fhir
 
 RUN mkdir -p /opt/library/unconverted/
 
