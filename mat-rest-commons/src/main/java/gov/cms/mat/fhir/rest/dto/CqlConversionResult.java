@@ -11,14 +11,25 @@ import java.util.Set;
 public class CqlConversionResult {
     ConversionType type;
     Boolean result;
+
+    /* informative strings of errors */
     List<String> errors = new ArrayList<>();
+
+    /* QDM */
     String cql;
     String elm;
-    List<CqlConversionError> cqlConversionErrors = new ArrayList<>();
+
+    /* results added automatically by cql-elm-translation service when translating qdm elm */
+    List<CqlConversionError> cqlConversionErrors = new ArrayList<>(); // results added automatically by elm  service
+
+    /* results we add for exceptions cql-elm-translation service misses for some reason when translating qdm elm*/
     Set<MatCqlConversionException> matCqlConversionErrors = new HashSet<>();
 
     String fhirCql;
     String fhirElm;
+
+    /* results added automatically by cql-elm-translation service when translating fhir elm */
     List<CqlConversionError> fhirCqlConversionErrors = new ArrayList<>();
+    /* results we add for exceptions cql-elm-translation service misses for some reason when translating fhir elm */
     Set<MatCqlConversionException> fhirMatCqlConversionErrors = new HashSet<>();
 }

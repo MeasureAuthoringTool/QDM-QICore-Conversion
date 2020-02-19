@@ -37,11 +37,10 @@ hs_err_pid*
 
 .DS_Store
 /qdm-qicore-parent/docker-compose-mike.yml
-/mat-fhir-services/cache/
 /qdm-qicore-parent/qdm-qicore-parent.iml
 /mat-fhir-commons/mat-fhir-commons.iml
 /mat-fhir-services/mat-fhir-services.iml
 /mat-rest-commons/mat-rest-commons.iml
 /mat-server-commons/mat-server-commons.iml
 /vsac-mat-conversion/vsac-mat-conversion.iml
-/mat-fhir-services/fhir/
+

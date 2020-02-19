@@ -28,7 +28,9 @@ public interface FhirValidatorProcessor {
 
         ValidationResult validationResult = validator.validateWithResult(resource, options);
 
-        validationResult.getMessages()
+
+
+       validationResult.getMessages()
                 .forEach(n -> fhirResourceValidationResult.getValidationErrorList().add(buildValidationError(n)));
     }
 
@@ -39,12 +41,12 @@ public interface FhirValidatorProcessor {
 
     default List<FhirValidationResult> buildResults(FhirResourceValidationResult response) {
         return response.getValidationErrorList().stream()
-                .map(this::processError)
+                .map(this::buildFhirValidationResult)
                 .collect(Collectors.toList());
     }
 
 
-    default FhirValidationResult processError(FhirResourceValidationError e) {
+    default FhirValidationResult buildFhirValidationResult(FhirResourceValidationError e) {
         return FhirValidationResult.builder()
                 .severity(e.getSeverity())
                 .locationField(e.getLocationField())

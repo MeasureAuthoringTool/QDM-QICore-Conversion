@@ -51,28 +51,7 @@ class ConversionReporterTest {
         verify(conversionResultsService).addMeasureResult(any(), any(FieldConversionResult.class));
     }
 
-    @Test
-    void setLibraryResult_NoThreadLocal() {
-        ConversionReporter.setLibraryFieldConversionResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
 
-        assertNull(ConversionReporter.getFromThreadLocal());
-
-        verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
-    }
-
-    @Test
-    void setLibraryResult_Success() {
-        ConversionReporter.setInThreadLocal(MEASURE_ID,
-                "TEST",
-                conversionResultsService,
-                Instant.now(),
-                ConversionType.CONVERSION,
-                Boolean.TRUE);
-
-        ConversionReporter.setLibraryFieldConversionResult(FIELD, DESTINATION, REASON, MAT_LIBRARY_ID);
-
-        verify(conversionResultsService).addLibraryFieldConversionResult(any(), any(FieldConversionResult.class), anyString());
-    }
 
     @Test
     void setValueSetResult_NoThreadLocal() {

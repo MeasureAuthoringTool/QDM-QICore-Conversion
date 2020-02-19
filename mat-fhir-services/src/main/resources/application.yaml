@@ -26,7 +26,7 @@ library-files:
     - SupplementalDataElements_FHIR4-1.0.0.cql
     - AdultOutpatientEncounters_FHIR4-1.1.000.cql
     - MATGlobalCommonFunctions_FHIR4-4.0.000.cql
-    - AdvancedIllnessandFrailtyExclusion_FHIR4
+    - AdvancedIllnessandFrailtyExclusion_FHIR4-4.0.000.cql
     - TJCOverall_FHIR4-4.0.000.cql
 
 

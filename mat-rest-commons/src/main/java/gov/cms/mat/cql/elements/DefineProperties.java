@@ -25,10 +25,10 @@ public class DefineProperties extends BaseProperties {
     @Override
     public void setToFhir() {
         if (line.contains("define \"SDE ")) {
-            log.info("Define is SDE");
+            log.debug("Define is SDE");
         } else {
             if (CollectionUtils.isEmpty(symbolicProperties)) {
-                log.info("No Symbolics");
+                log.debug("No Symbolics");
             } else {
                 symbolicProperties.forEach(this::process);
             }

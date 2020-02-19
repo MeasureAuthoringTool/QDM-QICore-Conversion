@@ -110,18 +110,17 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 .forEach(matLib -> validateQdm(matLib, atomicBoolean));
 
         if (!atomicBoolean.get()) {
-            log.warn("IGNORED FOR TESTING: Terminal message errorMessage: {},  ConversionOutcome:{}",
-                    VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
-            //ConversionReporter.setTerminalMessage(VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
+            //log.warn("IGNORED FOR TESTING: Terminal message errorMessage: {},  ConversionOutcome:{}",
+            //         VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
+            ConversionReporter.setTerminalMessage(VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
         }
 
-        properties.getCqlLibraries()
-                .forEach(matLib -> convertQdm(matLib));
+        properties.getCqlLibraries().forEach(this::convertQdm);
 
         // When no errors we would then convert to fhir and validate - for initial testing do for ALL
 
-//        properties.getCqlLibraries()
-//                .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
+        properties.getCqlLibraries()
+                .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
 
         return atomicBoolean.get();
     }
@@ -184,10 +183,9 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         List<FhirValidationResult> list = buildResults(response);
         ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibrary.getId());
 
-        list.forEach(v -> isValid(v, atomicBoolean));
+        list.forEach(validationResult -> isValid(validationResult, atomicBoolean));
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
-        conversionResult.findOrCreateLibraryConversionResults(matCqlLibrary.getId());
 
         response.setLibraryConversionResults(conversionResult.getLibraryConversionResults());
         response.setLibraryConversionType(conversionResult.getConversionType());

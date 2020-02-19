@@ -107,7 +107,6 @@ class ConversionResultProcessorServiceTest {
         assertNotNull(dto.getValueSetConversionResults());
         assertEquals(2, dto.getMeasureConversionResults().getMeasureResults().size());
         assertEquals(1, dto.getLibraryConversionResults().size());
-        assertEquals(3, dto.getLibraryConversionResults().get(0).getLibraryResults().size());
     }
 
     private ConversionResult createConversionResult(boolean oidFound) {
@@ -142,8 +141,6 @@ class ConversionResultProcessorServiceTest {
         LibraryConversionResults libraryConversionResults = new LibraryConversionResults();
         List<FieldConversionResult> libraryResults =
                 Arrays.asList(buildLibraryResult(0), buildLibraryResult(1), buildLibraryResult(2));
-        libraryConversionResults.getLibraryResults().addAll(libraryResults);
-
         return Collections.singletonList(libraryConversionResults);
     }
 

@@ -75,23 +75,6 @@ class ConversionResultsServiceTest {
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
 
-    @Test
-    void addLibraryResult_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
-                .thenReturn(Optional.empty());
-        ConversionResult conversionResultToReturn = new ConversionResult();
-
-        when(conversionResultRepository.save(any(ConversionResult.class)))
-                .thenReturn(conversionResultToReturn);
-
-        FieldConversionResult result = buildLibraryResult();
-
-        conversionResultsService.addLibraryFieldConversionResult(threadSessionKey, result, MAT_LIBRARY_ID);
-
-        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
-        verify(conversionResultRepository).save(any(ConversionResult.class));
-    }
-
 
     @Test
     void addMeasureResult_FoundInDb() {
@@ -111,23 +94,6 @@ class ConversionResultsServiceTest {
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
 
-    @Test
-    void addLibraryResult_FoundInDb() {
-        ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
-                .thenReturn(Optional.of(conversionResultToReturn));
-
-        when(conversionResultRepository.save(conversionResultToReturn))
-                .thenReturn(conversionResultToReturn);
-
-        FieldConversionResult result = buildLibraryResult();
-
-        conversionResultsService.addLibraryFieldConversionResult(threadSessionKey, result, MAT_LIBRARY_ID);
-
-
-        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
-        verify(conversionResultRepository).save(conversionResultToReturn);
-    }
 
     @Test
     void addValueSetResult_NotFoundInDb() {

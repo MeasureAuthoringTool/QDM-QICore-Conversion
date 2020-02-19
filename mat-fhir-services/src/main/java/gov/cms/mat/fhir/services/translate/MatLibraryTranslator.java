@@ -32,10 +32,5 @@ public class MatLibraryTranslator extends LibraryTranslatorBase {
 
         fhirLibrary.setName(cqlLibrary.getCqlName());
         fhirLibrary.setUrl(baseURL + "Library/" + cqlLibrary.getId());
-
-        if (fhirLibrary.getContent().isEmpty()) {
-            ConversionReporter.setLibraryFieldConversionResult("MAT.cql", "Library.content",
-                    "No CQL or ELM to process", cqlLibrary.getId());
-        }
     }
 }

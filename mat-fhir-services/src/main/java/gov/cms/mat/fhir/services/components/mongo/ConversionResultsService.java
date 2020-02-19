@@ -66,15 +66,15 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-    void addLibraryFieldConversionResult(ThreadSessionKey key, FieldConversionResult result, String matLibraryId) {
-        ConversionResult conversionResult = findOrCreate(key);
-
-        LibraryConversionResults libraryConversionResult = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
-
-        libraryConversionResult.getLibraryResults().add(result);
-
-        save(conversionResult);
-    }
+//    void addLibraryFieldConversionResult(ThreadSessionKey key, FieldConversionResult result, String matLibraryId) {
+//        ConversionResult conversionResult = findOrCreate(key);
+//
+//        LibraryConversionResults libraryConversionResult = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+//
+//        libraryConversionResult.getLibraryResults().add(result);
+//
+//        save(conversionResult);
+//    }
 
     public Optional<ConversionResult> findByMeasureId(ThreadSessionKey key) {
         return conversionResultRepository.findByMeasureIdAndStart(key.getMeasureId(), key.getStart());

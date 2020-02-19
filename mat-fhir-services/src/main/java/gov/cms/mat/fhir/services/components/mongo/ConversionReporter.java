@@ -47,13 +47,13 @@ public class ConversionReporter {
         }
     }
 
-    public static void setLibraryFieldConversionResult(String field, String destination, String reason, String matLibraryId) {
-        ConversionReporter conversionReporter = getFromThreadLocal();
-
-        if (conversionReporter != null) {
-            conversionReporter.addLibraryFieldConversionResult(field, destination, reason, matLibraryId);
-        }
-    }
+//    public static void setLibraryFieldConversionResult(String field, String destination, String reason, String matLibraryId) {
+//        ConversionReporter conversionReporter = getFromThreadLocal();
+//
+//        if (conversionReporter != null) {
+//            conversionReporter.addLibraryFieldConversionResult(field, destination, reason, matLibraryId);
+//        }
+//    }
 
     public static void setCqlConversionResultSuccess(String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
@@ -302,15 +302,15 @@ public class ConversionReporter {
         conversionResultsService.addMeasureResult(key, result);
     }
 
-    private void addLibraryFieldConversionResult(String field, String destination, String reason, String matCqlId) {
-        FieldConversionResult result = FieldConversionResult.builder()
-                .field(field)
-                .destination(destination)
-                .reason(reason)
-                .build();
-
-        conversionResultsService.addLibraryFieldConversionResult(key, result, matCqlId);
-    }
+//    private void addLibraryFieldConversionResult(String field, String destination, String reason, String matCqlId) {
+//        FieldConversionResult result = FieldConversionResult.builder()
+//                .field(field)
+//                .destination(destination)
+//                .reason(reason)
+//                .build();
+//
+//        conversionResultsService.addLibraryFieldConversionResult(key, result, matCqlId);
+//    }
 
 
     private void addCqlConversionResultSuccess(String matLibraryId) {

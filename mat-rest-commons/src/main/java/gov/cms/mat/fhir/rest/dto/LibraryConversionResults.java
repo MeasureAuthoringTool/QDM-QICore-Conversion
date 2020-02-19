@@ -18,8 +18,10 @@ public class LibraryConversionResults {
     Boolean success;
     String link;
     String fhirLibraryJson;
-    private List<FieldConversionResult> libraryResults = new ArrayList<>();
-    private List<FhirValidationResult> libraryFhirValidationResults = new ArrayList<>();
+
+    /* Error results when validating the  */
+    private List<FhirValidationResult> libraryFhirValidationResults = new ArrayList<>(); // KEEP
+
     private CqlConversionResult cqlConversionResult = new CqlConversionResult();
 
     public LibraryConversionResults(String matId) {
