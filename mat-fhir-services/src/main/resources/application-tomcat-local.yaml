@@ -28,17 +28,16 @@ logging:
 
 fhir:
   r4:
-    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+    baseurl: http://localhost:8080/hapi-fhir-jpaserver/
 
 qdmqicore:
   conversion:
-    baseurl: http://localhost:8080/qdm-qicore-mapping-services/
+    baseurl: http://localhost:8083/qdm-qicore-mapping-services/
 
 cql:
   conversion:
-    baseurl: http://localhost:8080/cql-elm-translation/
-
+    baseurl: http://localhost:8082/cql-elm-translation/
 
 self:
   health:
-    baseurl: http://localhost:${server.port}/mat-fhir-serives
+    baseurl: http://localhost:8081/mat-fhir-serives/
