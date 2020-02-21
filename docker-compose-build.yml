@@ -2,12 +2,26 @@ version: '3.6'
 
 services:
 
+  hapi-fhir-mysql:
+    image: mysql:latest
+    container_name: hapi-fhir-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'hapi'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 'admin'
+      MYSQL_ROOT_PASSWORD: 'admin'
+    ports:
+      - 3307:3306
+    volumes:
+      - hapi-fhir-mysql:/var/lib/mysql
+
   mongo:
     image: mongo
     container_name: mongo
     restart: always
     ports:
-      - 27017:27017
+      - 27018:27017
 
   hapi-fhir-jpaserver:
     image: greenemcg/hapi-fhir-jpaserver
@@ -19,7 +33,7 @@ services:
     image: cql-elm-translation
     container_name: cql-elm-translation
     build:
-      context: ../cql-elm-translation/
+      context: cql-elm-translation
       dockerfile: Dockerfile
     ports:
       - 7070:7070
@@ -28,7 +42,7 @@ services:
     image: qdm-qicore-mapping-services
     container_name: qdm-qicore-mapping-services
     build:
-      context: ../qdm-qicore-mapping-services
+      context: qdm-qicore-mapping-services
       dockerfile: Dockerfile
     ports:
       - 9090:9090
@@ -36,6 +50,9 @@ services:
   mat-fhir-services:
     image: mat-fhir-services
     container_name: mat-fhir-services
+    build:
+      context: mat-fhir-services
+      dockerfile: Dockerfile
     environment:
       VSAC_USER: ${VSAC_USER}
       VSAC_PASS: ${VSAC_PASS}
@@ -44,3 +61,6 @@ services:
       MAT_DB_USER: ${MAT_DB_USER}
     ports:
       - 9080:9080
+
+volumes:
+  hapi-fhir-mysql:
