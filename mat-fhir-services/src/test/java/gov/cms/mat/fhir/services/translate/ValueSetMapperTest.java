@@ -5,6 +5,7 @@ import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
@@ -63,6 +64,7 @@ class ValueSetMapperTest {
                 conversionResultsService,
                 Instant.now(),
                 ConversionType.CONVERSION,
+                XmlSource.MEASURE,
                 Boolean.TRUE);
     }
 

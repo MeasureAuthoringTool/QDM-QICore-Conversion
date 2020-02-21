@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.rest;
 
-import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryFileHandler;
+import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -16,23 +16,23 @@ import java.util.List;
 @Tag(name = "Untranslated_Library-Controller", description = "API for for getting conversion results.")
 @Slf4j
 public class UntranslatedLibraryController {
-    private final UnConvertedCqlLibraryFileHandler unConvertedCqlLibraryFileHandler;
+    private final UnConvertedCqlLibraryHandler unConvertedCqlLibraryHandler;
 
-    public UntranslatedLibraryController(UnConvertedCqlLibraryFileHandler unConvertedCqlLibraryFileHandler) {
-        this.unConvertedCqlLibraryFileHandler = unConvertedCqlLibraryFileHandler;
+    public UntranslatedLibraryController(UnConvertedCqlLibraryHandler unConvertedCqlLibraryHandler) {
+        this.unConvertedCqlLibraryHandler = unConvertedCqlLibraryHandler;
     }
 
     @Operation(summary = "Display all untranslated libraries",
             description = "Display the untranslated libraries that could not be located in HAPI FHIR.")
     @GetMapping()
     public List<String> findMissingValueSets() {
-        return unConvertedCqlLibraryFileHandler.findAll();
+        return unConvertedCqlLibraryHandler.findAll();
     }
 
     @Operation(summary = "Display all the cql in file",
             description = "Display the untranslated libraries cql.")
     @GetMapping("/{name}")
     public String findMissingValueSets(@PathVariable String name) {
-        return unConvertedCqlLibraryFileHandler.findCql(name);
+        return unConvertedCqlLibraryHandler.findCql(name);
     }
 }

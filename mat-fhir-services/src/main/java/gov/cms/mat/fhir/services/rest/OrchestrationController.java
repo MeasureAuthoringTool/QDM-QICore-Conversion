@@ -68,6 +68,7 @@ public class OrchestrationController {
                         conversionResultsService,
                         Instant.now(),
                         conversionType,
+                        xmlSource,
                         showWarnings);
         try {
             Measure matMeasure;

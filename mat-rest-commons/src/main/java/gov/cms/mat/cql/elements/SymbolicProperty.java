@@ -1,6 +1,7 @@
 package gov.cms.mat.cql.elements;
 
 import gov.cms.mat.cql.CqlNegations;
+import gov.cms.mat.cql.exceptions.QdmMappingException;
 import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +34,7 @@ public class SymbolicProperty {
                 return matDataTypeDescription;
             }
 
-            throw new IllegalArgumentException("No conversion mapping found: " + this.toString());
+            throw new QdmMappingException(matDataTypeDescription);
         } else {
             return conversionMappings.get(0).getFhirResource(); // should I check if all the same
         }

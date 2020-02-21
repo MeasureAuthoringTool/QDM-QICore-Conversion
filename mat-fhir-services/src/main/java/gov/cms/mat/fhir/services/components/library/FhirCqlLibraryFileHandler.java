@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.components.library;
 
-
 import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql.elements.LibraryProperties;
 import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
@@ -12,6 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,19 +36,19 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     }
 
     public void loaLibs() {
-        Path path = checkAndCreatePath(libraryConversionFileConfig.getFhirDirectory());
-        log.info("Cql fhir directory is: {}, file order: {}",
-                libraryConversionFileConfig.getFhirDirectory(),
-                libraryConversionFileConfig.getOrder());
-
-        processFhirLibraries(path);
+        libraryConversionFileConfig.getOrder().stream()
+                .map(this::getData)
+                .forEach(this::processHapiFhir);
     }
 
-    private void processFhirLibraries(Path path) {
-        libraryConversionFileConfig.getOrder()
-                .stream()
-                .map(s -> findCqlInFile(path, s))
-                .forEach(this::processHapiFhir);
+    private String getData(String name) {
+        File inputXmlFile = new File(this.getClass().getResource("/fhir/" + name).getFile());
+
+        try {
+            return new String(Files.readAllBytes(inputXmlFile.toPath()));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private void processHapiFhir(String cql) {

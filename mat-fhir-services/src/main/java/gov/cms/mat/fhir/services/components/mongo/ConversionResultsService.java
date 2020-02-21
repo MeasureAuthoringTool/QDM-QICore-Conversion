@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
 import gov.cms.mat.fhir.rest.dto.*;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -326,6 +327,12 @@ public class ConversionResultsService {
     public void addBatchId(ThreadSessionKey key, String batchId) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setBatchId(batchId);
+        save(conversionResult);
+    }
+
+    public void addXmlSource(ThreadSessionKey key, XmlSource xmlSource) {
+        ConversionResult conversionResult = findOrCreate(key);
+        conversionResult.setXmlSource(xmlSource);
         save(conversionResult);
     }
 

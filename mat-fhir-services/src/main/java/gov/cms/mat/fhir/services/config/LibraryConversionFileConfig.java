@@ -12,7 +12,5 @@ import java.util.List;
 @ConfigurationProperties(prefix = "library-files")
 @Data
 public class LibraryConversionFileConfig {
-    String unconvertedDirectory;
-    String fhirDirectory;
     List<String> order;
 }

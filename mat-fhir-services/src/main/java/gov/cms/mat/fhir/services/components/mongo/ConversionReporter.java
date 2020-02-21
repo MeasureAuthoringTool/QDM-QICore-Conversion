@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
 import gov.cms.mat.fhir.rest.dto.*;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ThreadLocalNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -170,11 +171,13 @@ public class ConversionReporter {
                                                     ConversionResultsService conversionResultsService,
                                                     Instant instant,
                                                     ConversionType conversionType,
+                                                    XmlSource xmlSource,
                                                     boolean showWarnings) {
         removeInThreadLocal();
         threadLocal.set(new ConversionReporter(measureId, conversionResultsService, instant));
         setConversionType(conversionType);
         setBatchId(batchId);
+        setXmlSource(xmlSource);
         setShowWarnings(showWarnings);
 
         return getKey();
@@ -270,6 +273,11 @@ public class ConversionReporter {
         conversionReporter.addBatchId(batchId);
     }
 
+    public static void setXmlSource(XmlSource xmlSource) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addXmlSource(xmlSource);
+    }
+
     public static void setShowWarnings(boolean flag) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addShowWarnings(flag);
@@ -277,6 +285,10 @@ public class ConversionReporter {
 
     private void addBatchId(String batchId) {
         conversionResultsService.addBatchId(key, batchId);
+    }
+
+    private void addXmlSource(XmlSource xmlSource) {
+        conversionResultsService.addXmlSource(key, xmlSource);
     }
 
     private void addShowWarnings(boolean flag) {

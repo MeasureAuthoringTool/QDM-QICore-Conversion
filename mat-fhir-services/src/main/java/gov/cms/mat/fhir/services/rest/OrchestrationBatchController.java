@@ -1,6 +1,8 @@
 package gov.cms.mat.fhir.services.rest;
 
+import gov.cms.mat.cql.exceptions.QdmMappingException;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mat.MatXmlException;
 import gov.cms.mat.fhir.services.components.mongo.BatchResultsService;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
@@ -123,9 +125,10 @@ public class OrchestrationBatchController {
                              String id) {
         try {
             orchestrationController.translateMeasureById(id, conversionType, xmlSource, batchId, Boolean.TRUE);
+        } catch (MatXmlException | QdmMappingException e) {
+            log.debug("{} Error for id: {}, reason: {}", e.getClass().getSimpleName(), id, e.getMessage());
         } catch (Exception e) {
-            log.warn("Error for id: {}, reason: {}", id, e.getMessage());
-            log.info("Error for id: {}", id, e);
+            log.warn("Unknown Error for id: {}, reason: {}", id, e.getMessage(), e);
         }
     }
 

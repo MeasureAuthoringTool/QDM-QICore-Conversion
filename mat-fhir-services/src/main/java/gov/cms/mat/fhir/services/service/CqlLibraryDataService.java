@@ -1,16 +1,14 @@
 package gov.cms.mat.fhir.services.service;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
-import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -31,7 +29,7 @@ public class CqlLibraryDataService {
         }
     }
 
-    public CqlLibrary findCqlLibrary(CqlLibraryFindData cqlLibraryFindData) {  //todo MCG return array can be multiples
+    public CqlLibrary findCqlLibrary(CqlLibraryFindData cqlLibraryFindData) {
 
         List<CqlLibrary> libraries =
                 cqlLibraryRepo.findByQdmVersionAndCqlNameAndVersionAndFinalizedDateIsNotNull(
@@ -42,16 +40,15 @@ public class CqlLibraryDataService {
         if (libraries.isEmpty()) {
             throw new CqlLibraryNotFoundException(cqlLibraryFindData);
         } else if (libraries.size() > 1) {
-
-            String ids = libraries.stream()
-                    .map(CqlLibrary::getId)
-                    .collect(Collectors.joining(", "));
-
-            ConversionReporter.setTerminalMessage("To many cql libraries found ids: " + ids,
-                    ConversionOutcome.CQL_LIBRARY_TRANSLATION_FAILED);
-            throw new CqlLibraryNotFoundException("To many cql libraries found ids: ", ids);
+            return findLatestByFinalizedDate(libraries);
         } else {
             return libraries.get(0);
         }
+    }
+
+    public CqlLibrary findLatestByFinalizedDate(List<CqlLibrary> libraries) {
+        return libraries.stream()
+                .max(Comparator.comparing(CqlLibrary::getFinalizedDate))
+                .orElseThrow(() -> new CqlLibraryNotFoundException( "Too many cql libraries found"));
     }
 }

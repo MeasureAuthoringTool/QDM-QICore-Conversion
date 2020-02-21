@@ -43,7 +43,9 @@ public class MatXmlConverter {
         try {
             String xpathXml = matXpath.toCompositeMeasureDetail(xml);
             return matXmlMarshaller.toCompositeMeasureDetail(xpathXml);
-        } catch (Exception e) {
+        } catch (MatXmlException e) {
+            throw e;
+        } catch (Exception  e) {
             throw new MatXmlException(e);
         }
     }

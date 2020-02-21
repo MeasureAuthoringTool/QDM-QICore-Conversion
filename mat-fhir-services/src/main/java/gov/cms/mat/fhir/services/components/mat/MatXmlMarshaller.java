@@ -1,5 +1,8 @@
 package gov.cms.mat.fhir.services.components.mat;
 
+import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
@@ -45,8 +48,25 @@ class MatXmlMarshaller {
 
     private void checkXML(String xml, String message) {
         if (StringUtils.isBlank(xml)) {
+            message = processErrorMessage(message);
+
+            ConversionReporter.setTerminalMessage(message, ConversionOutcome.MEASURE_XML_NOT_FOUND);
             throw new MatXmlMarshalException(message);
         }
+    }
+
+    private String processErrorMessage(String message) {
+        ConversionResult conversionResult = ConversionReporter.getConversionResult();
+
+        if (conversionResult == null) {
+            message = message + ", conversion result is null.";
+        } else if (conversionResult.getXmlSource() == null) {
+            message = message + ", xmlSource is null.";
+        } else {
+            message = message + ", using xmlSource: " + conversionResult.getXmlSource();
+        }
+
+        return message;
     }
 
     private MeasurePackageDetail convertMeasureGrouping(String xml) {

@@ -60,9 +60,7 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         FhirMeasureResourceValidationResult response =
                 new FhirMeasureResourceValidationResult(properties.getMeasureId(), "Measure");
 
-        log.info("VALIDATE-RESOURCE-START Measure");
         validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
-        log.info("VALIDATE-RESOURCE-END Measure");
 
         List<FhirValidationResult> list = buildResults(response);
 
@@ -86,7 +84,6 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         ConversionReporter.setFhirMeasureJson(hapiFhirServer.toJson(fhirMeasure));
 
         return fhirMeasure;
-
     }
 
     private org.hl7.fhir.r4.model.Measure buildFhirMeasure(OrchestrationProperties properties) {
@@ -110,11 +107,11 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
     }
 
     public org.hl7.fhir.r4.model.Measure createFhirMeasure(Measure matMeasure, byte[] xmlBytes, String narrative) {
-        try {
+      //  try {
             return fhirMeasureCreator.create(matMeasure, xmlBytes, narrative);
-        } catch (MatXmlException e) {
-            ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_CONVERSION_FAILED);
-            throw e;
-        }
+       // } catch (MatXmlException e) {
+       //     ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_CONVERSION_FAILED);
+       //     throw e;
+      //  }
     }
 }

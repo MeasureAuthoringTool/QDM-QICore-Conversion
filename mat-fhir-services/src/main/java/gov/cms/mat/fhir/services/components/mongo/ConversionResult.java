@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.components.mongo.helpers.LibraryResultsHelper;
 import gov.cms.mat.fhir.services.components.mongo.helpers.MeasureResultsHelper;
 import gov.cms.mat.fhir.services.components.mongo.helpers.ValueSetResultsHelper;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedDate;
@@ -40,6 +41,8 @@ public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHe
     private String measureId;
 
     private String batchId;
+
+    private XmlSource xmlSource;
 
     private Boolean showWarnings;
 

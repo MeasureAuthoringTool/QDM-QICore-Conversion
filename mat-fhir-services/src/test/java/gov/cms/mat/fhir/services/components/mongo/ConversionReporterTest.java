@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.components.mongo;
 
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +46,7 @@ class ConversionReporterTest {
                 conversionResultsService,
                 Instant.now(),
                 ConversionType.CONVERSION,
+                XmlSource.SIMPLE,
                 Boolean.TRUE);
         ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 

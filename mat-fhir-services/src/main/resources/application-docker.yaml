@@ -15,7 +15,7 @@ spring:
   data:
     mongodb:
       database: mat_conversion_results
-      uri: mongodb://docker.for.mac.localhost
+      uri: mongodb://mongo
 
 logging:
   level:

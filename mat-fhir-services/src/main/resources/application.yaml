@@ -19,8 +19,6 @@ vsac-client:
   cache-directory: /opt/vsac/cache
 
 library-files:
-  unconverted-directory: /opt/library/unconverted
-  fhir-directory: /opt/library/fhir
   order:
     - FHIRHelpers-4.0.0.cql
     - SupplementalDataElements_FHIR4-1.0.0.cql

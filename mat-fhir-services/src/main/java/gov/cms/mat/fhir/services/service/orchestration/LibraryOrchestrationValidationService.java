@@ -7,7 +7,7 @@ import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
 import gov.cms.mat.fhir.services.components.cql.CqlLibraryConverter;
-import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryFileHandler;
+import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryHandler;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
@@ -44,17 +44,17 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     private final CqlLibraryDataService cqlLibraryDataService;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
-    private final UnConvertedCqlLibraryFileHandler unConvertedCqlLibraryFileHandler;
+    private final UnConvertedCqlLibraryHandler unConvertedCqlLibraryHandler;
     private final CqlLibraryConverter cqlLibraryConverter;
 
     public LibraryOrchestrationValidationService(HapiFhirServer hapiFhirServer,
                                                  CqlLibraryDataService cqlLibraryDataService,
                                                  CQLLibraryTranslationService cqlLibraryTranslationService,
-                                                 UnConvertedCqlLibraryFileHandler unConvertedCqlLibraryFileHandler, CqlLibraryConverter cqlLibraryConverter) {
+                                                 UnConvertedCqlLibraryHandler unConvertedCqlLibraryHandler, CqlLibraryConverter cqlLibraryConverter) {
         super(hapiFhirServer);
         this.cqlLibraryDataService = cqlLibraryDataService;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
-        this.unConvertedCqlLibraryFileHandler = unConvertedCqlLibraryFileHandler;
+        this.unConvertedCqlLibraryHandler = unConvertedCqlLibraryHandler;
         this.cqlLibraryConverter = cqlLibraryConverter;
     }
 
@@ -70,12 +70,12 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                     .version(include.getVersion())
                     .build();
 
-            if (unConvertedCqlLibraryFileHandler.exists(data)) {
-                log.info("File already exists for: {}", unConvertedCqlLibraryFileHandler.makeCqlFileName(data));
+            if (unConvertedCqlLibraryHandler.exists(data)) {
+                log.info("File already exists for: {}", unConvertedCqlLibraryHandler.makeCqlName(data));
             } else {
                 CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);
                 String cql = cqlLibraryTranslationService.convertMatXmlToCql(cqlLibrary.getCqlXml(), null);
-                unConvertedCqlLibraryFileHandler.write(data, cql);
+                unConvertedCqlLibraryHandler.write(data, cql);
             }
 
             String message = String.format(HAPI_FAILURE_MESSAGE, include.getName(), include.getVersion());
@@ -176,9 +176,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(matCqlLibrary.getId());
         response.setMeasureId(matCqlLibrary.getMeasureId());
 
-        log.info("VALIDATE-RESOURCE-START Library");
         validateResource(response, fhirLibrary, hapiFhirServer.getCtx());
-        log.info("VALIDATE-RESOURCE-END Library");
 
         List<FhirValidationResult> list = buildResults(response);
         ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibrary.getId());

@@ -55,9 +55,7 @@ public class ValueSetFhirValidationResults implements FhirValidatorProcessor {
         log.debug("Validating oid: {} for measureId: {}", valueSet.getId(), measureId);
         FhirResourceValidationResult res = new FhirResourceValidationResult();
 
-        log.info("VALIDATE-RESOURCE-START ValueSet");
         validateResource(res, valueSet, hapiFhirServer.getCtx());
-        log.info("VALIDATE-RESOURCE-END ValueSet");
 
         res.setId(valueSet.getId());
         res.setType("ValueSet");
