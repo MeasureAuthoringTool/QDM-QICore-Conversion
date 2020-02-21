@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:11-jdk
 RUN mkdir -p /opt/vsac/cache
 COPY ./cache  /opt/vsac/cache
 

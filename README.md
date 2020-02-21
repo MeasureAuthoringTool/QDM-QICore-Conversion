@@ -4,46 +4,102 @@ to Fast Healthcare Interoperable Resources(FHIR) release R4.  It utilizes MAT my
 such as NLMs VSAC to gather valueSets needed for measure evaluation.
 
 ## Requirements
-1.  Java 1.8
+1.  Java 1.11
 2.  Maven 3.3.9 or higher
-2.  MySQL 5.7.x
-3.  Local or remote accessibility to MAT database installed in MySQL
+2.  MySQL 5.7.x (Mat DB)
 4.  User login to NLM VSAC system via UMLS.
-5.  Hapi-Fhir Jpaserver deployed in Tomcat and accessible locally or remotely.  You can clone and build HAPI-FHIR JPAServer at
-https://github.com/MeasureAuthoringTool/mat-fhir-jpaserver/tree/HapiFhir3.7-R4/hapi-fhir-jpaserver-starter.  Follow the instructions 
-in the README.md file.
-6.  MongoDB version 3.4.23 or greater.
 
-## Setting Up Your Local Development and Test Environment
-1.  Checkout this project
+##Initial Setup
 
+### Checking out.
+Checkout this project
+```shell script
+git clone https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion.git
 ```
-$ git clone https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion.git
-```
-
-2.  Navigate to project module parent directory
-
-```
-$ cd QDM-QICore-Conversion/qdm-qicore-parent
+change to the develop branch.
+```shell script
+git checkout develop
 ```
 
-3.  Build the project
+```shell script
+$ cd QDM-QICore-Conversion
 ```
-$ mvn clean install
+
+###Env vars
+Setup the following environment vars. I added them to ~/.bash_profile.
+```shell script
+export VSAC_USER=YOUR_VSAC_USER
+export VSAC_PASS=YOUR_PASS
+export MAT_DB=MAT_APP_BLANK
+export MAT_DB_USER=MAT_DB_USER
+export MAT_DB_PASS=YOUR_MAT_PWD
+```
+
+Run the following shell script to setup links for hapi-fhir libraries and value-sets.
+```shell script
+./create-links.sh
+```
+
+###Maven
+Do a clean build of everything.
+```shell script
+mvn clean install
 ```
 or to skip testing
+```shell script
+mvn clean install -DskipTests
 ```
-$ mvn clean install -DskipTests
+
+###Docker Compose
+Use the docker-compose-build.yml when you want to build containers from all the source code you just built.
+```shell script
+docker-compose -f docker-compose-build.yml pull
+docker-compose -f docker-compose-build.yml build
+docker-compose -f docker-compose-build.yml up
 ```
+
+Alternatively you can use the docker-compose.yml when you want to use pre-built containers.
+Usually developers use this one and then comment out the service they are working on and build and start it 
+just for that service by `cd`ing into the directory and running it.
+```shell script
+docker-compose -f docker-compose.yml pull
+docker-compose -f docker-compose.yml build
+docker-compose -f docker-compose.yml up
+```
+
+If you get an error running hapi-fhir-jpaserver that looks like this just ignore it. Its a known issue and is just 
+failing to create an index locally.
+ GenerationTarget encountered exception accepting command : Error executing DDL "create index IDX_VALUESET_C_DSGNTN_VAL on TRM_VALUESET_C_DESIGNATION (VAL)" via JDBC Statement
+
+
+###Loading valuesets/codes
+Run this to setup all the valuesets and codes needed on the hapi-fhir-server. 
+You just need to run this once on a newly setup hapi-fhir-server.
+curl -X GET "http://localhost:9080/library/find/load" -H "accept: */*"
+
+###Urls
+mat-fhir-services:
+-  Actuator:  http://localhost:9080/actuator
+-  Swagger: http://localhost:9080/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
+
+qdm-qicore-mapping-services:
+-  Actuator:  http://localhost:9090/actuator
+-  Swagger: http://localhost:9090/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
+
+cql-elm-translation:
+-  Actuator: http://localhost:7070/actuator
+-  Swagger: http://localhost:7070/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
+
+hapi-fhir-server:
+-  Test Overlay: http://localhost:6060/hapi-fhir-jpaserver/
 
 ## Configure for Running as Micro-service Locally
 1. Using vi, your IDE, or some other editor modify the mat-fhir-services project 'application.yaml' and 'application-local.yaml files they can be found QDM-QICore-Conversion/mat-fhir-services/src/main/resources.
 
 application.yaml - `Note:` profile is configured for local
-```
+```yaml
 server:
   port: 9080
-
 
 spring:
   profiles:
@@ -67,7 +123,7 @@ measures:
 ```
 
 application-local.yaml
-```
+```yaml
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
@@ -111,7 +167,7 @@ Note:  You will most likely only need to change the datasource username and pass
 QDM-QICore-Conversion/cql-elm-translation/src/main/resources directory
 
 application.yaml - Note: the profile is set to local
-```
+```yaml
 server:
   port: 7070
 
@@ -121,7 +177,7 @@ spring:
 ```
 
 application-local.yaml
-```
+```yaml
 fhir:
   conversion:
     baseurl: http://localhost:9080
@@ -132,7 +188,7 @@ fhir:
 
 3. Update your .bash_profile file to include
 
-```
+```shell script
 export VSAC_USER={username}
 export VSAC_PASS={password}
 ```
@@ -145,7 +201,7 @@ export VSAC_PASS={password}
 1. Using vi, your IDE, or some other editor modify the mat-fhir-services project 'application.yaml' and 'application-tomcat-local.yaml files they can be found QDM-QICore-Conversion/mat-fhir-services/src/main/resources.
 
 application.yaml - `Note:` profile is configured for tomcat-local
-```
+```yaml
 server:
   port: 9080
 
@@ -172,7 +228,7 @@ measures:
 ```
 
 application-tomcat-local.yaml
-```
+```yaml
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
@@ -216,7 +272,7 @@ Note:  You will most likely only need to change the datasource username and pass
 QDM-QICore-Conversion/cql-elm-translation/src/main/resources directory
 
 application.yaml - Note: the profile is set to tomcat-local
-```
+```yaml
 server:
   port: 7070
 
@@ -226,7 +282,7 @@ spring:
 ```
 
 application-tomcat-local.yaml
-```
+```yaml
 fhir:
   conversion:
     baseurl: http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/
@@ -237,7 +293,7 @@ fhir:
 
 3. Update your .bash_profile file to include
 
-```
+```shell script
 export VSAC_USER={username}
 export VSAC_PASS={password}
 ```
@@ -249,7 +305,7 @@ You will need to restart tomcat so it see's these values.
 
 ## Creating Profiles for Other environments.
 You can create profiles for varying deployment scenarios, tomcat-dev, tomcat-qa tomcat-prod, or microservice-dev, etc by sourcing the existing examples in the mat-fhir-services and cql-elm-translation projects.  The profile file must begin with `application` and use the separator `-`, example `application-tomcat-dev.yaml` would describe the tomcat-dev profile.  You then must set the profile in the application.yaml file.  
-```
+```yaml
 spring:
   profiles:
     active: tomcat-dev
@@ -268,35 +324,35 @@ These microservices are not intended to be publically exposed on internet, they 
 Note: Both mat-fhir-services and cql-elm-translation project profiles should built with  be `profile` set to `local`.
 1.  Navigate to the MAT-FHIR-Services directory
 
-```
+```shell script
 $ cd QDM-QICore-Conversion/mat-fhir-services
 ```
 
 2. Launch the micro service
 
-```
+```shell script
 $ mvn spring-boot:run 
 ```
 
 3. Navigate to the QDM-QICORE-Mapping-Services directory
 
-```
+```shell script
 $ cd ../qdm-qicore-mapping-services
 ```
 
 4. Launch the micro service
 
-```
+```shell script
 $ mvn spring-boot:run
 ```
 
 5. Navigate to CQL-ELM-Translation directory
-```
+```shell script
 $ cd ../cql-elm-translation
 ```
 
 6. Launch the micro service
-```
+```shell script
 $ mvn spring-boot:run
 ```
 
@@ -320,7 +376,7 @@ When running as micro-service,
 http://localhost:9080/swagger-ui.html
 ```
 When running in Tomcat container,
-```
+```text
 http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/swagger-ui/index.html?url=/mat-fhir-services-0.0.1-SNAPSHOT/v3/api-docs&validatorUrl=
 ```
 
@@ -330,11 +386,11 @@ http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/swagger-ui/index.html?url
 Request URL example
 
 When running as micro-service
-```
+```text
 http://localhost:9080/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=VALIDATION&xmlSource=MEASURE
 ```
 When running in Tomcat container,
-```
+```text
 http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=VALIDATION&xmlSource=MEASURE
 ```
 
@@ -348,11 +404,11 @@ Note: You may also access the Orchestration-Controller API using swagger at http
 Request URL example
 
 When running as micro-service
-```
+```text
 http://localhost:9080/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=CONVERSION&xmlSource=MEASURE
 ```
 When running in Tomcat container,
-```
+```text
 http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/orchestration/measure?id=40280382649c54c30164d76256dd11dc&conversionType=CONVERSION&xmlSource=MEASURE
 ```
 
@@ -365,11 +421,11 @@ Note: You may also access the Orchestration-Controller API using swagger at http
 Request URL example
 
 When running as micro-service
-```
+```text
 http://localhost:9080/report/find?measureId=40280382649c54c30164d76256dd11dc
 ```
 When running in Tomcat container,
-```
+```text
 http://localhost:8080/mat-fhir-services-0.0.1-SNAPSHOT/report/find?measureId=40280382649c54c30164d76256dd11dc
 ```
 
@@ -380,13 +436,13 @@ Note: You may also access the TranslationReport-Controller API using swagger at 
 The HAPI-FHIR UI, http://localhost:8080/hapi-fhir-jpaserver/ will provide you with examples of how it is querying the system.  For additional information refer to documentation at https://hapifhir.io.
 
 **Programmatically**
-```
+```java
 // Create a client (only needed once)
 FhirContext ctx = FhirContext.forR4();
 IGenericClient client = ctx.newRestfulGenericClient("http://localhost:8080/hapi-fhir-jpaserver/fhir");
 ```
 
-```
+```java
 // Invoke the client and perform Measure search
 Bundle bundle = client.search().forResource(Measure.class)
 .prettyPrint()
@@ -396,8 +452,9 @@ Bundle bundle = client.search().forResource(Measure.class)
 **Using URL**
 In the form of GET http://localhost:8080/hapi-fhir-jpaserver/fhir/Measure/{mat uuid}
 
-```
+```text
 GET http://localhost:8080/hapi-fhir-jpaserver/fhir/Measure/402803826529d99f0165d33515622e23/
 
 Set Accept = application/xml or application/json depending on your preference.
 ```
+

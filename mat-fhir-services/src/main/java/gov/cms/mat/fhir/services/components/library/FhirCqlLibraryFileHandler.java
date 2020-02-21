@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,10 +43,8 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     }
 
     private String getData(String name) {
-        File inputXmlFile = new File(this.getClass().getResource("/fhir/" + name).getFile());
-
-        try {
-            return new String(Files.readAllBytes(inputXmlFile.toPath()));
+        try (InputStream i = getClass().getResourceAsStream("/fhir/" + name);) {
+            return new String(i.readAllBytes(),"utf8");
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

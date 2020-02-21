@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.4.RELEASE</version>
+        <relativePath/>
+    </parent>
+    <groupId>gov.cms.mat</groupId>
+    <artifactId>qdm-qicore-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <mat.microservices.version>0.0.1-SNAPSHOT</mat.microservices.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.4.0-b180830.0359</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.4.0-b180830.0438</version>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>gov.cms.mat</groupId>
+                <artifactId>mat-fhir-commons</artifactId>
+                <version>${mat.microservices.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.cms.mat</groupId>
+                <artifactId>mat-rest-commons</artifactId>
+                <version>${mat.microservices.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.cms.mat</groupId>
+                <artifactId>mat-server-commons</artifactId>
+                <version>${mat.microservices.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.cms.mat</groupId>
+                <artifactId>vsac-mat-conversion</artifactId>
+                <version>${mat.microservices.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>mat-fhir-commons</module>
+        <module>mat-fhir-services</module>
+        <module>mat-server-commons</module>
+        <module>mat-rest-commons</module>
+        <module>vsac-mat-conversion</module>
+        <module>qdm-qicore-mapping-services</module>
+        <module>cql-elm-translation</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>oss-sonatype</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>oss-sonatype-public</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+    </repositories>
+</project>
