@@ -28,16 +28,16 @@ logging:
 
 fhir:
   r4:
-    baseurl: http://localhost:8080/hapi-fhir-jpaserver/
+    baseurl: https://matdev.semanticbits.com/hapi-fhir-jpaserver/fhir
 
 qdmqicore:
   conversion:
-    baseurl: http://localhost:8083/qdm-qicore-mapping-services/
+    baseurl: https://matdev.semanticbits.com/qdm-qicore-mapping-services/
 
 cql:
   conversion:
-    baseurl: http://localhost:8082/cql-elm-translation/
+    baseurl: https://matdev.semanticbits.com/cql-elm-translation/
 
 self:
   health:
-    baseurl: http://localhost:8081/mat-fhir-serives/
+    baseurl: https://matdev.semanticbits.com/mat-fhir-serives/
