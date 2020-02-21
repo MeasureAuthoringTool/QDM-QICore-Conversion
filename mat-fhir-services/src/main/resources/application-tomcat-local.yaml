@@ -32,11 +32,11 @@ fhir:
 
 qdmqicore:
   conversion:
-    baseurl: http://localhost:8080/qdm-qicore-mapping-services-0.0.1-SNAPSHOT/
+    baseurl: http://localhost:8080/qdm-qicore-mapping-services/
 
 cql:
   conversion:
-    baseurl: http://localhost:8080/cql-elm-translation-0.0.1-SNAPSHOT/
+    baseurl: http://localhost:8080/cql-elm-translation/
 
 
 self:
