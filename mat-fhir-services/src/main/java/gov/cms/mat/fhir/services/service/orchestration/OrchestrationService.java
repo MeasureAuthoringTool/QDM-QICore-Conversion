@@ -92,8 +92,7 @@ public class OrchestrationService {
         String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml());
         ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
 
-
-        // libraryOrchestrationValidationService.processIncludes(cql);
+        libraryOrchestrationValidationService.processIncludes(cql);
     }
 
 
