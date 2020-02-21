@@ -15,9 +15,8 @@ public class ValueSetConversionResults {
     String reason;
     Boolean success;
     String link;
-    //private List<ValueSetResult> valueSetResults = new ArrayList<>();
-    // private ConversionType valueSetConversionType;
-    //private List<ValueSetValidationResult> valueSetFhirValidationResults = new ArrayList<>();
+    String json;
+
     List<FhirValidationResult> valueSetFhirValidationResults = new ArrayList<>();
 
     public ValueSetConversionResults(String oid) {

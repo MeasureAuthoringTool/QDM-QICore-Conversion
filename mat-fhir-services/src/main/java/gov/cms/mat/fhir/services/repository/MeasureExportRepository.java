@@ -22,7 +22,6 @@ public interface MeasureExportRepository extends JpaRepository<MeasureExport, St
             "from MeasureExport me, Measure ms where me.measureId = ms.id and ms.releaseVersion in :allowedVersions")
     List<MeasureVersionExportId> getAllExportIdsAndVersion(Collection<String> allowedVersions);
 
-
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     Optional<MeasureExport> findById(String id);

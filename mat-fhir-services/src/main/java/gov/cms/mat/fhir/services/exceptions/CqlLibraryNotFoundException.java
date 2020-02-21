@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.CQLLIBRARY_NOT_FOUND;
+
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 @Slf4j
 public class CqlLibraryNotFoundException extends RuntimeException {
@@ -14,8 +16,7 @@ public class CqlLibraryNotFoundException extends RuntimeException {
 
     public CqlLibraryNotFoundException(String measureId) {
         super(String.format(NOT_FOUND_BY_MEASURE_ID, measureId));
-        log.warn(getMessage());
-        ConversionReporter.setErrorMessage(getMessage());
+        ConversionReporter.setTerminalMessage(getMessage(), CQLLIBRARY_NOT_FOUND);
     }
 
     public CqlLibraryNotFoundException(String message, String id) {
@@ -26,7 +27,7 @@ public class CqlLibraryNotFoundException extends RuntimeException {
     public CqlLibraryNotFoundException(CqlLibraryFindData cqlLibraryFindData) {
         super(String.format(NOT_FOUND_BY_FIND_DATA, cqlLibraryFindData.getName(),
                 cqlLibraryFindData.getQdmVersion(),
-                cqlLibraryFindData.getVersion()));
+                cqlLibraryFindData.getMatVersion()));
         log.warn(getMessage());
 
     }

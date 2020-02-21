@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.2.RELEASE</version>
+        <version>2.2.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>gov.cms.mat</groupId>
@@ -48,6 +48,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>cql</artifactId>
             <version>1.4.6</version>
@@ -77,33 +82,21 @@
             <artifactId>qdm</artifactId>
             <version>1.4.6</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
             <version>2.1.1</version>
         </dependency>
-
-        <dependency>
-            <groupId>net.sourceforge.saxon</groupId>
-            <artifactId>saxon</artifactId>
-            <version>9.1.0.8</version>
-        </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon9-dom</artifactId>
-            <version>9.1.0.8</version>
-            <scope>runtime</scope>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.5.1-5</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
         </dependency>
-
         <dependency>
             <groupId>org.codehaus.castor</groupId>
             <artifactId>castor-xml</artifactId>
@@ -124,14 +117,11 @@
             <artifactId>castor-xml-schema</artifactId>
             <version>1.4.1</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.2.22</version>
         </dependency>
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>mat-rest-commons</artifactId>

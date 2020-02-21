@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.mat;
 
 import gov.cms.mat.fhir.services.ResourceFileUtil;
+import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measurepackage.MeasurePackageDetail;
 import mat.model.cql.CQLDefinitionsWrapper;
@@ -8,8 +9,6 @@ import mat.model.cql.CQLQualityDataModelWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.UncheckedIOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,14 +22,14 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
 
     @Test
     void toCQLDefinitions_ErrorIsBlankCheck() {
-        Assertions.assertThrows(UncheckedIOException.class, () -> {
+        Assertions.assertThrows(MatXmlMarshalException.class, () -> {
             matXmlMarshaller.toCQLDefinitionsSupplementalData(null);
         });
     }
 
     @Test
     void toCQLDefinitions_ErrorIsInvalidXML() {
-        Assertions.assertThrows(UncheckedIOException.class, () -> {
+        Assertions.assertThrows(MatXmlMarshalException.class, () -> {
             matXmlMarshaller.toCQLDefinitionsSupplementalData("Bozo|T|Clown");
         });
     }
@@ -52,14 +51,14 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
 
     @Test
     void toCompositeMeasureDetail_ErrorIsBlankCheck() {
-        Assertions.assertThrows(UncheckedIOException.class, () -> {
+        Assertions.assertThrows(MatXmlMarshalException.class, () -> {
             matXmlMarshaller.toCompositeMeasureDetail("");
         });
     }
 
     @Test
     void toCompositeMeasureDetail_ErrorIsInvalidXML() {
-        Assertions.assertThrows(UncheckedIOException.class, () -> {
+        Assertions.assertThrows(MatXmlMarshalException.class, () -> {
             matXmlMarshaller.toCompositeMeasureDetail("{\"json\": \"howdy\"}");
         });
     }
@@ -73,14 +72,14 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
 
     @Test
     void toQualityData_ErrorIsBlankCheck() {
-        Assertions.assertThrows(UncheckedIOException.class, () -> {
+        Assertions.assertThrows(MatXmlMarshalException.class, () -> {
             matXmlMarshaller.toQualityData(null);
         });
     }
 
     @Test
     void toQualityData_ErrorIsInvalidXML() {
-        Assertions.assertThrows(UncheckedIOException.class, () -> {
+        Assertions.assertThrows(MatXmlMarshalException.class, () -> {
             matXmlMarshaller.toQualityData("BR-549 x234");
         });
     }

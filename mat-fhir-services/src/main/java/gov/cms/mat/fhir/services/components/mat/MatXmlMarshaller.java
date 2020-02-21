@@ -1,5 +1,9 @@
 package gov.cms.mat.fhir.services.components.mat;
 
+import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
+import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measurepackage.MeasurePackageDetail;
@@ -44,9 +48,25 @@ class MatXmlMarshaller {
 
     private void checkXML(String xml, String message) {
         if (StringUtils.isBlank(xml)) {
-            log.warn(message);
-            throw new UncheckedIOException(new IOException(message));
+            message = processErrorMessage(message);
+
+            ConversionReporter.setTerminalMessage(message, ConversionOutcome.MEASURE_XML_NOT_FOUND);
+            throw new MatXmlMarshalException(message);
         }
+    }
+
+    private String processErrorMessage(String message) {
+        ConversionResult conversionResult = ConversionReporter.getConversionResult();
+
+        if (conversionResult == null) {
+            message = message + ", conversion result is null.";
+        } else if (conversionResult.getXmlSource() == null) {
+            message = message + ", xmlSource is null.";
+        } else {
+            message = message + ", using xmlSource: " + conversionResult.getXmlSource();
+        }
+
+        return message;
     }
 
     private MeasurePackageDetail convertMeasureGrouping(String xml) {
@@ -55,6 +75,7 @@ class MatXmlMarshaller {
             return (MeasurePackageDetail) xmlMarshalUtil.convertXMLToObject(fileName,
                     xml,
                     MeasurePackageDetail.class);
+
         } catch (Exception e) {
             throw new UncheckedIOException(new IOException(e));
         }
@@ -67,7 +88,7 @@ class MatXmlMarshaller {
                     xml,
                     CQLDefinitionsWrapper.class);
         } catch (Exception e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new MatXmlMarshalException(e);
         }
     }
 
@@ -78,7 +99,7 @@ class MatXmlMarshaller {
                     xml,
                     CQLDefinitionsWrapper.class);
         } catch (Exception e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new MatXmlMarshalException(e);
         }
     }
 
@@ -88,8 +109,9 @@ class MatXmlMarshaller {
             return (ManageCompositeMeasureDetailModel) xmlMarshalUtil.convertXMLToObject(fileName,
                     xml,
                     ManageCompositeMeasureDetailModel.class);
+
         } catch (Exception e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new MatXmlMarshalException(e);
         }
     }
 
@@ -99,7 +121,7 @@ class MatXmlMarshaller {
                     xml,
                     CQLQualityDataModelWrapper.class);
         } catch (Exception e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new MatXmlMarshalException(e);
         }
     }
 }

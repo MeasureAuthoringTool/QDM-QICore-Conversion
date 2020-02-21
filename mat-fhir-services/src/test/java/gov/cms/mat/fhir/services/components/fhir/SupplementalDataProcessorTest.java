@@ -49,6 +49,6 @@ class SupplementalDataProcessorTest {
         List<Measure.MeasureSupplementalDataComponent> list = supplementalDataProcessor.processXml(XML);
         assertEquals(1, list.size());
 
-        assertEquals(NAME, list.get(0).getDescription());
+        assertEquals(NAME, list.get(0).getCriteria().getExpression());
     }
 }

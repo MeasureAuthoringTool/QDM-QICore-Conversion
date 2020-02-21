@@ -1,11 +1,12 @@
 package gov.cms.mat.qdmqicore.conversion.service;
 
+import gov.cms.mat.cql.CqlNegations;
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.data.SearchData;
-import gov.cms.mat.qdmqicore.conversion.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.ConversionEntry;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.FhirQdmMappingData;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,9 +14,11 @@ import java.util.stream.Collectors;
 @Service
 public class ConversionDataService {
     private final FhirQdmMappingData fhirQdmMappingData;
+    private final String[] negations;
 
     public ConversionDataService(FhirQdmMappingData fhirQdmMappingData) {
         this.fhirQdmMappingData = fhirQdmMappingData;
+        negations = CqlNegations.getNegations();
     }
 
     public List<ConversionMapping> getAll() {
@@ -28,9 +31,27 @@ public class ConversionDataService {
     public List<ConversionMapping> find(SearchData searchData) {
         return fhirQdmMappingData.getAll()
                 .stream()
-                .filter(c -> filter(c, searchData))
+                .filter(conversionEntry -> filterBySearchData(conversionEntry, searchData))
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<ConversionMapping> filtered(SearchData searchData) {
+        return fhirQdmMappingData.getAll()
+                .stream()
+                .filter(this::filterNulls)
+                .filter(this::filterNegations)
+                .filter(conversionEntry -> filterBySearchData(conversionEntry, searchData))
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    private boolean filterNegations(ConversionEntry cm) {
+        return StringUtils.indexOfAny(cm.getMatDataTypeDescriptionData(), negations) < 0;
+    }
+
+    private boolean filterNulls(ConversionEntry cm) {
+        return (StringUtils.isNotEmpty(cm.getFhirResourceData()) && StringUtils.isNotEmpty(cm.getFhirElementData()));
     }
 
     private ConversionMapping mapToDto(ConversionEntry entry) {
@@ -42,10 +63,11 @@ public class ConversionDataService {
                 .fhirResource(entry.getFhirResourceData())
                 .fhirElement(entry.getFhirElementData())
                 .fhirType(entry.getFhirTypeData())
+                .hashValue(entry.hashCode())
                 .build();
     }
 
-    private boolean filter(ConversionEntry conversionEntry, SearchData searchData) {
+    private boolean filterBySearchData(ConversionEntry conversionEntry, SearchData searchData) {
         return isFiltered(conversionEntry.getFhirResourceData(), searchData.getFhirResource())
                 && isFiltered(conversionEntry.getMatAttributeNameData(), searchData.getMatAttributeName())
                 && isFiltered(conversionEntry.getFhirR4QiCoreMappingData(), searchData.getFhirR4QiCoreMapping())

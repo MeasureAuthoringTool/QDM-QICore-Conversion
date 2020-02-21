@@ -1,5 +1,6 @@
 package gov.cms.mat.qdmqicore.conversion.dto;
 
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

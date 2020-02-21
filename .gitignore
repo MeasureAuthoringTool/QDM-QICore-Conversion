@@ -36,3 +36,11 @@ hs_err_pid*
 /mat-rest-commons/target/maven-archiver/pom.properties
 
 .DS_Store
+/qdm-qicore-parent/docker-compose-mike.yml
+/qdm-qicore-parent/qdm-qicore-parent.iml
+/mat-fhir-commons/mat-fhir-commons.iml
+/mat-fhir-services/mat-fhir-services.iml
+/mat-rest-commons/mat-rest-commons.iml
+/mat-server-commons/mat-server-commons.iml
+/vsac-mat-conversion/vsac-mat-conversion.iml
+

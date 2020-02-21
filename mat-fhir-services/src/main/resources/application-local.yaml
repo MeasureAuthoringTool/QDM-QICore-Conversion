@@ -1,9 +1,9 @@
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
-    username: mat
-    password: mat
+    url: jdbc:mysql://localhost:3306/${MAT_DB:mat}?serverTimezone=UTC&max_allowed_packet=16777216
+    username: ${MAT_DB_USER:mat}
+    password: ${MAT_DB_PASS:mat}
   jpa:
     hibernate.ddl-auto: none
     hibernate:
@@ -11,7 +11,7 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl    
     generate-ddl: false
-    show-sql: true
+    show-sql: false
   data:
     mongodb:
       database: mat_conversion_results
@@ -19,14 +19,17 @@ spring:
 
 logging:
   level:
-    root: INFO
-    gov.cms.mat: DEBUG
+    root: WARN
+    gov.cms.mat: INFO
     org.hl7.fhir.r4.hapi.ctx: WARN
     org.exolab: WARN
+    org.springframework.data.mongodb.core.MongoTemplate: WARN
+  file:
+    name: mat-fhir-services.log
 
 fhir:
   r4:
-    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+    baseurl: http://localhost:6060/hapi-fhir-jpaserver/fhir/
 
 qdmqicore:
   conversion:
@@ -37,4 +40,7 @@ cql:
     baseurl: http://localhost:7070
 
 
+self:
+  health:
+    baseurl: http://localhost:${server.port}
 

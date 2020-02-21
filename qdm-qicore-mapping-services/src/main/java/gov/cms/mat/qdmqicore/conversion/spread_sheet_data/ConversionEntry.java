@@ -3,11 +3,13 @@ package gov.cms.mat.qdmqicore.conversion.spread_sheet_data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
+@EqualsAndHashCode
 public class ConversionEntry {
     @JsonProperty("title")
     Cell title;

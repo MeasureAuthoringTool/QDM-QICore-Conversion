@@ -2,11 +2,13 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mat.MatXmlException;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.exceptions.*;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Service;
 
@@ -15,32 +17,37 @@ import java.util.List;
 @Service
 @Slf4j
 public class OrchestrationService {
-    private final ConversionResultsService conversionResultsService;
     private final ValueSetOrchestrationValidationService valueSetOrchestrationValidationService;
     private final ValueSetOrchestrationConversionService valueSetOrchestrationConversionService;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
     private final LibraryOrchestrationConversionService libraryOrchestrationConversionService;
+    private final LibraryOrchestrationValidationService libraryOrchestrationValidationService;
+    private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
+    private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
 
-    public OrchestrationService(ConversionResultsService conversionResultsService,
-                                ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
+    public OrchestrationService(ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
                                 ValueSetOrchestrationConversionService valueSetOrchestrationConversionService,
                                 CQLLibraryTranslationService cqlLibraryTranslationService,
-                                LibraryOrchestrationConversionService libraryOrchestrationConversionService) {
-        this.conversionResultsService = conversionResultsService;
+                                LibraryOrchestrationConversionService libraryOrchestrationConversionService,
+                                LibraryOrchestrationValidationService libraryOrchestrationValidationService,
+                                MeasureOrchestrationValidationService measureOrchestrationValidationService,
+                                MeasureOrchestrationConversionService measureOrchestrationConversionService) {
         this.valueSetOrchestrationValidationService = valueSetOrchestrationValidationService;
         this.valueSetOrchestrationConversionService = valueSetOrchestrationConversionService;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
         this.libraryOrchestrationConversionService = libraryOrchestrationConversionService;
+        this.libraryOrchestrationValidationService = libraryOrchestrationValidationService;
+        this.measureOrchestrationValidationService = measureOrchestrationValidationService;
+        this.measureOrchestrationConversionService = measureOrchestrationConversionService;
     }
 
     public boolean process(OrchestrationProperties properties) {
-        ConversionReporter.setInThreadLocal(properties.getMatMeasure().getId(), conversionResultsService);
-        ConversionReporter.resetOrchestration();
+        boolean processPrerequisitesFlag = processPrerequisites(properties);
 
-        processAndGetValueSets(properties);
-        processAndGetCqlLibraries(properties);
-
-        if (!processValidation(properties)) {
+        if (!processPrerequisitesFlag) {
+            log.debug("Conversion Stopped due to Prerequisites failures measureId: {}", properties.getMeasureId());
+            return false;
+        } else if (!processValidation(properties)) {
             log.debug("Conversion Stopped due to validation errors measureId: {}", properties.getMeasureId());
             return false;
         } else {
@@ -48,16 +55,52 @@ public class OrchestrationService {
         }
     }
 
+    public boolean processPrerequisites(OrchestrationProperties properties) {
+        try {
+            processAndGetValueSets(properties);
+            processAndGetCqlLibraries(properties);
+            processFhirMeasure(properties);
+            return true;
+        } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException |
+                CqlLibraryNotFoundException | MatXmlMarshalException | MatXmlException e) {
+            return false;
+        } catch (Exception e) {
+            log.info("Error for id: {}", properties.getMeasureId(), e);
+            return false;
+        }
+    }
+
+    private void processFhirMeasure(OrchestrationProperties properties) {
+        measureOrchestrationConversionService.processExistingFhirMeasure(properties);
+    }
+
     public void processAndGetCqlLibraries(OrchestrationProperties properties) {
         List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesNotInHapi(properties);
 
-        properties.getCqlLibraries().addAll(cqlLibraries);
+        cqlLibraries.forEach(this::processCqlLibrary);
+
+        properties.getCqlLibraries()
+                .addAll(cqlLibraries);
     }
+
+    private void processCqlLibrary(CqlLibrary cqlLibrary) {
+
+        if (StringUtils.isEmpty(cqlLibrary.getCqlXml())) {
+            throw new CqlConversionException("oops");
+        }
+
+        String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml());
+        ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
+
+        libraryOrchestrationValidationService.processIncludes(cql);
+    }
+
 
     public void processAndGetValueSets(OrchestrationProperties properties) {
         List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties);
 
-        properties.getValueSets().addAll(valueSets);
+        properties.getValueSets()
+                .addAll(valueSets);
     }
 
     /* Should be called only when validation has succeeded */
@@ -92,18 +135,20 @@ public class OrchestrationService {
             return false;
         } else { // we are valid full steam ahead
             log.debug("Validation has passed for measureId: {}", properties.getMeasureId());
-            return convert(properties);
+            return true;
         }
     }
 
     public boolean convert(OrchestrationProperties properties) {
         return valueSetOrchestrationConversionService.convert(properties) &&
-                libraryOrchestrationConversionService.convert(properties);
+                libraryOrchestrationConversionService.convert(properties) &&
+                measureOrchestrationConversionService.convert(properties);
     }
 
-
     public boolean validate(OrchestrationProperties properties) {
-        return valueSetOrchestrationValidationService.validate(properties) &&
-                cqlLibraryTranslationService.validate(properties);
+        return valueSetOrchestrationValidationService.validate(properties) &
+                cqlLibraryTranslationService.validate(properties) &
+                libraryOrchestrationValidationService.validate(properties) &
+                measureOrchestrationValidationService.validate(properties);
     }
 }

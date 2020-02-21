@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public interface FhirValueSetCreator extends FhirCreator {
-    String SYSTEM_IDENTIFIER = "urn:ietf:rfc:3986";
+
 
     default ValueSet createFhirValueSet(MatValueSet matValueSet, CQLQualityDataSetDTO cqlQualityDataSetDTO) {
         ValueSet valueSet = buildValueSet(matValueSet, cqlQualityDataSetDTO);
@@ -40,12 +40,11 @@ public interface FhirValueSetCreator extends FhirCreator {
         ValueSet valueSet = new ValueSet();
         valueSet.setId(matValueSet.getID());
 
-
         if (StringUtils.isNotEmpty(matValueSet.getStatus())) {
             valueSet.setStatus(Enumerations.PublicationStatus.fromCode(matValueSet.getStatus().toLowerCase()));
         }
 
-        return valueSet.setIdentifier(Collections.singletonList(createIdentifier(SYSTEM_IDENTIFIER, matValueSet.getID())))
+        return valueSet.setIdentifier(Collections.singletonList(createIdentifier("urn:ietf:rfc:3986", matValueSet.getID())))
                 .setVersion(cqlQualityDataSetDTO.getVersion())
                 .setName(matValueSet.getDisplayName())
                 .setPublisher(matValueSet.getSource());

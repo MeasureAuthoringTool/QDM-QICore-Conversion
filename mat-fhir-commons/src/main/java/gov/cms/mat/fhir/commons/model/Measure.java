@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
@@ -14,10 +9,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 
-/**
- *
- * @author duanedecouteau
- */
 @Entity
 @Table(name = "MEASURE")
 @XmlRootElement

@@ -1,6 +1,6 @@
 package gov.cms.mat.qdmqicore.conversion.controller;
 
-import gov.cms.mat.qdmqicore.conversion.dto.ConversionMapping;
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.exceptions.ConversionMappingDataError;
 import gov.cms.mat.qdmqicore.conversion.exceptions.ConversionMappingNotFound;
 import gov.cms.mat.qdmqicore.conversion.service.ConversionDataService;
@@ -87,5 +87,20 @@ class ConversionDataControllerTest {
                 () -> conversionDataController.findOne("mat_name", "mat_description"));
 
         verify(conversionDataService).find(any());
+    }
+
+    @Test
+    void findFiltered() {
+        List<ConversionMapping> listToReturn =
+                Arrays.asList(ConversionMapping.builder().build(), ConversionMapping.builder().build());
+
+        when(conversionDataService
+                .filtered(any())).thenReturn(listToReturn);
+
+        conversionDataController.filtered(null, null,
+                null, null, null, null);
+
+
+        verify(conversionDataService).filtered(any());
     }
 }

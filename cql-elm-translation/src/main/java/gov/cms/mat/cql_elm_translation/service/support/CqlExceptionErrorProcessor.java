@@ -41,9 +41,24 @@ public class CqlExceptionErrorProcessor {
         mapper.readTree(json);
 
         List<MatCqlConversionException> matErrors = buildMatErrors();
-
         String jsonToInsert = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(matErrors);
-        return json.replaceFirst("\n", "\n  \"errorExceptions\" :" + jsonToInsert + ",\n");
+
+      String temp =  json.replaceFirst("\n", "\n  \"errorExceptions\":" + jsonToInsert + ",\n");
+
+      return temp;
+    }
+
+    private String escape(String raw) {
+        String escaped = raw;
+        escaped = escaped.replace("\\", "\\\\");
+        escaped = escaped.replace("\"", "\\\"");
+        escaped = escaped.replace("\b", "\\b");
+        escaped = escaped.replace("\f", "\\f");
+        escaped = escaped.replace("\n", "\\n");
+        escaped = escaped.replace("\r", "\\r");
+        escaped = escaped.replace("\t", "\\t");
+        // TODO: escape other non-printing characters using uXXXX notation
+        return escaped;
     }
 
     private List<MatCqlConversionException> buildMatErrors() {
@@ -52,13 +67,13 @@ public class CqlExceptionErrorProcessor {
                 .collect(Collectors.toList());
     }
 
-    private MatCqlConversionException createDto(CqlTranslatorException c) {
-        MatCqlConversionException matCqlConversionException = buildMatError(c);
+    private MatCqlConversionException createDto(CqlTranslatorException cqlException) {
+        MatCqlConversionException matCqlConversionException = buildMatError(cqlException);
 
-        if (c.getLocator() == null) {
+        if (cqlException.getLocator() == null) {
             log.warn("Locator is null");
         } else {
-            addLocatorData(c.getLocator(), matCqlConversionException);
+            addLocatorData(cqlException.getLocator(), matCqlConversionException);
         }
 
         return matCqlConversionException;
@@ -76,7 +91,15 @@ public class CqlExceptionErrorProcessor {
     private MatCqlConversionException buildMatError(CqlTranslatorException c) {
         MatCqlConversionException matCqlConversionException = new MatCqlConversionException();
         matCqlConversionException.setErrorSeverity(c.getSeverity().name());
-        matCqlConversionException.setMessage(c.getMessage());
+
+
+        try {
+            String payload = escape(c.getMessage());
+            matCqlConversionException.setMessage(payload);
+        } catch (Exception e) {
+            log.debug("Error building MatError", e);
+            matCqlConversionException.setMessage("Exception");
+        }
 
         return matCqlConversionException;
     }

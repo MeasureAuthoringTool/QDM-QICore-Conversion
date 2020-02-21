@@ -2,10 +2,15 @@ package gov.cms.mat.fhir.rest.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Builder
 @Getter
+@Setter
 public class ConversionMapping {
+
+    int hashValue;
+
     String title;
 
     String matDataTypeDescription;
@@ -19,4 +24,27 @@ public class ConversionMapping {
     String fhirElement;
 
     String fhirType;
+
+    public ConversionMapping(int hashValue,
+                             String title,
+                             String matDataTypeDescription,
+                             String matAttributeName,
+                             String fhirR4QiCoreMapping,
+                             String fhirResource,
+                             String fhirElement,
+                             String fhirType) {
+        this.hashValue = hashValue;
+        this.title = title;
+        this.matDataTypeDescription = matDataTypeDescription;
+        this.matAttributeName = matAttributeName;
+        this.fhirElement = fhirElement;
+        this.fhirResource = fhirResource;
+        this.fhirType = fhirType;
+        this.fhirR4QiCoreMapping = fhirR4QiCoreMapping;
+    }
+
+    public ConversionMapping() {
+
+    }
+
 }

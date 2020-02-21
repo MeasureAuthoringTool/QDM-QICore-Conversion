@@ -12,11 +12,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @Slf4j
 public class QdmQiCoreDataService {
     private final RestTemplate restTemplate;
+    private String[] exludeList = new String[]{"Not Performed", "Not Ordered", "Not Recommended", "Not Administered", "Not Dispensed"};
 
     @Value("${qdmqicore.conversion.baseurl}")
     private String baseURL;
@@ -36,6 +39,50 @@ public class QdmQiCoreDataService {
             log.warn("Cannot get FhirR4QiCoreMapping: {}", fhirR4QiCoreMapping, e);
             throw new QdmQiCoreDataException(e.getMessage());
         }
+    }
+
+    public List<ConversionMapping> findAllFilteredByMatDataTypeDescription(String matDataTypeDescription) {
+        URI uri = buildUriForAllFilteredByMatDataTypeDescription(matDataTypeDescription);
+        log.debug("Finding All spreadsheet data by matDataTypeDescription: {}", uri);
+        return restExcchange(uri);
+    }
+
+    public List<ConversionMapping> findAllFiltered() {
+        URI uri = buildUriForAllFiltered();
+        log.debug("Finding All spreadsheet data: {}", uri);
+        return restExcchange(uri);
+    }
+
+    public List<ConversionMapping> restExcchange(URI uri) {
+        try {
+            ConversionMapping[] mappings = restTemplate.getForObject(uri, ConversionMapping[].class);
+
+            if (mappings == null) {
+                throw new QdmQiCoreDataException("No results found");
+            } else {
+                return Arrays.asList(mappings);
+            }
+        } catch (RestClientException e) {
+            log.warn("Cannot get FhirR4QiCoreMapping: {}", "All", e);
+            throw new QdmQiCoreDataException(e.getMessage());
+        }
+    }
+
+    private URI buildUriForAllFiltered() {
+        return UriComponentsBuilder
+                .fromHttpUrl(baseURL + "/filtered")
+                .build()
+                .encode()
+                .toUri();
+    }
+
+    private URI buildUriForAllFilteredByMatDataTypeDescription(String matDataTypeDescription) {
+        return UriComponentsBuilder
+                .fromHttpUrl(baseURL + "/filtered")
+                .queryParam("matDataTypeDescription", matDataTypeDescription)
+                .build()
+                .encode()
+                .toUri();
     }
 
     private URI buildUri(String matObjectWithAttribute, String fhirR4QiCoreMapping) {

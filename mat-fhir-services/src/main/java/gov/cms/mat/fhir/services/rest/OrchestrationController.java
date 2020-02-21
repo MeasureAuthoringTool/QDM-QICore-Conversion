@@ -3,8 +3,13 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
+import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
+import gov.cms.mat.fhir.services.exceptions.MeasureReleaseVersionInvalidException;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.service.orchestration.OrchestrationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
@@ -17,6 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Min;
+import java.time.Instant;
+
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.*;
+
 @RestController
 @RequestMapping(path = "/orchestration/measure")
 @Tag(name = "Orchestration-Controller",
@@ -26,13 +36,16 @@ public class OrchestrationController {
     private final OrchestrationService orchestrationService;
     private final ConversionResultProcessorService conversionResultProcessorService;
     private final MeasureDataService measureDataService;
+    private final ConversionResultsService conversionResultsService;
 
     public OrchestrationController(OrchestrationService orchestrationService,
                                    ConversionResultProcessorService conversionResultProcessorService,
-                                   MeasureDataService measureDataService) {
+                                   MeasureDataService measureDataService,
+                                   ConversionResultsService conversionResultsService) {
         this.orchestrationService = orchestrationService;
         this.conversionResultProcessorService = conversionResultProcessorService;
         this.measureDataService = measureDataService;
+        this.conversionResultsService = conversionResultsService;
     }
 
     @Operation(summary = "Orchestrate Measure in MAT to FHIR.",
@@ -44,21 +57,55 @@ public class OrchestrationController {
                     @ApiResponse(responseCode = "404", description = "Measure is not found in the mat db using the id")})
     @PutMapping
     public ConversionResultDto translateMeasureById(
-            @RequestParam String id,
+            @RequestParam @Min(10) String id,
             @RequestParam ConversionType conversionType,
-            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource) {
-        Measure matMeasure = measureDataService.findOneValid(id);
+            @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
+            @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId,
+            @RequestParam(required = false, defaultValue = "false") boolean showWarnings) {
+        ThreadSessionKey threadSessionKey =
+                ConversionReporter.setInThreadLocal(id,
+                        batchId,
+                        conversionResultsService,
+                        Instant.now(),
+                        conversionType,
+                        xmlSource,
+                        showWarnings);
+        try {
+            Measure matMeasure;
 
-        OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()
-                .matMeasure(matMeasure)
-                .conversionType(conversionType)
-                .xmlSource(xmlSource)
-                .build();
+            try {
+                matMeasure = measureDataService.findOneValid(id);
+            } catch (MeasureReleaseVersionInvalidException e) {
+                ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_RELEASE_VERSION_INVALID);
+                return conversionResultProcessorService.process(threadSessionKey);
+            } catch (MeasureNotFoundException e) {
+                ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_NOT_FOUND);
+                return conversionResultProcessorService.process(threadSessionKey);
+            }
 
-        log.info("Orchestrating Measure: {}", orchestrationProperties);
+            OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()
+                    .matMeasure(matMeasure)
+                    .conversionType(conversionType)
+                    .xmlSource(xmlSource)
+                    .threadSessionKey(threadSessionKey)
+                    .build();
+
+            return process(orchestrationProperties);
+        } finally {
+            ConversionReporter.removeInThreadLocalAndComplete();
+        }
+    }
+
+    public ConversionResultDto process(OrchestrationProperties orchestrationProperties) {
+        log.info("Started Orchestrating Measure key: {}", orchestrationProperties.getThreadSessionKey());
 
         orchestrationService.process(orchestrationProperties);
 
-        return conversionResultProcessorService.process(id);
+        if (ConversionReporter.getConversionResult().getOutcome() == null) {
+            ConversionReporter.setTerminalMessage(SUCCESS.name(), SUCCESS);
+        }
+
+        return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
+
     }
 }

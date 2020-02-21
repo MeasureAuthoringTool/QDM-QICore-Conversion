@@ -1,10 +1,10 @@
 package gov.cms.mat.cql_elm_translation.cql_translator;
 
-import gov.cms.mat.cql_elm_translation.service.FhirServicesService;
+import gov.cms.mat.cql.elements.UsingProperties;
+import gov.cms.mat.cql_elm_translation.service.MatFhirServices;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.cqframework.cql.cql2elm.FhirLibrarySourceProvider;
 import org.cqframework.cql.cql2elm.LibrarySourceProvider;
 import org.hl7.elm.r1.VersionedIdentifier;
 
@@ -15,25 +15,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class MatLibrarySourceProvider implements LibrarySourceProvider {
-
     private static final ConcurrentHashMap<String, String> cqlLibraries = new ConcurrentHashMap<>();
-    private static final ThreadLocal<String> threadLocalValue = new ThreadLocal<>();
-    private static FhirServicesService fhirServicesService;
+    private static final ThreadLocal<UsingProperties> threadLocalValue = new ThreadLocal<>();
+    private static MatFhirServices matFhirServices;
 
-    public static void setFhirServicesService(FhirServicesService fhirServicesService) {
-        MatLibrarySourceProvider.fhirServicesService = fhirServicesService;
+    public static void setFhirServicesService(MatFhirServices matFhirServices) {
+        MatLibrarySourceProvider.matFhirServices = matFhirServices;
     }
 
-    public static void setQdmVersion(String version) {
-        threadLocalValue.set(version);
-    }
-
-    public static boolean isLibraryInMap(String name, String qdmVersion, String version) {
-        return cqlLibraries.contains(createKey(name, qdmVersion, version));
-    }
-
-    public static void addLibraryInMap(String name, String qdmVersion, String version, String cql) {
-        cqlLibraries.put(createKey(name, qdmVersion, version), cql);
+    public static void setQdmVersion(UsingProperties usingProperties) {
+        threadLocalValue.set(usingProperties);
     }
 
     private static String createKey(String name, String qdmVersion, String version) {
@@ -42,33 +33,36 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
 
     @Override
     public InputStream getLibrarySource(VersionedIdentifier libraryIdentifier) {
+        String usingVersion = threadLocalValue.get().getVersion(); //using FHIR version '4.0.0
+        String key = createKey(libraryIdentifier.getId(), usingVersion, libraryIdentifier.getVersion());
 
-        if (libraryIdentifier.getId().toLowerCase().contains("fhir")) {
-            return FhirLibrarySourceProvider.class.getResourceAsStream(String.format("/org/hl7/fhir/%s-%s.cql",
-                    libraryIdentifier.getId(),
-                    libraryIdentifier.getVersion()));
+        if (cqlLibraries.containsKey(key)) {
+            return getInputStream(cqlLibraries.get(key)); // do we need to expire cache ?????
         } else {
+            return processLibrary(libraryIdentifier, usingVersion, key);
+        }
+    }
 
-            String qdmVersion = threadLocalValue.get();
+    public InputStream processLibrary(VersionedIdentifier libraryIdentifier, String usingVersion, String key) {
+        if (threadLocalValue.get().getLibraryType().equals("QDM")) {
+            String cql = matFhirServices.getMatCql(libraryIdentifier.getId(), libraryIdentifier.getVersion(), usingVersion);
+            return processCqlFromService(key, cql);
+        } else if (threadLocalValue.get().getLibraryType().equals("FHIR")) {
+            String cql = matFhirServices.getFhirCql(libraryIdentifier.getId(), libraryIdentifier.getVersion());
+            return processCqlFromService(key, cql);
+        } else {
+            log.error("Cannot process Library for key: {}", key);
+            return null;
+        }
+    }
 
-            String key = createKey(libraryIdentifier.getId(), qdmVersion, libraryIdentifier.getVersion());
-
-            String cql = cqlLibraries.get(key);
-
-            if (StringUtils.isEmpty(cql)) {
-
-                cql = fhirServicesService.getCql(libraryIdentifier.getId(), libraryIdentifier.getVersion(), qdmVersion);
-
-                if (StringUtils.isEmpty(cql)) {
-                    log.debug("Did not find any cql");
-                    return null;
-                } else {
-                    cqlLibraries.put(key, cql);
-                    return getInputStream(cql);
-                }
-            } else {
-                return getInputStream(cql);
-            }
+    private InputStream processCqlFromService(String key, String cql) {
+        if (StringUtils.isEmpty(cql)) {
+            log.debug("Did not find any cql for key : {}", key);
+            return null;
+        } else {
+            cqlLibraries.put(key, cql);
+            return getInputStream(cql);
         }
     }
 

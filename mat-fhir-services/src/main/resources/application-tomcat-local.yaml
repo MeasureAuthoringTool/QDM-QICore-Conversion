@@ -9,10 +9,10 @@ spring:
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl    
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
     generate-ddl: false
-    show-sql: true
-    data:
+    show-sql: false
+  data:
     mongodb:
       database: mat_conversion_results
       uri: mongodb://localhost
@@ -23,6 +23,8 @@ logging:
     gov.cms.mat: DEBUG
     org.hl7.fhir.r4.hapi.ctx: WARN
     org.exolab: WARN
+  file:
+    name: mat-fhir-services.log
 
 fhir:
   r4:
@@ -37,4 +39,6 @@ cql:
     baseurl: http://localhost:8080/cql-elm-translation-0.0.1-SNAPSHOT/
 
 
-
+self:
+  health:
+    baseurl: http://localhost:${server.port}/mat-fhir-serives

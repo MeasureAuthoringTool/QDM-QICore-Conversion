@@ -2,7 +2,6 @@ package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.service.VsacService;
@@ -21,13 +20,13 @@ public class ValueSetVsacVerifier {
     private final VsacService vsacService;
     private final MatXmlProcessor matXmlProcessor;
     private final MatXmlConverter matXmlConverter;
-    private final ConversionResultsService conversionResultsService;
 
-    public ValueSetVsacVerifier(VsacService vsacService, MatXmlProcessor matXmlProcessor, MatXmlConverter matXmlConverter, ConversionResultsService conversionResultsService) {
+    public ValueSetVsacVerifier(VsacService vsacService,
+                                MatXmlProcessor matXmlProcessor,
+                                MatXmlConverter matXmlConverter) {
         this.vsacService = vsacService;
         this.matXmlProcessor = matXmlProcessor;
         this.matXmlConverter = matXmlConverter;
-        this.conversionResultsService = conversionResultsService;
     }
 
     public boolean verify(OrchestrationProperties properties) {
@@ -40,8 +39,6 @@ public class ValueSetVsacVerifier {
                     properties.getMeasureId());
         }
 
-        ConversionReporter.setInThreadLocal(properties.getMatMeasure().getId(), conversionResultsService);
-        ConversionReporter.resetValueSetResults(properties.getConversionType());
 
         AtomicBoolean atomicSuccessFlag = new AtomicBoolean(true);
 
@@ -57,9 +54,10 @@ public class ValueSetVsacVerifier {
         if (vsacValueSetWrapper == null) {
             log.debug("VsacService returned null for oid: {}", oid);
             atomicSuccessFlag.set(false);
-            ConversionReporter.setValueSetFailResult(oid, "Not Found in VSAC");
+            ConversionReporter.setValueSetInit(oid, "Not Found in VSAC", Boolean.FALSE);
         } else {
-            ConversionReporter.setValueSetSuccessResult(oid, "Found in VSAC");
+            log.debug("VsacService returned SUCCESS for oid: {}", oid);
+            ConversionReporter.setValueSetInit(oid, "Found in VSAC", null);
         }
     }
 }

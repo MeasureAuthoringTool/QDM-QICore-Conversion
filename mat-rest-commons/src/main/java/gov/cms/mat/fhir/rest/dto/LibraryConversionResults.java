@@ -11,15 +11,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LibraryConversionResults {
-
     String matId;
-
-    private List<FieldConversionResult> libraryResults = new ArrayList<>();
-
-    private List<FhirValidationResult> libraryFhirValidationResults = new ArrayList<>();
+    String name;
+    String version;
     String reason;
     Boolean success;
     String link;
+    String fhirLibraryJson;
+
+    /* Error results when validating the  */
+    private List<FhirValidationResult> libraryFhirValidationResults = new ArrayList<>(); // KEEP
+
     private CqlConversionResult cqlConversionResult = new CqlConversionResult();
 
     public LibraryConversionResults(String matId) {

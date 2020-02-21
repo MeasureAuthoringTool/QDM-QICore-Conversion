@@ -61,7 +61,6 @@ public class VsacService {
             return null;
         }
 
-
         getServiceTicket();
 
         VSACResponseResult vsacResponseResult = vsacClient.getDataFromProfile(oid, vsacServiceTicket.getTicket());

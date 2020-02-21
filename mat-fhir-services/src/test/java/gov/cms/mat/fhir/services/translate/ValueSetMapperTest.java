@@ -1,9 +1,12 @@
 package gov.cms.mat.fhir.services.translate;
 
 import ca.uhn.fhir.context.FhirContext;
+import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
+import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.MatConcept;
@@ -20,15 +23,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.hl7.fhir.r4.model.api.IBaseBundle.LINK_NEXT;
+import static org.hl7.fhir.r4.model.Bundle.LINK_NEXT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
+
+//import static org.hl7.fhir.r4.model.api.IBaseBundle.LINK_NEXT;
 
 @ExtendWith(MockitoExtension.class)
 class ValueSetMapperTest {
@@ -44,14 +50,22 @@ class ValueSetMapperTest {
     @Mock
     private HapiFhirServer hapiFhirServer;
     @Mock
-    private ConversionResultsService conversionResultsService;
+    private HapiFhirLinkProcessor hapiFhirLinkProcessor;
+    @Mock
+    private ConversionResultsService conversionResultsService; // injected into  ConversionReporter
 
     @InjectMocks
     private ValueSetMapper valueSetMapper;
 
     @BeforeEach
     void setUp() {
-        ConversionReporter.setInThreadLocal("measureId", conversionResultsService);
+        ConversionReporter.setInThreadLocal("measureId",
+                "TEST",
+                conversionResultsService,
+                Instant.now(),
+                ConversionType.CONVERSION,
+                XmlSource.MEASURE,
+                Boolean.TRUE);
     }
 
     @Test

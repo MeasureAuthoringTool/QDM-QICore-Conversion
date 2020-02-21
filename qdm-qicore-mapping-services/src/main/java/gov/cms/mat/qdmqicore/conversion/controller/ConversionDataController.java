@@ -1,7 +1,7 @@
 package gov.cms.mat.qdmqicore.conversion.controller;
 
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.data.SearchData;
-import gov.cms.mat.qdmqicore.conversion.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.exceptions.ConversionMappingDataError;
 import gov.cms.mat.qdmqicore.conversion.exceptions.ConversionMappingNotFound;
 import gov.cms.mat.qdmqicore.conversion.service.ConversionDataService;
@@ -46,6 +46,25 @@ public class ConversionDataController {
                 .build();
 
         return conversionDataService.find(searchData);
+    }
+
+    @GetMapping(path = "/filtered")
+    public List<ConversionMapping> filtered(@RequestParam(required = false) String fhirResource,
+                                            @RequestParam(required = false) String matAttributeName,
+                                            @RequestParam(required = false) String fhirR4QiCoreMapping,
+                                            @RequestParam(required = false) String fhirElement,
+                                            @RequestParam(required = false) String fhirType,
+                                            @RequestParam(required = false) String matDataTypeDescription) {
+        SearchData searchData = SearchData.builder()
+                .fhirResource(fhirResource)
+                .matAttributeName(matAttributeName)
+                .fhirR4QiCoreMapping(fhirR4QiCoreMapping)
+                .fhirElement(fhirElement)
+                .fhirType(fhirType)
+                .matDataTypeDescription(matDataTypeDescription)
+                .build();
+
+        return conversionDataService.filtered(searchData);
     }
 
     @GetMapping(path = "/findOne")

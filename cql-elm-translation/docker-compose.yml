@@ -1,0 +1,11 @@
+version: '3.6'
+
+services:
+  cql-elm-translation:
+    image: cql-elm-translation
+    container_name: cql-elm-translation
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 9090:9090

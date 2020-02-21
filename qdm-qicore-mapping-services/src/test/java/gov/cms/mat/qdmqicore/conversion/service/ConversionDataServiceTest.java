@@ -1,8 +1,8 @@
 package gov.cms.mat.qdmqicore.conversion.service;
 
+import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.data.SearchData;
 import gov.cms.mat.qdmqicore.conversion.dto.ConversionDataBuilder;
-import gov.cms.mat.qdmqicore.conversion.dto.ConversionMapping;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.ConversionEntry;
 import gov.cms.mat.qdmqicore.conversion.spread_sheet_data.FhirQdmMappingData;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,14 +24,14 @@ import static org.mockito.Mockito.when;
 class ConversionDataServiceTest implements ConversionDataBuilder {
     @Mock
     private FhirQdmMappingData fhirQdmMappingData;
+
+
     @InjectMocks
     private ConversionDataService conversionDataService;
 
-    private ConversionMapping conversionMapping;
-
     @BeforeEach
     void setUp() {
-        conversionMapping = buildConversionMapping();
+        ConversionMapping conversionMapping = buildConversionMapping();
         ConversionEntry conversionEntry = createConversionEntryWithData(conversionMapping);
 
         when(fhirQdmMappingData.getAll()).thenReturn(Collections.singletonList(conversionEntry));
@@ -58,6 +58,16 @@ class ConversionDataServiceTest implements ConversionDataBuilder {
     }
 
     @Test
+    void filtered_Success() {
+        SearchData searchData = SearchData.builder().build();
+
+        List<ConversionMapping> mappingList = conversionDataService.filtered(searchData);
+        assertEquals(1, mappingList.size());
+
+        verify(fhirQdmMappingData).getAll();
+    }
+
+    @Test
     void find_NotFound() {
         SearchData searchData = SearchData.builder()
                 .fhirResource("___Not_Found___")
@@ -68,6 +78,4 @@ class ConversionDataServiceTest implements ConversionDataBuilder {
 
         verify(fhirQdmMappingData).getAll();
     }
-
-
 }

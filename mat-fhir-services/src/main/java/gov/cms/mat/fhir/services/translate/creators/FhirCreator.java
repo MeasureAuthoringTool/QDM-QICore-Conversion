@@ -1,14 +1,12 @@
 package gov.cms.mat.fhir.services.translate.creators;
 
-import org.hl7.fhir.r4.model.Attachment;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Identifier;
+import gov.cms.mat.cql.elements.LibraryProperties;
+import org.hl7.fhir.r4.model.*;
 
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.List;
+import java.util.Date;
 
 public interface FhirCreator {
 
@@ -36,15 +34,28 @@ public interface FhirCreator {
     }
 
     default CodeableConcept buildCodeableConcept(String code, String system, String display) {
-        CodeableConcept cp = new CodeableConcept();
-        List<Coding> lC = new ArrayList<>();
-        Coding cd = new Coding();
-        cd.setCode(code);
-        cd.setSystem(system);
-        cd.setDisplay(display);
-        lC.add(cd);
-        cp.setCoding(lC);
+        CodeableConcept codeableConcept = new CodeableConcept();
+        codeableConcept.setCoding(new ArrayList<>());
+        codeableConcept.getCoding()
+                .add(buildCoding(code, system, display));
+        return codeableConcept;
+    }
 
-        return cp;
+    default Coding buildCoding(String code, String system, String display) {
+        return new Coding()
+                .setCode(code)
+                .setSystem(system)
+                .setDisplay(display);
+    }
+
+    default Period buildPeriod(Date startDate, Date endDate) {
+        return new Period()
+                .setStart(startDate)
+                .setEnd(endDate);
+    }
+
+    default String createLibraryUuid(LibraryProperties properties) {
+        return properties.getName().replace('_', '-') + "-" +
+                properties.getVersion().replace('.', '-');
     }
 }

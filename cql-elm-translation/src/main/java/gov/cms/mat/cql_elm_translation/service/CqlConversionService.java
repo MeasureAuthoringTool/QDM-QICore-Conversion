@@ -1,6 +1,6 @@
 package gov.cms.mat.cql_elm_translation.service;
 
-import gov.cms.mat.cql_elm_translation.cql_translator.MatCqlSourceParser;
+import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql_elm_translation.cql_translator.MatLibrarySourceProvider;
 import gov.cms.mat.cql_elm_translation.cql_translator.TranslationResource;
 import gov.cms.mat.cql_elm_translation.data.RequestData;
@@ -18,16 +18,18 @@ import java.util.List;
 @Slf4j
 public class CqlConversionService {
     private static final String LOG_MESSAGE_TEMPLATE = "ErrorSeverity: %s, Message: %s";
-    private final FhirServicesService fhirServicesService;
+    private final MatFhirServices matFhirServices;
 
-    public CqlConversionService(FhirServicesService fhirServicesService) {
-        this.fhirServicesService = fhirServicesService;
+    public CqlConversionService(MatFhirServices matFhirServices) {
+        this.matFhirServices = matFhirServices;
     }
 
-    public void processQdmVersion(String cqlData) {
-        String qdmVersion = new MatCqlSourceParser(cqlData).parseQdmVersion();
-        MatLibrarySourceProvider.setQdmVersion(qdmVersion);
-        MatLibrarySourceProvider.setFhirServicesService(fhirServicesService);
+    /* MatLibrarySourceProvider places version and service in thread local */
+    public void setUpMatLibrarySourceProvider(String cql) {
+        CqlParser cqlParser = new CqlParser(cql);
+
+        MatLibrarySourceProvider.setQdmVersion(cqlParser.getUsing());
+        MatLibrarySourceProvider.setFhirServicesService(matFhirServices);
     }
 
     public String processCqlDataWithErrors(RequestData requestData) {
@@ -38,7 +40,6 @@ public class CqlConversionService {
     }
 
     private String attachErrorsToJson(List<CqlTranslatorException> errors, String json) {
-
         if (CollectionUtils.isEmpty(errors)) {
             return json;
         } else {
@@ -47,8 +48,8 @@ public class CqlConversionService {
     }
 
     public CqlTranslator processCqlData(RequestData requestData) {
-        TranslationResource translationResource = new TranslationResource();
-        return translationResource.buildTranslator(requestData.getCqlDataInputStream(), requestData.createMap());
+        return new TranslationResource()
+                .buildTranslator(requestData.getCqlDataInputStream(), requestData.createMap());
     }
 
     private List<CqlTranslatorException> processErrors(List<CqlTranslatorException> exceptions) {

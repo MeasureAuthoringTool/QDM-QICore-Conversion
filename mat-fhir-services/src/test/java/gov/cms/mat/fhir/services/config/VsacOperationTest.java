@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Disabled
 class VsacOperationTest {
     // when the vsac connect timeout's the groovy client will retry, making testing impossible.
     private final static boolean RUN_VSAC_INTEGRATION_TESTS = true;
@@ -27,8 +29,6 @@ class VsacOperationTest {
 
     @Test
     void testConfigProperties() {
-
-
         assertEquals("https://vsac.nlm.nih.gov/vsac/ws/Ticket", vsacConfig.getServer());
         assertEquals("http://umlsks.nlm.nih.gov", vsacConfig.getService());
         assertEquals("https://vsac.nlm.nih.gov/vsac/svs/RetrieveMultipleValueSets?", vsacConfig.getRetrieveMultiOidsService());
@@ -49,7 +49,7 @@ class VsacOperationTest {
     void testValidateData() {
         if (haveVsacCredentialsInEnvironmentAndFlag()) {
             CQLQualityDataSetDTO cqlQualityDataSetDTO = new CQLQualityDataSetDTO();
-            cqlQualityDataSetDTO.setOid("2.16.840.1.113762.1.4.1195.291");
+            cqlQualityDataSetDTO.setOid("2.16.840.1.113762.1.4.1116.180");
             //  cqlQualityDataSetDTO.setVersion("20190129"); version and revision ignored
 
             {

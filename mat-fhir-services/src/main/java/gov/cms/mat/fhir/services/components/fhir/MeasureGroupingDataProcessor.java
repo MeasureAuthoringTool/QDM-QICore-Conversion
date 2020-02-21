@@ -61,11 +61,10 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
         Measure.MeasureGroupPopulationComponent component = new Measure.MeasureGroupPopulationComponent();
 
         Expression value = new Expression();
-        value.setLanguage(Expression.ExpressionLanguage.TEXT_CQL);
+        String expressionString = (Expression.ExpressionLanguage.TEXT_CQL).getDisplay();
+        value.setLanguage(expressionString);
         value.setExpression(clauseDetail.getDisplayName());
         component.setCode(buildCodeableConcept(clauseDetail.getType(), SYSTEM, clauseDetail.getDisplayName()));
         return component;
     }
-
-
 }

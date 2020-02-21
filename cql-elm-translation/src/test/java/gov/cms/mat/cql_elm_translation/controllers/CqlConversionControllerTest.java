@@ -45,7 +45,7 @@ class CqlConversionControllerTest {
 
         assertEquals(result, json);
         verify(cqlConversionService).processCqlDataWithErrors(any());
-        verify(cqlConversionService).processQdmVersion(cqlData);
+        //verify(cqlConversionService).processQdmVersion(cqlData);
     }
 
     @Test
@@ -70,6 +70,6 @@ class CqlConversionControllerTest {
 
         verify(matXmlConversionService).processCqlXml(xml);
         verify(cqlConversionService).processCqlDataWithErrors(any());
-        verify(cqlConversionService).processQdmVersion(cqlData);
+        //verify(cqlConversionService).processQdmVersion(cqlData);
     }
 }

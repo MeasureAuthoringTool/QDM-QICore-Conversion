@@ -10,5 +10,6 @@ import java.math.BigDecimal;
 public class CqlLibraryFindData {
     String qdmVersion;
     String name;
-    BigDecimal version;
+    BigDecimal matVersion;
+    String version;
 }

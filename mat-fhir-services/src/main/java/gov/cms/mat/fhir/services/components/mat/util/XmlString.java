@@ -6,8 +6,9 @@ import java.util.List;
 public class XmlString {
     private static final String START_TAG = "<group sequence=";
     private static final String END_TAG = "</group>";
+    private static final String XML_BASE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><measureGrouping>%s</measureGrouping>";
+
     private final String xml;
-    String XML_BASE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><measureGrouping>%s</measureGrouping>";
     private int pointer = 0;
 
     public XmlString(String xml) {

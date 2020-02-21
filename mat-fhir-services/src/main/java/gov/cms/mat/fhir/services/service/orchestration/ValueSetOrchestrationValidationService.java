@@ -17,9 +17,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.VALUESET_VALIDATION_FAILED;
+
 @Component
 @Slf4j
 class ValueSetOrchestrationValidationService implements ErrorSeverityChecker {
+    private static final String FAILURE_MESSAGE = "ValueSet validation failed";
     private final ValueSetService valueSetService;
     private final ValueSetFhirValidationResults valueSetFhirValidationResults;
 
@@ -42,6 +45,10 @@ class ValueSetOrchestrationValidationService implements ErrorSeverityChecker {
         boolean result =
                 noMissingDataSets && resultPass(conversionResult.getValueSetConversionResults());
 
+        if (!result) {
+            ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, VALUESET_VALIDATION_FAILED);
+        }
+
         log.info("ValueSet validation results for measure:{}, passed: {}", properties.getMeasureId(), result);
 
         return result;
@@ -61,21 +68,17 @@ class ValueSetOrchestrationValidationService implements ErrorSeverityChecker {
 
             valueSetConversionResults.forEach(v -> haveError(v.getSuccess(), errorCount));
 
-            log.info("Measure: {} contains {} errors", measureId, errorCount.get());
+            log.info("Measure: {} valueSetConversionResults contains {} errors", measureId, errorCount.get());
 
             return errorCount.get() == 0;
         }
     }
 
-    private boolean haveError(Boolean success, AtomicInteger errorCount) {
-        if (BooleanUtils.isTrue(success)) {
-            return false;
-        } else {
+    private void haveError(Boolean success, AtomicInteger errorCount) {
+        if (BooleanUtils.isFalse(success)) {
             errorCount.incrementAndGet();
-            return true;
         }
     }
-
 
     private boolean resultPass(List<ValueSetConversionResults> valueSetConversionResults) {
         if (CollectionUtils.isEmpty(valueSetConversionResults)) {

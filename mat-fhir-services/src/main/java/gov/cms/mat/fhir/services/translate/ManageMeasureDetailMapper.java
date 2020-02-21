@@ -20,7 +20,6 @@ public class ManageMeasureDetailMapper {
     public ManageMeasureDetailMapper(MatXmlConverter matXmlConverter) {
         this.matXmlConverter = matXmlConverter;
     }
-    
 
     public ManageCompositeMeasureDetailModel convert(byte[] xmlBytes, Measure measure) {
         ManageCompositeMeasureDetailModel model = getFromXml(xmlBytes);
@@ -99,7 +98,6 @@ public class ManageMeasureDetailMapper {
         if (measure.getMeasureSetId() != null) {
             model.setMeasureSetId(measure.getMeasureSetId().getId());
         }
-
 
         model.setValueSetDate(DateUtility.convertDateToStringNoTime(measure.getValueSetDate()));
     }

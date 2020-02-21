@@ -24,12 +24,12 @@ public class MeasureDataService {
         this.measureRepository = measureRepository;
     }
 
-    public List<String> findAllValidIds() {
-        return measureRepository.findAllIdsWithAllowedVersions(allowedVersions);
+    public List<String> findAllIds() {
+        return measureRepository.findAllIds();
     }
 
-    public List<Measure> findAllValid() {
-        return measureRepository.findByReleaseVersionIn(allowedVersions);
+    public List<String> findAllValidIds() {
+        return measureRepository.findAllIdsWithAllowedVersions(allowedVersions);
     }
 
     public Measure findOneValid(String measureId) {
@@ -57,9 +57,5 @@ public class MeasureDataService {
         } else {
             return allowedVersions.contains(releaseVersion);
         }
-    }
-
-    public List<Measure> getMeasuresByStatus(String measureStatus) {
-        return measureRepository.getMeasuresByStatusWithAllowedVersions(measureStatus, allowedVersions);
     }
 }

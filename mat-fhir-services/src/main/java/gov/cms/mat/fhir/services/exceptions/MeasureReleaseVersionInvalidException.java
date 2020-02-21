@@ -12,6 +12,6 @@ public class MeasureReleaseVersionInvalidException extends RuntimeException {
 
     public MeasureReleaseVersionInvalidException(String measureId, String releaseVersion, String allowedVersions) {
         super(String.format(MESSAGE, measureId, releaseVersion, allowedVersions));
-        log.warn(getMessage());
+        log.debug(getMessage());
     }
 }
