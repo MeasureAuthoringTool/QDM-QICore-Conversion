@@ -30,12 +30,12 @@ public class UnConvertedCqlLibraryHandler implements FileHandler {
 
             unconvertedCqlLibraryRepository.save(unconvertedCqlLibraryResult);
         } catch (Exception e) {
-            log.error("Cannot save {} UnconvertedCqlLibraryResult : {} ", makeCqlName(findData), findData);
+            log.error("Cannot save {} UnconvertedCqlLibraryResult : {} ", makeCqlName(findData), findData, e);
         }
     }
 
     public boolean exists(CqlLibraryFindData findData) {
-        return unconvertedCqlLibraryRepository.findByName(findData.getName()).isPresent();
+        return unconvertedCqlLibraryRepository.findByName(makeCqlName(findData)).isPresent();
     }
 
     public String makeCqlName(CqlLibraryFindData data) {
