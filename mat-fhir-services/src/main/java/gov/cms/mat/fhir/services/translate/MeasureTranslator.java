@@ -13,7 +13,10 @@ import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
 
 
 @Slf4j
@@ -29,7 +32,9 @@ public class MeasureTranslator implements FhirCreator {
 
     private final String baseURL;
 
-    public MeasureTranslator(ManageCompositeMeasureDetailModel measureCompositeModel, String humanReadable, String baseURL) {
+    public MeasureTranslator(ManageCompositeMeasureDetailModel measureCompositeModel,
+                             String humanReadable,
+                             String baseURL) {
         this.matCompositeMeasureModel = measureCompositeModel;
         this.humanReadable = humanReadable;
         this.baseURL = baseURL;
@@ -173,7 +178,7 @@ public class MeasureTranslator implements FhirCreator {
     }
 
     public CodeableConcept buildTypeFromAbbreviation(String abbrName) {
-        Optional<MatMeasureType> optional = MatMeasureType.findByMatAbbreviation(abbrName);
+        var optional = MatMeasureType.findByMatAbbreviation(abbrName);
 
         if (optional.isPresent()) {
             return buildCodeableConcept(optional.get().fhirCode, MEASURE_TYPE, "");

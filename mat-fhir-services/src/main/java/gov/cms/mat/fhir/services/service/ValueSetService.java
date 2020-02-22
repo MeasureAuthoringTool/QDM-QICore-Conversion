@@ -42,9 +42,9 @@ public class ValueSetService {
     }
 
     public List<ValueSet> findValueSetsByMeasureId(XmlSource xmlSource, String measureId, ConversionType conversionType) {
-        Measure matMeasure = measureDataService.findOneValid(measureId); // if not valid will throw
+        var matMeasure = measureDataService.findOneValid(measureId); // if not valid will throw
 
-        OrchestrationProperties properties = OrchestrationProperties.builder()
+        var properties = OrchestrationProperties.builder()
                 .matMeasure(matMeasure)
                 .xmlSource(xmlSource)
                 .conversionType(conversionType)
@@ -62,7 +62,7 @@ public class ValueSetService {
         if (ArrayUtils.isEmpty(xml)) {
             String message = String.format(XML_NOT_FOUND_MESSAGE, matMeasure.getId(), properties.getXmlSource());
             log.warn(message);
-            ConversionReporter.setTerminalMessage(message, ConversionOutcome.VALUESET_CONVERSION_FAILED);
+            ConversionReporter.setTerminalMessage(message, ConversionOutcome.MEASURE_XML_NOT_FOUND);
             throw new ValueSetConversionException(message);
         } else {
             return valueSetMapper.translateToFhir(new String(xml));
