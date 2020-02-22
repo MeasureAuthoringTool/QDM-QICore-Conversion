@@ -1,10 +1,13 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
+import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
+import gov.cms.mat.fhir.services.service.support.LibraryConversionReporter;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -23,19 +26,23 @@ import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.ELM_CONT
 
 @Component
 @Slf4j
-public class LibraryOrchestrationConversionService extends LibraryOrchestrationBase implements FhirLibraryHelper {
+public class LibraryOrchestrationConversionService extends LibraryOrchestrationBase
+        implements FhirLibraryHelper, LibraryConversionReporter {
+
     private static final String FAILURE_MESSAGE_PERSIST = "Library conversion failed";
     private final CqlLibraryDataService cqlLibraryDataService;
     private final HapiFhirLinkProcessor hapiFhirLinkProcessor;
+    private final CQLLibraryTranslationService cqlLibraryTranslationService;
 
 
     public LibraryOrchestrationConversionService(CqlLibraryDataService cqlLibraryDataService,
                                                  HapiFhirServer hapiFhirServer,
-                                                 HapiFhirLinkProcessor hapiFhirLinkProcessor) {
+                                                 HapiFhirLinkProcessor hapiFhirLinkProcessor, CQLLibraryTranslationService cqlLibraryTranslationService) {
         super(hapiFhirServer);
         this.cqlLibraryDataService = cqlLibraryDataService;
 
         this.hapiFhirLinkProcessor = hapiFhirLinkProcessor;
+        this.cqlLibraryTranslationService = cqlLibraryTranslationService;
     }
 
     boolean convert(OrchestrationProperties properties) {
@@ -82,9 +89,19 @@ public class LibraryOrchestrationConversionService extends LibraryOrchestrationB
 
                 String fhirCql = findContentFromLibrary(library, CQL_CONTENT_TYPE);
                 ConversionReporter.setFhirCql(fhirCql, cqlLibrary.getId());
-            }
 
-            return false;
+                CqlParser cqlParser = new CqlParser(fhirCql);
+                ConversionReporter.setCqlNameAndVersion(cqlParser.getLibrary().getName(),
+                        cqlParser.getLibrary().getVersion(),
+                        cqlLibrary.getId());
+
+
+                return cqlLibraryTranslationService.processJsonForError(CQLLibraryTranslationService.ConversionType.FHIR,
+                        fhirJson,
+                        cqlLibrary.getId());
+            } else {
+                return false;
+            }
         } else {
             ConversionReporter.setLibraryNotFoundInHapi(cqlLibrary.getId());
             return true;
