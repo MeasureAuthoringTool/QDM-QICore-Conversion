@@ -66,7 +66,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
 
     private void processCqlLibrary(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean) {
         String cql = convertMatXmlToCql(cqlLibrary.getCqlXml(), cqlLibrary.getId());
-        ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId()); //todo no need for this done in processAndGetCqlLibraries
+        ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
 
         String json = convertToJson(cqlLibrary, atomicBoolean, cql, ConversionType.QDM);
 
@@ -89,7 +89,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         return convertToJson(null, atomicBoolean, cql, ConversionType.FHIR);
     }
 
-    private boolean processJsonForError(ConversionType conversionType, String json, String matLibraryId) {
+    public boolean processJsonForError(ConversionType conversionType, String json, String matLibraryId) {
         ElmErrorExtractor extractor = new ElmErrorExtractor(json);
 
         List<CqlConversionError> cqlConversionErrors = getCqlConversionErrors(matLibraryId, extractor);

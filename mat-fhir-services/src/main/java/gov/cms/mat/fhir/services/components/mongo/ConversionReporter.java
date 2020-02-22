@@ -97,6 +97,11 @@ public class ConversionReporter {
         conversionReporter.addCql(cql, name, versionString, matLibraryId);
     }
 
+    public static void setCqlNameAndVersion(String name, String version, String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addCqlNameAndVersion(name, version, matLibraryId);
+    }
+
     public static void setFhirCql(String fhirCql, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addFhirCql(fhirCql, matLibraryId);
@@ -314,15 +319,6 @@ public class ConversionReporter {
         conversionResultsService.addMeasureResult(key, result);
     }
 
-//    private void addLibraryFieldConversionResult(String field, String destination, String reason, String matCqlId) {
-//        FieldConversionResult result = FieldConversionResult.builder()
-//                .field(field)
-//                .destination(destination)
-//                .reason(reason)
-//                .build();
-//
-//        conversionResultsService.addLibraryFieldConversionResult(key, result, matCqlId);
-//    }
 
 
     private void addCqlConversionResultSuccess(String matLibraryId) {
@@ -335,6 +331,10 @@ public class ConversionReporter {
 
     private void addCql(String cql, String name, String version, String matLibraryId) {
         conversionResultsService.addCql(key, cql, name, version, matLibraryId);
+    }
+
+    private void addCqlNameAndVersion(String name, String version, String matLibraryId) {
+        conversionResultsService.addCql(key, null, name, version, matLibraryId);
     }
 
     private void addFhirCql(String cql, String matLibraryId) {

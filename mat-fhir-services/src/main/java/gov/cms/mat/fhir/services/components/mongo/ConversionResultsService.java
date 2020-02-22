@@ -67,15 +67,6 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
-//    void addLibraryFieldConversionResult(ThreadSessionKey key, FieldConversionResult result, String matLibraryId) {
-//        ConversionResult conversionResult = findOrCreate(key);
-//
-//        LibraryConversionResults libraryConversionResult = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
-//
-//        libraryConversionResult.getLibraryResults().add(result);
-//
-//        save(conversionResult);
-//    }
 
     public Optional<ConversionResult> findByMeasureId(ThreadSessionKey key) {
         return conversionResultRepository.findByMeasureIdAndStart(key.getMeasureId(), key.getStart());
@@ -140,7 +131,9 @@ public class ConversionResultsService {
         libraryConversionResults.setName(name);
         libraryConversionResults.setVersion(version);
 
-        libraryConversionResults.getCqlConversionResult().setCql(cql);
+        if (cql != null) {
+            libraryConversionResults.getCqlConversionResult().setCql(cql);
+        }
 
         save(conversionResult);
     }
