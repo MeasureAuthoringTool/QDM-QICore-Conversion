@@ -50,7 +50,6 @@ public class ValueSetService {
                 .conversionType(conversionType)
                 .build();
 
-
         return findValueSetsByMeasure(properties);
     }
 

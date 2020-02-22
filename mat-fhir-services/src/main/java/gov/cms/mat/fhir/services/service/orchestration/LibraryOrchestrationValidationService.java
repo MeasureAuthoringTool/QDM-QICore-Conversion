@@ -78,9 +78,9 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 unConvertedCqlLibraryHandler.write(data, cql);
             }
 
-            String message = String.format(HAPI_FAILURE_MESSAGE, include.getName(), include.getVersion());
-            ConversionReporter.setTerminalMessage(message, CQL_LIBRARY_TRANSLATION_FAILED);
-            throw new LibraryConversionException(message);
+            // String message = String.format(HAPI_FAILURE_MESSAGE, include.getName(), include.getVersion());
+            // ConversionReporter.setTerminalMessage(message, CQL_LIBRARY_TRANSLATION_FAILED);
+            // throw new LibraryConversionException(message);
         } else {
             log.debug("Included Library already in fhir: {}", include);
         }
@@ -89,6 +89,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     public void processIncludes(String cql) {
         CqlParser cqlParser = new CqlParser(cql);
+        log.warn(cql);
         List<IncludeProperties> includes = cqlParser.getIncludes();
         UsingProperties using = cqlParser.getUsing();
 
