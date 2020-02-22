@@ -71,7 +71,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                     .build();
 
             if (unConvertedCqlLibraryHandler.exists(data)) {
-                log.info("File already exists for: {}", unConvertedCqlLibraryHandler.makeCqlName(data));
+                log.info("Already exists in mongo for key: {}", unConvertedCqlLibraryHandler.makeCqlName(data));
             } else {
                 CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);
                 String cql = cqlLibraryTranslationService.convertMatXmlToCql(cqlLibrary.getCqlXml(), null);

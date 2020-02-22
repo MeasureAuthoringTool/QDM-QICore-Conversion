@@ -17,6 +17,7 @@ public class CqlLibraryNotFoundException extends RuntimeException {
     public CqlLibraryNotFoundException(String measureId) {
         super(String.format(NOT_FOUND_BY_MEASURE_ID, measureId));
         ConversionReporter.setTerminalMessage(getMessage(), CQLLIBRARY_NOT_FOUND);
+        log.warn(getMessage());
     }
 
     public CqlLibraryNotFoundException(String message, String id) {
