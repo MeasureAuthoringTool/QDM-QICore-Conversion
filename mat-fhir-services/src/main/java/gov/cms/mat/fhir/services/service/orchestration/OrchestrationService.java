@@ -132,7 +132,8 @@ public class OrchestrationService {
 
         if (!validated) {
             log.debug("Validation has failed for measureId: {}", properties.getMeasureId());
-            return false;
+            log.warn("Validation has failed for measureId: {} BUT CONVERTING ANYWAY", properties.getMeasureId());
+            return true; //todo mcg
         } else { // we are valid full steam ahead
             log.debug("Validation has passed for measureId: {}", properties.getMeasureId());
             return true;

@@ -44,3 +44,6 @@ hs_err_pid*
 /mat-server-commons/mat-server-commons.iml
 /vsac-mat-conversion/vsac-mat-conversion.iml
 
+/docker-compose-mike.yml
+/qdm-qicore-mapping-services/qdm-qicore-mapping-services.iml
+/qdm-qicore-parent.iml
