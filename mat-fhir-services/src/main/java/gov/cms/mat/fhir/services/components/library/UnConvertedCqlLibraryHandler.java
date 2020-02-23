@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -38,12 +37,24 @@ public class UnConvertedCqlLibraryHandler implements FileHandler {
         return unconvertedCqlLibraryRepository.findByName(makeCqlName(findData)).isPresent();
     }
 
+    public boolean delete(CqlLibraryFindData findData) {
+        var optional = unconvertedCqlLibraryRepository.findByName(makeCqlName(findData));
+
+        if( optional.isPresent()) {
+            unconvertedCqlLibraryRepository.delete(optional.get());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     public String makeCqlName(CqlLibraryFindData data) {
         return data.getName() + "_" + data.getQdmVersion() + "_" + data.getVersion() + EXTENSION;
     }
 
     public String findCql(String name) {
-        Optional<UnconvertedCqlLibraryResult> optional = unconvertedCqlLibraryRepository.findByName(name);
+        var optional = unconvertedCqlLibraryRepository.findByName(name);
 
         if (optional.isPresent()) {
             return optional.get().getCql();

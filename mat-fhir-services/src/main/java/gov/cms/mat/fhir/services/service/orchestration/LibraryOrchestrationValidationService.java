@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.BaseProperties;
 import gov.cms.mat.cql.elements.IncludeProperties;
 import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
@@ -10,7 +11,6 @@ import gov.cms.mat.fhir.services.components.cql.CqlLibraryConverter;
 import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryHandler;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
-import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.CQL_LIBRARY_TRANSLATION_FAILED;
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.LIBRARY_VALIDATION_FAILED;
 
 @Component
@@ -59,32 +58,36 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
     }
 
     public void processIncludedLibrary(IncludeProperties include, UsingProperties using) {
+        CqlLibraryFindData data = buildFindData(include, using);
+        String unconvertedName = unConvertedCqlLibraryHandler.makeCqlName(data);
 
-        Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(include.getVersion(), include.getName());
+        Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(include.getVersion(),
+                include.getName() + BaseProperties.LIBRARY_FHIR_EXTENSION);
 
         if (CollectionUtils.isEmpty(bundle.getEntry())) {
-            CqlLibraryFindData data = CqlLibraryFindData.builder()
-                    .qdmVersion(using.getVersion())
-                    .name(include.getName())
-                    .matVersion(convertVersionToBigDecimal(include.getVersion()))
-                    .version(include.getVersion())
-                    .build();
-
             if (unConvertedCqlLibraryHandler.exists(data)) {
-                log.info("Already exists in mongo for key: {}", unConvertedCqlLibraryHandler.makeCqlName(data));
+                log.info("Already exists in mongo for key: {}", unconvertedName);
             } else {
                 CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);
                 String cql = cqlLibraryTranslationService.convertMatXmlToCql(cqlLibrary.getCqlXml(), null);
                 unConvertedCqlLibraryHandler.write(data, cql);
             }
-
-            // String message = String.format(HAPI_FAILURE_MESSAGE, include.getName(), include.getVersion());
-            // ConversionReporter.setTerminalMessage(message, CQL_LIBRARY_TRANSLATION_FAILED);
-            // throw new LibraryConversionException(message);
         } else {
             log.debug("Included Library already in fhir: {}", include);
-        }
 
+            if (unConvertedCqlLibraryHandler.delete(data)) {
+                log.info("Removed from mongo for key: {}", unconvertedName); // making progress
+            }
+        }
+    }
+
+    private CqlLibraryFindData buildFindData(IncludeProperties include, UsingProperties using) {
+        return CqlLibraryFindData.builder()
+                .qdmVersion(using.getVersion())
+                .name(include.getName())
+                .matVersion(convertVersionToBigDecimal(include.getVersion()))
+                .version(include.getVersion())
+                .build();
     }
 
     public void processIncludes(String cql) {
