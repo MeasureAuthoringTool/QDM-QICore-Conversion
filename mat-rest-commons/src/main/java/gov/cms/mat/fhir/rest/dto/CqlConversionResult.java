@@ -20,7 +20,7 @@ public class CqlConversionResult {
     String elm;
 
     /* results added automatically by cql-elm-translation service when translating qdm elm */
-    List<CqlConversionError> cqlConversionErrors = new ArrayList<>(); // results added automatically by elm  service
+    Set<CqlConversionError> cqlConversionErrors = new HashSet<>(); // results added automatically by elm  service
 
     /* results we add for exceptions cql-elm-translation service misses for some reason when translating qdm elm*/
     Set<MatCqlConversionException> matCqlConversionErrors = new HashSet<>();
@@ -29,7 +29,7 @@ public class CqlConversionResult {
     String fhirElm;
 
     /* results added automatically by cql-elm-translation service when translating fhir elm */
-    List<CqlConversionError> fhirCqlConversionErrors = new ArrayList<>();
+    Set<CqlConversionError> fhirCqlConversionErrors = new HashSet<>();
     /* results we add for exceptions cql-elm-translation service misses for some reason when translating fhir elm */
     Set<MatCqlConversionException> fhirMatCqlConversionErrors = new HashSet<>();
 }

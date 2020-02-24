@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.cqframework.cql.cql2elm.CqlTranslator;
 import org.cqframework.cql.cql2elm.CqlTranslatorException;
+import org.cqframework.cql.cql2elm.model.TranslatedLibrary;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -36,14 +37,14 @@ public class CqlConversionService {
         CqlTranslator cqlTranslator = processCqlData(requestData);
         List<CqlTranslatorException> errors = processErrors(cqlTranslator.getExceptions());
 
-        return attachErrorsToJson(errors, cqlTranslator.toJson());
+        return attachErrorsToJson(errors, cqlTranslator.toJson(), cqlTranslator.getTranslatedLibrary());
     }
 
-    private String attachErrorsToJson(List<CqlTranslatorException> errors, String json) {
-        if (CollectionUtils.isEmpty(errors)) {
+    private String attachErrorsToJson(List<CqlTranslatorException> errors, String json, TranslatedLibrary translatedLibrary) {
+        if (CollectionUtils.isEmpty(errors) || translatedLibrary == null || translatedLibrary.getLibrary() == null) {
             return json;
         } else {
-            return new CqlExceptionErrorProcessor(errors, json).process();
+            return new CqlExceptionErrorProcessor(errors, json, translatedLibrary.getLibrary()).process();
         }
     }
 

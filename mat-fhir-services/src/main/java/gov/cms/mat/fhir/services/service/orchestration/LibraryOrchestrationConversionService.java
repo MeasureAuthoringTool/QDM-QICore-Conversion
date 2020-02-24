@@ -85,7 +85,9 @@ public class LibraryOrchestrationConversionService extends LibraryOrchestrationB
                 Library library = optionalLibrary.get();
 
                 String fhirJson = findContentFromLibrary(library, ELM_CONTENT_TYPE);
-                ConversionReporter.setFhirJson(fhirJson, cqlLibrary.getId());
+
+                String cleanedFhirJson = cleanJsonFromMatExceptions(fhirJson);
+                ConversionReporter.setFhirJson(cleanedFhirJson, cqlLibrary.getId());
 
                 String fhirCql = findContentFromLibrary(library, CQL_CONTENT_TYPE);
                 ConversionReporter.setFhirCql(fhirCql, cqlLibrary.getId());

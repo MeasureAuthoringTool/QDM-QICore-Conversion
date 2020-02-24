@@ -1,4 +1,4 @@
-*.class
+git pull*.class
 *.log
 *.ctxt
 .mtj.tmp/
@@ -26,3 +26,5 @@ hs_err_pid*
 
 # misc
 /docker-compose-mike.yml
+/mat-rest-commons/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+/mat-rest-commons/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
