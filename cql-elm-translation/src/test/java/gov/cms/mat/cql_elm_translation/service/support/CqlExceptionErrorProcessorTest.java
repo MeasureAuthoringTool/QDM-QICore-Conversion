@@ -2,6 +2,8 @@ package gov.cms.mat.cql_elm_translation.service.support;
 
 import gov.cms.mat.cql_elm_translation.ResourceFileUtil;
 import org.cqframework.cql.cql2elm.CqlTranslatorException;
+
+import org.hl7.elm.r1.Library;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -16,7 +18,8 @@ class CqlExceptionErrorProcessorTest implements ResourceFileUtil {
     @Test
     void process_EmptyErrors() {
         String json = getData("/library-elm.json");
-        cqlExceptionErrorProcessor = new CqlExceptionErrorProcessor(Collections.emptyList(), json);
+        Library library = new Library();
+        cqlExceptionErrorProcessor = new CqlExceptionErrorProcessor(Collections.emptyList(), json, library);
 
         assertEquals(json, cqlExceptionErrorProcessor.process()); // since no errors no changes to json
     }
@@ -26,8 +29,9 @@ class CqlExceptionErrorProcessorTest implements ResourceFileUtil {
         String json = getData("/library-elm.json");
 
         List<CqlTranslatorException> errors = Collections.singletonList(createError());
+        Library library = new Library();
 
-        cqlExceptionErrorProcessor = new CqlExceptionErrorProcessor(errors, json);
+        cqlExceptionErrorProcessor = new CqlExceptionErrorProcessor(errors, json, library );
 
         assertNotEquals(json, cqlExceptionErrorProcessor.process());
     }

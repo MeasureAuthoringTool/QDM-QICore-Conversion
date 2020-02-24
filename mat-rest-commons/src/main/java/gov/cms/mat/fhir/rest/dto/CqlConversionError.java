@@ -8,8 +8,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class CqlConversionError extends CqlConversionBase {
     String errorSeverity;
+    @EqualsAndHashCode.Exclude
     String targetIncludeLibraryId;
+    @EqualsAndHashCode.Exclude
     String targetIncludeLibraryVersionId;
-    String type;
     String message;
+    String type;
 }
