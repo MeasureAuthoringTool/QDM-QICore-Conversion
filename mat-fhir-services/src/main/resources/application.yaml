@@ -26,6 +26,8 @@ library-files:
     - MATGlobalCommonFunctions_FHIR4-4.0.000.cql
     - AdvancedIllnessandFrailtyExclusion_FHIR4-4.0.000.cql
     - TJCOverall_FHIR4-4.0.000.cql
+    - VTEICU_FHIR4-3.1.000.cql
+    - Hospice_FHIR4-1.0.000.cql
 
 
 measures:
