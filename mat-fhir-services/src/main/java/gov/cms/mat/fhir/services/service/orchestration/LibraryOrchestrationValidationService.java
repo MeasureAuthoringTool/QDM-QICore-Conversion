@@ -11,6 +11,7 @@ import gov.cms.mat.fhir.services.components.cql.CqlLibraryConverter;
 import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryHandler;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
+import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
@@ -24,6 +25,7 @@ import gov.cms.mat.fhir.services.translate.MatLibraryTranslator;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
@@ -47,23 +49,40 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
     private final UnConvertedCqlLibraryHandler unConvertedCqlLibraryHandler;
     private final CqlLibraryConverter cqlLibraryConverter;
+    private final LibraryConversionFileConfig libraryConversionFileConfig;
 
     public LibraryOrchestrationValidationService(HapiFhirServer hapiFhirServer,
                                                  CqlLibraryDataService cqlLibraryDataService,
                                                  CQLLibraryTranslationService cqlLibraryTranslationService,
-                                                 UnConvertedCqlLibraryHandler unConvertedCqlLibraryHandler, CqlLibraryConverter cqlLibraryConverter) {
+                                                 UnConvertedCqlLibraryHandler unConvertedCqlLibraryHandler,
+                                                 CqlLibraryConverter cqlLibraryConverter,
+                                                 LibraryConversionFileConfig libraryConversionFileConfig) {
         super(hapiFhirServer);
         this.cqlLibraryDataService = cqlLibraryDataService;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
         this.unConvertedCqlLibraryHandler = unConvertedCqlLibraryHandler;
         this.cqlLibraryConverter = cqlLibraryConverter;
+        this.libraryConversionFileConfig = libraryConversionFileConfig;
     }
 
     public void processIncludedLibrary(IncludeProperties include, UsingProperties using) {
         CqlLibraryFindData data = buildFindData(include, using);
         String unconvertedName = unConvertedCqlLibraryHandler.makeCqlName(data);
 
-        Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(include.getVersion(),
+
+        String fhir4Name = include.getName() + BaseProperties.LIBRARY_FHIR_EXTENSION;
+        String version = include.getVersion();
+
+        var optional = libraryConversionFileConfig.getOrder().stream()
+                .filter(s -> nameMatch(s, fhir4Name))
+                .findFirst();
+
+
+        if (optional.isPresent()) {
+            version = findVersion(optional.get(), version);
+        }
+
+        Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(version,
                 include.getName() + BaseProperties.LIBRARY_FHIR_EXTENSION);
 
         if (CollectionUtils.isEmpty(bundle.getEntry())) {
@@ -83,6 +102,26 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         }
     }
 
+    private String findVersion(String orderedName, String defaultVersion) {
+        String startPattern = BaseProperties.LIBRARY_FHIR_EXTENSION + "-";
+        String version = StringUtils.substringBetween(orderedName, startPattern, UnConvertedCqlLibraryHandler.EXTENSION);
+
+        return StringUtils.isEmpty(version) ? defaultVersion : version;
+    }
+
+    private boolean nameMatch(String orderedName, String fhir4Name) {
+
+        int end = orderedName.indexOf(BaseProperties.LIBRARY_FHIR_EXTENSION);
+
+        if (end == -1) {
+            return false;
+        }
+
+        String name = orderedName.substring(0, end + BaseProperties.LIBRARY_FHIR_EXTENSION.length());
+
+        return name.equals(fhir4Name);
+    }
+
     private CqlLibraryFindData buildFindData(IncludeProperties include, UsingProperties using) {
         return CqlLibraryFindData.builder()
                 .qdmVersion(using.getVersion())
@@ -95,12 +134,13 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
     public void processIncludes(String cql) {
         CqlParser cqlParser = new CqlParser(cql);
         log.warn(cql);
-        List<IncludeProperties> includes = cqlParser.getIncludes();
         UsingProperties using = cqlParser.getUsing();
 
-        // when no more includes recursion will stop
+        List<IncludeProperties> includes = cqlParser.getIncludes();
+
         includes.forEach(includeProperties -> processIncludedLibrary(includeProperties, using));
     }
+
 
     boolean validate(OrchestrationProperties properties) {
 
@@ -121,7 +161,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
             ConversionReporter.setTerminalMessage(VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
         }
 
-        properties.getCqlLibraries().forEach(this::convertQdm);
+        properties.getCqlLibraries().forEach(this::convertQdmToFhir);
 
         // When no errors we would then convert to fhir and validate - for initial testing do for ALL
 
@@ -131,7 +171,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         return atomicBoolean.get();
     }
 
-    private void convertQdm(CqlLibrary matLib) {
+    private void convertQdmToFhir(CqlLibrary matLib) {
         String qdmCql = ConversionReporter.getCql(matLib.getId());
         String fhirCql = cqlLibraryConverter.convert(qdmCql);
         ConversionReporter.setFhirCql(fhirCql, matLib.getId());
