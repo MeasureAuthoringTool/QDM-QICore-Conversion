@@ -25,14 +25,14 @@ public class UntranslatedLibraryController {
     @Operation(summary = "Display all untranslated libraries",
             description = "Display the untranslated libraries that could not be located in HAPI FHIR.")
     @GetMapping()
-    public List<String> findMissingValueSets() {
+    public List<String> findMissingLibraries() {
         return unConvertedCqlLibraryHandler.findAll();
     }
 
     @Operation(summary = "Display all the cql in file",
             description = "Display the untranslated libraries cql.")
     @GetMapping("/{name}")
-    public String findMissingValueSets(@PathVariable String name) {
+    public String findMissingLibrary(@PathVariable String name) {
         return unConvertedCqlLibraryHandler.findCql(name);
     }
 }

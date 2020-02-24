@@ -7,7 +7,7 @@ class TranslationResourceTest {
 
     @Test
     void buildTranslator_checkExceptionHandling() {
-        TranslationResource translationResource = new TranslationResource();
+        TranslationResource translationResource = new TranslationResource(true);
 
         Assertions.assertThrows(TranslationFailureException.class, () -> {
             translationResource.buildTranslator(null, null);

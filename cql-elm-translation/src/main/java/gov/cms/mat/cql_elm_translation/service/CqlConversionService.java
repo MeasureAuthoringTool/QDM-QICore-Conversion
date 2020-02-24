@@ -49,7 +49,7 @@ public class CqlConversionService {
     }
 
     public CqlTranslator processCqlData(RequestData requestData) {
-        return new TranslationResource()
+        return new TranslationResource(true) //todo MCG
                 .buildTranslator(requestData.getCqlDataInputStream(), requestData.createMap());
     }
 

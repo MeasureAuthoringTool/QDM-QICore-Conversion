@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class UnConvertedCqlLibraryHandler implements FileHandler {
-    private static final String EXTENSION = ".cql";
+public class UnConvertedCqlLibraryHandler  {
+    public static final String EXTENSION = ".cql";
     private final UnconvertedCqlLibraryRepository unconvertedCqlLibraryRepository;
 
     public UnConvertedCqlLibraryHandler(UnconvertedCqlLibraryRepository unconvertedCqlLibraryRepository) {
