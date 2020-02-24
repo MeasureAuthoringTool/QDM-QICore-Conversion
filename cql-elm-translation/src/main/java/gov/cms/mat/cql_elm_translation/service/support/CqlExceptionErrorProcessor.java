@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.cqframework.cql.cql2elm.CqlTranslatorException;
 import org.cqframework.cql.elm.tracking.TrackBack;
+import org.hl7.cql_annotations.r1.CqlToElmError;
+import org.hl7.elm.r1.Library;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,10 +19,12 @@ public class CqlExceptionErrorProcessor {
 
     private final List<CqlTranslatorException> cqlErrors;
     private final String json;
+    private final Library library;
 
-    public CqlExceptionErrorProcessor(List<CqlTranslatorException> cqlErrors, String json) {
+    public CqlExceptionErrorProcessor(List<CqlTranslatorException> cqlErrors, String json, Library library) {
         this.cqlErrors = cqlErrors;
         this.json = json;
+        this.library = library;
     }
 
     public String process() {
@@ -43,9 +47,9 @@ public class CqlExceptionErrorProcessor {
         List<MatCqlConversionException> matErrors = buildMatErrors();
         String jsonToInsert = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(matErrors);
 
-      String temp =  json.replaceFirst("\n", "\n  \"errorExceptions\":" + jsonToInsert + ",\n");
+        String temp = json.replaceFirst("\n", "\n  \"errorExceptions\":" + jsonToInsert + ",\n");
 
-      return temp;
+        return temp;
     }
 
     private String escape(String raw) {
@@ -63,9 +67,28 @@ public class CqlExceptionErrorProcessor {
 
     private List<MatCqlConversionException> buildMatErrors() {
         return cqlErrors.stream()
+                .filter(this::filterByMessage)
                 .map(this::createDto)
                 .collect(Collectors.toList());
     }
+
+    private boolean filterByMessage(CqlTranslatorException cqlTranslatorException) {
+        List<Object> objectList = library.getAnnotation();
+
+        if( CollectionUtils.isEmpty(objectList)) {
+            return true;
+        } else {
+            var optional = objectList.stream()
+                    .filter(o -> o instanceof CqlToElmError)
+                    .map(CqlToElmError.class::cast)
+                    .map(CqlToElmError::getMessage)
+                    .filter(m -> m.equals(cqlTranslatorException.getMessage()))
+                    .findFirst();
+
+            return optional.isEmpty(); // did not find add to list
+        }
+    }
+
 
     private MatCqlConversionException createDto(CqlTranslatorException cqlException) {
         MatCqlConversionException matCqlConversionException = buildMatError(cqlException);

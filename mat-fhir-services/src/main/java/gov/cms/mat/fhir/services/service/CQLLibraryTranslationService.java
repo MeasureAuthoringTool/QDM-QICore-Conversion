@@ -12,6 +12,7 @@ import gov.cms.mat.fhir.services.service.support.ElmErrorExtractor;
 import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
 import gov.cms.mat.fhir.services.service.support.LibraryConversionReporter;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
+import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.CQL_LIBRARY_TRANSLATIO
 
 @Service
 @Slf4j
-public class CQLLibraryTranslationService implements ErrorSeverityChecker, LibraryConversionReporter {
+public class CQLLibraryTranslationService implements ErrorSeverityChecker, LibraryConversionReporter, FhirLibraryHelper {
     private final MeasureDataService measureDataService;
     private final CqlLibraryRepository cqlLibraryRepository;
     private final CqlConversionClient cqlConversionClient;
@@ -70,7 +71,8 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
 
         String json = convertToJson(cqlLibrary, atomicBoolean, cql, ConversionType.QDM);
 
-        ConversionReporter.setElm(json, cqlLibrary.getId());
+        String cleanedJson = cleanJsonFromMatExceptions(json);
+        ConversionReporter.setElm(cleanedJson, cqlLibrary.getId());
     }
 
     public String convertToJson(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean, String cql, ConversionType type) {
