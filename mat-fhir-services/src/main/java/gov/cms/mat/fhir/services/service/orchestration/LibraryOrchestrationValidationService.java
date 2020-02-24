@@ -21,6 +21,7 @@ import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.MatLibraryTranslator;
+import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.Bundle;
@@ -37,7 +38,7 @@ import static gov.cms.mat.fhir.services.service.CQLLibraryTranslationService.Con
 @Component
 @Slf4j
 public class LibraryOrchestrationValidationService extends LibraryOrchestrationBase
-        implements FhirValidatorProcessor, ErrorSeverityChecker, CqlVersionConverter {
+        implements FhirValidatorProcessor, ErrorSeverityChecker, CqlVersionConverter, FhirLibraryHelper {
 
     private static final String VALIDATION_FAILURE_MESSAGE = "Library validation failed";
     private static final String HAPI_FAILURE_MESSAGE = "Cannot find hapi fhir library with name: %s and version: %s";
@@ -137,7 +138,8 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
         String fhirJson = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, fhirCql);
-        ConversionReporter.setFhirJson(fhirJson, matLib.getId());
+        String cleanedJson = cleanJsonFromMatExceptions(fhirJson);
+        ConversionReporter.setFhirJson(cleanedJson, matLib.getId());
 
         cqlLibraryTranslationService.processJsonForError(FHIR, fhirJson, matLib.getId());
     }
@@ -149,7 +151,8 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 cql,
                 CQLLibraryTranslationService.ConversionType.QDM);
 
-        ConversionReporter.setElm(json, matLib.getId());
+        String cleanedJson = cleanJsonFromMatExceptions(json);
+        ConversionReporter.setElm(cleanedJson, matLib.getId());
     }
 
     private void translateCqlMatLibsToFhir(OrchestrationProperties properties) {

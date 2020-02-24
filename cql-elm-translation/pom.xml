@@ -55,27 +55,27 @@
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>model</artifactId>
-            <version>1.4.6</version>
+            <version>1.4.8</version>
         </dependency>
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>cql-to-elm</artifactId>
-            <version>1.4.6</version>
+            <version>1.4.8</version>
         </dependency>
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>elm</artifactId>
-            <version>1.4.6</version>
+            <version>1.4.8</version>
         </dependency>
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>quick</artifactId>
-            <version>1.4.6</version>
+            <version>1.4.8</version>
         </dependency>
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>qdm</artifactId>
-            <version>1.4.6</version>
+            <version>1.4.8</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
