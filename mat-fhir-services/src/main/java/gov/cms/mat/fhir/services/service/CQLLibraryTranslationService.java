@@ -97,10 +97,8 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
 
         if (cqlConversionErrors.isEmpty() && matCqlConversionExceptions.isEmpty()) {
             processCqlConversionResultSuccess(matLibraryId);
-
             return true;
         } else {
-
             return checkForErrors(matLibraryId, cqlConversionErrors, matCqlConversionExceptions, conversionType);
         }
     }
