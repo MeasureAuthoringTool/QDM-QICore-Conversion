@@ -1,16 +1,7 @@
-# Compiled class file
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -19,31 +10,19 @@
 *.tar.gz
 *.rar
 
+#Intellij files.
+*.iml
+.idea
+**/.mvn
+
+#OSX
+.DS_Store
+
+#Maven target dris.
+**/target
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-/qdm-qicore-commons/target/
-/mat-fhir-commons/target/
-/mat-fhir-services/target/
-/mat-server-commons/target/
-/vsac-mat-conversion/target/
-/qdm-qicore-mapping-services/target/
-/cql-translation-service/target/
 
-.idea
-/cql-elm-translation/.mvn/
-/mat-rest-commons/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
-/mat-rest-commons/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
-/mat-rest-commons/target/maven-archiver/pom.properties
-
-.DS_Store
-/qdm-qicore-parent/docker-compose-mike.yml
-/qdm-qicore-parent/qdm-qicore-parent.iml
-/mat-fhir-commons/mat-fhir-commons.iml
-/mat-fhir-services/mat-fhir-services.iml
-/mat-rest-commons/mat-rest-commons.iml
-/mat-server-commons/mat-server-commons.iml
-/vsac-mat-conversion/vsac-mat-conversion.iml
-
+# misc
 /docker-compose-mike.yml
-/qdm-qicore-mapping-services/qdm-qicore-mapping-services.iml
-/qdm-qicore-parent.iml
