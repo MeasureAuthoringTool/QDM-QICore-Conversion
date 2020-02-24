@@ -1,4 +1,4 @@
-*.class
+git pull*.class
 *.log
 *.ctxt
 .mtj.tmp/
