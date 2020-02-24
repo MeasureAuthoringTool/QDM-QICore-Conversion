@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.LIBRARY_VALIDATION_FAILED;
+import static gov.cms.mat.fhir.services.service.CQLLibraryTranslationService.ConversionType.FHIR;
 
 @Component
 @Slf4j
@@ -137,6 +138,8 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
         String fhirJson = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, fhirCql);
         ConversionReporter.setFhirJson(fhirJson, matLib.getId());
+
+        cqlLibraryTranslationService.processJsonForError(FHIR, fhirJson, matLib.getId());
     }
 
     private void validateQdm(CqlLibrary matLib, AtomicBoolean atomicBoolean) {
