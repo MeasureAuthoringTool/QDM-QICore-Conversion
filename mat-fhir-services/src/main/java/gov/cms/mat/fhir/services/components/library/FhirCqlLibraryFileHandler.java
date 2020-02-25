@@ -11,12 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,8 +41,8 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     }
 
     private String getData(String name) {
-        try (InputStream i = getClass().getResourceAsStream("/fhir/" + name);) {
-            return new String(i.readAllBytes(),"utf8");
+        try (InputStream i = getClass().getResourceAsStream("/fhir/" + name)) {
+            return new String(i.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

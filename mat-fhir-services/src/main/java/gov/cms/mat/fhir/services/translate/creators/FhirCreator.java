@@ -55,7 +55,10 @@ public interface FhirCreator {
     }
 
     default String createLibraryUuid(LibraryProperties properties) {
-        return properties.getName().replace('_', '-') + "-" +
-                properties.getVersion().replace('.', '-');
+        return createLibraryUuid(properties.getName(), properties.getVersion());
+    }
+
+    default String createLibraryUuid(String name, String version) {
+        return name.replace('_', '-') + "-" + version.replace('.', '-');
     }
 }

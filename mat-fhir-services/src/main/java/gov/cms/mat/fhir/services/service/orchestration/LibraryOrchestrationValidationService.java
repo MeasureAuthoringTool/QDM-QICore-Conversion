@@ -25,7 +25,6 @@ import gov.cms.mat.fhir.services.translate.MatLibraryTranslator;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
@@ -69,13 +68,10 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         CqlLibraryFindData data = buildFindData(include, using);
         String unconvertedName = unConvertedCqlLibraryHandler.makeCqlName(data);
 
-
         String fhir4Name = include.getName() + BaseProperties.LIBRARY_FHIR_EXTENSION;
         String version = include.getVersion();
 
-        var optional = libraryConversionFileConfig.getOrder().stream()
-                .filter(s -> nameMatch(s, fhir4Name))
-                .findFirst();
+        var optional = findLibFile(libraryConversionFileConfig.getOrder(), fhir4Name);
 
 
         if (optional.isPresent()) {
@@ -100,26 +96,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 log.info("Removed from mongo for key: {}", unconvertedName); // making progress
             }
         }
-    }
-
-    private String findVersion(String orderedName, String defaultVersion) {
-        String startPattern = BaseProperties.LIBRARY_FHIR_EXTENSION + "-";
-        String version = StringUtils.substringBetween(orderedName, startPattern, UnConvertedCqlLibraryHandler.EXTENSION);
-
-        return StringUtils.isEmpty(version) ? defaultVersion : version;
-    }
-
-    private boolean nameMatch(String orderedName, String fhir4Name) {
-
-        int end = orderedName.indexOf(BaseProperties.LIBRARY_FHIR_EXTENSION);
-
-        if (end == -1) {
-            return false;
-        }
-
-        String name = orderedName.substring(0, end + BaseProperties.LIBRARY_FHIR_EXTENSION.length());
-
-        return name.equals(fhir4Name);
     }
 
     private CqlLibraryFindData buildFindData(IncludeProperties include, UsingProperties using) {
