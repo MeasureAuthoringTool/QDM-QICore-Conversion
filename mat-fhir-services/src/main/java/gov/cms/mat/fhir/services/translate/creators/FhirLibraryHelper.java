@@ -40,6 +40,9 @@ public interface FhirLibraryHelper {
             ObjectNode root = (ObjectNode) mapper.readTree(json);
             root.remove("errorExceptions");
 
+            ObjectNode node = (ObjectNode) root.get("library");
+            node.remove("annotation");
+
             return root.toPrettyString();
 
         } catch (JsonProcessingException e) {
