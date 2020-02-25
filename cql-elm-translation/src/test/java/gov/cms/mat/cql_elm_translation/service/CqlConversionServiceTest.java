@@ -33,16 +33,6 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     }
 
     @Test
-    void process_Bad() {
-        cqlData = "cqlData";
-        CqlTranslator cqlTranslator = buildCqlTranslator();
-
-        assertEquals(2, cqlTranslator.getErrors().size());
-
-        assertTrue(cqlTranslator.toJson().contains("CqlToElmError"));
-    }
-
-    @Test
     void process_Good() {
         CqlTranslator cqlTranslator = buildCqlTranslator();
         assertTrue(cqlTranslator.getErrors().isEmpty());
