@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 @Builder
 @Getter
@@ -20,6 +21,10 @@ public class UsingProperties extends BaseProperties {
         //using FHIR version '4.0.0'
         this.libraryType = LIBRARY_FHIR_TYPE;
         this.version = LIBRARY_FHIR_VERSION;
+    }
+
+    public boolean isFhir() {
+        return StringUtils.isNotEmpty(libraryType) && libraryType.equals(BaseProperties.LIBRARY_FHIR_TYPE);
     }
 
     @Override

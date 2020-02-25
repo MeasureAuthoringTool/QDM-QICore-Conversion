@@ -1,10 +1,12 @@
 package gov.cms.mat.cql_elm_translation.service;
 
 import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.cql_elm_translation.cql_translator.MatLibrarySourceProvider;
 import gov.cms.mat.cql_elm_translation.cql_translator.TranslationResource;
 import gov.cms.mat.cql_elm_translation.data.RequestData;
 import gov.cms.mat.cql_elm_translation.service.support.CqlExceptionErrorProcessor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.cqframework.cql.cql2elm.CqlTranslator;
@@ -48,8 +50,12 @@ public class CqlConversionService {
         }
     }
 
+    @SneakyThrows
     public CqlTranslator processCqlData(RequestData requestData) {
-        return new TranslationResource(true) //todo MCG
+        CqlParser cqlParser = new CqlParser(new String(requestData.getCqlDataInputStream().readAllBytes()));
+        UsingProperties usingProperties = cqlParser.getUsing();
+
+        return new TranslationResource(usingProperties.isFhir())
                 .buildTranslator(requestData.getCqlDataInputStream(), requestData.createMap());
     }
 

@@ -54,8 +54,9 @@ public class TranslationResource {
     public TranslationResource(boolean isFhir) {
         this.modelManager = new ModelManager();
 
-        if (isFhir)
+        if (isFhir) {
             modelManager.resolveModel("FHIR", "4.0.0");
+        }
 
         this.libraryManager = new LibraryManager(modelManager);
     }
@@ -84,7 +85,7 @@ public class TranslationResource {
                     modelManager,
                     libraryManager,
                     ucumService,
-                    CqlTranslatorException.ErrorSeverity.Info,
+                    CqlTranslatorException.ErrorSeverity.Error,
                     signatureLevel,
                     options);
 
