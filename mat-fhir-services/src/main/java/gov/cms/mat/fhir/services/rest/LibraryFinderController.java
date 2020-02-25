@@ -95,8 +95,6 @@ public class LibraryFinderController implements CqlVersionConverter {
             } else {
                 throw new CqlLibraryNotFoundException("Cannot find library in bundle for name: " + name + ", version: " + version);
             }
-
-
         }
     }
 
@@ -104,11 +102,7 @@ public class LibraryFinderController implements CqlVersionConverter {
             description = "Load")
     @GetMapping("/load")
     public String load() {
-
         fhirCqlLibraryFileHandler.loaLibs();
-
         return "OK";
     }
-
-
 }

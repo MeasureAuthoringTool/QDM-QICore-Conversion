@@ -1,14 +1,17 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.BaseProperties;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
 import gov.cms.mat.fhir.services.service.support.LibraryConversionReporter;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
+import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
@@ -27,22 +30,26 @@ import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.ELM_CONT
 @Component
 @Slf4j
 public class LibraryOrchestrationConversionService extends LibraryOrchestrationBase
-        implements FhirLibraryHelper, LibraryConversionReporter {
+        implements FhirLibraryHelper, LibraryConversionReporter, FhirCreator {
 
     private static final String FAILURE_MESSAGE_PERSIST = "Library conversion failed";
     private final CqlLibraryDataService cqlLibraryDataService;
     private final HapiFhirLinkProcessor hapiFhirLinkProcessor;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
 
+    private final LibraryConversionFileConfig libraryConversionFileConfig;
 
     public LibraryOrchestrationConversionService(CqlLibraryDataService cqlLibraryDataService,
                                                  HapiFhirServer hapiFhirServer,
-                                                 HapiFhirLinkProcessor hapiFhirLinkProcessor, CQLLibraryTranslationService cqlLibraryTranslationService) {
+                                                 HapiFhirLinkProcessor hapiFhirLinkProcessor,
+                                                 CQLLibraryTranslationService cqlLibraryTranslationService,
+                                                 LibraryConversionFileConfig libraryConversionFileConfig) {
         super(hapiFhirServer);
         this.cqlLibraryDataService = cqlLibraryDataService;
 
         this.hapiFhirLinkProcessor = hapiFhirLinkProcessor;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
+        this.libraryConversionFileConfig = libraryConversionFileConfig;
     }
 
     boolean convert(OrchestrationProperties properties) {
@@ -71,7 +78,7 @@ public class LibraryOrchestrationConversionService extends LibraryOrchestrationB
     }
 
     public boolean filterLibrary(CqlLibrary cqlLibrary) {
-        Optional<String> optionalLink = hapiFhirServer.fetchHapiLinkLibrary(cqlLibrary.getId());
+        Optional<String> optionalLink = findLink(cqlLibrary);
 
         if (optionalLink.isPresent()) {
             String url = optionalLink.get();
@@ -107,6 +114,20 @@ public class LibraryOrchestrationConversionService extends LibraryOrchestrationB
         } else {
             ConversionReporter.setLibraryNotFoundInHapi(cqlLibrary.getId());
             return true;
+        }
+    }
+
+    private Optional<String> findLink(CqlLibrary cqlLibrary) {
+        String fhir4Name = cqlLibrary.getCqlName() + BaseProperties.LIBRARY_FHIR_EXTENSION;
+
+        var optionalName = findLibFile(libraryConversionFileConfig.getOrder(), fhir4Name);
+
+        if (optionalName.isPresent()) {
+            String version = findVersion(optionalName.get(), null);
+            String name = createLibraryUuid(fhir4Name, version);
+            return hapiFhirServer.fetchHapiLinkLibrary(name);
+        } else {
+            return hapiFhirServer.fetchHapiLinkLibrary(cqlLibrary.getId());
         }
     }
 }
