@@ -16,5 +16,6 @@ public enum ConversionOutcome {
     MEASURE_EXPORT_NOT_FOUND,
     OUTCOME_MISSING,
     QDM_MAPPING_ERROR,
+    SUCCESS_WITH_ERROR,
     SUCCESS
 }
