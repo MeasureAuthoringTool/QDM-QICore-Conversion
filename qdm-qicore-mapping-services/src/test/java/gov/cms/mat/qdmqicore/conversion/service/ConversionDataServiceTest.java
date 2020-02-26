@@ -25,7 +25,6 @@ class ConversionDataServiceTest implements ConversionDataBuilder {
     @Mock
     private FhirQdmMappingData fhirQdmMappingData;
 
-
     @InjectMocks
     private ConversionDataService conversionDataService;
 

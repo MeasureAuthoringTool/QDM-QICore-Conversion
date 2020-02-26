@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import gov.cms.mat.cql.elements.BaseProperties;
 import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryHandler;
+import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Attachment;
@@ -64,8 +65,9 @@ public interface FhirLibraryHelper {
     }
 
     default String cleanJsonFromMatExceptions(String json) {
-        ObjectMapper mapper = new ObjectMapper();
         try {
+            ObjectMapper mapper = new ObjectMapper();
+
             ObjectNode root = (ObjectNode) mapper.readTree(json);
             root.remove("errorExceptions");
 
@@ -73,10 +75,8 @@ public interface FhirLibraryHelper {
             node.remove("annotation");
 
             return root.toPrettyString();
-
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return json;
+            throw new CqlConversionException("Cannot clean json", e);
         }
     }
 }

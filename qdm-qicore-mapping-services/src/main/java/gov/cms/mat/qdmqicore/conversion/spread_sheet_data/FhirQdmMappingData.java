@@ -30,10 +30,10 @@ public class FhirQdmMappingData {
         this.restTemplate = restTemplate;
     }
 
-    static boolean areAllUnique(List<ConversionEntry> list) {
+    public boolean areAllUnique() {
         Set<Integer> set = new HashSet<>();
 
-        for (ConversionEntry t : list) {
+        for (ConversionEntry t : conversionData.feed.getEntry()) {
             if (!set.add(t.hashCode())) {
                 log.error("Record is a dup: {}", t.hashCode());
                 return false;
@@ -54,7 +54,7 @@ public class FhirQdmMappingData {
         log.info("Received {} records from the spreadsheet's JSON, URL: {}",
                 conversionData.feed.getEntry().size(), url);
 
-        if (!areAllUnique(conversionData.feed.getEntry())) {
+        if (!areAllUnique()) {
             log.error("We have duplicate data from the spreadsheet");
         } else {
             log.info("All records are uniq from the spreadsheet");
