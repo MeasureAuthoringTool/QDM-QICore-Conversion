@@ -3,10 +3,7 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
+import gov.cms.mat.fhir.services.components.mongo.*;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.MeasureReleaseVersionInvalidException;
@@ -17,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -101,11 +99,38 @@ public class OrchestrationController {
 
         orchestrationService.process(orchestrationProperties);
 
-        if (ConversionReporter.getConversionResult().getOutcome() == null) {
-            ConversionReporter.setTerminalMessage(SUCCESS.name(), SUCCESS);
+        ConversionResult conversionResult = ConversionReporter.getConversionResult();
+
+        if (conversionResult.getOutcome() == null) {
+            if (haveConversionResultError(conversionResult)) {
+                ConversionReporter.setTerminalMessage(SUCCESS_WITH_ERROR.name(), SUCCESS_WITH_ERROR);
+            } else {
+                ConversionReporter.setTerminalMessage(SUCCESS.name(), SUCCESS);
+            }
         }
 
         return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
+    }
 
+
+    private boolean haveConversionResultError(ConversionResult conversionResult) {
+        var optionalValueSetError = conversionResult.getValueSetConversionResults().stream()
+                .filter(l -> BooleanUtils.isNotTrue(l.getSuccess()))
+                .findFirst();
+
+        if (optionalValueSetError.isPresent()) {
+            return true;
+        }
+
+        var optionalLibraryError = conversionResult.getLibraryConversionResults().stream()
+                .filter(l -> BooleanUtils.isNotTrue(l.getSuccess()))
+                .findFirst();
+
+        if (optionalLibraryError.isPresent()) {
+            return true;
+        }
+
+        return conversionResult.getMeasureConversionResults() == null ||
+                BooleanUtils.isNotTrue(conversionResult.getMeasureConversionResults().getSuccess());
     }
 }
