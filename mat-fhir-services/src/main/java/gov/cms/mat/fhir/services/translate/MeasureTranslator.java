@@ -1,5 +1,8 @@
 package gov.cms.mat.fhir.services.translate;
 
+import gov.cms.mat.fhir.commons.model.MeasureDetails;
+import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
+import gov.cms.mat.fhir.commons.model.MeasureReferenceType;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
@@ -15,8 +18,13 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.CITATION;
+import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.DOCUMENTATION;
+import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.JUSTIFICATION;
 
 
 @Slf4j
@@ -24,6 +32,7 @@ public class MeasureTranslator implements FhirCreator {
     //this should be something that MAT provides but doesn't there are many possibilities
     public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/proportion-measure-cqfm";
     public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
+    public static final RelatedArtifact.RelatedArtifactType DEFAULT_ARTIFACT_TYPE = RelatedArtifact.RelatedArtifactType.CITATION;
 
     public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
 
@@ -31,13 +40,16 @@ public class MeasureTranslator implements FhirCreator {
     private final String humanReadable;
 
     private final String baseURL;
+    private gov.cms.mat.fhir.commons.model.Measure matMeasure;
 
-    public MeasureTranslator(ManageCompositeMeasureDetailModel measureCompositeModel,
+    public MeasureTranslator(gov.cms.mat.fhir.commons.model.Measure matMeasure,
+                             ManageCompositeMeasureDetailModel measureCompositeModel,
                              String humanReadable,
                              String baseURL) {
         this.matCompositeMeasureModel = measureCompositeModel;
         this.humanReadable = humanReadable;
         this.baseURL = baseURL;
+        this.matMeasure = matMeasure;
     }
 
     public org.hl7.fhir.r4.model.Measure translateToFhir() {
@@ -125,18 +137,21 @@ public class MeasureTranslator implements FhirCreator {
     }
 
     public void processRelatedArtifacts(Measure fhirMeasure) {
-        //related artifacts
         List<RelatedArtifact> relatedArtifacts = new ArrayList<>();
-        List<String> referenceList = matCompositeMeasureModel.getReferencesList();
-        if (referenceList != null) {
-            for (String ref : referenceList) {
-                RelatedArtifact art = new RelatedArtifact();
-                art.setCitation(ref);
-                art.setType(RelatedArtifact.RelatedArtifactType.CITATION);
-                relatedArtifacts.add(art);
-            }
-            fhirMeasure.setRelatedArtifact(relatedArtifacts);
+
+        MeasureDetails matMeasureDetails = getMeasureDetails();
+        Collection<MeasureDetailsReference> dbRefs =
+                matMeasureDetails == null ? null : matMeasureDetails.getMeasureDetailsReferenceCollection();
+        List<String> xmlRefs = matCompositeMeasureModel.getReferencesList();
+
+        //Grab from DB if they are populated there, otherwise use the XML.
+        if (CollectionUtils.isNotEmpty(dbRefs)) {
+            dbRefs.forEach(r -> relatedArtifacts.add(convertReferenceDetails(r)));
+        } else if (CollectionUtils.isNotEmpty(xmlRefs)) {
+            xmlRefs.forEach(s -> relatedArtifacts.add(convertFromReference(s)));
         }
+
+        fhirMeasure.setRelatedArtifact(relatedArtifacts);
     }
 
     public void processScoring(Measure fhirMeasure) {
@@ -269,5 +284,34 @@ public class MeasureTranslator implements FhirCreator {
                 return new Date(epochLong);
             }
         }
+    }
+
+    private RelatedArtifact.RelatedArtifactType mapReferenceType(MeasureReferenceType matReferenceType) {
+        switch (matReferenceType) {
+            case JUSTIFICATION:
+                return JUSTIFICATION;
+            case CITATION:
+                return CITATION;
+            case DOCUMENTATION:
+                return DOCUMENTATION;
+            default:
+                return DEFAULT_ARTIFACT_TYPE;
+        }
+    }
+
+    private RelatedArtifact convertReferenceDetails(MeasureDetailsReference ref) {
+        return convertFromReference(ref.getReference());
+    }
+
+    private RelatedArtifact convertFromReference(String ref) {
+        return new RelatedArtifact()
+                .setCitation(ref)
+                .setType(DEFAULT_ARTIFACT_TYPE);
+    }
+
+    private MeasureDetails getMeasureDetails() {
+        return CollectionUtils.isNotEmpty(
+                matMeasure.getMeasureDetailsCollection()) ?
+                matMeasure.getMeasureDetailsCollection().iterator().next() : null;
     }
 }

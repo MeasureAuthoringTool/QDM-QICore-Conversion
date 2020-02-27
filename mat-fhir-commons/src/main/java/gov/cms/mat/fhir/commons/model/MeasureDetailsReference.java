@@ -23,6 +23,9 @@ public class MeasureDetailsReference implements Serializable {
     private Integer referenceNumber;
     @Column(name = "MEASURE_DETAILS_ID")
     private Integer measureDetailsId;
+    @Column(name = "REFERENCE_TYPE")
+    @Enumerated(EnumType.STRING)
+    private MeasureReferenceType referenceType = MeasureReferenceType.UNKNOWN;
 
     public MeasureDetailsReference() {
     }
@@ -67,6 +70,14 @@ public class MeasureDetailsReference implements Serializable {
         this.measureDetailsId = measureDetailsId;
     }
 
+    public MeasureReferenceType getReferenceType() {
+        return referenceType;
+    }
+
+    public void setReferenceType(MeasureReferenceType referenceType) {
+        this.referenceType = referenceType;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -91,5 +102,5 @@ public class MeasureDetailsReference implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.MeasureDetailsReference[ id=" + id + " ]";
     }
-    
+
 }
