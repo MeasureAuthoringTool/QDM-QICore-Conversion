@@ -1,13 +1,18 @@
 package gov.cms.mat.fhir.services.translate;
 
+import gov.cms.mat.fhir.commons.model.MeasureDetails;
+import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
+import gov.cms.mat.fhir.commons.model.MeasureReferenceType;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
 import org.hl7.fhir.r4.model.Measure;
+import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MeasureTranslatorTest {
 
+    private gov.cms.mat.fhir.commons.model.Measure matMeasure;
     private ManageCompositeMeasureDetailModel compositeModel;
     private String humanReadable;
     private String baseURL;
@@ -77,12 +83,108 @@ class MeasureTranslatorTest {
         pModel.setStartDate("2019-11-05 00:00:00");
         pModel.setStopDate("2020-11-05 00:00:00");
         compositeModel.setPeriodModel(pModel);
-        
         measureURL = baseURL + "Measure/402803826529d99f0165d33515622e23";
 
-        measureTranslator = new MeasureTranslator(compositeModel, humanReadable, baseURL);
-        
-        
+        matMeasure = new gov.cms.mat.fhir.commons.model.Measure();
+        matMeasure.setMeasureDetailsCollection(new ArrayList<>());
+        matMeasure.getMeasureDetailsCollection().add(new MeasureDetails());
+        matMeasure.setId(compositeModel.getId());
+
+        measureTranslator = new MeasureTranslator(matMeasure, compositeModel, humanReadable, baseURL);
+    }
+
+    @Test
+    void testReferenceTypeNotInDB() {
+        String[] refs = {
+                "XML Reference 1",
+                "XML Reference 2",
+                "XML Reference 3",
+                "XML Reference 4",
+                "XML Reference 5"
+        };
+
+        Arrays.stream(refs).forEach(s -> compositeModel.getReferencesList().add(s));
+        Measure fhirMeasure = measureTranslator.translateToFhir();
+
+        List<RelatedArtifact> artifacts = fhirMeasure.getRelatedArtifact();
+        assertEquals(refs.length,fhirMeasure.getRelatedArtifact().size());
+        for (int i = 0; i < refs.length; i++) {
+            assertEquals(refs[i],artifacts.get(i).getCitation());
+            assertEquals(MeasureTranslator.DEFAULT_ARTIFACT_TYPE,artifacts.get(i).getType());
+        }
+    }
+
+    @Test
+    void testReferenceTypeInDB() {
+        List<MeasureDetailsReference> refs = new ArrayList<>();
+
+        MeasureDetailsReference ref1 = new MeasureDetailsReference();
+        ref1.setReference("DB Reference 1");
+        ref1.setReferenceType(MeasureReferenceType.CITATION);
+        ref1.setReferenceNumber(0);
+        refs.add(ref1);
+
+        MeasureDetailsReference ref2 = new MeasureDetailsReference();
+        ref2.setReference("DB Reference 2");
+        ref2.setReferenceType(MeasureReferenceType.DOCUMENTATION);
+        refs.add(ref2);
+
+        MeasureDetailsReference ref3 = new MeasureDetailsReference();
+        ref3.setReference("DB Reference 3");
+        ref3.setReferenceType(MeasureReferenceType.JUSTIFICATION);
+        refs.add(ref3);
+
+        MeasureDetailsReference ref4 = new MeasureDetailsReference();
+        ref4.setReference("DB Reference 3");
+        ref4.setReferenceType(MeasureReferenceType.UNKNOWN);
+        refs.add(ref4);
+
+        getMeasureDetails().setMeasureDetailsReferenceCollection(refs);
+
+        Measure fhirMeasure = measureTranslator.translateToFhir();
+
+        List<RelatedArtifact> artifacts = fhirMeasure.getRelatedArtifact();
+
+        assertEquals(refs.size(),fhirMeasure.getRelatedArtifact().size());
+
+        assertEquals(ref1.getReference(),artifacts.get(0).getCitation());
+        assertEquals(RelatedArtifact.RelatedArtifactType.CITATION,artifacts.get(0).getType());
+
+        assertEquals(ref2.getReference(),artifacts.get(1).getCitation());
+        assertEquals(RelatedArtifact.RelatedArtifactType.DOCUMENTATION,artifacts.get(1).getType());
+
+        assertEquals(ref3.getReference(),artifacts.get(2).getCitation());
+        assertEquals(RelatedArtifact.RelatedArtifactType.JUSTIFICATION,artifacts.get(2).getType());
+
+        assertEquals(ref4.getReference(),artifacts.get(3).getCitation());
+        assertEquals(MeasureTranslator.DEFAULT_ARTIFACT_TYPE,artifacts.get(3).getType());
+    }
+
+    @Test
+    void testReferenceTypeDBAndXml() {
+        String[] refs = {
+                "XML Reference 1",
+                "XML Reference 2",
+                "XML Reference 3",
+                "XML Reference 4",
+                "XML Reference 5"
+        };
+        Arrays.stream(refs).forEach(s -> compositeModel.getReferencesList().add(s));
+
+        List<MeasureDetailsReference> mdrs = new ArrayList<>();
+        MeasureDetailsReference ref1 = new MeasureDetailsReference();
+        ref1.setReference("DB Reference 1");
+        ref1.setReferenceType(MeasureReferenceType.CITATION);
+        mdrs.add(ref1);
+        getMeasureDetails().setMeasureDetailsReferenceCollection(mdrs);
+
+        Measure fhirMeasure = measureTranslator.translateToFhir();
+
+        assertEquals(1,fhirMeasure.getRelatedArtifact().size());
+        List<RelatedArtifact> artifacts = fhirMeasure.getRelatedArtifact();
+
+        assertEquals(ref1.getReference(),artifacts.get(0).getCitation());
+        assertEquals(RelatedArtifact.RelatedArtifactType.CITATION,artifacts.get(0).getType());
     }
     
     @Test
@@ -119,5 +221,9 @@ class MeasureTranslatorTest {
         }
         catch(Exception ex) {}
         return res;
+    }
+
+    private MeasureDetails getMeasureDetails() {
+        return matMeasure.getMeasureDetailsCollection().iterator().next();
     }
 }

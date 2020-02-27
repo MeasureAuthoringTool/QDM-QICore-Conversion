@@ -92,7 +92,8 @@ public class MeasureDetails implements Serializable {
     @Column(name = "MEASURE_ID")
     private String measureId;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "measureDetailsId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "measureDetailsId", fetch = FetchType.EAGER)
+    @OrderBy("referenceNumber")
     private Collection<MeasureDetailsReference> measureDetailsReferenceCollection;
 
     public MeasureDetails() {

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,10 +33,21 @@ public class MeasureDataService {
         return measureRepository.findAllIdsWithAllowedVersions(allowedVersions);
     }
 
+    @Transactional
     public Measure findOneValid(String measureId) {
         Optional<Measure> optional = measureRepository.findById(measureId);
 
         if (optional.isPresent()) {
+            // Force needed lazy collections to get loaded to avoid hibernate closed session
+            // issues down the road.
+            if (optional.get().getMeasureDetailsCollection() != null) {
+                int size = optional.get().getMeasureDetailsCollection().size();
+                if (size != 0) {
+                    optional.get().getMeasureDetailsCollection().iterator().
+                            next().getMeasureDetailsReferenceCollection().size();
+                }
+            }
+
             return checkMeasure(measureId, optional.get());
         } else {
             throw new MeasureNotFoundException(measureId);
