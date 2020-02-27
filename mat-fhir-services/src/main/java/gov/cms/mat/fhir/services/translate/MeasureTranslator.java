@@ -300,7 +300,9 @@ public class MeasureTranslator implements FhirCreator {
     }
 
     private RelatedArtifact convertReferenceDetails(MeasureDetailsReference ref) {
-        return convertFromReference(ref.getReference());
+        return new RelatedArtifact()
+                .setCitation(ref.getReference())
+                .setType(mapReferenceType(ref.getReferenceType()));
     }
 
     private RelatedArtifact convertFromReference(String ref) {
