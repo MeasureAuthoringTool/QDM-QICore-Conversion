@@ -109,7 +109,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     public void processIncludes(String cql) {
         CqlParser cqlParser = new CqlParser(cql);
-        log.warn(cql);
         UsingProperties using = cqlParser.getUsing();
 
         List<IncludeProperties> includes = cqlParser.getIncludes();

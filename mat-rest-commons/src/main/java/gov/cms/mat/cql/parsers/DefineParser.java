@@ -25,7 +25,7 @@ public interface DefineParser extends SymbolicParser {
         return properties;
     }
 
-    default DefineProperties buildDefineProperties(String firstLine, Iterator<String> iterator) {
+    private DefineProperties buildDefineProperties(String firstLine, Iterator<String> iterator) {
         StringBuilder stringBuilder = new StringBuilder(firstLine);
         stringBuilder.append("\n");
 
@@ -52,15 +52,8 @@ public interface DefineParser extends SymbolicParser {
                 .build();
     }
 
-    default void parseDiagnosis() {
 
-//       Arrays.stream( getLines())
-//               .filter(l-> l.contains(" with "))
-//               .
-
-    }
-
-    default void parseSymbolicAttributes(SymbolicProperty symbolic, String defineData) {
+    private void parseSymbolicAttributes(SymbolicProperty symbolic, String defineData) {
         SymbolicAttributeParser symbolicAttributeParser = new SymbolicAttributeParser(defineData);
         Set<SymbolicAttributeProperty> set = symbolicAttributeParser.find(symbolic.getSymbolic());
         symbolic.setAttributePropertySet(set);
