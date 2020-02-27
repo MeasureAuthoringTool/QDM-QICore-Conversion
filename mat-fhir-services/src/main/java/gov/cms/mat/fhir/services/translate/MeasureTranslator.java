@@ -32,7 +32,7 @@ public class MeasureTranslator implements FhirCreator {
     //this should be something that MAT provides but doesn't there are many possibilities
     public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/proportion-measure-cqfm";
     public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
-    public static final RelatedArtifact.RelatedArtifactType DEFAULT_ARTIFACT_TYPE = RelatedArtifact.RelatedArtifactType.CITATION;
+    public static final RelatedArtifact.RelatedArtifactType DEFAULT_ARTIFACT_TYPE = DOCUMENTATION;
 
     public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
 
