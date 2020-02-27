@@ -63,6 +63,8 @@ public class ConversionDataService {
                 .fhirResource(entry.getFhirResourceData())
                 .fhirElement(entry.getFhirElementData())
                 .fhirType(entry.getFhirTypeData())
+                .dropDownValues(entry.getDropDownValues())
+                .recommendationValues(entry.getRecommendationsValues())
                 .hashValue(entry.hashCode())
                 .build();
     }

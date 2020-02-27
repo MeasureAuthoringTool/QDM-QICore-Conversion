@@ -19,7 +19,7 @@ public class CqlLibraryConverter {
     public String convert(String cqlText) {
         try {
             QdmCqlToFhirCqlConverter qdmCqlToFhirCql = new QdmCqlToFhirCqlConverter(cqlText, qdmQiCoreDataService);
-            return qdmCqlToFhirCql.convert();
+            return qdmCqlToFhirCql.convert(null);
         } catch (QdmMappingException e) {
             ConversionReporter.setTerminalMessage(e.getMessage(), ConversionOutcome.QDM_MAPPING_ERROR);
             throw e;

@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -25,6 +27,10 @@ public class ConversionMapping {
 
     String fhirType;
 
+    List<String> dropDownValues;
+
+    List<String> recommendationValues;
+
     public ConversionMapping(int hashValue,
                              String title,
                              String matDataTypeDescription,
@@ -32,7 +38,9 @@ public class ConversionMapping {
                              String fhirR4QiCoreMapping,
                              String fhirResource,
                              String fhirElement,
-                             String fhirType) {
+                             String fhirType,
+                             List<String> dropDownValues,
+                             List<String> recommendationValues) {
         this.hashValue = hashValue;
         this.title = title;
         this.matDataTypeDescription = matDataTypeDescription;
@@ -41,6 +49,8 @@ public class ConversionMapping {
         this.fhirResource = fhirResource;
         this.fhirType = fhirType;
         this.fhirR4QiCoreMapping = fhirR4QiCoreMapping;
+        this.dropDownValues = dropDownValues;
+        this.recommendationValues = recommendationValues;
     }
 
     public ConversionMapping() {
