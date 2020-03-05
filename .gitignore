@@ -1,4 +1,4 @@
-git pull*.class
+*.class
 *.log
 *.ctxt
 .mtj.tmp/
@@ -9,6 +9,7 @@ git pull*.class
 *.zip
 *.tar.gz
 *.rar
+docker-env.sh
 
 #Intellij files.
 *.iml
