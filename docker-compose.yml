@@ -1,16 +1,15 @@
 version: '3.6'
 
 services:
-
   hapi-fhir-mysql:
     image: mysql:latest
     container_name: hapi-fhir-mysql
     restart: always
     environment:
-      MYSQL_DATABASE: 'hapi'
-      MYSQL_USER: 'admin'
-      MYSQL_PASSWORD: 'admin'
-      MYSQL_ROOT_PASSWORD: 'admin'
+      MYSQL_DATABASE: ${HAPI_DB}
+      MYSQL_USER: ${HAPI_DB_USER}
+      MYSQL_PASSWORD: ${HAPI_DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${HAPI_DB_PASS}
     ports:
       - 3307:3306
     volumes:
@@ -24,32 +23,60 @@ services:
       - 27018:27017
 
   hapi-fhir-jpaserver:
-    image: greenemcg/hapi-fhir-jpaserver
+    image: hapi-fhir-jpaserver
     container_name: hapi-fhir-jpaserver
+    build:
+      context: hapi-fhir-jpaserver
+      dockerfile: Dockerfile
+    environment:
+      HAPI_DB_URL: ${HAPI_DB_URL}
+      HAPI_DB_USER: ${HAPI_DB_USER}
+      HAPI_DB_PASS: ${HAPI_DB_PASS}
+      HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
     ports:
       - 6060:6060
 
   cql-elm-translation:
-    image: greenemcg/cql-elm-translation
+    image: cql-elm-translation
     container_name: cql-elm-translation
+    build:
+      context: cql-elm-translation
+      dockerfile: Dockerfile
+    environment:
+      FHIR_SERVICES_URL: ${FHIR_SERVICES_URL}
     ports:
       - 7070:7070
 
   qdm-qicore-mapping-services:
-    image: greenemcg/qdm-qicore-mapping-services
+    image: qdm-qicore-mapping-services
     container_name: qdm-qicore-mapping-services
+    build:
+      context: qdm-qicore-mapping-services
+      dockerfile: Dockerfile
+    environment:
+      QDM_SPREADSHEET: ${QDM_SPREADSHEET}
     ports:
       - 9090:9090
 
   mat-fhir-services:
-    image: greenemcg/mat-fhir-services
+    image: mat-fhir-services
     container_name: mat-fhir-services
+    build:
+      context: mat-fhir-services
+      dockerfile: Dockerfile
     environment:
       VSAC_USER: ${VSAC_USER}
       VSAC_PASS: ${VSAC_PASS}
-      MAT_DB: ${MAT_DB}
+      VSAC_VASE_URL: ${VSAC_VASE_URL}
+      VSAC_SERVICE_URL: ${VSAC_SERVICE_URL}
+      MAT_DB_URL: ${MAT_DB_URL}
       MAT_DB_PASS: ${MAT_DB_PASS}
       MAT_DB_USER: ${MAT_DB_USER}
+      MONGO_DB_URL: ${MONGO_DB_URL}
+      HAPI_FHIR_URL: ${HAPI_FHIR_URL}
+      QDM_QICORE_URL: ${QDM_QICORE_URL}
+      CQL_CONVERSION_URL: ${CQL_CONVERSION_URL}
+      FHIR_SERVICES_URL: ${FHIR_SERVICES_URL}
     ports:
       - 9080:9080
 

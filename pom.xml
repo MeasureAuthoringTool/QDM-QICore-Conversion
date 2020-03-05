@@ -68,6 +68,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>hapi-fhir-jpaserver</module>
         <module>mat-fhir-commons</module>
         <module>mat-fhir-services</module>
         <module>mat-server-commons</module>
