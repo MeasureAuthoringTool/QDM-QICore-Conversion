@@ -65,8 +65,6 @@ services:
       context: mat-fhir-services
       dockerfile: Dockerfile
     environment:
-      VSAC_USER: ${VSAC_USER}
-      VSAC_PASS: ${VSAC_PASS}
       VSAC_VASE_URL: ${VSAC_VASE_URL}
       VSAC_SERVICE_URL: ${VSAC_SERVICE_URL}
       MAT_DB_URL: ${MAT_DB_URL}

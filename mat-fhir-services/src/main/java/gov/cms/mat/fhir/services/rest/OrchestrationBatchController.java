@@ -61,6 +61,7 @@ public class OrchestrationBatchController {
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam String batchId,
+            @RequestParam String vsacGrantingTicket,
             @RequestBody List<String> matIds) {
 
         selfHealthCheckingService.checkHealthWithException();
@@ -70,7 +71,7 @@ public class OrchestrationBatchController {
                 List<String> matIdsToProcess = processRequestData(batchId, matIds);
 
                 matIdsToProcess.parallelStream()
-                        .forEach((id -> orchestrate(conversionType, xmlSource, batchId, id)));
+                        .forEach((id -> orchestrate(conversionType, xmlSource, batchId, id, vsacGrantingTicket)));
 
                 log.info("Completed orchestrating {} ids with batchId: {} in {} seconds",
                         matIdsToProcess.size(),
@@ -122,9 +123,10 @@ public class OrchestrationBatchController {
     private void orchestrate(ConversionType conversionType,
                              XmlSource xmlSource,
                              String batchId,
-                             String id) {
+                             String id,
+                             String vsacGrantingTicket) {
         try {
-            orchestrationController.translateMeasureById(id, conversionType, xmlSource, batchId, Boolean.TRUE);
+            orchestrationController.translateMeasureById(id, conversionType, xmlSource, batchId, Boolean.TRUE, vsacGrantingTicket);
         } catch (MatXmlException | QdmMappingException e) {
             log.debug("{} Error for id: {}, reason: {}", e.getClass().getSimpleName(), id, e.getMessage());
         } catch (Exception e) {

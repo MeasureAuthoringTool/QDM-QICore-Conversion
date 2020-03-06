@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.vsac;
 
+import com.google.common.annotations.VisibleForTesting;
 import gov.cms.mat.fhir.services.config.VsacConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -52,6 +53,8 @@ public class VsacClient {
         }
     }
 
+    // For testing purposes only
+    @VisibleForTesting
     public String getGrantingTicket(String userName, String password) {
         return vsacConfig.getVsacRestClient().getTicketGrantingTicket(userName, password);
     }
