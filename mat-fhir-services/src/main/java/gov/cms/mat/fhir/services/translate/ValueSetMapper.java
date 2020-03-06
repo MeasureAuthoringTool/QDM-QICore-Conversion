@@ -1,5 +1,16 @@
 package gov.cms.mat.fhir.services.translate;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.r4.model.ValueSet;
+import org.springframework.stereotype.Component;
+
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.ValueSetValidationException;
@@ -12,16 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.ValueSet;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.NEW;
@@ -48,7 +49,7 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
         return hapiFhirServer.count(ValueSet.class);
     }
 
-    public List<ValueSet> translateToFhir(String xml) {
+    public List<ValueSet> translateToFhir(String xml, String vsacGrantingTicket) {
         CQLQualityDataModelWrapper wrapper = matXmlConverter.toQualityData(xml);
 
         if (wrapper == null || CollectionUtils.isEmpty(wrapper.getQualityDataDTO())) {
@@ -60,7 +61,7 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
         wrapper.getQualityDataDTO()
                 .stream()
                 .filter(w -> !inHapi(w.getOid()))
-                .forEach(t -> processFhir(t, valueSets));
+                .forEach(t -> processFhir(t, valueSets, vsacGrantingTicket));
 
         return valueSets;
     }
@@ -82,7 +83,8 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
     }
 
     private void processFhir(CQLQualityDataSetDTO cqlQualityDataSetDTO,
-                             List<ValueSet> valueSets) {
+                             List<ValueSet> valueSets,
+                             String vsacGrantingTicket) {
         String oid;
 
         if (StringUtils.isBlank(cqlQualityDataSetDTO.getOid())) {
@@ -91,7 +93,7 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
             oid = cqlQualityDataSetDTO.getOid();
         }
 
-        VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid);
+        VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid, vsacGrantingTicket);
 
         if (vsacValueSetWrapper == null) {
             log.debug("VsacService returned null for oid: {}", oid);

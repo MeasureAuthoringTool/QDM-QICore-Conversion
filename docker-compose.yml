@@ -45,8 +45,6 @@ services:
     image: greenemcg/mat-fhir-services
     container_name: mat-fhir-services
     environment:
-      VSAC_USER: ${VSAC_USER}
-      VSAC_PASS: ${VSAC_PASS}
       MAT_DB: ${MAT_DB}
       MAT_DB_PASS: ${MAT_DB_PASS}
       MAT_DB_USER: ${MAT_DB_USER}

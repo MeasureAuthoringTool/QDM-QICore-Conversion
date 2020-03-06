@@ -40,6 +40,7 @@ import static org.mockito.Mockito.*;
 class ValueSetMapperTest {
     private static final String OID = "2.16.840.1.113762.1.4.1195.291";
     private static final String XML = "<xml>xml</xml>";
+    private static final String VSAC_GRANTING_TICKET = "vsacGrantingTicket";
 
     private final FhirContext ctx = FhirContext.forR4();
 
@@ -56,6 +57,7 @@ class ValueSetMapperTest {
 
     @InjectMocks
     private ValueSetMapper valueSetMapper;
+
 
     @BeforeEach
     void setUp() {
@@ -109,7 +111,7 @@ class ValueSetMapperTest {
     @Test
     void translateToFhir_matXmlConverterReturnsNull() {
         when(matXmlConverter.toQualityData(XML)).thenReturn(null);
-        assertTrue(valueSetMapper.translateToFhir(XML).isEmpty());
+        assertTrue(valueSetMapper.translateToFhir(XML, VSAC_GRANTING_TICKET).isEmpty());
         verify(matXmlConverter).toQualityData(XML);
     }
 
@@ -117,7 +119,7 @@ class ValueSetMapperTest {
     void translateToFhir_matXmlConverterReturnsEmptyList() {
         CQLQualityDataModelWrapper wrapper = new CQLQualityDataModelWrapper();
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
-        assertTrue(valueSetMapper.translateToFhir(XML).isEmpty());
+        assertTrue(valueSetMapper.translateToFhir(XML, VSAC_GRANTING_TICKET).isEmpty());
         verify(matXmlConverter).toQualityData(XML);
 
         verifyNoInteractions(vsacService);
@@ -129,12 +131,12 @@ class ValueSetMapperTest {
         wrapper.setQualityDataDTO(Collections.singletonList(create()));
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
-        when(vsacService.getData(OID)).thenReturn(null);
+        when(vsacService.getData(OID, VSAC_GRANTING_TICKET)).thenReturn(null);
 
-        assertTrue(valueSetMapper.translateToFhir(XML).isEmpty());
+        assertTrue(valueSetMapper.translateToFhir(XML, VSAC_GRANTING_TICKET).isEmpty());
 
         verify(matXmlConverter).toQualityData(XML);
-        verify(vsacService).getData(OID);
+        verify(vsacService).getData(eq(OID), eq(VSAC_GRANTING_TICKET));
     }
 
 
@@ -145,11 +147,11 @@ class ValueSetMapperTest {
 
         VSACValueSetWrapper vsacValueSetWrapper = new VSACValueSetWrapper();
         vsacValueSetWrapper.setValueSetList(createValueSetList());
-        when(vsacService.getData(OID)).thenReturn(vsacValueSetWrapper);
+        when(vsacService.getData(OID, VSAC_GRANTING_TICKET)).thenReturn(vsacValueSetWrapper);
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
-        List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML);
+        List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML, VSAC_GRANTING_TICKET);
         assertEquals(1, valueSets.size());
 
         String encoded = ctx.newXmlParser().setPrettyPrint(true)
@@ -157,7 +159,7 @@ class ValueSetMapperTest {
 
         assertTrue(encoded.contains("ValueSet"));
         verify(matXmlConverter).toQualityData(XML);
-        verify(vsacService).getData(OID);
+        verify(vsacService).getData(eq(OID), eq(VSAC_GRANTING_TICKET));
     }
 
     @Test
@@ -171,7 +173,7 @@ class ValueSetMapperTest {
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
-        valueSetMapper.translateToFhir(XML);
+        valueSetMapper.translateToFhir(XML, VSAC_GRANTING_TICKET);
 
     }
 

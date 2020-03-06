@@ -59,7 +59,8 @@ public class OrchestrationController {
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId,
-            @RequestParam(required = false, defaultValue = "false") boolean showWarnings) {
+            @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
+            @RequestParam String vsacGrantingTicket) {
         ThreadSessionKey threadSessionKey =
                 ConversionReporter.setInThreadLocal(id,
                         batchId,
@@ -88,16 +89,16 @@ public class OrchestrationController {
                     .threadSessionKey(threadSessionKey)
                     .build();
 
-            return process(orchestrationProperties);
+            return process(orchestrationProperties, vsacGrantingTicket);
         } finally {
             ConversionReporter.removeInThreadLocalAndComplete();
         }
     }
 
-    public ConversionResultDto process(OrchestrationProperties orchestrationProperties) {
+    public ConversionResultDto process(OrchestrationProperties orchestrationProperties, String vsacGrantingTicket) {
         log.info("Started Orchestrating Measure key: {}", orchestrationProperties.getThreadSessionKey());
 
-        orchestrationService.process(orchestrationProperties);
+        orchestrationService.process(orchestrationProperties, vsacGrantingTicket);
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
 
