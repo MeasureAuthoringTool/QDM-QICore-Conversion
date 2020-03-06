@@ -28,8 +28,6 @@ $ cd QDM-QICore-Conversion
 ###Env vars
 Setup the following environment vars. I added them to ~/.bash_profile.
 ```shell script
-export VSAC_USER=YOUR_VSAC_USER
-export VSAC_PASS=YOUR_PASS
 export MAT_DB=MAT_APP_BLANK
 export MAT_DB_USER=MAT_DB_USER
 export MAT_DB_PASS=YOUR_MAT_PWD

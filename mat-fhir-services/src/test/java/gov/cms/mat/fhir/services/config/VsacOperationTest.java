@@ -1,8 +1,5 @@
 package gov.cms.mat.fhir.services.config;
 
-import gov.cms.mat.fhir.services.service.VsacService;
-import mat.model.VSACValueSetWrapper;
-import mat.model.cql.CQLQualityDataSetDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -11,7 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import gov.cms.mat.fhir.services.components.vsac.VsacClient;
+import gov.cms.mat.fhir.services.service.VsacService;
+import mat.model.VSACValueSetWrapper;
+import mat.model.cql.CQLQualityDataSetDTO;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -22,6 +25,8 @@ class VsacOperationTest {
 
     @Autowired
     private VsacConfig vsacConfig;
+    @Autowired
+    private VsacClient vsacClient;
     @Autowired
     private VsacService vsacService;
     @Autowired
@@ -38,27 +43,20 @@ class VsacOperationTest {
     }
 
     @Test
-    void testValidateUser() {
-        if (haveVsacCredentialsInEnvironmentAndFlag()) {
-            assertTrue(vsacService.validateUser());
-            assertTrue(vsacService.validateTicket());
-        }
-    }
-
-    @Test
     void testValidateData() {
         if (haveVsacCredentialsInEnvironmentAndFlag()) {
+            String vsacGrantingTicket = vsacClient.getGrantingTicket(getVsacUser(), getVsacPass());
             CQLQualityDataSetDTO cqlQualityDataSetDTO = new CQLQualityDataSetDTO();
             cqlQualityDataSetDTO.setOid("2.16.840.1.113762.1.4.1116.180");
             //  cqlQualityDataSetDTO.setVersion("20190129"); version and revision ignored
 
             {
-                VSACValueSetWrapper valueSetWrapper = vsacService.getData(cqlQualityDataSetDTO.getOid());
+                VSACValueSetWrapper valueSetWrapper = vsacService.getData(cqlQualityDataSetDTO.getOid(), vsacGrantingTicket);
                 assertNotNull(valueSetWrapper);
             }
 
             { // must fetch the
-                VSACValueSetWrapper valueSetWrapper = vsacService.getData(cqlQualityDataSetDTO.getOid());
+                VSACValueSetWrapper valueSetWrapper = vsacService.getData(cqlQualityDataSetDTO.getOid(), vsacGrantingTicket);
                 assertNotNull(valueSetWrapper);
             }
         }
@@ -67,8 +65,8 @@ class VsacOperationTest {
     private boolean haveVsacCredentialsInEnvironmentAndFlag() {
         if (RUN_VSAC_INTEGRATION_TESTS) {
             boolean haveProperties =
-                    StringUtils.isNotBlank(environment.getProperty("VSAC_USER")) ||
-                            StringUtils.isNotBlank(environment.getProperty("VSAC_PASS"));
+                    StringUtils.isNotBlank(getVsacUser()) ||
+                            StringUtils.isNotBlank(getVsacPass());
 
             if (!haveProperties) {
                 // wont fail build if not found when running in jenkins
@@ -81,4 +79,13 @@ class VsacOperationTest {
             return false;
         }
     }
+
+    private String getVsacPass() {
+        return environment.getProperty("VSAC_PASS");
+    }
+
+    private String getVsacUser() {
+        return environment.getProperty("VSAC_USER");
+    }
+
 }

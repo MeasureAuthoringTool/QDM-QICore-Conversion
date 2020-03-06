@@ -41,8 +41,8 @@ public class OrchestrationService {
         this.measureOrchestrationConversionService = measureOrchestrationConversionService;
     }
 
-    public boolean process(OrchestrationProperties properties) {
-        boolean processPrerequisitesFlag = processPrerequisites(properties);
+    public boolean process(OrchestrationProperties properties, String vsacGrantingTicket) {
+        boolean processPrerequisitesFlag = processPrerequisites(properties, vsacGrantingTicket);
 
         if (!processPrerequisitesFlag) {
             log.debug("Conversion Stopped due to Prerequisites failures measureId: {}", properties.getMeasureId());
@@ -55,9 +55,9 @@ public class OrchestrationService {
         }
     }
 
-    public boolean processPrerequisites(OrchestrationProperties properties) {
+    public boolean processPrerequisites(OrchestrationProperties properties, String vsacGrantingTicket) {
         try {
-            processAndGetValueSets(properties);
+            processAndGetValueSets(properties, vsacGrantingTicket);
             processAndGetCqlLibraries(properties);
             processFhirMeasure(properties);
             return true;
@@ -96,8 +96,8 @@ public class OrchestrationService {
     }
 
 
-    public void processAndGetValueSets(OrchestrationProperties properties) {
-        List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties);
+    public void processAndGetValueSets(OrchestrationProperties properties, String vsacGrantingTicket) {
+        List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties, vsacGrantingTicket);
 
         properties.getValueSets()
                 .addAll(valueSets);
