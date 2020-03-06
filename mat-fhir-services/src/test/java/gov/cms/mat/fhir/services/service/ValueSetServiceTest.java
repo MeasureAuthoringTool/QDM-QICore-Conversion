@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ValueSetServiceTest {
     private static final String MEASURE_ID = "measureId";
+    private static final String VSAC_GRANTING_TICKET = "vsacGrantingTicket";
 
     @Mock
     private MeasureExportDataService measureExportDataService;
@@ -63,7 +64,6 @@ class ValueSetServiceTest {
 
     @Test
     void findValueSets_XmlIsNull() {
-        String vsacGrantingTicket = "vsacGrantingTicket";
         Measure matMeasure = new Measure();
         matMeasure.setId(MEASURE_ID);
         when(measureDataService.findOneValid(MEASURE_ID)).thenReturn(matMeasure);
@@ -71,7 +71,7 @@ class ValueSetServiceTest {
         when(matXmlProcessor.getXmlById(MEASURE_ID, XmlSource.SIMPLE)).thenReturn(null);
 
         assertThrows(ValueSetConversionException.class,
-                () -> valueSetService.findValueSetsByMeasureId(XmlSource.SIMPLE, MEASURE_ID, ConversionType.CONVERSION, vsacGrantingTicket));
+                () -> valueSetService.findValueSetsByMeasureId(XmlSource.SIMPLE, MEASURE_ID, ConversionType.CONVERSION, VSAC_GRANTING_TICKET));
 
 
         verify(measureDataService).findOneValid(MEASURE_ID);
@@ -81,7 +81,6 @@ class ValueSetServiceTest {
     @Test
     void findValueSets_HaveXml() {
         String xml = "</xml>";
-        String vsacGrantingTicket = "vsacGrantingTicket";
         when(matXmlProcessor.getXmlById(MEASURE_ID, XmlSource.SIMPLE)).thenReturn(xml.getBytes());
 
         Measure matMeasure = new Measure();
@@ -89,9 +88,9 @@ class ValueSetServiceTest {
         when(measureDataService.findOneValid(MEASURE_ID)).thenReturn(matMeasure);
 
         ValueSet valueSet = new ValueSet();
-        when(valueSetMapper.translateToFhir(xml, vsacGrantingTicket)).thenReturn(Collections.singletonList(valueSet));
+        when(valueSetMapper.translateToFhir(xml, VSAC_GRANTING_TICKET)).thenReturn(Collections.singletonList(valueSet));
 
-        List<ValueSet> valueSets = valueSetService.findValueSetsByMeasureId(XmlSource.SIMPLE, MEASURE_ID, ConversionType.CONVERSION, vsacGrantingTicket);
+        List<ValueSet> valueSets = valueSetService.findValueSetsByMeasureId(XmlSource.SIMPLE, MEASURE_ID, ConversionType.CONVERSION, VSAC_GRANTING_TICKET);
 
         assertEquals(1, valueSets.size());
         assertEquals(valueSet, valueSets.get(0));
