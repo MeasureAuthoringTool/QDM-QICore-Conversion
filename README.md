@@ -26,12 +26,14 @@ $ cd QDM-QICore-Conversion
 ```
 
 ###Env vars
-Setup the following environment vars. I added them to ~/.bash_profile.
+Edit docker-env.sh and setup all the environment variables to match your environment.
+Replace all the FIX_ME! entries with the appropriate information.
+ 
+To load env vars:
 ```shell script
-export MAT_DB=MAT_APP_BLANK
-export MAT_DB_USER=MAT_DB_USER
-export MAT_DB_PASS=YOUR_MAT_PWD
+. ./docker-env.sh
 ```
+You can also manually add a line to ~/.bash_profile to load it.
 
 Run the following shell script to setup links for hapi-fhir libraries and value-sets.
 ```shell script
@@ -56,18 +58,10 @@ docker-compose -f docker-compose-build.yml build
 docker-compose -f docker-compose-build.yml up
 ```
 
-Alternatively you can use the docker-compose.yml when you want to use pre-built containers.
-Usually developers use this one and then comment out the service they are working on and build and start it 
-just for that service by `cd`ing into the directory and running it.
-```shell script
-docker-compose -f docker-compose.yml pull
-docker-compose -f docker-compose.yml build
-docker-compose -f docker-compose.yml up
-```
-
-If you get an error running hapi-fhir-jpaserver that looks like this just ignore it. Its a known issue and is just 
-failing to create an index locally.
- GenerationTarget encountered exception accepting command : Error executing DDL "create index IDX_VALUESET_C_DSGNTN_VAL on TRM_VALUESET_C_DESIGNATION (VAL)" via JDBC Statement
+If you get an error running hapi-fhir-jpaserver that looks like this just ignore it its a known issue and not user impacting. 
+```text
+ Error executing DDL "create index IDX_VALUESET_C_DSGNTN_VAL on TRM_VALUESET_C_DESIGNATION (VAL)" via JDBC Statement
+``` 
 
 
 ###Loading valuesets/codes

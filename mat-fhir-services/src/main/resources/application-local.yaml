@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/${MAT_DB:mat}?serverTimezone=UTC&max_allowed_packet=16777216
+    url: ${MAT_DB_URL:jdbc:mysql://localhost:3306/MAT?serverTimezone=UTC&max_allowed_packet=16777216}
     username: ${MAT_DB_USER:mat}
     password: ${MAT_DB_PASS:mat}
   jpa:
@@ -18,7 +18,7 @@ spring:
   data:
     mongodb:
       database: mat_conversion_results
-      uri: mongodb://localhost
+      uri: ${MONGO_DB_URL}
 
 logging:
   level:
@@ -32,18 +32,18 @@ logging:
 
 fhir:
   r4:
-    baseurl: http://localhost:6060/hapi-fhir-jpaserver/fhir/
+    baseurl: ${HAPI_FHIR_URL}
 
 qdmqicore:
   conversion:
-    baseurl: http://localhost:9090
+    baseurl: ${QDM_QICORE_URL}
 
 cql:
   conversion:
-    baseurl: http://localhost:7070
+    baseurl: ${CQL_CONVERSION_URL}
 
 
 self:
   health:
-    baseurl: http://localhost:${server.port}
+    baseurl: ${FHIR_SERVICES_URL}
 

@@ -9,7 +9,7 @@ management:
 
 json:
   data:
-    url: https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json
+    url: ${QDM_SPREADSHEET}
 
 
 
