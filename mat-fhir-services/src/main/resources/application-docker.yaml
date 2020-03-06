@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://host.docker.internal:3306/${MAT_DB}?serverTimezone=UTC&max_allowed_packet=16777216
+    url: ${MAT_DB_URL}
     username: ${MAT_DB_USER}
     password: ${MAT_DB_PASS}
   jpa:
@@ -15,13 +15,10 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
     generate-ddl: false
     show-sql: false
-
-
-
   data:
     mongodb:
       database: mat_conversion_results
-      uri: mongodb://mongo
+      uri: ${MONGO_DB_URL}
 
 logging:
   level:
@@ -35,17 +32,17 @@ logging:
 
 fhir:
   r4:
-    baseurl: http://hapi-fhir-jpaserver:6060/hapi-fhir-jpaserver/fhir/
+    baseurl: ${HAPI_FHIR_URL}
 
 qdmqicore:
   conversion:
-    baseurl: http://qdm-qicore-mapping-services:9090
+    baseurl: ${QDM_QICORE_URL}
 
 cql:
   conversion:
-    baseurl: http://cql-elm-translation:7070
+    baseurl: ${CQL_CONVERSION_URL}
 
 self:
   health:
-    baseurl: http://docker.for.mac.localhost:${server.port}
+    baseurl: ${FHIR_SERVICES_URL}
 

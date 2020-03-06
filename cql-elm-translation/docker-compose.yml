@@ -7,5 +7,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      FHIR_SERVICES_URL: ${FHIR_SERVICES_URL}
     ports:
       - 9090:9090

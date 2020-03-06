@@ -17,3 +17,7 @@ management:
 info:
   app:
     name: Cql Elm Translation Services
+
+fhir:
+  conversion:
+    baseurl: ${FHIR_SERVICES_URL}

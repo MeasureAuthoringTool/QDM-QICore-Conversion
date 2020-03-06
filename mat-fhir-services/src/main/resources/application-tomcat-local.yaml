@@ -1,9 +1,9 @@
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
-    username: mat
-    password: mat
+    url: ${MAT_DB_URL:jdbc:mysql://localhost:3306/MAT?serverTimezone=UTC&max_allowed_packet=16777216}
+    username: ${MAT_DB_USER:mat}
+    password: ${MAT_DB_PASS:mat}
   jpa:
     hibernate.ddl-auto: none
     hibernate:
@@ -18,7 +18,7 @@ spring:
   data:
     mongodb:
       database: mat_conversion_results
-      uri: mongodb://localhost
+      uri: ${MONGO_DB_URL}
 
 logging:
   level:
@@ -31,16 +31,16 @@ logging:
 
 fhir:
   r4:
-    baseurl: https://matdev.semanticbits.com/hapi-fhir-jpaserver/fhir
+    baseurl: ${HAPI_FHIR_URL}
 
 qdmqicore:
   conversion:
-    baseurl: https://matdev.semanticbits.com/qdm-qicore-mapping-services/
+    baseurl: ${QDM_QICORE_URL}
 
 cql:
   conversion:
-    baseurl: https://matdev.semanticbits.com/cql-elm-translation/
+    baseurl: ${CQL_CONVERSION_URL}
 
 self:
   health:
-    baseurl: https://matdev.semanticbits.com/mat-fhir-serives/
+    baseurl: ${FHIR_SERVICES_URL}/mat-fhir-serives/
