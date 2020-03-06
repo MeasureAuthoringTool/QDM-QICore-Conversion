@@ -9,9 +9,9 @@ such as NLMs VSAC to gather valueSets needed for measure evaluation.
 2.  MySQL 5.7.x (Mat DB)
 4.  User login to NLM VSAC system via UMLS.
 
-##Initial Setup
+# Initial Setup
 
-### Checking out.
+## Checking out. ##
 Checkout this project
 ```shell script
 git clone https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion.git
@@ -25,7 +25,7 @@ git checkout develop
 $ cd QDM-QICore-Conversion
 ```
 
-###Env vars
+### Env vars
 Edit docker-env.sh and setup all the environment variables to match your environment.
 Replace all the FIX_ME! entries with the appropriate information.
  
@@ -40,7 +40,7 @@ Run the following shell script to setup links for hapi-fhir libraries and value-
 ./create-links.sh
 ```
 
-###Maven
+### Maven
 Do a clean build of everything.
 ```shell script
 mvn clean install
@@ -50,7 +50,7 @@ or to skip testing
 mvn clean install -DskipTests
 ```
 
-###Docker Compose
+### Docker Compose
 Use the docker-compose-build.yml when you want to build containers from all the source code you just built.
 ```shell script
 docker-compose -f docker-compose-build.yml pull
@@ -64,12 +64,12 @@ If you get an error running hapi-fhir-jpaserver that looks like this just ignore
 ``` 
 
 
-###Loading valuesets/codes
+### Loading valuesets/codes
 Run this to setup all the valuesets and codes needed on the hapi-fhir-server. 
 You just need to run this once on a newly setup hapi-fhir-server.
 curl -X GET "http://localhost:9080/library/find/load" -H "accept: */*"
 
-###Urls
+### Urls
 mat-fhir-services:
 -  Actuator:  http://localhost:9080/actuator
 -  Swagger: http://localhost:9080/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
