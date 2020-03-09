@@ -83,7 +83,7 @@ cql-elm-translation:
 -  Swagger: http://localhost:7070/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
 
 hapi-fhir-server:
--  Test Overlay: http://localhost:6060/hapi-fhir-jpaserver/
+-  Test Overlay: http://localhost:6060/
 
 ## Configure for Running as Micro-service Locally
 1. Using vi, your IDE, or some other editor modify the mat-fhir-services project 'application.yaml' and 'application-local.yaml files they can be found QDM-QICore-Conversion/mat-fhir-services/src/main/resources.
