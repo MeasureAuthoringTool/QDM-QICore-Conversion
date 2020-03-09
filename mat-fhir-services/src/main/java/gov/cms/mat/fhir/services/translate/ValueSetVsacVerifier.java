@@ -29,7 +29,7 @@ public class ValueSetVsacVerifier {
         this.matXmlConverter = matXmlConverter;
     }
 
-    public boolean verify(OrchestrationProperties properties) {
+    public boolean verify(OrchestrationProperties properties, String vsacGrantingTicket) {
         byte[] bytes = matXmlProcessor.getXml(properties.getMatMeasure(), properties.getXmlSource());
 
         CQLQualityDataModelWrapper wrapper = matXmlConverter.toQualityData(new String(bytes));
@@ -43,13 +43,13 @@ public class ValueSetVsacVerifier {
         AtomicBoolean atomicSuccessFlag = new AtomicBoolean(true);
 
         wrapper.getQualityDataDTO()
-                .forEach(t -> verifyOidInVsac(t.getOid(), atomicSuccessFlag));
+                .forEach(t -> verifyOidInVsac(t.getOid(), atomicSuccessFlag, vsacGrantingTicket));
 
         return atomicSuccessFlag.get();
     }
 
-    private void verifyOidInVsac(String oid, AtomicBoolean atomicSuccessFlag) {
-        VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid);
+    private void verifyOidInVsac(String oid, AtomicBoolean atomicSuccessFlag, String vsacGrantingTicket) {
+        VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid, vsacGrantingTicket);
 
         if (vsacValueSetWrapper == null) {
             log.debug("VsacService returned null for oid: {}", oid);

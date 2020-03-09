@@ -25,24 +25,24 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
-@RequestMapping(path = "/batch")
-@Tag(name = "Orchestration-Batch-Controller",
-        description = "API for converting many MAT Measures (For testing) to FHIR executing all validations and services to perform this task")
+@RequestMapping(path = "/vsac/batch")
+@Tag(name = "VSAC-Batch-Controller",
+        description = "API for BATCH VSAC ValueSet Conversions and Validations")
 @Slf4j
-public class OrchestrationBatchController {
+public class VSACBatchController {
     /* long running multi threaded job runs only one at time, */
     private static final AtomicBoolean isRunning = new AtomicBoolean(false);
     private static RunningBatchJobInfo runningBatchJobInfo;
 
     private final ConversionResultsService conversionResultsService;
-    private final OrchestrationController orchestrationController;
+    private final VSACOrchestrationController orchestrationController;
     private final MeasureDataService measureDataService;
     private final BatchResultsService batchResultsService;
     private final SelfHealthCheckingService selfHealthCheckingService;
 
 
-    public OrchestrationBatchController(ConversionResultsService conversionResultsService,
-                                        OrchestrationController orchestrationController,
+    public VSACBatchController(ConversionResultsService conversionResultsService,
+                                        VSACOrchestrationController orchestrationController,
                                         MeasureDataService measureDataService,
                                         BatchResultsService batchResultsService, SelfHealthCheckingService selfHealthCheckingService) {
         this.conversionResultsService = conversionResultsService;
@@ -73,14 +73,14 @@ public class OrchestrationBatchController {
                 matIdsToProcess.parallelStream()
                         .forEach((id -> orchestrate(conversionType, xmlSource, batchId, id, vsacGrantingTicket)));
 
-                log.info("Completed orchestrating {} ids with batchId: {} in {} seconds",
+                log.info("Completed Batch VSAC Orchestration {} ids with batchId: {} in {} seconds",
                         matIdsToProcess.size(),
                         batchId,
                         runningBatchJobInfo.computeRunningSeconds());
 
                 Map<String, BatchResult> results = createAggregationBatchReport(batchId);
 
-                log.info("Finished OrchestrationBatch with batchId: {} in {} seconds",
+                log.info("Finished VSAC Batch with batchId: {} in {} seconds",
                         batchId,
                         runningBatchJobInfo.computeRunningSeconds());
 

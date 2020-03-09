@@ -8,8 +8,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      VSAC_USER: ${VSAC_USER}
-      VSAC_PASS: ${VSAC_PASS}
+      MAT_DB: ${MAT_DB}
       VSAC_VASE_URL: ${VSAC_VASE_URL}
       VSAC_SERVICE_URL: ${VSAC_SERVICE_URL}
       MAT_DB_URL: ${MAT_DB_URL}

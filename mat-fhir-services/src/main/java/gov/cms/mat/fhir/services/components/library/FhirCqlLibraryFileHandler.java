@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.components.library;
 
 import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql.elements.LibraryProperties;
+import gov.cms.mat.cql.parsers.ParseException;
 import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
@@ -15,8 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.commons.lang3.StringUtils;
 
 @Component
 @Slf4j
@@ -49,9 +52,9 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     }
 
     private void processHapiFhir(String cql) {
-
-        CqlParser cqlParser = new CqlParser(cql);
-        LibraryProperties libraryProperties = cqlParser.getLibrary();
+        
+        String[] lines = cql.split("\\r?\\n");
+        LibraryProperties libraryProperties = getLibrary(lines);
 
         try {
             String uuid = createLibraryUuid(libraryProperties);
@@ -78,5 +81,29 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
             log.error("Error processing Standard Fhir cql lib url: {}", libraryProperties, e);
         }
     }
+    
+    private LibraryProperties getLibrary(String[] lines) {
+        return Arrays.stream(lines)
+                .filter(l -> l.startsWith("library"))
+                .map(this::buildLibraryProperties)
+                .findFirst()
+                .orElseThrow(() -> new ParseException("Cannot find library"));
+    }
+
+    private LibraryProperties buildLibraryProperties(String line) {
+        return LibraryProperties.builder()
+                .name(getLibraryName(line))
+                .version(getLibraryVersion(line))
+                .line(line)
+                .build();
+    }
+
+    private String getLibraryName(String line) {
+        return StringUtils.substringBetween(line, "library ", " version ");
+    }
+
+    private String getLibraryVersion(String line) {
+        return StringUtils.substringBetween(line, " version '", "'");
+    }    
 
 }
