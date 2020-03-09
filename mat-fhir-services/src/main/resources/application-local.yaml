@@ -22,11 +22,11 @@ spring:
 
 logging:
   level:
-    root: WARN
-    gov.cms.mat: INFO
-    org.hl7.fhir.r4.hapi.ctx: WARN
-    org.exolab: WARN
-    org.springframework.data.mongodb.core.MongoTemplate: WARN
+    root: ${MAT_LOG_LEVEL:WARN}
+    gov.cms.mat: ${MAT_LOG_LEVEL:WARN}
+    org.hl7.fhir.r4.hapi.ctx: ${MAT_LOG_LEVEL:WARN}
+    org.exolab: ${MAT_LOG_LEVEL:WARN}
+    org.springframework.data.mongodb.core.MongoTemplate: ${MAT_LOG_LEVEL:WARN}
   file:
     name: mat-fhir-services.log
 
