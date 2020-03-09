@@ -1,10 +1,7 @@
 package gov.cms.mat.fhir.services.cql;
 
 import gov.cms.mat.cql.CqlParser;
-import gov.cms.mat.cql.elements.BaseProperties;
-import gov.cms.mat.cql.elements.DefineProperties;
-import gov.cms.mat.cql.elements.SymbolicProperty;
-import gov.cms.mat.cql.elements.UnionProperties;
+import gov.cms.mat.cql.elements.*;
 import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
@@ -14,14 +11,22 @@ import java.util.List;
 
 @Slf4j
 public class QdmCqlToFhirCqlConverter {
+
+    public static final String STD_FHIR_LIBS = "\ninclude FHIRHelpers version '4.0.0'\n" +
+            "include SupplementalDataElements_FHIR4 version '1.0.0'\n" +
+            "include MATGlobalCommonFunctions_FHIR4 version '4.0.000'\n";
+
+
     private static final String ERROR_MESSAGE =
             "DEFINE crosses dissimilar FHIR Resources within UNION statements, this will fail processing, " +
                     "consider creating define statements limited to single FHIR Resource.";
     private final CqlParser cqlParser;
     private final QdmQiCoreDataService qdmQiCoreDataService;
 
+    private UsingProperties usingProperties;
+
     public QdmCqlToFhirCqlConverter(String cqlText, QdmQiCoreDataService qdmQiCoreDataService) {
-        
+
         cqlParser = new CqlParser(cqlText);
         this.qdmQiCoreDataService = qdmQiCoreDataService;
     }
@@ -34,7 +39,15 @@ public class QdmCqlToFhirCqlConverter {
 
         checkUnion(matLibId);
 
-        return cqlParser.getCql();
+        return addDefaultFhirLibraries();
+    }
+
+    private String addDefaultFhirLibraries() {
+        String cqlUsingLine = usingProperties.createCql();
+        String cqlReplacement = cqlUsingLine + STD_FHIR_LIBS;
+
+        return cqlParser.getCql()
+                .replace(cqlUsingLine, cqlReplacement);
     }
 
     private void checkUnion(String matLibId) {
@@ -96,9 +109,10 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void convertUsing() {
-        setToFhir(cqlParser.getUsing());
+        usingProperties = cqlParser.getUsing();
+        setToFhir(usingProperties);
     }
-    
+
     public void convertLibrary() {
         setToFhir(cqlParser.getLibrary());
     }

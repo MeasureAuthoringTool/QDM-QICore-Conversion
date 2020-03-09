@@ -71,7 +71,7 @@ public class DefineProperties extends BaseProperties {
 
     @Override
     public String createCql() {
-        return defineData.toString();
+        return defineData;
     }
 
 }

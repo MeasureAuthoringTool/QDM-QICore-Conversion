@@ -1,7 +1,6 @@
 server:
   port: 9080
 
-
 spring:
   profiles:
     active: local
@@ -28,7 +27,6 @@ library-files:
     - TJCOverall_FHIR4-4.0.000.cql
     - VTEICU_FHIR4-3.1.000.cql
     - Hospice_FHIR4-1.0.000.cql
-
 
 measures:
   allowed:
