@@ -109,7 +109,7 @@ public class LibraryOrchestrationConversionService extends LibraryOrchestrationB
                         fhirJson,
                         cqlLibrary.getId());
             } else {
-                return false;
+                return true;
             }
         } else {
             ConversionReporter.setLibraryNotFoundInHapi(cqlLibrary.getId());

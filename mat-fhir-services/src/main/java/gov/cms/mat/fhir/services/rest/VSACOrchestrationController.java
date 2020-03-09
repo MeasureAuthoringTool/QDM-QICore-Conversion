@@ -26,17 +26,17 @@ import java.time.Instant;
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.*;
 
 @RestController
-@RequestMapping(path = "/orchestration/measure")
+@RequestMapping(path = "/orchestration/vsac")
 @Tag(name = "Orchestration-Controller",
-        description = "API for converting MAT Measures to FHIR executing all validations and services to perform this task")
+        description = "API for converting VSAC ValueSets to FHIR executing all validations and services to perform this task")
 @Slf4j
-public class OrchestrationController {
+public class VSACOrchestrationController {
     private final OrchestrationService orchestrationService;
     private final ConversionResultProcessorService conversionResultProcessorService;
     private final MeasureDataService measureDataService;
     private final ConversionResultsService conversionResultsService;
 
-    public OrchestrationController(OrchestrationService orchestrationService,
+    public VSACOrchestrationController(OrchestrationService orchestrationService,
                                    ConversionResultProcessorService conversionResultProcessorService,
                                    MeasureDataService measureDataService,
                                    ConversionResultsService conversionResultsService) {

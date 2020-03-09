@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.Base64;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,10 +89,10 @@ public class LibraryFinderController implements CqlVersionConverter {
                         .findFirst()
                         .orElseThrow(() -> new CqlLibraryNotFoundException("Cannot find attachment type " + CQL_CONTENT_TYPE +
                                 " for library  name: " + name + ", version: " + version));
-
-                return new String(cql.getData());
-
-
+                String cqlRaw = new String(cql.getData());
+                byte[] cqlS = Base64.getDecoder().decode(cqlRaw);
+                String res = new String(cqlS);
+                return new String(res);
             } else {
                 throw new CqlLibraryNotFoundException("Cannot find library in bundle for name: " + name + ", version: " + version);
             }

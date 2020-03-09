@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class OrchestrationService {
+public class VSACOrchestrationService {
     private final ValueSetOrchestrationValidationService valueSetOrchestrationValidationService;
     private final ValueSetOrchestrationConversionService valueSetOrchestrationConversionService;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
@@ -25,7 +25,7 @@ public class OrchestrationService {
     private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
     private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
 
-    public OrchestrationService(ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
+    public VSACOrchestrationService(ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
                                 ValueSetOrchestrationConversionService valueSetOrchestrationConversionService,
                                 CQLLibraryTranslationService cqlLibraryTranslationService,
                                 LibraryOrchestrationConversionService libraryOrchestrationConversionService,
@@ -57,9 +57,9 @@ public class OrchestrationService {
 
     public boolean processPrerequisites(OrchestrationProperties properties, String vsacGrantingTicket) {
         try {
-            //processAndGetValueSets(properties, vsacGrantingTicket);
-            processAndGetCqlLibraries(properties);
-            processFhirMeasure(properties);
+            processAndGetValueSets(properties, vsacGrantingTicket);
+            //processAndGetCqlLibraries(properties);
+            //processFhirMeasure(properties);
             return true;
         } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException |
                 CqlLibraryNotFoundException | MatXmlMarshalException | MatXmlException e) {
@@ -141,15 +141,11 @@ public class OrchestrationService {
     }
 
     public boolean convert(OrchestrationProperties properties) {
-        //return valueSetOrchestrationConversionService.convert(properties) &&
-         return libraryOrchestrationConversionService.convert(properties) &&
-                measureOrchestrationConversionService.convert(properties);
+         return valueSetOrchestrationConversionService.convert(properties);
+  
     }
 
     public boolean validate(OrchestrationProperties properties) {
-        //return valueSetOrchestrationValidationService.validate(properties) &
-          return cqlLibraryTranslationService.validate(properties) &
-                libraryOrchestrationValidationService.validate(properties) &
-                measureOrchestrationValidationService.validate(properties);
+          return valueSetOrchestrationValidationService.validate(properties);
     }
 }
