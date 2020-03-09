@@ -40,13 +40,13 @@ public class MeasureOrchestrationConversionService {
     }
 
     boolean convert(OrchestrationProperties properties) {
-        if (ConversionReporter.getConversionResult().measureExistsInHapi()) {
-            log.info("No Conversion performed already in hapi measureId: {}", properties.getMeasureId());
-            return true;
-        } else {
+//        if (ConversionReporter.getConversionResult().measureExistsInHapi()) {
+//            log.info("No Conversion performed already in hapi measureId: {}", properties.getMeasureId());
+//            return true;
+//        } else {
             log.info("Converting measure hapi measureId: {}", properties.getMeasureId());
             return persistToFhir(properties);
-        }
+//        }
     }
 
     private boolean persistToFhir(OrchestrationProperties properties) {

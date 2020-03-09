@@ -53,5 +53,10 @@ public class VsacService {
         log.debug("serviceTicket: {}", serviceTicket);
         return serviceTicket;
     }
-
+    
+    public String getGrantingTicket(String username, String passwd) {
+        String grantingTicket = vsacClient.getGrantingTicket(username, passwd);
+        log.debug("grantingTicket: {}", grantingTicket);
+        return grantingTicket;
+    }
 }

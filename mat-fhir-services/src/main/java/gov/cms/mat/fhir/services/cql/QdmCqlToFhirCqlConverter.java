@@ -21,6 +21,7 @@ public class QdmCqlToFhirCqlConverter {
     private final QdmQiCoreDataService qdmQiCoreDataService;
 
     public QdmCqlToFhirCqlConverter(String cqlText, QdmQiCoreDataService qdmQiCoreDataService) {
+        
         cqlParser = new CqlParser(cqlText);
         this.qdmQiCoreDataService = qdmQiCoreDataService;
     }
@@ -97,7 +98,7 @@ public class QdmCqlToFhirCqlConverter {
     private void convertUsing() {
         setToFhir(cqlParser.getUsing());
     }
-
+    
     public void convertLibrary() {
         setToFhir(cqlParser.getLibrary());
     }

@@ -45,13 +45,13 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
     }
 
     boolean validate(OrchestrationProperties properties) {
-        if (ConversionReporter.getConversionResult().measureExistsInHapi()) {
-            log.info("No Validation performed already in hapi measureId: {}", properties.getMeasureId());
-            return true;
-        } else {
+//        if (ConversionReporter.getConversionResult().measureExistsInHapi()) {
+//            log.info("No Validation performed already in hapi measureId: {}", properties.getMeasureId());
+//            return true;
+//        } else {
             log.info("Validating measure hapi measureId: {}", properties.getMeasureId());
             return validateMeasure(properties);
-        }
+//        }
     }
 
     private boolean validateMeasure(OrchestrationProperties properties) {
