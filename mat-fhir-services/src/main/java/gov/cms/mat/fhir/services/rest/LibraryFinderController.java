@@ -89,10 +89,10 @@ public class LibraryFinderController implements CqlVersionConverter {
                         .findFirst()
                         .orElseThrow(() -> new CqlLibraryNotFoundException("Cannot find attachment type " + CQL_CONTENT_TYPE +
                                 " for library  name: " + name + ", version: " + version));
-                String cqlRaw = new String(cql.getData());
-                byte[] cqlS = Base64.getDecoder().decode(cqlRaw);
-                String res = new String(cqlS);
-                return new String(res);
+
+                return new String(cql.getData());
+
+
             } else {
                 throw new CqlLibraryNotFoundException("Cannot find library in bundle for name: " + name + ", version: " + version);
             }
