@@ -60,7 +60,7 @@ public class OrchestrationController {
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId,
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
-            @RequestParam String vsacGrantingTicket) {
+            @RequestParam(required = false, defaultValue = "") String vsacGrantingTicket) {
         ThreadSessionKey threadSessionKey =
                 ConversionReporter.setInThreadLocal(id,
                         batchId,

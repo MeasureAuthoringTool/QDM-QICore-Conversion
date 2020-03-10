@@ -37,9 +37,9 @@ public class VSACOrchestrationController {
     private final ConversionResultsService conversionResultsService;
 
     public VSACOrchestrationController(OrchestrationService orchestrationService,
-                                   ConversionResultProcessorService conversionResultProcessorService,
-                                   MeasureDataService measureDataService,
-                                   ConversionResultsService conversionResultsService) {
+                                       ConversionResultProcessorService conversionResultProcessorService,
+                                       MeasureDataService measureDataService,
+                                       ConversionResultsService conversionResultsService) {
         this.orchestrationService = orchestrationService;
         this.conversionResultProcessorService = conversionResultProcessorService;
         this.measureDataService = measureDataService;
@@ -60,7 +60,7 @@ public class VSACOrchestrationController {
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId,
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
-            @RequestParam String vsacGrantingTicket) {
+            @RequestParam(required = false, defaultValue = "") String vsacGrantingTicket) {
         ThreadSessionKey threadSessionKey =
                 ConversionReporter.setInThreadLocal(id,
                         batchId,
