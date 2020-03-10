@@ -61,7 +61,7 @@ public class OrchestrationBatchController {
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam String batchId,
-            @RequestParam String vsacGrantingTicket,
+            @RequestParam(required = false, defaultValue = "") String vsacGrantingTicket,
             @RequestBody List<String> matIds) {
 
         selfHealthCheckingService.checkHealthWithException();
