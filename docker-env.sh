@@ -1,20 +1,20 @@
 #!/bin/sh
-export VSAC_USER=FIX_ME!
-export VSAC_PASS=FIX_ME!
+export VSAC_USER=ddecouteau24
+export VSAC_PASS=R1v3r0n3!#
 
 export MAT_DB_URL='jdbc:mysql://host.docker.internal:3306/MAT?serverTimezone=UTC&max_allowed_packet=16777216'
-export MAT_DB_USER=FIX_ME!
-export MAT_DB_PASS=FIX_ME!
+export MAT_DB_USER=root
+export MAT_DB_PASS=changeme
 
-export HAPI_DB=hapi
-export HAPI_DB_URL='jdbc:mysql://host.docker.internal:3306/'${HAPI_DB}'?serverTimezone=UTC&max_allowed_packet=16777216'
-export HAPI_DB_USER=FIX_ME!
-export HAPI_DB_PASS=FIX_ME!
+export HAPI_DB=hapi_r4
+export HAPI_DB_URL='jdbc:mysql://hapi-fhir-mysql:3306/'${HAPI_DB}'?serverTimezone=UTC&max_allowed_packet=16777216'
+export HAPI_DB_USER=root
+export HAPI_DB_PASS=changeme
 
-export MONGO_DB_URL='mongodb://host.docker.internal'
+export MONGO_DB_URL='mongodb://host.docker.internal:27018'
 
-export HAPI_FHIR_URL_PUBLIC='http://localhost:6060/fhir/'
-export HAPI_FHIR_URL='http://host.docker.internal:6060/fhir/'
+export HAPI_FHIR_URL_PUBLIC='http://host-docker-internal:6060/hapi-fhir-jpaserver/'
+export HAPI_FHIR_URL='http://host.docker.internal:6060/hapi-fhir-jpaserver/fhir/'
 export FHIR_SERVICES_URL='http://host.docker.internal:9080'
 export QDM_QICORE_URL='http://host.docker.internal:9090'
 export CQL_CONVERSION_URL='http://host.docker.internal:7070'

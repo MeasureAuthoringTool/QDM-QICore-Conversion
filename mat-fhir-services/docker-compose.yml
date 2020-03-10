@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      MAT_DB: ${MAT_DB}
+      MAT_DB: ${MAT_DB_URL}
       VSAC_VASE_URL: ${VSAC_VASE_URL}
       VSAC_SERVICE_URL: ${VSAC_SERVICE_URL}
       MAT_DB_URL: ${MAT_DB_URL}
