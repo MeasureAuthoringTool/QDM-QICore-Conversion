@@ -6,10 +6,10 @@ services:
     container_name: hapi-fhir-mysql
     restart: always
     environment:
-      MYSQL_DATABASE: ${HAPI_DB}
-      MYSQL_USER: ${HAPI_DB_USER}
-      MYSQL_PASSWORD: ${HAPI_DB_PASS}
-      MYSQL_ROOT_PASSWORD: ${HAPI_DB_PASS}
+      MYSQL_DATABASE: 'hapi'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 'admin'
+      MYSQL_ROOT_PASSWORD: 'admin'
     ports:
       - 3307:3306
     volumes:
@@ -23,16 +23,8 @@ services:
       - 27018:27017
 
   hapi-fhir-jpaserver:
-    image: hapi-fhir-jpaserver
+    image: greenemcg/hapi-fhir-jpaserver
     container_name: hapi-fhir-jpaserver
-    build:
-      context: hapi-fhir-jpaserver
-      dockerfile: Dockerfile
-    environment:
-      HAPI_DB_URL: ${HAPI_DB_URL}
-      HAPI_DB_USER: ${HAPI_DB_USER}
-      HAPI_DB_PASS: ${HAPI_DB_PASS}
-      HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
     ports:
       - 6060:6060
 
