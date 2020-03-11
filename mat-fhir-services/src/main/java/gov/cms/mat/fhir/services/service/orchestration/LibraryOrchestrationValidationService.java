@@ -220,12 +220,10 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         response.setLibraryConversionResults(conversionResult.getLibraryConversionResults());
         response.setLibraryConversionType(conversionResult.getConversionType());
 
-
         var optional = find(conversionResult.getLibraryConversionResults(), matCqlLibrary.getId());
 
         if (optional.isPresent()) {
             LibraryConversionResults results = optional.get();
-
 
             CqlConversionResult cqlConversionResult = results.getCqlConversionResult();
 
@@ -233,7 +231,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 ConversionReporter.setLibraryValidationError("Fhir Validation failed", matCqlLibrary.getId());
             }
         }
-
 
         return response;
     }
