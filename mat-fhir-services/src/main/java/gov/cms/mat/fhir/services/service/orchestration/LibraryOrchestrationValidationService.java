@@ -5,6 +5,7 @@ import gov.cms.mat.cql.elements.BaseProperties;
 import gov.cms.mat.cql.elements.IncludeProperties;
 import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
+import gov.cms.mat.fhir.rest.dto.CqlConversionResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
 import gov.cms.mat.fhir.services.components.cql.CqlLibraryConverter;
@@ -31,6 +32,7 @@ import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -218,8 +220,29 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         response.setLibraryConversionResults(conversionResult.getLibraryConversionResults());
         response.setLibraryConversionType(conversionResult.getConversionType());
 
+
+        var optional = find(conversionResult.getLibraryConversionResults(), matCqlLibrary.getId());
+
+        if (optional.isPresent()) {
+            LibraryConversionResults results = optional.get();
+
+
+            CqlConversionResult cqlConversionResult = results.getCqlConversionResult();
+
+            if (!cqlConversionResult.getFhirCqlConversionErrors().isEmpty()) {
+                ConversionReporter.setLibraryValidationError("Fhir Validation failed", matCqlLibrary.getId());
+            }
+        }
+
+
         return response;
     }
+
+
+    private Optional<LibraryConversionResults> find(List<LibraryConversionResults> libraryConversionResults, String matLibId) {
+        return libraryConversionResults.stream().filter(t -> t.getMatId().equals(matLibId)).findFirst();
+    }
+
 
     private boolean processValidation(FhirValidationResult validationResult, AtomicBoolean atomicBoolean, String matLibId) {
 
