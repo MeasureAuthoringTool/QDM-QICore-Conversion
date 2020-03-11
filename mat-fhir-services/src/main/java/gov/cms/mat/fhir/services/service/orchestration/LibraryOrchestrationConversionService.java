@@ -72,9 +72,11 @@ public class LibraryOrchestrationConversionService extends LibraryOrchestrationB
     }
 
     public List<CqlLibrary> filterCqlLibraries(List<CqlLibrary> cqlLibraries) {
-        return cqlLibraries.stream()
-                .filter(this::filterLibrary)
-                .collect(Collectors.toList());
+        // we should not filter on library being found in hapi allow process to continue
+        return cqlLibraries;
+        //return cqlLibraries.stream()
+        //        .filter(this::filterLibrary)
+        //        .collect(Collectors.toList());
     }
 
     public boolean filterLibrary(CqlLibrary cqlLibrary) {

@@ -126,7 +126,7 @@ public class OrchestrationBatchController {
                              String id,
                              String vsacGrantingTicket) {
         try {
-            orchestrationController.translateMeasureById(id, conversionType, xmlSource, batchId, Boolean.TRUE, vsacGrantingTicket);
+            orchestrationController.translateMeasureById(id, conversionType, xmlSource, batchId, Boolean.FALSE, vsacGrantingTicket);
         } catch (MatXmlException | QdmMappingException e) {
             log.debug("{} Error for id: {}, reason: {}", e.getClass().getSimpleName(), id, e.getMessage());
         } catch (Exception e) {
