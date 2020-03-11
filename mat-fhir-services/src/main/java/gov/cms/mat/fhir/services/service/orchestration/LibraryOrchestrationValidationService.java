@@ -11,6 +11,7 @@ import gov.cms.mat.fhir.services.components.cql.CqlLibraryConverter;
 import gov.cms.mat.fhir.services.components.library.UnConvertedCqlLibraryHandler;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
+import gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState;
 import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
@@ -206,7 +207,11 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         List<FhirValidationResult> list = buildResults(response);
         ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibrary.getId());
 
-        list.forEach(validationResult -> isValid(validationResult, atomicBoolean));
+        if (list.isEmpty()) {
+            ConversionReporter.setLibraryValidationLink(null, HapiResourcePersistedState.VALIDATION, matCqlLibrary.getId());
+        } else {
+            list.forEach(validationResult -> processValidation(validationResult, atomicBoolean, matCqlLibrary.getId()));
+        }
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
 
@@ -214,5 +219,18 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         response.setLibraryConversionType(conversionResult.getConversionType());
 
         return response;
+    }
+
+    private boolean processValidation(FhirValidationResult validationResult, AtomicBoolean atomicBoolean, String matLibId) {
+
+        boolean valid = isValid(validationResult, atomicBoolean);
+
+        if (valid) {
+            ConversionReporter.setLibraryValidationLink(null, HapiResourcePersistedState.VALIDATION, matLibId);
+        } else {
+            ConversionReporter.setLibraryValidationError("Validation Failed", matLibId);
+        }
+
+        return valid;
     }
 }

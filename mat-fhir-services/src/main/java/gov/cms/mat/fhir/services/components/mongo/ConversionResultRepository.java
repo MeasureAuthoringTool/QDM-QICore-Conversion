@@ -19,6 +19,8 @@ public interface ConversionResultRepository extends MongoRepository<ConversionRe
 
     List<ConversionResult> findByBatchId(String batchId);
 
+    Optional<ConversionResult> findTop1ByValueSetsProcessedIsNullOrderByCreated();
+
     @Query(value = "{}", fields = "{'batchId' : 1}")
     List<ConversionResult> findAllBatchIds();
 }

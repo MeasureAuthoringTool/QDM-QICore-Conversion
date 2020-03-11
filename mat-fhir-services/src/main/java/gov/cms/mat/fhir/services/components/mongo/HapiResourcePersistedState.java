@@ -2,7 +2,9 @@ package gov.cms.mat.fhir.services.components.mongo;
 
 public enum HapiResourcePersistedState {
     NEW("New"), // if new not persisted
-    EXISTS("Exists"), CREATED("Created");
+    VALIDATION("Validation"),
+    EXISTS("Exists"),
+    CREATED("Created");
 
     public final String value;
 

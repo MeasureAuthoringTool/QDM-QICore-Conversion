@@ -57,7 +57,7 @@ public class OrchestrationService {
 
     public boolean processPrerequisites(OrchestrationProperties properties, String vsacGrantingTicket) {
         try {
-            //processAndGetValueSets(properties, vsacGrantingTicket);
+          //  processAndGetValueSets(properties, vsacGrantingTicket);
             processAndGetCqlLibraries(properties);
             processFhirMeasure(properties);
             return true;
@@ -75,6 +75,7 @@ public class OrchestrationService {
     }
 
     public void processAndGetCqlLibraries(OrchestrationProperties properties) {
+
         List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesNotInHapi(properties);
 
         cqlLibraries.forEach(this::processCqlLibrary);
@@ -97,7 +98,8 @@ public class OrchestrationService {
 
 
     public void processAndGetValueSets(OrchestrationProperties properties, String vsacGrantingTicket) {
-        List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties, vsacGrantingTicket);
+        List<ValueSet> valueSets =
+                valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties, vsacGrantingTicket);
 
         properties.getValueSets()
                 .addAll(valueSets);

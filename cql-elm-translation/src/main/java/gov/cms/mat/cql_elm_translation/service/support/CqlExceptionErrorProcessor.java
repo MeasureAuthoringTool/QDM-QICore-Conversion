@@ -75,12 +75,13 @@ public class CqlExceptionErrorProcessor {
     private boolean filterByMessage(CqlTranslatorException cqlTranslatorException) {
         List<Object> objectList = library.getAnnotation();
 
-        if( CollectionUtils.isEmpty(objectList)) {
+        if (CollectionUtils.isEmpty(objectList)) {
             return true;
         } else {
             var optional = objectList.stream()
                     .filter(o -> o instanceof CqlToElmError)
                     .map(CqlToElmError.class::cast)
+                    .filter(m -> m.getMessage() != null)
                     .map(CqlToElmError::getMessage)
                     .filter(m -> m.equals(cqlTranslatorException.getMessage()))
                     .findFirst();
