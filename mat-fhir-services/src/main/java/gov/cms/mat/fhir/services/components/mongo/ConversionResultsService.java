@@ -18,6 +18,10 @@ import java.util.stream.Collectors;
 public class ConversionResultsService {
     private final ConversionResultRepository conversionResultRepository;
 
+    public Optional<ConversionResult> findTopValueSetConversion() {
+        return conversionResultRepository.findTop1ByValueSetsProcessedIsNullOrderByCreated();
+    }
+
     public ConversionResultsService(ConversionResultRepository conversionResultRepository) {
         this.conversionResultRepository = conversionResultRepository;
     }

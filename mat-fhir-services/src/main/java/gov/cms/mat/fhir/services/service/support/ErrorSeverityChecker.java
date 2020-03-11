@@ -17,11 +17,14 @@ public interface ErrorSeverityChecker {
         }
     }
 
-    default void isValid(FhirValidationResult result, AtomicBoolean atomicBoolean) {
+    default boolean isValid(FhirValidationResult result, AtomicBoolean atomicBoolean) {
         boolean haveErrorsOrHigher = checkSeverity(result.getSeverity());
 
         if (haveErrorsOrHigher) {
             atomicBoolean.set(false);
+            return false;
+        } else {
+            return true;
         }
     }
 }
