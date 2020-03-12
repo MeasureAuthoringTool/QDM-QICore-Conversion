@@ -100,7 +100,7 @@ public class OrchestrationController {
     public ConversionResultDto process(OrchestrationProperties orchestrationProperties, String vsacGrantingTicket) {
         log.info("Started Orchestrating Measure key: {}", orchestrationProperties.getThreadSessionKey());
 
-        orchestrationService.process(orchestrationProperties, vsacGrantingTicket);
+        orchestrationService.process(orchestrationProperties);
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
 

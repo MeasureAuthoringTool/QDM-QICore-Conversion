@@ -54,7 +54,7 @@ public class ValueSetService {
         return findValueSetsByMeasure(properties);
     }
 
-    public List<ValueSet> findValueSetsByMeasure(OrchestrationProperties properties, String vsacGrantingTicket) {
+    public List<ValueSet> findValueSetsByMeasure(OrchestrationProperties properties) {
         Measure matMeasure = properties.getMatMeasure();
 
         byte[] xml = getXmlBytesBySource(matMeasure.getId(), properties.getXmlSource());

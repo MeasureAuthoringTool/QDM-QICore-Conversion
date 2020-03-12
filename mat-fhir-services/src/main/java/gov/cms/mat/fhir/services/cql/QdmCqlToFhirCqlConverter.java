@@ -21,9 +21,9 @@ public class QdmCqlToFhirCqlConverter {
 //            "include MATGlobalCommonFunctions_FHIR4 version '4.0.000'\n";
 
     private static final StandardLib[] STANDARD_LIBS = {
-            new StandardLib("FHIRHelpers", "'4.0.0'"),
-            new StandardLib("SupplementalDataElements_FHIR4", "'1.0.0'"),
-            new StandardLib("MATGlobalCommonFunctions_FHIR4", "'1.0.0'")
+            new StandardLib("FHIRHelpers", "4.0.0"),
+            new StandardLib("SupplementalDataElements_FHIR4", "1.0.0"),
+            new StandardLib("MATGlobalCommonFunctions_FHIR4", "1.0.0")
     };
     private static final String ERROR_MESSAGE =
             "DEFINE crosses dissimilar FHIR Resources within UNION statements, this will fail processing, " +
@@ -32,8 +32,6 @@ public class QdmCqlToFhirCqlConverter {
     private final QdmQiCoreDataService qdmQiCoreDataService;
     List<IncludeProperties> includeProperties;
     List<IncludeProperties> standardIncludeProperties;
-    private UsingProperties usingProperties;
-
     private UsingProperties usingProperties;
 
     public QdmCqlToFhirCqlConverter(String cqlText, QdmQiCoreDataService qdmQiCoreDataService) {
@@ -82,9 +80,35 @@ public class QdmCqlToFhirCqlConverter {
         String cqlUsingLine = usingProperties.createCql();
         String cqlReplacement = cqlUsingLine + createStandardIncludesCql();
 
-        return cqlParser.getCql()
+        String cql = cqlParser.getCql()
                 .replace(cqlUsingLine, cqlReplacement);
+
+        return cleanLines(cql);
     }
+
+
+    private String cleanLines(String cql) {
+        String[] lines = cql.split("\\r?\\n");
+        StringBuilder output = new StringBuilder();
+
+        boolean isLastLineBlank = false;
+
+        for (String line : lines) {
+            boolean isLineBlank = StringUtils.isBlank(line);
+
+            if (isLastLineBlank && isLineBlank) {
+                log.debug("Skipping line");
+            } else {
+                output.append(line);
+                output.append("\n");
+            }
+
+            isLastLineBlank = isLineBlank;
+        }
+
+        return output.toString();
+    }
+
 
     private void checkUnion(String matLibId) {
         List<UnionProperties> unions = cqlParser.getUnions();
@@ -149,7 +173,7 @@ public class QdmCqlToFhirCqlConverter {
     private void processIncludesCalled(IncludeProperties include) {
         var optional = isStandardLibrary(include.getName());
 
-        include.setDisplay(optional.isPresent());
+        include.setDisplay(optional.isEmpty());
 
         if (optional.isPresent() && StringUtils.isNotEmpty(include.getCalled())) {
             optional.get().setCalled(include.getCalled());
@@ -158,7 +182,18 @@ public class QdmCqlToFhirCqlConverter {
 
     private Optional<IncludeProperties> isStandardLibrary(String name) {
         return standardIncludeProperties.stream()
-                .filter(s -> s.getName().equals(name)).findFirst();
+                .filter(s -> getNonFhirName(s.getName()).equals(name))
+                .findFirst();
+    }
+
+    private String getNonFhirName(String name) {
+        int idx = name.indexOf("_FHIR4");
+
+        if (idx < 0) {
+            return name;
+        } else {
+            return name.substring(0, idx);
+        }
     }
 
     private void convertUsing() {

@@ -41,8 +41,8 @@ public class OrchestrationService {
         this.measureOrchestrationConversionService = measureOrchestrationConversionService;
     }
 
-    public boolean process(OrchestrationProperties properties, String vsacGrantingTicket) {
-        boolean processPrerequisitesFlag = processPrerequisites(properties, vsacGrantingTicket);
+    public boolean process(OrchestrationProperties properties) {
+        boolean processPrerequisitesFlag = processPrerequisites(properties);
 
         if (!processPrerequisitesFlag) {
             log.debug("Conversion Stopped due to Prerequisites failures measureId: {}", properties.getMeasureId());
@@ -55,7 +55,7 @@ public class OrchestrationService {
         }
     }
 
-    public boolean processPrerequisites(OrchestrationProperties properties, String vsacGrantingTicket) {
+    public boolean processPrerequisites(OrchestrationProperties properties) {
         try {
             //  processAndGetValueSets(properties, vsacGrantingTicket);
             processAndGetCqlLibraries(properties);
