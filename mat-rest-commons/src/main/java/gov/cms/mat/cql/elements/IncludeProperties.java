@@ -1,6 +1,7 @@
 package gov.cms.mat.cql.elements;
 
 import lombok.*;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Builder
@@ -19,7 +20,7 @@ public class IncludeProperties extends BaseProperties {
     String called; // is the symbolic optional name
 
     @Setter
-    boolean display;
+    Boolean display;
 
     @Override
     public void setToFhir() {
@@ -28,12 +29,20 @@ public class IncludeProperties extends BaseProperties {
 
     @Override
     public String createCql() {
-        String cql = String.format(TEMPLATE, name, version, using).trim();
-
-        if (StringUtils.isEmpty(called)) {
-            return cql;
+        if (BooleanUtils.isFalse(display)) {
+            return "";
         } else {
-            return cql + " called " + called;
+            if (using == null) {
+                using = "";
+            }
+
+            String cql = String.format(TEMPLATE, name, version, using).trim();
+
+            if (StringUtils.isEmpty(called)) {
+                return cql;
+            } else {
+                return cql + " called " + called;
+            }
         }
     }
 }
