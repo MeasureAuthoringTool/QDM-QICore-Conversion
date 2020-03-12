@@ -2,21 +2,31 @@ package gov.cms.mat.fhir.services.components.cql;
 
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestTemplate;
 
-import static gov.cms.mat.fhir.services.cql.QdmCqlToFhirCqlConverter.STD_FHIR_LIBS;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class CqlLibraryConverterTest implements ResourceFileUtil {
-    @InjectMocks
+    // @InjectMocks
     CqlLibraryConverter cqlLibraryConverter;
-    @Mock
+
     private QdmQiCoreDataService qdmQiCoreDataService;
+
+    @BeforeEach
+    void setUp() {
+        RestTemplate restTemplate = new RestTemplate();
+        qdmQiCoreDataService = new QdmQiCoreDataService(restTemplate);
+        ReflectionTestUtils.setField(qdmQiCoreDataService, "baseURL", "http://localhost:9090");
+
+        cqlLibraryConverter = new CqlLibraryConverter(qdmQiCoreDataService);
+    }
+
 
     @Test
     void convert() {
@@ -33,8 +43,20 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
 
         String converted = cqlLibraryConverter.convert(cql);
 
-        assertTrue(converted.contains(STD_FHIR_LIBS));
+        //assertTrue(converted.contains(STD_FHIR_LIBS));
         assertTrue(converted.contains("define \"SDE Ethnicity\""));
         assertTrue(converted.contains("define \"SDE Sex\""));
+    }
+
+    @Test
+    void convert_Called() {
+        String cql = getStringFromResource("/called.cql");
+
+        String converted = cqlLibraryConverter.convert(cql);
+
+        System.out.println(converted);
+
+        //assertTrue(converted.contains(cqlLibraryConverter.));
+
     }
 }

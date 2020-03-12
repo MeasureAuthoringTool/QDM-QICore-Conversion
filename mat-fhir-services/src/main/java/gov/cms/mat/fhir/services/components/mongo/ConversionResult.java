@@ -56,4 +56,7 @@ public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHe
 
     private Instant valueSetsProcessed;
 
+    private String vsacGrantingTicket;
+    private String valueSetProcessingMemo;
+
 }
