@@ -337,6 +337,16 @@ public class ConversionReporter {
         conversionResultsService.addMeasureResult(key, result);
     }
 
+//    private void addLibraryFieldConversionResult(String field, String destination, String reason, String matCqlId) {
+//        FieldConversionResult result = FieldConversionResult.builder()
+//                .field(field)
+//                .destination(destination)
+//                .reason(reason)
+//                .build();
+//
+//        conversionResultsService.addLibraryFieldConversionResult(key, result, matCqlId);
+//    }
+
 
     private void addCqlConversionResultSuccess(String matLibraryId) {
         conversionResultsService.addCqlConversionResultSuccess(key, matLibraryId);

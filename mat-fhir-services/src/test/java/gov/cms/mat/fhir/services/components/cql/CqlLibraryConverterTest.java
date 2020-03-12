@@ -58,5 +58,5 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
 
         //assertTrue(converted.contains(cqlLibraryConverter.));
 
-    }
+  }
 }

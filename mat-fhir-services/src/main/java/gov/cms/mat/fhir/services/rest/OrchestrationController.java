@@ -91,16 +91,16 @@ public class OrchestrationController {
                     .vsacGrantingTicket(vsacGrantingTicket)
                     .build();
 
-            return process(orchestrationProperties);
+            return process(orchestrationProperties, vsacGrantingTicket);
         } finally {
             ConversionReporter.removeInThreadLocalAndComplete();
         }
     }
 
-    public ConversionResultDto process(OrchestrationProperties orchestrationProperties) {
+    public ConversionResultDto process(OrchestrationProperties orchestrationProperties, String vsacGrantingTicket) {
         log.info("Started Orchestrating Measure key: {}", orchestrationProperties.getThreadSessionKey());
 
-        orchestrationService.process(orchestrationProperties);
+        orchestrationService.process(orchestrationProperties, vsacGrantingTicket);
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
 

@@ -34,6 +34,8 @@ public class QdmCqlToFhirCqlConverter {
     List<IncludeProperties> standardIncludeProperties;
     private UsingProperties usingProperties;
 
+    private UsingProperties usingProperties;
+
     public QdmCqlToFhirCqlConverter(String cqlText, QdmQiCoreDataService qdmQiCoreDataService) {
 
         cqlParser = new CqlParser(cqlText);
