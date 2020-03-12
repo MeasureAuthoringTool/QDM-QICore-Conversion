@@ -16,15 +16,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class QdmCqlToFhirCqlConverter {
-//    public static final String STD_FHIR_LIBS = "\ninclude FHIRHelpers version '4.0.0'\n" +
-//            "include SupplementalDataElements_FHIR4 version '1.0.0'\n" +
-//            "include MATGlobalCommonFunctions_FHIR4 version '4.0.000'\n";
-
     private static final StandardLib[] STANDARD_LIBS = {
             new StandardLib("FHIRHelpers", "4.0.0"),
             new StandardLib("SupplementalDataElements_FHIR4", "1.0.0"),
-            new StandardLib("MATGlobalCommonFunctions_FHIR4", "1.0.0")
+            new StandardLib("MATGlobalCommonFunctions_FHIR4", "4.0.000")
     };
+
     private static final String ERROR_MESSAGE =
             "DEFINE crosses dissimilar FHIR Resources within UNION statements, this will fail processing, " +
                     "consider creating define statements limited to single FHIR Resource.";
@@ -48,7 +45,6 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private String createStandardIncludesCql() {
-
         StringBuilder stringBuilder = new StringBuilder("\n");
 
         standardIncludeProperties.forEach(s -> stringBuilder.append(s.createCql()).append("\n"));
