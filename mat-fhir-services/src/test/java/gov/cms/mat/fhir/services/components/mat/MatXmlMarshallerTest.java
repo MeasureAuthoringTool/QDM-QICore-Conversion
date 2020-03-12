@@ -35,7 +35,8 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
                 Instant.now(),
                 ConversionType.CONVERSION,
                 XmlSource.SIMPLE,
-                true);
+                true,
+                null);
     }
 
     @Test

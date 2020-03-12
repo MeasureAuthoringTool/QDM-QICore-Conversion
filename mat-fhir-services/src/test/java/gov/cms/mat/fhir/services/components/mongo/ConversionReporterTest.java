@@ -47,12 +47,12 @@ class ConversionReporterTest {
                 Instant.now(),
                 ConversionType.CONVERSION,
                 XmlSource.SIMPLE,
-                Boolean.TRUE);
+                Boolean.TRUE,
+                null);
         ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 
         verify(conversionResultsService).addMeasureResult(any(), any(FieldConversionResult.class));
     }
-
 
 
     @Test

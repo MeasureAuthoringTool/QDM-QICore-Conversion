@@ -48,12 +48,13 @@ public class ValueSetService {
                 .matMeasure(matMeasure)
                 .xmlSource(xmlSource)
                 .conversionType(conversionType)
+                .vsacGrantingTicket(vsacGrantingTicket)
                 .build();
 
-        return findValueSetsByMeasure(properties, vsacGrantingTicket);
+        return findValueSetsByMeasure(properties);
     }
 
-    public List<ValueSet> findValueSetsByMeasure(OrchestrationProperties properties, String vsacGrantingTicket) {
+    public List<ValueSet> findValueSetsByMeasure(OrchestrationProperties properties) {
         Measure matMeasure = properties.getMatMeasure();
 
         byte[] xml = getXmlBytesBySource(matMeasure.getId(), properties.getXmlSource());
@@ -64,7 +65,7 @@ public class ValueSetService {
             ConversionReporter.setTerminalMessage(message, ConversionOutcome.MEASURE_XML_NOT_FOUND);
             throw new ValueSetConversionException(message);
         } else {
-            return valueSetMapper.translateToFhir(new String(xml), vsacGrantingTicket);
+            return valueSetMapper.translateToFhir(new String(xml), properties.getVsacGrantingTicket());
         }
     }
 

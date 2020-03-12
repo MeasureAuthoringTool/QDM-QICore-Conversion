@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: ${MAT_DB_URL:jdbc:mysql://localhost:3306/MAT?serverTimezone=UTC&max_allowed_packet=16777216}
+    url: jdbc:mysql://localhost:3306/MAT_APP_BLANK?serverTimezone=UTC&max_allowed_packet=16777216
     username: ${MAT_DB_USER:mat}
     password: ${MAT_DB_PASS:mat}
   jpa:
@@ -22,11 +22,11 @@ spring:
 
 logging:
   level:
-    root: ${MAT_LOG_LEVEL:WARN}
-    gov.cms.mat: ${MAT_LOG_LEVEL:WARN}
-    org.hl7.fhir.r4.hapi.ctx: ${MAT_LOG_LEVEL:WARN}
-    org.exolab: ${MAT_LOG_LEVEL:WARN}
-    org.springframework.data.mongodb.core.MongoTemplate: ${MAT_LOG_LEVEL:WARN}
+    root: INFO
+    gov.cms.mat: INFO
+    org.hl7.fhir.r4.hapi.ctx: INFO
+    org.exolab: WARN
+    org.springframework.data.mongodb.core.MongoTemplate: WARN
   file:
     name: mat-fhir-services.log
 
