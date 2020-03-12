@@ -1,6 +1,6 @@
 #!/bin/sh
-export VSAC_USER=ddecouteau24
-export VSAC_PASS=R1v3r0n3!#
+export VSAC_USER=FIXME
+export VSAC_PASS=FIXME
 
 export MAT_DB_URL='jdbc:mysql://host.docker.internal:3306/MAT?serverTimezone=UTC&max_allowed_packet=16777216'
 export MAT_DB_USER=root
