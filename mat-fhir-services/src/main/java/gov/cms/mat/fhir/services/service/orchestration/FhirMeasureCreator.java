@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.SupplementalDataProcessor;
+import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
 import gov.cms.mat.fhir.services.translate.MeasureTranslator;
@@ -11,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
+
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.INVALID_MEASURE_XML;
 
 @Component
 @Slf4j
@@ -33,8 +36,17 @@ public class FhirMeasureCreator {
         this.measureGroupingDataProcessor = measureGroupingDataProcessor;
     }
 
+    public ManageCompositeMeasureDetailModel buildModel(byte[] xmlBytes,Measure matMeasure) {
+        try {
+            return manageMeasureDetailMapper.convert(xmlBytes, matMeasure);
+        } catch (RuntimeException e) {
+            ConversionReporter.setTerminalMessage(e.getMessage(),INVALID_MEASURE_XML);
+            throw e;
+        }
+    }
+
     public org.hl7.fhir.r4.model.Measure create(Measure matMeasure, byte[] xmlBytes, String narrative) {
-        ManageCompositeMeasureDetailModel model = manageMeasureDetailMapper.convert(xmlBytes, matMeasure);
+        ManageCompositeMeasureDetailModel model = buildModel(xmlBytes,matMeasure);
 
         MeasureTranslator fhirMapper = new MeasureTranslator(matMeasure,model,narrative, hapiFhirServer.getBaseURL());
         org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir();
