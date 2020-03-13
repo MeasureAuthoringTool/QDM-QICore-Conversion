@@ -1,8 +1,12 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.commons.model.Measure;
+import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
+import gov.cms.mat.fhir.rest.dto.MeasureConversionResults;
+import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.mongo.*;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
@@ -22,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Min;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.*;
 
@@ -70,8 +76,10 @@ public class OrchestrationController {
                         xmlSource,
                         showWarnings,
                         vsacGrantingTicket);
+        OrchestrationProperties orchestrationProperties = null;
         try {
             Measure matMeasure;
+            log.error("id=" + id + " conversionType=" + conversionType);
 
             try {
                 matMeasure = measureDataService.findOneValid(id);
@@ -83,7 +91,7 @@ public class OrchestrationController {
                 return conversionResultProcessorService.process(threadSessionKey);
             }
 
-            OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()
+            orchestrationProperties = OrchestrationProperties.builder()
                     .matMeasure(matMeasure)
                     .conversionType(conversionType)
                     .xmlSource(xmlSource)
@@ -92,26 +100,29 @@ public class OrchestrationController {
                     .build();
 
             return process(orchestrationProperties, vsacGrantingTicket);
+        } catch (RuntimeException e) {
+            log.error("Internal Server Error",e);
+            if (orchestrationProperties != null) {
+                return buildErrorDto(e, orchestrationProperties);
+            } else {
+                throw e;
+            }
         } finally {
             ConversionReporter.removeInThreadLocalAndComplete();
         }
     }
 
+    private ConversionResultDto buildErrorDto(RuntimeException e, OrchestrationProperties orchestrationProperties) {
+        if (ConversionReporter.getConversionResult().getOutcome() == null) {
+            ConversionReporter.setTerminalMessage(e.getMessage(), ConversionOutcome.INTERNAL_SERVER_ERROR);
+        }
+        return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
+
+    }
+
     public ConversionResultDto process(OrchestrationProperties orchestrationProperties, String vsacGrantingTicket) {
         log.info("Started Orchestrating Measure key: {}", orchestrationProperties.getThreadSessionKey());
-
         orchestrationService.process(orchestrationProperties);
-
-        ConversionResult conversionResult = ConversionReporter.getConversionResult();
-
-        if (conversionResult.getOutcome() == null) {
-            if (haveConversionResultError(conversionResult)) {
-                ConversionReporter.setTerminalMessage(SUCCESS_WITH_ERROR.name(), SUCCESS_WITH_ERROR);
-            } else {
-                ConversionReporter.setTerminalMessage(SUCCESS.name(), SUCCESS);
-            }
-        }
-
         return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
     }
 
