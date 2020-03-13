@@ -9,11 +9,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class CqlLibraryConverterTest implements ResourceFileUtil {
-    // @InjectMocks
+
     CqlLibraryConverter cqlLibraryConverter;
 
     private QdmQiCoreDataService qdmQiCoreDataService;
@@ -38,7 +39,7 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
     }
 
     @Test
-    void convert_VerifySrdLibs() {
+    void convert_VerifyStandardLibs() {
         String cql = getStringFromResource("/test_std_includes.cql");
 
         String converted = cqlLibraryConverter.convert(cql);
@@ -48,15 +49,22 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
         assertTrue(converted.contains("define \"SDE Sex\""));
     }
 
+
     @Test
     void convert_Called() {
+        String matGlobalCommonFunctions = "include MATGlobalCommonFunctions version '4.1.000' called Global";
+
         String cql = getStringFromResource("/called.cql");
+        assertTrue(cql.contains(matGlobalCommonFunctions));
 
         String converted = cqlLibraryConverter.convert(cql);
 
         System.out.println(converted);
 
-        //assertTrue(converted.contains(cqlLibraryConverter.));
+        assertTrue(converted.contains("include FHIRHelpers version '4.0.0' called FHIRHelpers"));
+        assertTrue(converted.contains("include SupplementalDataElements_FHIR4 version '1.0.0' called SDE"));
+        assertTrue(converted.contains("include MATGlobalCommonFunctions_FHIR4 version '4.0.000' called Global"));
 
-  }
+        assertFalse(converted.contains(matGlobalCommonFunctions));
+    }
 }
