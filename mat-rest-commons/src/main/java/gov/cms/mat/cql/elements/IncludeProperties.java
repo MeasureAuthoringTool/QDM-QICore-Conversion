@@ -1,9 +1,8 @@
 package gov.cms.mat.cql.elements;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Builder
 @Getter
@@ -17,6 +16,12 @@ public class IncludeProperties extends BaseProperties {
     String using; //can be empty string ""
     String line;
 
+    @Setter
+    String called; // is the symbolic optional name
+
+    @Setter
+    Boolean display;
+
     @Override
     public void setToFhir() {
         name = name + LIBRARY_FHIR_EXTENSION;
@@ -24,6 +29,20 @@ public class IncludeProperties extends BaseProperties {
 
     @Override
     public String createCql() {
-        return String.format(TEMPLATE, name, version, using);
+        if (BooleanUtils.isFalse(display)) {
+            return "";
+        } else {
+            if (using == null) {
+                using = "";
+            }
+
+            String cql = String.format(TEMPLATE, name, version, using).trim();
+
+            if (StringUtils.isEmpty(called)) {
+                return cql;
+            } else {
+                return cql + " called " + called;
+            }
+        }
     }
 }

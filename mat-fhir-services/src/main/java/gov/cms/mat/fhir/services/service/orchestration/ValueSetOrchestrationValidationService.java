@@ -54,9 +54,9 @@ class ValueSetOrchestrationValidationService implements ErrorSeverityChecker {
         return result;
     }
 
-    public List<ValueSet> getValueSetsNotInHapi(OrchestrationProperties properties, String vsacGrantingTicket) {
+    public List<ValueSet> getValueSetsNotInHapi(OrchestrationProperties properties) {
         // will throw ValueSetConversionException if none found in DB, then filters if not in hapi
-        return valueSetService.findValueSetsByMeasure(properties, vsacGrantingTicket);
+        return valueSetService.findValueSetsByMeasure(properties);
     }
 
     private boolean processMissingValueSets(List<ValueSetConversionResults> valueSetConversionResults, String measureId) {

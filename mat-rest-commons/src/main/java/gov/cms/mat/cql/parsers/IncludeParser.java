@@ -23,7 +23,18 @@ public interface IncludeParser {
                 .name(findIncludeName(line))
                 .version(findIncludeVersion(line))
                 .using(getIncludeUsing(line))
+                .called(findCalled(line))
                 .build();
+    }
+
+    default String findCalled(String line) {
+        String called = StringUtils.substringAfter(line, "called ");
+
+        if (StringUtils.isEmpty(called)) {
+            return StringUtils.EMPTY;
+        } else {
+            return called.trim();
+        }
     }
 
     default String findIncludeName(String line) {

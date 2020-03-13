@@ -29,6 +29,8 @@ public class OrchestrationProperties {
 
     Measure matMeasure;
 
+    String vsacGrantingTicket;
+
     @Setter
     org.hl7.fhir.r4.model.Measure fhirMeasure;
 

@@ -276,6 +276,13 @@ public class ConversionResultsService {
         save(conversionResult);
     }
 
+    public void addValueSetProcessingMemo(ThreadSessionKey key, String memo) {
+        ConversionResult conversionResult = findOrCreate(key);
+        conversionResult.setValueSetProcessingMemo(memo);
+        conversionResult.setValueSetsProcessed(Instant.now());
+        save(conversionResult);
+    }
+
     public void addFhirMeasureJson(ThreadSessionKey key, String json) {
         ConversionResult conversionResult = findOrCreate(key);
 
@@ -336,6 +343,12 @@ public class ConversionResultsService {
     public void addShowWarnings(ThreadSessionKey key, boolean flag) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setShowWarnings(flag);
+        save(conversionResult);
+    }
+
+    public void addVsacGrantingTicket(ThreadSessionKey key, String vsacGrantingTicket) {
+        ConversionResult conversionResult = findOrCreate(key);
+        conversionResult.setVsacGrantingTicket(vsacGrantingTicket);
         save(conversionResult);
     }
 }

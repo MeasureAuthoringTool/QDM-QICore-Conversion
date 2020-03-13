@@ -169,7 +169,8 @@ public class ConversionReporter {
                                                     Instant instant,
                                                     ConversionType conversionType,
                                                     XmlSource xmlSource,
-                                                    boolean showWarnings) {
+                                                    boolean showWarnings,
+                                                    String vsacGrantingTicket) {
         removeInThreadLocal();
         threadLocal.set(new ConversionReporter(measureId, conversionResultsService, instant));
         setConversionType(conversionType);
@@ -260,6 +261,18 @@ public class ConversionReporter {
         }
     }
 
+    public static void setValueSetCompletionMemo(String memo) {
+        try {
+            ConversionReporter conversionReporter = getConversionReporter();
+            conversionReporter.addValueSetProcessingMemo(memo);
+            log.debug("Setting memo: {}", memo);
+        } catch (Exception e) {
+            log.warn("Cannot find ConversionReporter: {} setting valueSetCompletionMemo: {}",
+                    e.getMessage(),
+                    memo);
+        }
+    }
+
     public static void setConversionType(ConversionType conversionType) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addConversionType(conversionType);
@@ -280,6 +293,11 @@ public class ConversionReporter {
         conversionReporter.addShowWarnings(flag);
     }
 
+    public static void setShowWarnings(String vsacGrantingTicket) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addVsacGrantingTicket(vsacGrantingTicket);
+    }
+
     private void addBatchId(String batchId) {
         conversionResultsService.addBatchId(key, batchId);
     }
@@ -292,8 +310,16 @@ public class ConversionReporter {
         conversionResultsService.addShowWarnings(key, flag);
     }
 
+    private void addVsacGrantingTicket(String vsacGrantingTicket) {
+        conversionResultsService.addVsacGrantingTicket(key, vsacGrantingTicket);
+    }
+
     private void addErrorMessage(String message, ConversionOutcome outcome) {
         conversionResultsService.addErrorMessage(key, message, outcome);
+    }
+
+    private void addValueSetProcessingMemo(String memo) {
+        conversionResultsService.addValueSetProcessingMemo(key, memo);
     }
 
     private void addConversionType(ConversionType conversionType) {
@@ -311,6 +337,15 @@ public class ConversionReporter {
         conversionResultsService.addMeasureResult(key, result);
     }
 
+//    private void addLibraryFieldConversionResult(String field, String destination, String reason, String matCqlId) {
+//        FieldConversionResult result = FieldConversionResult.builder()
+//                .field(field)
+//                .destination(destination)
+//                .reason(reason)
+//                .build();
+//
+//        conversionResultsService.addLibraryFieldConversionResult(key, result, matCqlId);
+//    }
 
 
     private void addCqlConversionResultSuccess(String matLibraryId) {

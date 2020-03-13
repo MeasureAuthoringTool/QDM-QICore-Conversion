@@ -43,13 +43,13 @@ public class QdmQiCoreDataService {
 
     public List<ConversionMapping> findAllFilteredByMatDataTypeDescription(String matDataTypeDescription) {
         URI uri = buildUriForAllFilteredByMatDataTypeDescription(matDataTypeDescription);
-        log.debug("Finding All spreadsheet data by matDataTypeDescription: {}", uri);
+        log.info("Finding All spreadsheet data by matDataTypeDescription: {}", uri);
         return restExcchange(uri);
     }
 
     public List<ConversionMapping> findAllFiltered() {
         URI uri = buildUriForAllFiltered();
-        log.debug("Finding All spreadsheet data: {}", uri);
+        log.info("Finding All spreadsheet data: {}", uri);
         return restExcchange(uri);
     }
 

@@ -41,8 +41,8 @@ public class OrchestrationService {
         this.measureOrchestrationConversionService = measureOrchestrationConversionService;
     }
 
-    public boolean process(OrchestrationProperties properties, String vsacGrantingTicket) {
-        boolean processPrerequisitesFlag = processPrerequisites(properties, vsacGrantingTicket);
+    public boolean process(OrchestrationProperties properties) {
+        boolean processPrerequisitesFlag = processPrerequisites(properties);
 
         if (!processPrerequisitesFlag) {
             log.debug("Conversion Stopped due to Prerequisites failures measureId: {}", properties.getMeasureId());
@@ -55,9 +55,9 @@ public class OrchestrationService {
         }
     }
 
-    public boolean processPrerequisites(OrchestrationProperties properties, String vsacGrantingTicket) {
+    public boolean processPrerequisites(OrchestrationProperties properties) {
         try {
-          //  processAndGetValueSets(properties, vsacGrantingTicket);
+            //  processAndGetValueSets(properties, vsacGrantingTicket);
             processAndGetCqlLibraries(properties);
             processFhirMeasure(properties);
             return true;
@@ -97,9 +97,9 @@ public class OrchestrationService {
     }
 
 
-    public void processAndGetValueSets(OrchestrationProperties properties, String vsacGrantingTicket) {
+    public void processAndGetValueSets(OrchestrationProperties properties) {
         List<ValueSet> valueSets =
-                valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties, vsacGrantingTicket);
+                valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties);
 
         properties.getValueSets()
                 .addAll(valueSets);
@@ -144,13 +144,13 @@ public class OrchestrationService {
 
     public boolean convert(OrchestrationProperties properties) {
         //return valueSetOrchestrationConversionService.convert(properties) &&
-         return libraryOrchestrationConversionService.convert(properties) &&
+        return libraryOrchestrationConversionService.convert(properties) &&
                 measureOrchestrationConversionService.convert(properties);
     }
 
     public boolean validate(OrchestrationProperties properties) {
         //return valueSetOrchestrationValidationService.validate(properties) &
-          return cqlLibraryTranslationService.validate(properties) &
+        return cqlLibraryTranslationService.validate(properties) &
                 libraryOrchestrationValidationService.validate(properties) &
                 measureOrchestrationValidationService.validate(properties);
     }
