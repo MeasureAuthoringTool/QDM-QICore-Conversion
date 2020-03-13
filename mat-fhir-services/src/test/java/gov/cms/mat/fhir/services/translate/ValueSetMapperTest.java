@@ -67,7 +67,8 @@ class ValueSetMapperTest {
                 Instant.now(),
                 ConversionType.CONVERSION,
                 XmlSource.MEASURE,
-                Boolean.TRUE);
+                Boolean.TRUE,
+                null);
     }
 
     @Test

@@ -68,7 +68,8 @@ public class OrchestrationController {
                         Instant.now(),
                         conversionType,
                         xmlSource,
-                        showWarnings);
+                        showWarnings,
+                        vsacGrantingTicket);
         try {
             Measure matMeasure;
 
@@ -87,6 +88,7 @@ public class OrchestrationController {
                     .conversionType(conversionType)
                     .xmlSource(xmlSource)
                     .threadSessionKey(threadSessionKey)
+                    .vsacGrantingTicket(vsacGrantingTicket)
                     .build();
 
             return process(orchestrationProperties, vsacGrantingTicket);
@@ -98,7 +100,7 @@ public class OrchestrationController {
     public ConversionResultDto process(OrchestrationProperties orchestrationProperties, String vsacGrantingTicket) {
         log.info("Started Orchestrating Measure key: {}", orchestrationProperties.getThreadSessionKey());
 
-        orchestrationService.process(orchestrationProperties, vsacGrantingTicket);
+        orchestrationService.process(orchestrationProperties);
 
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
 
