@@ -18,13 +18,15 @@ import java.util.Optional;
 @EqualsAndHashCode(callSuper = false)
 @Slf4j
 public class DefineProperties extends BaseProperties {
+    public static final String DEFINE_SDE = "define \"SDE ";
+
     String defineData;
     String line;
     List<SymbolicProperty> symbolicProperties;
 
     @Override
     public void setToFhir() {
-        if (line.contains("define \"SDE ")) {
+        if (line.contains(DEFINE_SDE)) {
             log.debug("Define is SDE");
         } else {
             if (CollectionUtils.isEmpty(symbolicProperties)) {

@@ -14,8 +14,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static gov.cms.mat.cql.elements.DefineProperties.DEFINE_SDE;
+
 @Slf4j
 public class QdmCqlToFhirCqlConverter {
+    private static final String SDE_TEMPLATE = "  SDE.\"SDE %s\"";
+
     private static final StandardLib[] STANDARD_LIBS = {
             new StandardLib("FHIRHelpers", "4.0.0", "FHIRHelpers"),
             new StandardLib("SupplementalDataElements_FHIR4", "1.0.0", "SDE"),
@@ -70,7 +74,42 @@ public class QdmCqlToFhirCqlConverter {
 
         checkUnion(matLibId);
 
-        return addDefaultFhirLibraries();
+        String cql = addDefaultFhirLibraries();
+        return fixSDE(cql);
+    }
+
+    private String fixSDE(String cql) {
+        String[] lines = cql.split("\\r?\\n");
+        StringBuilder output = new StringBuilder();
+
+        boolean isLastLineSDE = false;
+        String lastLine = null;
+
+        for (String line : lines) {
+            if (isLastLineSDE) {
+                String changedCql = createSdeCql(lastLine);
+                output.append(changedCql);
+            } else {
+                output.append(line);
+            }
+            output.append("\n");
+
+            isLastLineSDE = line.startsWith(DEFINE_SDE);
+            lastLine = line;
+        }
+
+        return output.toString();
+    }
+
+    private String createSdeCql(String line) {
+        String type = StringUtils.substringBetween(line, "\"SDE ", "\":");
+
+        if (StringUtils.isEmpty(type)) {
+            log.warn("Cannot successfully parse SDE line: {}", line);
+            return line;
+        } else {
+            return String.format(SDE_TEMPLATE, type);
+        }
     }
 
     private String addDefaultFhirLibraries() {
