@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class QdmCqlToFhirCqlConverter {
     private static final StandardLib[] STANDARD_LIBS = {
-            new StandardLib("FHIRHelpers", "4.0.0"),
-            new StandardLib("SupplementalDataElements_FHIR4", "1.0.0"),
-            new StandardLib("MATGlobalCommonFunctions_FHIR4", "4.0.000")
+            new StandardLib("FHIRHelpers", "4.0.0", "FHIRHelpers"),
+            new StandardLib("SupplementalDataElements_FHIR4", "1.0.0", "SDE"),
+            new StandardLib("MATGlobalCommonFunctions_FHIR4", "4.0.000", "Global")
     };
 
     private static final String ERROR_MESSAGE =
@@ -56,6 +56,7 @@ public class QdmCqlToFhirCqlConverter {
         return IncludeProperties.builder()
                 .name(standardLib.name)
                 .version(standardLib.version)
+                .called(standardLib.defaultCalled)
                 .build();
     }
 
@@ -210,5 +211,6 @@ public class QdmCqlToFhirCqlConverter {
     static class StandardLib {
         final String name;
         final String version;
+        final String defaultCalled;
     }
 }
