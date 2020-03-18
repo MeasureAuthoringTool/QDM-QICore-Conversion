@@ -61,7 +61,7 @@ public class OrchestrationService {
             processAndGetCqlLibraries(properties);
             processFhirMeasure(properties);
             return true;
-        } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException |
+        } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException | NoCqlLibrariesFoundException |
                 CqlLibraryNotFoundException | MatXmlMarshalException | MatXmlException e) {
             return false;
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class OrchestrationService {
     private void processCqlLibrary(CqlLibrary cqlLibrary) {
 
         if (StringUtils.isEmpty(cqlLibrary.getCqlXml())) {
-            throw new CqlConversionException("oops");
+            throw new CqlConversionException("Cql Xml is blank for library : " + cqlLibrary.getCqlName());
         }
 
         String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml());
@@ -143,13 +143,11 @@ public class OrchestrationService {
     }
 
     public boolean convert(OrchestrationProperties properties) {
-        //return valueSetOrchestrationConversionService.convert(properties) &&
         return libraryOrchestrationConversionService.convert(properties) &&
                 measureOrchestrationConversionService.convert(properties);
     }
 
     public boolean validate(OrchestrationProperties properties) {
-        //return valueSetOrchestrationValidationService.validate(properties) &
         return cqlLibraryTranslationService.validate(properties) &
                 libraryOrchestrationValidationService.validate(properties) &
                 measureOrchestrationValidationService.validate(properties);
