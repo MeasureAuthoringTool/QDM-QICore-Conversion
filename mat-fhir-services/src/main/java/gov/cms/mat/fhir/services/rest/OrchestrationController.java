@@ -4,9 +4,6 @@ import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
-import gov.cms.mat.fhir.rest.dto.MeasureConversionResults;
-import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.mongo.*;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
@@ -26,10 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Min;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
-import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.*;
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_NOT_FOUND;
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSION_INVALID;
 
 @RestController
 @RequestMapping(path = "/orchestration/measure")
@@ -99,7 +95,7 @@ public class OrchestrationController {
                     .vsacGrantingTicket(vsacGrantingTicket)
                     .build();
 
-            return process(orchestrationProperties, vsacGrantingTicket);
+            return process(orchestrationProperties);
         } catch (RuntimeException e) {
             log.error("Internal Server Error",e);
             if (orchestrationProperties != null) {
@@ -114,13 +110,14 @@ public class OrchestrationController {
 
     private ConversionResultDto buildErrorDto(RuntimeException e, OrchestrationProperties orchestrationProperties) {
         if (ConversionReporter.getConversionResult().getOutcome() == null) {
+            log.warn("", orchestrationProperties.getThreadSessionKey());
             ConversionReporter.setTerminalMessage(e.getMessage(), ConversionOutcome.INTERNAL_SERVER_ERROR);
         }
         return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
 
     }
 
-    public ConversionResultDto process(OrchestrationProperties orchestrationProperties, String vsacGrantingTicket) {
+    public ConversionResultDto process(OrchestrationProperties orchestrationProperties) {
         log.info("Started Orchestrating Measure key: {}", orchestrationProperties.getThreadSessionKey());
         orchestrationService.process(orchestrationProperties);
         return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
