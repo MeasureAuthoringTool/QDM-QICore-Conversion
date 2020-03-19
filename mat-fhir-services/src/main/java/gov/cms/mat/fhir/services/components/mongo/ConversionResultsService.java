@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +18,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ConversionResultsService {
     private final ConversionResultRepository conversionResultRepository;
+    private final LibraryDataService libraryDataService;
 
-    public Optional<ConversionResult> findTopValueSetConversion() {
-        return conversionResultRepository.findTop1ByValueSetsProcessedIsNullOrderByCreated();
+    public ConversionResultsService(ConversionResultRepository conversionResultRepository,
+                                    LibraryDataService libraryDataService) {
+        this.conversionResultRepository = conversionResultRepository;
+        this.libraryDataService = libraryDataService;
     }
 
-    public ConversionResultsService(ConversionResultRepository conversionResultRepository) {
-        this.conversionResultRepository = conversionResultRepository;
+    public Optional<ConversionResult> findTopValueSetConversion() {
+        return conversionResultRepository.findTop1ByValueSetsProcessedIsNullAndFinishedIsNullOrderByCreated();
     }
 
     public boolean checkBatchIdNotUsed(String batchId) {
@@ -134,44 +138,58 @@ public class ConversionResultsService {
 
         libraryConversionResults.setName(name);
         libraryConversionResults.setVersion(version);
-
-        if (cql != null) {
-            libraryConversionResults.getCqlConversionResult().setCql(cql);
-        }
-
         save(conversionResult);
+
+        addLibraryData(key, cql, matLibraryId, LibraryType.QDM_CQL);
     }
 
     public void addFhirCql(ThreadSessionKey key, String cql, String matLibraryId) {
-        ConversionResult conversionResult = findOrCreate(key);
-        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
-
-        libraryConversionResults.getCqlConversionResult().setFhirCql(cql);
-        save(conversionResult);
+        addLibraryData(key, cql, matLibraryId, LibraryType.FHIR_CQL);
     }
 
     public void addFhirJson(ThreadSessionKey key, String json, String matLibraryId) {
-        ConversionResult conversionResult = findOrCreate(key);
-        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+        addLibraryData(key, json, matLibraryId, LibraryType.FHIR_ELM);
+    }
 
-        libraryConversionResults.getCqlConversionResult().setFhirElm(json);
-        save(conversionResult);
+    private void addLibraryData(ThreadSessionKey key, String data, String matLibraryId, LibraryType type) {
+        ConversionResult conversionResult = findOrCreate(key);
+
+        libraryDataService.findOrCreate(conversionResult.getId(),
+                conversionResult.getMeasureId(),
+                matLibraryId,
+                type,
+                data);
     }
 
     public String getCql(ThreadSessionKey key, String matLibraryId) {
-        ConversionResult conversionResult = findOrCreate(key);
-        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+        return getLibraryData(key, matLibraryId, LibraryType.QDM_CQL);
+    }
 
-        return libraryConversionResults.getCqlConversionResult().getCql();
+    public String getElm(ThreadSessionKey key, String matLibraryId) {
+        return getLibraryData(key, matLibraryId, LibraryType.QDM_ELM);
+    }
+
+    public String getFhirElm(ThreadSessionKey key, String matLibraryId) {
+        return getLibraryData(key, matLibraryId, LibraryType.FHIR_ELM);
+    }
+
+    public String getFhirCql(ThreadSessionKey key, String matLibraryId) {
+        return getLibraryData(key, matLibraryId, LibraryType.FHIR_CQL);
+    }
+
+    private String getLibraryData(ThreadSessionKey key, String matLibraryId, LibraryType type) {
+        ConversionResult conversionResult = findOrCreate(key);
+
+        var optional = libraryDataService.findByIndex(conversionResult.getId(),
+                conversionResult.getMeasureId(),
+                matLibraryId,
+                type);
+
+        return optional.map(LibraryData::getData).orElse(StringUtils.EMPTY);
     }
 
     public void addElm(ThreadSessionKey key, String json, String matLibraryId) {
-        ConversionResult conversionResult = findOrCreate(key);
-        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
-
-        libraryConversionResults.getCqlConversionResult().setElm(json);
-
-        save(conversionResult);
+        addLibraryData(key, json, matLibraryId, LibraryType.QDM_ELM);
     }
 
     public void addCqlConversionErrors(ThreadSessionKey key, List<CqlConversionError> errors, String matLibraryId) {

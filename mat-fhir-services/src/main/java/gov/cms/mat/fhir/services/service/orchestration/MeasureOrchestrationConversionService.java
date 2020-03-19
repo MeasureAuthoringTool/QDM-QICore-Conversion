@@ -1,15 +1,20 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.r4.model.CanonicalType;
 import org.hl7.fhir.r4.model.Measure;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_CONVERSION_FAILED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
@@ -40,17 +45,13 @@ public class MeasureOrchestrationConversionService {
     }
 
     boolean convert(OrchestrationProperties properties) {
-//        if (ConversionReporter.getConversionResult().measureExistsInHapi()) {
-//            log.info("No Conversion performed already in hapi measureId: {}", properties.getMeasureId());
-//            return true;
-//        } else {
-            log.info("Converting measure hapi measureId: {}", properties.getMeasureId());
-            return persistToFhir(properties);
-//        }
+        log.info("Converting measure hapi measureId: {}", properties.getMeasureId());
+        return persistToFhir(properties);
     }
 
     private boolean persistToFhir(OrchestrationProperties properties) {
         try {
+            addLibrariesLinkToMeasures(properties.getFhirMeasure());
             String link = hapiFhirServer.persist(properties.getFhirMeasure());
 
             ConversionReporter.setMeasureValidationLink(link, CREATED);
@@ -58,7 +59,8 @@ public class MeasureOrchestrationConversionService {
             Optional<Measure> optional = hapiFhirLinkProcessor.fetchMeasureByUrl(link);
 
             if (optional.isPresent()) {
-                ConversionReporter.setFhirMeasureJson(hapiFhirServer.toJson(optional.get()));
+                Measure fhirMeasure = optional.get();
+                ConversionReporter.setFhirMeasureJson(hapiFhirServer.toJson(fhirMeasure));
             } else {
                 throw new HapiFhirCreateException("Cannot find Measure json for url: " + link);
             }
@@ -70,5 +72,19 @@ public class MeasureOrchestrationConversionService {
 
             return false;
         }
+    }
+
+    private void addLibrariesLinkToMeasures(Measure fhirMeasure) {
+        ConversionResult conversionResult = ConversionReporter.getConversionResult();
+
+        List<CanonicalType> theLibrary = conversionResult.getLibraryConversionResults()
+                .stream()
+                .filter(l -> StringUtils.isNotEmpty(l.getLink()))
+                .map(l -> new CanonicalType(l.getLink()))
+                .collect(Collectors.toList());
+
+        log.debug("Lib size = {}", theLibrary.size());
+
+        fhirMeasure.setLibrary(theLibrary);
     }
 }

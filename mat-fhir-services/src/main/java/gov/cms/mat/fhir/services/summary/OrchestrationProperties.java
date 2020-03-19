@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.ValueSet;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Builder
 @Getter
+@Slf4j
 @ToString
 public class OrchestrationProperties {
     final List<ValueSet> valueSets = new ArrayList<>();
@@ -47,8 +49,8 @@ public class OrchestrationProperties {
 
     public Library findFhirLibrary(String id) {
         return fhirLibraries.stream()
-                .findFirst()
                 .filter(l -> l.getId().equals(id))
+                .findFirst()
                 .orElseThrow(() -> new FhirLibraryNotFoundException(id));
     }
 }

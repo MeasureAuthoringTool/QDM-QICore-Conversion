@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.VALUESET_CONVERSION_FAILED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
 
@@ -37,7 +36,7 @@ public class ValueSetOrchestrationConversionService {
 
         if (errorCount > 0) {
             log.info("{} count: {}", FAILURE_ERROR_MESSAGE, errorCount);
-            ConversionReporter.setTerminalMessage(FAILURE_ERROR_MESSAGE, VALUESET_CONVERSION_FAILED);
+            // ConversionReporter.setTerminalMessage(FAILURE_ERROR_MESSAGE, VALUESET_CONVERSION_FAILED);
         } else {
             log.debug("ValueSet error processing PASSED");
         }
