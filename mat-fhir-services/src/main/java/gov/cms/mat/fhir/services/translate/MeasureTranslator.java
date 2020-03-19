@@ -16,15 +16,9 @@ import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.CITATION;
-import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.DOCUMENTATION;
-import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.JUSTIFICATION;
+import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.*;
 
 
 @Slf4j
@@ -52,11 +46,11 @@ public class MeasureTranslator implements FhirCreator {
         this.matMeasure = matMeasure;
     }
 
-    public org.hl7.fhir.r4.model.Measure translateToFhir() {
+    public org.hl7.fhir.r4.model.Measure translateToFhir(String uuid) {
         org.hl7.fhir.r4.model.Measure fhirMeasure = new org.hl7.fhir.r4.model.Measure();
 
-        fhirMeasure.setId(matCompositeMeasureModel.getId());
-        fhirMeasure.setUrl(baseURL + "Measure/" + fhirMeasure.getId());
+        fhirMeasure.setId(uuid);
+        fhirMeasure.setUrl(baseURL + "Measure/" + uuid);
         fhirMeasure.setRationale(matCompositeMeasureModel.getRationale());
         fhirMeasure.setClinicalRecommendationStatement(matCompositeMeasureModel.getClinicalRecomms());
         fhirMeasure.setGuidance(matCompositeMeasureModel.getGuidance());

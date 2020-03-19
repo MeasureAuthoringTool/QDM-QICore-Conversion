@@ -81,7 +81,7 @@ public class ValueSetBackGroundService {
         Measure matMeasure;
 
         try {
-            matMeasure = measureDataService.findOneValid(conversionResult.getMeasureId());
+            matMeasure = measureDataService.findOneValid(conversionResult.getSourceMeasureId());
         } catch (Exception e) {
             log.warn("Cannot orchestrate ValueSets", e);
             ConversionReporter.setValueSetCompletionMemo(e.getMessage());
@@ -103,7 +103,7 @@ public class ValueSetBackGroundService {
     }
 
     private ThreadSessionKey buildThreadSessionKey(ConversionResult conversionResult) {
-        return ConversionReporter.setInThreadLocal(conversionResult.getMeasureId(),
+        return ConversionReporter.setInThreadLocal(conversionResult.getSourceMeasureId(),
                 conversionResult.getBatchId(),
                 conversionResultsService,
                 conversionResult.getStart(),

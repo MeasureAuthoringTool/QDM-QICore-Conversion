@@ -5,6 +5,7 @@ import gov.cms.mat.cql.elements.BaseProperties;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
+import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundInMapException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.LIBRARY_CONVERSION_FAILED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
@@ -56,13 +56,23 @@ public class LibraryOrchestrationConversionService extends LibraryOrchestrationB
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
 
         properties.getCqlLibraries()
-                .forEach(matLib -> processPersisting(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
+                .forEach(matLib -> persist(properties, atomicBoolean, matLib));
 
         if (!atomicBoolean.get()) {
             ConversionReporter.setTerminalMessage(FAILURE_MESSAGE_PERSIST, LIBRARY_CONVERSION_FAILED);
         }
 
         return atomicBoolean.get();
+    }
+
+    private void persist(OrchestrationProperties properties, AtomicBoolean atomicBoolean, CqlLibrary matLib) {
+        var optional = ConversionReporter.findFhirLibraryId(matLib.getId());
+
+        if (optional.isPresent()) {
+            processPersisting(matLib, properties.findFhirLibrary(optional.get()), atomicBoolean);
+        } else {
+            throw new FhirLibraryNotFoundInMapException(matLib.getId());
+        }
     }
 
     public List<CqlLibrary> getCqlLibrariesNotInHapi(OrchestrationProperties properties) {

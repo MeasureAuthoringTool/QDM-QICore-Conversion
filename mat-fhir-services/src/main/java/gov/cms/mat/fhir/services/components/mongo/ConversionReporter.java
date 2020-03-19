@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class ConversionReporter {
@@ -104,6 +105,16 @@ public class ConversionReporter {
         conversionReporter.addFhirJson(fhirJson, matLibraryId);
     }
 
+    public static void setFhirLibraryId(String fhirLibraryId, String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addFhirLibraryId(fhirLibraryId, matLibraryId);
+    }
+
+    public static Optional<String> findFhirLibraryId(String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        return conversionReporter.findFhirLibraryIdInMap(matLibraryId);
+    }
+
     public static String getCql(String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
@@ -125,7 +136,7 @@ public class ConversionReporter {
     public static String getFhirCql(String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        return conversionReporter.getFhirElmString(matLibraryId);
+        return conversionReporter.getFhirCqlString(matLibraryId);
     }
 
     public static void setElm(String json, String matLibraryId) {
@@ -307,6 +318,11 @@ public class ConversionReporter {
         conversionReporter.addXmlSource(xmlSource);
     }
 
+    public static void setFhirMeasureId(String id) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addFhirMeasureId(id);
+    }
+
     public static void setShowWarnings(boolean flag) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addShowWarnings(flag);
@@ -324,6 +340,10 @@ public class ConversionReporter {
 
     private void addXmlSource(XmlSource xmlSource) {
         conversionResultsService.addXmlSource(key, xmlSource);
+    }
+
+    private void addFhirMeasureId(String id) {
+        conversionResultsService.addMeasureLibraryId(key, id);
     }
 
     private void addShowWarnings(boolean flag) {
@@ -390,6 +410,14 @@ public class ConversionReporter {
 
     private void addFhirJson(String json, String matLibraryId) {
         conversionResultsService.addFhirJson(key, json, matLibraryId);
+    }
+
+    private void addFhirLibraryId(String fhirLibraryId, String matLibraryId) {
+        conversionResultsService.addFhirLibraryId(key, fhirLibraryId, matLibraryId);
+    }
+
+    private Optional<String> findFhirLibraryIdInMap(String matLibraryId) {
+        return conversionResultsService.findFhirLibraryIdInMap(key, matLibraryId);
     }
 
     private String getCqlString(String matLibraryId) {

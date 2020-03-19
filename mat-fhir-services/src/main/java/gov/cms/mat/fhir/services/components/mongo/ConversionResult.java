@@ -17,10 +17,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Document
-@CompoundIndex(name = "conversion-result-uniq-idx", unique = true, def = "{'measureId' : 1, 'start' : 1}")
+@CompoundIndex(name = "conversion-result-uniq-idx", unique = true, def = "{'sourceMeasureId' : 1, 'start' : 1}")
 @Data
 @Slf4j
 public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHelper, MeasureResultsHelper {
@@ -29,8 +31,13 @@ public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHe
     List<ValueSetConversionResults> valueSetConversionResults = new ArrayList<>();
     List<LibraryConversionResults> libraryConversionResults = new ArrayList<>();
 
+    private Map<String, String> libraryMappings = new HashMap<>();
+
     @Id
     private String id;
+
+    private String fhirMeasureId;
+
     @Version
     private Long version;
     @CreatedDate
@@ -38,7 +45,7 @@ public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHe
     @LastModifiedDate
     private Instant modified;
     @NotBlank
-    private String measureId;
+    private String sourceMeasureId;
 
     private String batchId;
 

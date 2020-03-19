@@ -76,16 +76,16 @@ public class ConversionResultsService {
     }
 
 
-    public Optional<ConversionResult> findByMeasureId(ThreadSessionKey key) {
-        return conversionResultRepository.findByMeasureIdAndStart(key.getMeasureId(), key.getStart());
+    public Optional<ConversionResult> findByThreadSessionKey(ThreadSessionKey key) {
+        return conversionResultRepository.findBySourceMeasureIdAndStart(key.getMeasureId(), key.getStart());
     }
 
-    public List<ConversionResult> findAllByMeasureId(String measureId) {
-        return conversionResultRepository.findByMeasureId(measureId);
+    public List<ConversionResult> findAllBySourceMeasureId(String measureId) {
+        return conversionResultRepository.findBySourceMeasureId(measureId);
     }
 
-    public Optional<ConversionResult> findTopByMeasureId(String measureId) {
-        return conversionResultRepository.findTopByMeasureIdOrderByCreatedDesc(measureId);
+    public Optional<ConversionResult> findTopBySourceMeasureId(String measureId) {
+        return conversionResultRepository.findTopBySourceMeasureIdOrderByCreatedDesc(measureId);
     }
 
     public List<ConversionResult> findAll() {
@@ -93,20 +93,20 @@ public class ConversionResultsService {
     }
 
     private ConversionResult findOrCreate(ThreadSessionKey key) {
-        Optional<ConversionResult> optional = findByMeasureId(key);
+        Optional<ConversionResult> optional = findByThreadSessionKey(key);
 
         if (optional.isPresent()) {
             return optional.get();
         } else {
             ConversionResult conversionResult = new ConversionResult();
-            conversionResult.setMeasureId(key.getMeasureId());
+            conversionResult.setSourceMeasureId(key.getMeasureId());
             conversionResult.setStart(key.getStart());
             return conversionResult;
         }
     }
 
     public ConversionResult findConversionResult(ThreadSessionKey key) {
-        Optional<ConversionResult> optional = findByMeasureId(key);
+        Optional<ConversionResult> optional = findByThreadSessionKey(key);
 
         return optional
                 .orElseThrow(() ->
@@ -151,11 +151,34 @@ public class ConversionResultsService {
         addLibraryData(key, json, matLibraryId, LibraryType.FHIR_ELM);
     }
 
+    public void addFhirLibraryId(ThreadSessionKey key, String fhirLibraryId, String matLibraryId) {
+        ConversionResult conversionResult = findOrCreate(key);
+        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+        libraryConversionResults.setFhirLibraryId(fhirLibraryId);
+
+        conversionResult.getLibraryMappings().put(matLibraryId, fhirLibraryId);
+
+        save(conversionResult);
+    }
+
+    public Optional<String> findFhirLibraryIdInMap(ThreadSessionKey key, String matLibraryId) {
+        ConversionResult conversionResult = findOrCreate(key);
+
+        String fhirLibraryId = conversionResult.getLibraryMappings().get(matLibraryId);
+
+        if (StringUtils.isNotEmpty(fhirLibraryId)) {
+            return Optional.of(fhirLibraryId);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+
     private void addLibraryData(ThreadSessionKey key, String data, String matLibraryId, LibraryType type) {
         ConversionResult conversionResult = findOrCreate(key);
 
         libraryDataService.findOrCreate(conversionResult.getId(),
-                conversionResult.getMeasureId(),
+                conversionResult.getSourceMeasureId(),
                 matLibraryId,
                 type,
                 data);
@@ -181,7 +204,7 @@ public class ConversionResultsService {
         ConversionResult conversionResult = findOrCreate(key);
 
         var optional = libraryDataService.findByIndex(conversionResult.getId(),
-                conversionResult.getMeasureId(),
+                conversionResult.getSourceMeasureId(),
                 matLibraryId,
                 type);
 
@@ -355,6 +378,12 @@ public class ConversionResultsService {
     public void addXmlSource(ThreadSessionKey key, XmlSource xmlSource) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setXmlSource(xmlSource);
+        save(conversionResult);
+    }
+
+    public void addMeasureLibraryId(ThreadSessionKey key, String id) {
+        ConversionResult conversionResult = findOrCreate(key);
+        conversionResult.setFhirMeasureId(id);
         save(conversionResult);
     }
 

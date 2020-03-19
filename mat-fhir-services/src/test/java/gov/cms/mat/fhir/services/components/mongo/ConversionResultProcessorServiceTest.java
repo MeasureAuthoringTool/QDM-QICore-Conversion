@@ -69,7 +69,7 @@ class ConversionResultProcessorServiceTest {
 
     @Test
     void processSearchData_NotFound() {
-        when(conversionResultsService.findByMeasureId(threadSessionKey)).thenReturn(Optional.empty());
+        when(conversionResultsService.findByThreadSessionKey(threadSessionKey)).thenReturn(Optional.empty());
 
         ConversionResultsNotFoundException thrown =
                 Assertions.assertThrows(ConversionResultsNotFoundException.class, () -> {
@@ -77,18 +77,19 @@ class ConversionResultProcessorServiceTest {
                 });
 
         assertTrue(thrown.getMessage().contains(MEASURE_ID));
-        verify(conversionResultsService).findByMeasureId(threadSessionKey);
+        verify(conversionResultsService).findByThreadSessionKey(threadSessionKey);
     }
 
     @Test
     void processSearchData_HappyPath() {
-        when(conversionResultsService.findByMeasureId(threadSessionKey)).thenReturn(Optional.of(createConversionResult(true)));
+        when(conversionResultsService.findByThreadSessionKey(threadSessionKey))
+                .thenReturn(Optional.of(createConversionResult(true)));
 
         ConversionResultDto dto = conversionResultProcessorService.process(threadSessionKey);
         verifyResult(dto);
         // dto.getMeasureResults().forEach(r -> assertNull(r.getErrorMessage()));
 
-        verify(conversionResultsService).findByMeasureId(threadSessionKey);
+        verify(conversionResultsService).findByThreadSessionKey(threadSessionKey);
 
     }
 
@@ -111,7 +112,7 @@ class ConversionResultProcessorServiceTest {
 
     private ConversionResult createConversionResult(boolean oidFound) {
         ConversionResult conversionResult = new ConversionResult();
-        conversionResult.setMeasureId(MEASURE_ID);
+        conversionResult.setSourceMeasureId(MEASURE_ID);
 
         //conversionResult.setValueSetConversionResults(new ValueSetConversionResults());
         conversionResult.setMeasureConversionResults(new MeasureConversionResults());

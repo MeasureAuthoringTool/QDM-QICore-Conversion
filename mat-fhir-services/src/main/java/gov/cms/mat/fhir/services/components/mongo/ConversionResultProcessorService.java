@@ -54,7 +54,7 @@ public class ConversionResultProcessorService {
 
 
     public ConversionResultDto process(ThreadSessionKey key) {
-        Optional<ConversionResult> optional = conversionResultsService.findByMeasureId(key);
+        Optional<ConversionResult> optional = conversionResultsService.findByThreadSessionKey(key);
 
         if (optional.isPresent()) {
             return buildDto(optional.get());
@@ -71,7 +71,7 @@ public class ConversionResultProcessorService {
         conversionResult.getLibraryConversionResults().forEach(this::addLibraryData);
 
         return ConversionResultDto.builder()
-                .measureId(conversionResult.getMeasureId())
+                .measureId(conversionResult.getSourceMeasureId())
                 .modified(conversionResult.getModified() == null ? null : conversionResult.getModified().toString())
                 .valueSetConversionResults(conversionResult.getValueSetConversionResults())
                 .measureConversionResults(conversionResult.getMeasureConversionResults())
@@ -85,11 +85,11 @@ public class ConversionResultProcessorService {
     private void addLibraryData(LibraryConversionResults libraryConversionResults) {
         if (libraryConversionResults.getCqlConversionResult() != null) {
             CqlConversionResult cqlConversionResult = libraryConversionResults.getCqlConversionResult();
-            cqlConversionResult.setCql(ConversionReporter.getCql(libraryConversionResults.getMatId()));
-            cqlConversionResult.setElm(ConversionReporter.getElm(libraryConversionResults.getMatId()));
+            cqlConversionResult.setCql(ConversionReporter.getCql(libraryConversionResults.getMatLibraryId()));
+            cqlConversionResult.setElm(ConversionReporter.getElm(libraryConversionResults.getMatLibraryId()));
 
-            cqlConversionResult.setFhirCql(ConversionReporter.getFhirCql(libraryConversionResults.getMatId()));
-            cqlConversionResult.setFhirElm(ConversionReporter.getFhirElm(libraryConversionResults.getMatId()));
+            cqlConversionResult.setFhirCql(ConversionReporter.getFhirCql(libraryConversionResults.getMatLibraryId()));
+            cqlConversionResult.setFhirElm(ConversionReporter.getFhirElm(libraryConversionResults.getMatLibraryId()));
         }
     }
 
@@ -143,14 +143,14 @@ public class ConversionResultProcessorService {
 
     public List<ConversionResultDto> processOne(String measureId, TranslationReportController.DocumentsToFind find) {
         if (find.equals(ALL)) {
-            return convertToDto(conversionResultsService.findAllByMeasureId(measureId));
+            return convertToDto(conversionResultsService.findAllBySourceMeasureId(measureId));
         } else {
             return processTop(measureId);
         }
     }
 
     private List<ConversionResultDto> processTop(String measureId) {
-        Optional<ConversionResult> optional = conversionResultsService.findTopByMeasureId(measureId);
+        Optional<ConversionResult> optional = conversionResultsService.findTopBySourceMeasureId(measureId);
 
         if (optional.isPresent()) {
             return convertToDto(Collections.singletonList(optional.get()));
