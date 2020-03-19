@@ -58,13 +58,13 @@ public class BatchResultsService {
             }
 
             BatchResult value = map.get(c.getOutcome().name());
-            value.getIds().add(c.getMeasureId());
+            value.getIds().add(c.getSourceMeasureId());
 
             if (c.getStart() != null && c.getFinished() != null) {
                 long ns = Duration.between(c.getStart(), c.getFinished()).toMillis();
                 value.getTimes().add(ns);
             } else {
-                log.warn("Times are missing for ConversionResult: " + c.getMeasureId());
+                log.warn("Times are missing for ConversionResult: " + c.getSourceMeasureId());
             }
         }
     }
