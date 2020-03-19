@@ -1,7 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Library;
@@ -11,16 +10,18 @@ import org.springframework.lang.Nullable;
 public class MatLibraryTranslator extends LibraryTranslatorBase {
 
     private final CqlLibrary cqlLibrary;
+    private final String uuid;
 
-    public MatLibraryTranslator(CqlLibrary cqlLibrary, byte[] cql, byte[] elm, String baseURL) {
+    public MatLibraryTranslator(CqlLibrary cqlLibrary, byte[] cql, byte[] elm, String baseURL, String uuid) {
         super(cql, elm, baseURL);
 
         this.cqlLibrary = cqlLibrary;
+        this.uuid = uuid;
     }
 
     @Override
     public void translate(@Nullable String version, Library fhirLibrary) {
-        fhirLibrary.setId(cqlLibrary.getId());
+        fhirLibrary.setId(uuid);
         fhirLibrary.setApprovalDate(cqlLibrary.getFinalizedDate());
 
 
@@ -31,6 +32,6 @@ public class MatLibraryTranslator extends LibraryTranslatorBase {
         }
 
         fhirLibrary.setName(cqlLibrary.getCqlName());
-        fhirLibrary.setUrl(baseURL + "Library/" + cqlLibrary.getId());
+        fhirLibrary.setUrl(baseURL + "Library/" + uuid);
     }
 }

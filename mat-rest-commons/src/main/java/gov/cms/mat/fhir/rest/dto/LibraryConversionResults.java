@@ -11,8 +11,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LibraryConversionResults {
-    String matId;
+    String matLibraryId;
+    String fhirLibraryId;
     String name;
+
     String version;
     String reason;
     Boolean success;
@@ -24,7 +26,7 @@ public class LibraryConversionResults {
 
     private CqlConversionResult cqlConversionResult = new CqlConversionResult();
 
-    public LibraryConversionResults(String matId) {
-        this.matId = matId;
+    public LibraryConversionResults(String matLibraryId) {
+        this.matLibraryId = matLibraryId;
     }
 }

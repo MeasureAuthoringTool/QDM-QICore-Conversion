@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public interface ConversionResultRepository extends MongoRepository<ConversionResult, String> {
 
-    Optional<ConversionResult> findByMeasureIdAndStart(String measureId, Instant start);
+    Optional<ConversionResult> findBySourceMeasureIdAndStart(String sourceMeasureId, Instant start);
 
-    List<ConversionResult> findByMeasureId(String measureId);
+    List<ConversionResult> findBySourceMeasureId(String sourceMeasureId);
 
-    Optional<ConversionResult> findTopByMeasureIdOrderByCreatedDesc(String measureId);
+    Optional<ConversionResult> findTopBySourceMeasureIdOrderByCreatedDesc(String sourceMeasureId);
 
     Long countByBatchId(String batchId);
 

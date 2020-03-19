@@ -18,7 +18,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MeasureTranslatorTest {
+class MeasureTranslatorTest implements IdGenerator {
+
+    private String UUID;
 
     private gov.cms.mat.fhir.commons.model.Measure matMeasure;
     private ManageCompositeMeasureDetailModel compositeModel;
@@ -29,12 +31,13 @@ class MeasureTranslatorTest {
 
     @BeforeEach
     void setup() {
+        UUID = createId();
         compositeModel = new ManageCompositeMeasureDetailModel();
         humanReadable = "<somefield> blah blah</somefield>";
         baseURL = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
         compositeModel.setCalenderYear(false);
         compositeModel.setClinicalRecomms("These are the clinical recommendations");
-        compositeModel.setCompositeScoringMethod("Proportion");;
+        compositeModel.setCompositeScoringMethod("Proportion");
         compositeModel.setCopyright("Copyright Statement");
         compositeModel.setDefinitions("These are Defininitions");
         compositeModel.setDeleted(false);
@@ -83,7 +86,7 @@ class MeasureTranslatorTest {
         pModel.setStartDate("2019-11-05 00:00:00");
         pModel.setStopDate("2020-11-05 00:00:00");
         compositeModel.setPeriodModel(pModel);
-        measureURL = baseURL + "Measure/402803826529d99f0165d33515622e23";
+        measureURL = baseURL + "Measure/" + UUID;
 
         matMeasure = new gov.cms.mat.fhir.commons.model.Measure();
         matMeasure.setMeasureDetailsCollection(new ArrayList<>());
@@ -95,6 +98,7 @@ class MeasureTranslatorTest {
 
     @Test
     void testReferenceTypeNotInDB() {
+        System.out.println(UUID);
         String[] refs = {
                 "XML Reference 1",
                 "XML Reference 2",
@@ -104,7 +108,7 @@ class MeasureTranslatorTest {
         };
 
         Arrays.stream(refs).forEach(s -> compositeModel.getReferencesList().add(s));
-        Measure fhirMeasure = measureTranslator.translateToFhir();
+        Measure fhirMeasure = measureTranslator.translateToFhir(UUID);
 
         List<RelatedArtifact> artifacts = fhirMeasure.getRelatedArtifact();
         assertEquals(refs.length,fhirMeasure.getRelatedArtifact().size());
@@ -141,7 +145,7 @@ class MeasureTranslatorTest {
 
         getMeasureDetails().setMeasureDetailsReferenceCollection(refs);
 
-        Measure fhirMeasure = measureTranslator.translateToFhir();
+        Measure fhirMeasure = measureTranslator.translateToFhir(UUID);
 
         List<RelatedArtifact> artifacts = fhirMeasure.getRelatedArtifact();
 
@@ -178,7 +182,7 @@ class MeasureTranslatorTest {
         mdrs.add(ref1);
         getMeasureDetails().setMeasureDetailsReferenceCollection(mdrs);
 
-        Measure fhirMeasure = measureTranslator.translateToFhir();
+        Measure fhirMeasure = measureTranslator.translateToFhir(UUID);
 
         assertEquals(1,fhirMeasure.getRelatedArtifact().size());
         List<RelatedArtifact> artifacts = fhirMeasure.getRelatedArtifact();
@@ -190,9 +194,9 @@ class MeasureTranslatorTest {
     @Test
     void testTranslateToFhir_MeasureIdentity() {
 
-        Measure fhirMeasure = measureTranslator.translateToFhir();
-        
-        assertEquals("402803826529d99f0165d33515622e23", fhirMeasure.getId());
+        Measure fhirMeasure = measureTranslator.translateToFhir(UUID);
+
+        assertEquals(UUID, fhirMeasure.getId());
         assertEquals("Hospital ReAdmits", fhirMeasure.getName());
         //  assertEquals("0.0001", fhirMeasure.getMeta().getVersionId()); TODO meta is off for now
         
@@ -202,7 +206,7 @@ class MeasureTranslatorTest {
     
     @Test
     void testTranslateToFhir_MeasureClinicalGuidance() {
-        Measure fhirMeasure = measureTranslator.translateToFhir();
+        Measure fhirMeasure = measureTranslator.translateToFhir(UUID);
 
         assertEquals("this is rationale", fhirMeasure.getRationale());
         assertEquals("This is the measures guidance", fhirMeasure.getGuidance());

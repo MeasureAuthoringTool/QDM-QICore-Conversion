@@ -86,7 +86,7 @@ class ValueSetBackGroundServiceTest {
 
         ConversionResult conversionResult = new ConversionResult();
         conversionResult.setShowWarnings(true);
-        conversionResult.setMeasureId(ID);
+        conversionResult.setSourceMeasureId(ID);
         conversionResult.setOutcome(conversionOutcome);
         return conversionResult;
     }

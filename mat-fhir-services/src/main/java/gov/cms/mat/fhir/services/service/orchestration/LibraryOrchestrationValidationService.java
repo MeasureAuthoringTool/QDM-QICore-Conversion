@@ -14,6 +14,7 @@ import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
 import gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState;
 import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
+import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundInMapException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
@@ -23,6 +24,7 @@ import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
+import gov.cms.mat.fhir.services.translate.IdGenerator;
 import gov.cms.mat.fhir.services.translate.MatLibraryTranslator;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +44,7 @@ import static gov.cms.mat.fhir.services.service.CQLLibraryTranslationService.Con
 @Component
 @Slf4j
 public class LibraryOrchestrationValidationService extends LibraryOrchestrationBase
-        implements FhirValidatorProcessor, ErrorSeverityChecker, CqlVersionConverter, FhirLibraryHelper {
+        implements FhirValidatorProcessor, ErrorSeverityChecker, CqlVersionConverter, FhirLibraryHelper, IdGenerator {
 
     private static final String VALIDATION_FAILURE_MESSAGE = "Library validation failed";
     private static final String HAPI_FAILURE_MESSAGE = "Cannot find hapi fhir library with name: %s and version: %s";
@@ -144,9 +146,20 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         // When no errors we would then convert to fhir and validate - for initial testing do for ALL
 
         properties.getCqlLibraries()
-                .forEach(matLib -> validate(matLib, properties.findFhirLibrary(matLib.getId()), atomicBoolean));
+                .forEach(matLib -> getValidate(properties, atomicBoolean, matLib));
 
         return atomicBoolean.get();
+    }
+
+    private void getValidate(OrchestrationProperties properties, AtomicBoolean atomicBoolean, CqlLibrary matLib) {
+
+        var optional = ConversionReporter.findFhirLibraryId(matLib.getId());
+
+        if (optional.isPresent()) {
+            validate(matLib, properties.findFhirLibrary(optional.get()), atomicBoolean);
+        } else {
+            throw new FhirLibraryNotFoundInMapException(matLib.getId());
+        }
     }
 
     private void convertQdmToFhir(CqlLibrary matLib) {
@@ -191,13 +204,16 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         MatLibraryTranslator matLibraryTranslator = new MatLibraryTranslator(cqlLibrary,
                 cql.getBytes(),
                 elm.getBytes(),
-                hapiFhirServer.getBaseURL());
+                hapiFhirServer.getBaseURL(),
+                createId());
 
         Library fhirLibrary = matLibraryTranslator.translateToFhir(null);
 
+        ConversionReporter.setFhirLibraryId(fhirLibrary.getId(), cqlLibrary.getId());
+
         results.setFhirLibraryJson(hapiFhirServer.toJson(fhirLibrary));
 
-        ConversionReporter.saveConversionResult(conversionResult);
+        // ConversionReporter.saveConversionResult(conversionResult);
 
         return fhirLibrary;
     }
@@ -240,7 +256,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
 
     private Optional<LibraryConversionResults> find(List<LibraryConversionResults> libraryConversionResults, String matLibId) {
-        return libraryConversionResults.stream().filter(t -> t.getMatId().equals(matLibId)).findFirst();
+        return libraryConversionResults.stream().filter(t -> t.getMatLibraryId().equals(matLibId)).findFirst();
     }
 
 

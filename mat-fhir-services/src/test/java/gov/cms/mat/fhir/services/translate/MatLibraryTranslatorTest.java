@@ -13,7 +13,7 @@ import static gov.cms.mat.fhir.services.translate.MatLibraryTranslator.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-class MatLibraryTranslatorTest {
+class MatLibraryTranslatorTest implements IdGenerator {
     private String MEASURE_ID;
     private byte[] cql;
     private byte[] elm;
@@ -25,7 +25,7 @@ class MatLibraryTranslatorTest {
 
     @BeforeEach
     void setUp() {
-        MEASURE_ID = "402803826963bf5e0169724b8c4b066c";
+        MEASURE_ID = createId();
         cqlLib = new CqlLibrary();
         cqlLib.setMeasureId(MEASURE_ID);
         cqlLib.setVersion(new BigDecimal(0.0001));
@@ -38,7 +38,7 @@ class MatLibraryTranslatorTest {
         baseURL = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
         fhirResourceURL = baseURL + "Library/" + MEASURE_ID;
         System.out.println(fhirResourceURL);
-        matLibraryTranslator = new MatLibraryTranslator(cqlLib, cql, elm, baseURL);
+        matLibraryTranslator = new MatLibraryTranslator(cqlLib, cql, elm, baseURL, MEASURE_ID);
     }
 
     @Test

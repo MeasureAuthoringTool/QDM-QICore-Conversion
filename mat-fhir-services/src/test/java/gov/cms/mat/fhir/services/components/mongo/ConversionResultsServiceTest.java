@@ -60,7 +60,7 @@ class ConversionResultsServiceTest {
 
     @Test
     void addMeasureResult_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(),
+        when(conversionResultRepository.findBySourceMeasureIdAndStart(threadSessionKey.getMeasureId(),
                 threadSessionKey.getStart())).thenReturn(Optional.empty());
         ConversionResult conversionResultToReturn = new ConversionResult();
 
@@ -71,7 +71,7 @@ class ConversionResultsServiceTest {
 
         conversionResultsService.addMeasureResult(threadSessionKey, result);
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
+        verify(conversionResultRepository).findBySourceMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
 
@@ -79,7 +79,7 @@ class ConversionResultsServiceTest {
     @Test
     void addMeasureResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
+        when(conversionResultRepository.findBySourceMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
         when(conversionResultRepository.save(conversionResultToReturn))
@@ -90,14 +90,14 @@ class ConversionResultsServiceTest {
         conversionResultsService.addMeasureResult(threadSessionKey, result);
 
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
+        verify(conversionResultRepository).findBySourceMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
 
 
     @Test
     void addValueSetResult_NotFoundInDb() {
-        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
+        when(conversionResultRepository.findBySourceMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
                 .thenReturn(Optional.empty());
         ConversionResult conversionResultToReturn = new ConversionResult();
 
@@ -107,7 +107,7 @@ class ConversionResultsServiceTest {
         conversionResultsService.addValueSetResult(threadSessionKey, "oid", "reason", true, null);
 
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
+        verify(conversionResultRepository).findBySourceMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(any(ConversionResult.class));
     }
 
@@ -115,7 +115,7 @@ class ConversionResultsServiceTest {
     @Test
     void addValueSetResult_FoundInDb() {
         ConversionResult conversionResultToReturn = new ConversionResult();
-        when(conversionResultRepository.findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
+        when(conversionResultRepository.findBySourceMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart()))
                 .thenReturn(Optional.of(conversionResultToReturn));
 
         when(conversionResultRepository.save(conversionResultToReturn))
@@ -125,7 +125,7 @@ class ConversionResultsServiceTest {
 
         conversionResultsService.addValueSetResult(threadSessionKey, "oid", "reason", Boolean.TRUE, null);
 
-        verify(conversionResultRepository).findByMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
+        verify(conversionResultRepository).findBySourceMeasureIdAndStart(threadSessionKey.getMeasureId(), threadSessionKey.getStart());
         verify(conversionResultRepository).save(conversionResultToReturn);
     }
 
