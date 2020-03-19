@@ -63,6 +63,7 @@ public class OrchestrationService {
             return true;
         } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException |
                 CqlLibraryNotFoundException | MatXmlMarshalException | MatXmlException e) {
+            log.info("Error for id: " + properties.getMeasureId(), e);
             return false;
         } catch (Exception e) {
             log.info("Error for id: {}", properties.getMeasureId(), e);
