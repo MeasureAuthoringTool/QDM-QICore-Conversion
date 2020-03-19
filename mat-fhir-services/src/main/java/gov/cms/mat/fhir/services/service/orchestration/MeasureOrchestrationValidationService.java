@@ -4,7 +4,6 @@ package gov.cms.mat.fhir.services.service.orchestration;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
-import gov.cms.mat.fhir.services.components.mat.MatXmlException;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_CONVERSION_FAILED;
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_VALIDATION_FAILED;
 import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.NEW;
 
@@ -45,13 +43,8 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
     }
 
     boolean validate(OrchestrationProperties properties) {
-//        if (ConversionReporter.getConversionResult().measureExistsInHapi()) {
-//            log.info("No Validation performed already in hapi measureId: {}", properties.getMeasureId());
-//            return true;
-//        } else {
-            log.info("Validating measure hapi measureId: {}", properties.getMeasureId());
-            return validateMeasure(properties);
-//        }
+        log.info("Validating measure hapi measureId: {}", properties.getMeasureId());
+        return validateMeasure(properties);
     }
 
     private boolean validateMeasure(OrchestrationProperties properties) {
@@ -107,11 +100,6 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
     }
 
     public org.hl7.fhir.r4.model.Measure createFhirMeasure(Measure matMeasure, byte[] xmlBytes, String narrative) {
-      //  try {
-            return fhirMeasureCreator.create(matMeasure, xmlBytes, narrative);
-       // } catch (MatXmlException e) {
-       //     ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_CONVERSION_FAILED);
-       //     throw e;
-      //  }
+        return fhirMeasureCreator.create(matMeasure, xmlBytes, narrative);
     }
 }

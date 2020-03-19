@@ -70,7 +70,7 @@ public class OrchestrationBatchController {
             try {
                 List<String> matIdsToProcess = processRequestData(batchId, matIds);
 
-                matIdsToProcess.parallelStream()
+                matIdsToProcess//.parallelStream()
                         .forEach((id -> orchestrate(conversionType, xmlSource, batchId, id, vsacGrantingTicket)));
 
                 log.info("Completed orchestrating {} ids with batchId: {} in {} seconds",

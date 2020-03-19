@@ -1,8 +1,6 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
-import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
-import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
+import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.exceptions.BatchIdNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsTooLargeException;
@@ -70,6 +68,8 @@ public class ConversionResultProcessorService {
             removeWarnings(conversionResult);
         }
 
+        conversionResult.getLibraryConversionResults().forEach(this::addLibraryData);
+
         return ConversionResultDto.builder()
                 .measureId(conversionResult.getMeasureId())
                 .modified(conversionResult.getModified() == null ? null : conversionResult.getModified().toString())
@@ -80,6 +80,17 @@ public class ConversionResultProcessorService {
                 .outcome(conversionResult.getOutcome())
                 .conversionType(conversionResult.getConversionType())
                 .build();
+    }
+
+    private void addLibraryData(LibraryConversionResults libraryConversionResults) {
+        if (libraryConversionResults.getCqlConversionResult() != null) {
+            CqlConversionResult cqlConversionResult = libraryConversionResults.getCqlConversionResult();
+            cqlConversionResult.setCql(ConversionReporter.getCql(libraryConversionResults.getMatId()));
+            cqlConversionResult.setElm(ConversionReporter.getElm(libraryConversionResults.getMatId()));
+
+            cqlConversionResult.setFhirCql(ConversionReporter.getFhirCql(libraryConversionResults.getMatId()));
+            cqlConversionResult.setFhirElm(ConversionReporter.getFhirElm(libraryConversionResults.getMatId()));
+        }
     }
 
     private void removeWarnings(ConversionResult conversionResult) {

@@ -110,6 +110,24 @@ public class ConversionReporter {
         return conversionReporter.getCqlString(matLibraryId);
     }
 
+    public static String getElm(String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        return conversionReporter.getElmString(matLibraryId);
+    }
+
+    public static String getFhirElm(String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        return conversionReporter.getFhirElmString(matLibraryId);
+    }
+
+    public static String getFhirCql(String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        return conversionReporter.getFhirElmString(matLibraryId);
+    }
+
     public static void setElm(String json, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
@@ -177,6 +195,7 @@ public class ConversionReporter {
         setBatchId(batchId);
         setXmlSource(xmlSource);
         setShowWarnings(showWarnings);
+        setVsacGrantingTicket(vsacGrantingTicket);
 
         return getKey();
     }
@@ -293,7 +312,8 @@ public class ConversionReporter {
         conversionReporter.addShowWarnings(flag);
     }
 
-    public static void setShowWarnings(String vsacGrantingTicket) {
+
+    public static void setVsacGrantingTicket(String vsacGrantingTicket) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addVsacGrantingTicket(vsacGrantingTicket);
     }
@@ -374,6 +394,18 @@ public class ConversionReporter {
 
     private String getCqlString(String matLibraryId) {
         return conversionResultsService.getCql(key, matLibraryId);
+    }
+
+    private String getElmString(String matLibraryId) {
+        return conversionResultsService.getElm(key, matLibraryId);
+    }
+
+    private String getFhirElmString(String matLibraryId) {
+        return conversionResultsService.getFhirElm(key, matLibraryId);
+    }
+
+    private String getFhirCqlString(String matLibraryId) {
+        return conversionResultsService.getFhirCql(key, matLibraryId);
     }
 
     private void addElm(String json, String matLibraryId) {

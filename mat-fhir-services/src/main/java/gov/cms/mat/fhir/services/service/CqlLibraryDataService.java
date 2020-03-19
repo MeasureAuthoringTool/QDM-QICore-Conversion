@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.service;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.CqlLibraryAssociation;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
+import gov.cms.mat.fhir.services.exceptions.NoCqlLibrariesFoundException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryAssociationRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CqlLibraryDataService {
     private final CqlLibraryRepository cqlLibraryRepo;
-
     private final CqlLibraryAssociationRepository cqlLibraryAssociationRepository;
 
     public CqlLibraryDataService(CqlLibraryRepository cqlLibraryRepo, CqlLibraryAssociationRepository cqlLibraryAssociationRepository) {
@@ -46,7 +46,7 @@ public class CqlLibraryDataService {
                 .collect(Collectors.toList());
 
         if (cqlLibraries.isEmpty()) {
-            throw new CqlLibraryNotFoundException(measureId);
+            throw new NoCqlLibrariesFoundException(measureId);
         } else {
             return cqlLibraries;
         }

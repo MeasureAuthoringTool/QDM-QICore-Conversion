@@ -185,9 +185,12 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
         LibraryConversionResults results = conversionResult.findLibraryConversionResultsRequired(cqlLibrary.getId());
 
+        String cql = ConversionReporter.getCql(cqlLibrary.getId());
+        String elm = ConversionReporter.getElm(cqlLibrary.getId());
+
         MatLibraryTranslator matLibraryTranslator = new MatLibraryTranslator(cqlLibrary,
-                results.getCqlConversionResult().getCql().getBytes(),
-                results.getCqlConversionResult().getElm().getBytes(),
+                cql.getBytes(),
+                elm.getBytes(),
                 hapiFhirServer.getBaseURL());
 
         Library fhirLibrary = matLibraryTranslator.translateToFhir(null);

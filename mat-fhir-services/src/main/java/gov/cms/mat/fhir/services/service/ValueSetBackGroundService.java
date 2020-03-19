@@ -20,10 +20,14 @@ import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.*;
 public class ValueSetBackGroundService {
     private static final String OUTCOME_ERROR_MESSAGE = "Value set processing not performed for outcome: %s";
 
-    private static final ConversionOutcome[] CONVERSION_OUTCOMES_FAILURES = {MEASURE_XML_NOT_FOUND,
+    private static final ConversionOutcome[] CONVERSION_OUTCOMES_FAILURES = {
+            MEASURE_XML_NOT_FOUND,
             MEASURE_RELEASE_VERSION_INVALID,
             MEASURE_NOT_FOUND,
-            MEASURE_EXPORT_NOT_FOUND};
+            MEASURE_EXPORT_NOT_FOUND,
+            INTERNAL_SERVER_ERROR,
+            INVALID_MEASURE_XML
+    };
 
     private final ConversionResultsService conversionResultsService;
     private final MeasureDataService measureDataService;
@@ -40,28 +44,29 @@ public class ValueSetBackGroundService {
     // @Scheduled(fixedRate = 300000)
     void checkConversionResults() {
         log.info("Running Scheduled");
+        int count = 0;
 
         while (true) {
             var optional = conversionResultsService.findTopValueSetConversion();
 
             if (optional.isPresent()) {
+                count++;
                 process(optional.get());
             } else {
+                log.info("{} VSAC conversion records processed", count);
                 break;
             }
         }
     }
 
     private void process(ConversionResult conversionResult) {
-
-        String memo;
-
         try {
             ThreadSessionKey threadSessionKey = buildThreadSessionKey(conversionResult);
 
             if (checkOutCome(conversionResult.getOutcome())) {
-                memo = String.format(OUTCOME_ERROR_MESSAGE, conversionResult.getOutcome());
-                ConversionReporter.setValueSetCompletionMemo(String.format(OUTCOME_ERROR_MESSAGE, conversionResult.getOutcome()));
+                String memo = String.format(OUTCOME_ERROR_MESSAGE, conversionResult.getOutcome());
+                log.info(memo);
+                ConversionReporter.setValueSetCompletionMemo(String.format(OUTCOME_ERROR_MESSAGE, memo));
             } else {
                 orchestrateValueSets(conversionResult, threadSessionKey);
                 ConversionReporter.setValueSetCompletionMemo("Orchestrated");
@@ -84,7 +89,7 @@ public class ValueSetBackGroundService {
         }
 
         OrchestrationProperties orchestrationProperties = buildProperties(conversionResult, threadSessionKey, matMeasure);
-        vsacOrchestrationService.processConversion(orchestrationProperties);
+        vsacOrchestrationService.process(orchestrationProperties);
     }
 
     private OrchestrationProperties buildProperties(ConversionResult conversionResult, ThreadSessionKey threadSessionKey, Measure matMeasure) {
@@ -117,7 +122,7 @@ public class ValueSetBackGroundService {
                     .filter(conversionOutcome -> conversionOutcome.equals(outcome))
                     .findFirst();
 
-            return optional.isEmpty();
+            return optional.isPresent();
         }
     }
 
