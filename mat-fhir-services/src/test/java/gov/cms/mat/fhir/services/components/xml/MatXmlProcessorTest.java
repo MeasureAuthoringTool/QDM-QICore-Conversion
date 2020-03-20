@@ -75,13 +75,13 @@ class MatXmlProcessorTest {
         MeasureXml measureXml = new MeasureXml();
         measureXml.setMeasureXml(XML_BYTES);
 
-        when(measureXmlRepository.findByMeasureId(measure)).thenReturn(Optional.of(measureXml));
+        when(measureXmlRepository.findByMeasureId(measure.getId())).thenReturn(Optional.of(measureXml));
 
         byte[] xmlBytes = matXmlProcessor.getXmlById(ID, XmlSource.MEASURE);
         assertEquals(XML_BYTES, xmlBytes);
 
         verify(measureRepository).findById(ID);
-        verify(measureXmlRepository).findByMeasureId(measure);
+        verify(measureXmlRepository).findByMeasureId(measure.getId());
         verifyNoInteractions(measureExportRepo);
     }
 
@@ -111,11 +111,11 @@ class MatXmlProcessorTest {
 
     @Test
     void getMeasureXml_Empty() {
-        when(measureXmlRepository.findByMeasureId(measure)).thenReturn(Optional.empty());
+        when(measureXmlRepository.findByMeasureId(measure.getId())).thenReturn(Optional.empty());
 
         assertNull(matXmlProcessor.getMeasureXml(measure));
 
-        verify(measureXmlRepository).findByMeasureId(measure);
+        verify(measureXmlRepository).findByMeasureId(measure.getId());
         verifyNoMoreInteractions(measureExportRepo, measureRepository);
     }
 
@@ -124,12 +124,12 @@ class MatXmlProcessorTest {
         MeasureXml measureXml = new MeasureXml();
         measureXml.setMeasureXml(XML_BYTES);
 
-        when(measureXmlRepository.findByMeasureId(measure)).thenReturn(Optional.of(measureXml));
+        when(measureXmlRepository.findByMeasureId(measure.getId())).thenReturn(Optional.of(measureXml));
 
         byte[] xmlBytes = matXmlProcessor.getMeasureXml(measure);
         assertEquals(XML_BYTES, xmlBytes);
 
-        verify(measureXmlRepository).findByMeasureId(measure);
+        verify(measureXmlRepository).findByMeasureId(measure.getId());
         verifyNoMoreInteractions(measureExportRepo, measureRepository);
     }
 }
