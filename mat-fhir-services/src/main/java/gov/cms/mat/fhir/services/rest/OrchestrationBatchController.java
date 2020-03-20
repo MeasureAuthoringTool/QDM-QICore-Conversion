@@ -9,6 +9,7 @@ import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.config.health.SelfHealthCheckingService;
 import gov.cms.mat.fhir.services.exceptions.BatchIdConflictException;
 import gov.cms.mat.fhir.services.exceptions.OrchestrationBatchJobAlreadyRunningException;
+import gov.cms.mat.fhir.services.rest.support.OrchestrationParameterChecker;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.summary.BatchResult;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Tag(name = "Orchestration-Batch-Controller",
         description = "API for converting many MAT Measures (For testing) to FHIR executing all validations and services to perform this task")
 @Slf4j
-public class OrchestrationBatchController {
+public class OrchestrationBatchController implements OrchestrationParameterChecker {
     /* long running multi threaded job runs only one at time, */
     private static final AtomicBoolean isRunning = new AtomicBoolean(false);
     private static RunningBatchJobInfo runningBatchJobInfo;
@@ -63,6 +64,8 @@ public class OrchestrationBatchController {
             @RequestParam String batchId,
             @RequestParam(required = false, defaultValue = "") String vsacGrantingTicket,
             @RequestBody List<String> matIds) {
+
+        checkParameters(xmlSource, conversionType);
 
         selfHealthCheckingService.checkHealthWithException();
 
