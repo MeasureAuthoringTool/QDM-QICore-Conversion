@@ -11,6 +11,7 @@ import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.MeasureReleaseVersionInvalidException;
+import gov.cms.mat.fhir.services.rest.support.OrchestrationParameterChecker;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.service.orchestration.OrchestrationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
@@ -33,7 +34,7 @@ import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSIO
 @Tag(name = "Orchestration-Controller",
         description = "API for converting MAT Measures to FHIR executing all validations and services to perform this task")
 @Slf4j
-public class OrchestrationController {
+public class OrchestrationController implements OrchestrationParameterChecker {
     private final OrchestrationService orchestrationService;
     private final ConversionResultProcessorService conversionResultProcessorService;
     private final MeasureDataService measureDataService;
@@ -60,6 +61,9 @@ public class OrchestrationController {
             @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId,
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
             @RequestParam(required = false, defaultValue = "") String vsacGrantingTicket) {
+
+        checkParameters(xmlSource, conversionType);
+
         ThreadSessionKey threadSessionKey =
                 ConversionReporter.setInThreadLocal(id,
                         batchId,
