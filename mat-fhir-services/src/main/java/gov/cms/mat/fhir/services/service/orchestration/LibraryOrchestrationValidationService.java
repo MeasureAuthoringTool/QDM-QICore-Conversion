@@ -132,8 +132,8 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
     private boolean validateLibs(OrchestrationProperties properties) {
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
 
-        properties.getCqlLibraries()
-                .forEach(matLib -> validateQdm(matLib, atomicBoolean));
+        //  properties.getCqlLibraries()
+        //        .forEach(matLib -> validateQdm(matLib, atomicBoolean));
 
         if (!atomicBoolean.get()) {
             //log.warn("IGNORED FOR TESTING: Terminal message errorMessage: {},  ConversionOutcome:{}",
@@ -146,12 +146,12 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         // When no errors we would then convert to fhir and validate - for initial testing do for ALL
 
         properties.getCqlLibraries()
-                .forEach(matLib -> getValidate(properties, atomicBoolean, matLib));
+                .forEach(matLib -> findFhirLibararyAndValidate(properties, atomicBoolean, matLib));
 
         return atomicBoolean.get();
     }
 
-    private void getValidate(OrchestrationProperties properties, AtomicBoolean atomicBoolean, CqlLibrary matLib) {
+    private void findFhirLibararyAndValidate(OrchestrationProperties properties, AtomicBoolean atomicBoolean, CqlLibrary matLib) {
 
         var optional = ConversionReporter.findFhirLibraryId(matLib.getId());
 
@@ -177,6 +177,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     private void validateQdm(CqlLibrary matLib, AtomicBoolean atomicBoolean) {
         String cql = ConversionReporter.getCql(matLib.getId());
+
         String json = cqlLibraryTranslationService.convertToJson(matLib,
                 atomicBoolean,
                 cql,
