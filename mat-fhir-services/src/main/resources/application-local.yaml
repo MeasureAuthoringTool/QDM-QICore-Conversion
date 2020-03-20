@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: ${MAT_DB_URL:jdbc:mysql://localhost:3306/MAT?serverTimezone=UTC&max_allowed_packet=16777216}
+    url: jdbc:mysql://localhost:3306/MAT_APP_BLANK?serverTimezone=UTC&max_allowed_packet=16777216
     username: ${MAT_DB_USER:mat}
     password: ${MAT_DB_PASS:mat}
   jpa:
