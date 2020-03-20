@@ -111,6 +111,7 @@ class MatXmlMarshaller {
                     ManageCompositeMeasureDetailModel.class);
 
         } catch (Exception e) {
+            log.error("error in convertCompositeMeasureDetail:",e);
             throw new MatXmlMarshalException(e);
         }
     }

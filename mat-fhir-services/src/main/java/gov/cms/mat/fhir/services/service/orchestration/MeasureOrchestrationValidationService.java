@@ -6,6 +6,7 @@ import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.MeasureExportDataService;
@@ -81,13 +82,14 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
 
     private org.hl7.fhir.r4.model.Measure buildFhirMeasure(OrchestrationProperties properties) {
         byte[] xmlBytes = matXmlProcessor.getXml(properties.getMatMeasure(), properties.getXmlSource());
+        String narrative = "";
 
-        MeasureExport measureExport = measureExportDataService.findByIdRequired(properties.getMeasureId());
-
-        //human-readable may exist not an error if it doesn't
-        String narrative = getNarrative(measureExport);
-
-        return createFhirMeasure(properties.getMatMeasure(), xmlBytes, narrative);
+        if (properties.getXmlSource() == XmlSource.SIMPLE) {
+            MeasureExport measureExport = measureExportDataService.findByIdRequired(properties.getMeasureId());
+            //human-readable may exist not an error if it doesn't
+            narrative = getNarrative(measureExport);
+        }
+        return createFhirMeasure(properties.getXmlSource(), properties.getMatMeasure(), xmlBytes, narrative);
     }
 
     public String getNarrative(MeasureExport measureExport) {
@@ -99,7 +101,7 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         }
     }
 
-    public org.hl7.fhir.r4.model.Measure createFhirMeasure(Measure matMeasure, byte[] xmlBytes, String narrative) {
-        return fhirMeasureCreator.create(matMeasure, xmlBytes, narrative);
+    public org.hl7.fhir.r4.model.Measure createFhirMeasure(XmlSource source, Measure matMeasure, byte[] xmlBytes, String narrative) {
+        return fhirMeasureCreator.create(source, matMeasure, xmlBytes, narrative);
     }
 }
