@@ -27,7 +27,7 @@ class MeasureTranslatorTest implements IdGenerator {
     private String humanReadable;
     private String baseURL;
     private String measureURL;
-    private MeasureTranslator measureTranslator;
+    private VersionedMeasureTranslator measureTranslator;
 
     @BeforeEach
     void setup() {
@@ -93,7 +93,7 @@ class MeasureTranslatorTest implements IdGenerator {
         matMeasure.getMeasureDetailsCollection().add(new MeasureDetails());
         matMeasure.setId(compositeModel.getId());
 
-        measureTranslator = new MeasureTranslator(matMeasure, compositeModel, humanReadable, baseURL);
+        measureTranslator = new VersionedMeasureTranslator(matMeasure, compositeModel, humanReadable, baseURL);
     }
 
     @Test
@@ -114,7 +114,7 @@ class MeasureTranslatorTest implements IdGenerator {
         assertEquals(refs.length,fhirMeasure.getRelatedArtifact().size());
         for (int i = 0; i < refs.length; i++) {
             assertEquals(refs[i],artifacts.get(i).getCitation());
-            assertEquals(MeasureTranslator.DEFAULT_ARTIFACT_TYPE,artifacts.get(i).getType());
+            assertEquals(VersionedMeasureTranslator.DEFAULT_ARTIFACT_TYPE,artifacts.get(i).getType());
         }
     }
 
@@ -161,7 +161,7 @@ class MeasureTranslatorTest implements IdGenerator {
         assertEquals(RelatedArtifact.RelatedArtifactType.JUSTIFICATION,artifacts.get(2).getType());
 
         assertEquals(ref4.getReference(),artifacts.get(3).getCitation());
-        assertEquals(MeasureTranslator.DEFAULT_ARTIFACT_TYPE,artifacts.get(3).getType());
+        assertEquals(VersionedMeasureTranslator.DEFAULT_ARTIFACT_TYPE,artifacts.get(3).getType());
     }
 
     @Test

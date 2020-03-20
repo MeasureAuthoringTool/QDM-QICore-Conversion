@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mat.MatXmlException;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.*;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
@@ -58,7 +59,9 @@ public class OrchestrationService {
     public boolean processPrerequisites(OrchestrationProperties properties) {
         try {
             //  processAndGetValueSets(properties, vsacGrantingTicket);
-            processAndGetCqlLibraries(properties);
+            if (properties.getXmlSource() == XmlSource.SIMPLE) {
+                processAndGetCqlLibraries(properties);
+            }
             processFhirMeasure(properties);
             return true;
         } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException | NoCqlLibrariesFoundException |

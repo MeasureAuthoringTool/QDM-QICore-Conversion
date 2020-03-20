@@ -5,11 +5,13 @@ import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.repository.MeasureXmlRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class MatXmlProcessor {
     private final MeasureExportRepository measureExportRepo;
     private final MeasureRepository measureRepository;
@@ -45,11 +47,13 @@ public class MatXmlProcessor {
 
     byte[] getSimpleXml(Measure measure) {
         var optionalMeasureExport = measureExportRepo.findByMeasureId(measure.getId());
+        log.debug("SIMPLE_XML row: " + measure);
         return processBytes(optionalMeasureExport);
     }
 
     byte[] getMeasureXml(Measure measure) {
-        var optionalMeasureXml = measureXmlRepository.findByMeasureId(measure);
+        var optionalMeasureXml = measureXmlRepository.findByMeasureId(measure.getId());
+        log.debug("MEASURE_XML row: {}", optionalMeasureXml);
         return processBytes(optionalMeasureXml);
     }
 

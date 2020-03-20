@@ -5,10 +5,13 @@ import gov.cms.mat.fhir.services.components.fhir.MeasureGroupingDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.components.fhir.SupplementalDataProcessor;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.translate.DraftMeasureTranslator;
 import gov.cms.mat.fhir.services.translate.IdGenerator;
 import gov.cms.mat.fhir.services.translate.ManageMeasureDetailMapper;
 import gov.cms.mat.fhir.services.translate.MeasureTranslator;
+import gov.cms.mat.fhir.services.translate.VersionedMeasureTranslator;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import org.apache.commons.lang3.ArrayUtils;
@@ -46,11 +49,12 @@ public class FhirMeasureCreator implements IdGenerator {
         }
     }
 
-    public org.hl7.fhir.r4.model.Measure create(Measure matMeasure, byte[] xmlBytes, String narrative) {
-        ManageCompositeMeasureDetailModel model = buildModel(xmlBytes, matMeasure);
+    public org.hl7.fhir.r4.model.Measure create(XmlSource source, Measure matMeasure, byte[] xmlBytes, String narrative) {
+        MeasureTranslator translator = source == XmlSource.SIMPLE ?
+                new VersionedMeasureTranslator(matMeasure, buildModel(xmlBytes, matMeasure), narrative, hapiFhirServer.getBaseURL()) :
+                new DraftMeasureTranslator(matMeasure, narrative, hapiFhirServer.getBaseURL());
 
-        MeasureTranslator fhirMapper = new MeasureTranslator(matMeasure, model, narrative, hapiFhirServer.getBaseURL());
-        org.hl7.fhir.r4.model.Measure fhirMeasure = fhirMapper.translateToFhir(createId());
+        org.hl7.fhir.r4.model.Measure fhirMeasure = translator.translateToFhir(createId());
 
         ConversionReporter.setFhirMeasureId(fhirMeasure.getId());
 
