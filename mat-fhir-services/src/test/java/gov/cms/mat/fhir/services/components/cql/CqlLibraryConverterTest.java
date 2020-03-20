@@ -3,17 +3,17 @@ package gov.cms.mat.fhir.services.components.cql;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ActiveProfiles("cql-testing")
+@Disabled
 @ExtendWith(MockitoExtension.class)
 class CqlLibraryConverterTest implements ResourceFileUtil {
 
