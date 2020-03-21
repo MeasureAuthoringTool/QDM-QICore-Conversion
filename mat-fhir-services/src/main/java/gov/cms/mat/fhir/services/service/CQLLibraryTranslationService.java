@@ -76,9 +76,26 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
     }
 
     public String convertToJson(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean, String cql, ConversionType type) {
+        return convertCqlToJson(cqlLibrary == null ? null : cqlLibrary.getId(),
+                atomicBoolean,
+                cql,
+                type);
+
+//        String json = convertCqlToJson(cql);
+//
+//        boolean success = processJsonForError(type, json, cqlLibrary == null ? null : cqlLibrary.getId());
+//
+//        if (!success) {
+//            atomicBoolean.set(Boolean.FALSE);
+//        }
+//
+//        return json;
+    }
+
+    public String convertCqlToJson(String cqlLibraryId, AtomicBoolean atomicBoolean, String cql, ConversionType type) {
         String json = convertCqlToJson(cql);
 
-        boolean success = processJsonForError(type, json, cqlLibrary == null ? null : cqlLibrary.getId());
+        boolean success = processJsonForError(type, json, cqlLibraryId);
 
         if (!success) {
             atomicBoolean.set(Boolean.FALSE);
