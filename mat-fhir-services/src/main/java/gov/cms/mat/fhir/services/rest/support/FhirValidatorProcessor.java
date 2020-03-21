@@ -28,8 +28,6 @@ public interface FhirValidatorProcessor {
 
         ValidationResult validationResult = validator.validateWithResult(resource, options);
 
-
-
        validationResult.getMessages()
                 .forEach(n -> fhirResourceValidationResult.getValidationErrorList().add(buildValidationError(n)));
     }
