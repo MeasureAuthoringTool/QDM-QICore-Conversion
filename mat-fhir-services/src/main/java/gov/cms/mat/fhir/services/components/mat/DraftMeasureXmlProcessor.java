@@ -6,6 +6,7 @@ import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.service.orchestration.LibraryOrchestrationValidationService;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
@@ -17,6 +18,7 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,7 +27,7 @@ import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.ELM_CONT
 
 @Component
 @Slf4j
-public class DraftMeasureXmlProcessor implements FhirLibraryHelper {
+public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionConverter {
 
     private final HapiFhirServer hapiFhirServer;
     private final MatXmlProcessor matXmlProcessor;
@@ -77,10 +79,12 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper {
         String library = matXpath.processXmlValue(cqlLookUpXml, "library");
         String version = matXpath.processXmlValue(cqlLookUpXml, "version");
 
-        Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(version, library);
+        BigDecimal versionBigDecimal = convertVersionToBigDecimal(version);
+
+        Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(versionBigDecimal.toString(), library);
 
         if (CollectionUtils.isEmpty(bundle.getEntry())) {
-            throw new CqlLibraryNotFoundException(measure.getId());
+            throw new CqlLibraryNotFoundException(measure.getId(), library, versionBigDecimal.toString());
         }
 
         var optional = hapiFhirServer.findResourceInBundle(bundle, Library.class);
