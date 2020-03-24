@@ -14,8 +14,16 @@ public class CqlLibraryNotFoundException extends RuntimeException {
     private static final String NOT_FOUND_BY_MEASURE_ID = "Cannot find a CqlLibrary for measureId: %s";
     private static final String NOT_FOUND_BY_FIND_DATA = "Cannot find a CqlLibrary with: %s, %s, %s";
 
+    private static final String NOT_FOUND_BY_MEASURE_ID_VERSION_LIBRARY = NOT_FOUND_BY_MEASURE_ID + " library: %s and version: %s";
+
     public CqlLibraryNotFoundException(String measureId) {
         super(String.format(NOT_FOUND_BY_MEASURE_ID, measureId));
+        ConversionReporter.setTerminalMessage(getMessage(), CQLLIBRARY_NOT_FOUND);
+        log.warn(getMessage());
+    }
+
+    public CqlLibraryNotFoundException(String measureId, String library, String version) {
+        super(String.format(NOT_FOUND_BY_MEASURE_ID_VERSION_LIBRARY, measureId, library, version));
         ConversionReporter.setTerminalMessage(getMessage(), CQLLIBRARY_NOT_FOUND);
         log.warn(getMessage());
     }
