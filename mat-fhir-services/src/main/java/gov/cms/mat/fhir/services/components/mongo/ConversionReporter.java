@@ -28,11 +28,6 @@ public class ConversionReporter {
                 .build();
     }
 
-    public static void saveConversionResult(ConversionResult conversionResult) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.saveConversionResultToMongo(conversionResult);
-    }
-
     public static void setMeasureResult(String field, String destination, String reason) {
         ConversionReporter conversionReporter = getFromThreadLocal();
 

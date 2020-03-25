@@ -49,6 +49,7 @@ class ConversionReporterTest {
                 XmlSource.SIMPLE,
                 Boolean.TRUE,
                 null);
+
         ConversionReporter.setMeasureResult(FIELD, DESTINATION, REASON);
 
         verify(conversionResultsService).addMeasureResult(any(), any(FieldConversionResult.class));
