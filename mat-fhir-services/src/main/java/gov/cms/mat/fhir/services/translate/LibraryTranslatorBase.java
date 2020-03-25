@@ -29,17 +29,21 @@ public abstract class LibraryTranslatorBase implements FhirCreator {
     }
 
     public Library translateToFhir(@Nullable String version) {
-        Library fhirLibrary = new Library()
-                .setDate(new Date())
-                .setStatus(Enumerations.PublicationStatus.ACTIVE) // assume this is active
-                .setContent(createContent())
-                .setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
+        Library fhirLibrary = buildBoilerplateLibrary();
 
         translate(version, fhirLibrary);
 
         log.debug("Converted library: {}", fhirLibrary);
 
         return fhirLibrary;
+    }
+
+    public Library buildBoilerplateLibrary() {
+        return new Library()
+                .setDate(new Date())
+                .setStatus(Enumerations.PublicationStatus.ACTIVE) // assume this is active
+                .setContent(createContent())
+                .setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
     }
 
     abstract void translate(@Nullable String version, Library fhirLibrary);
