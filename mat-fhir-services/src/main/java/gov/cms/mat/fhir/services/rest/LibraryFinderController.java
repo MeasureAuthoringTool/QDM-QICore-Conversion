@@ -118,6 +118,7 @@ public class LibraryFinderController implements CqlVersionConverter {
         List<FhirIncludeLibraryReferences> includeRefs = new ArrayList<FhirIncludeLibraryReferences>();
         String libraryName = "";
         String libraryVersion = "";
+        boolean result = true;
         try {
             CqlParser cqlParser = new CqlParser(cqlContent);
             LibraryProperties props = cqlParser.getLibrary();
@@ -125,7 +126,6 @@ public class LibraryFinderController implements CqlVersionConverter {
             libraryVersion = props.getVersion();
             res.setLibraryName(libraryName);
             res.setLibraryVersion(libraryVersion);
-            boolean result = true;
             List<IncludeProperties> includes =   cqlParser.getIncludes();
             Iterator iter = includes.iterator();
             while (iter.hasNext()) {
@@ -144,9 +144,9 @@ public class LibraryFinderController implements CqlVersionConverter {
                 }
                 catch(Exception nx) {
                     nx.printStackTrace();
-                    includeResults = false; 
+                    includeResults = false;
+                    result = includeResults;
                 }
-
                 iRefs.setSearchResult(includeResults);
                 includeRefs.add(iRefs);
             }
@@ -155,6 +155,7 @@ public class LibraryFinderController implements CqlVersionConverter {
             ex.printStackTrace();
             log.warn("Failed to process library "+libraryName +" "+libraryVersion);
         }
+        res.setOutcome(result);
         res.setLibraryReferences(includeRefs);
         return res;
     }
