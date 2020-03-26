@@ -21,8 +21,7 @@ import java.time.Instant;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DraftMeasureXmlProcessorTest implements ResourceFileUtil {
@@ -51,11 +50,31 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil {
     public void setUp() {
         cqlLookUpXml = getStringFromResource("/cqlLookUpXmlFhir.xml");
         convertedCql = getStringFromResource("/translated.cql");
+
+        setUpReporter();
     }
 
     @Test
     void process() {
+        Measure measure = new Measure();
 
+        when(matXmlProcessor.getXml(measure, XmlSource.MEASURE)).thenReturn(MEASURE_XML.getBytes());
+        when(matXpath.toQualityData(MEASURE_XML)).thenReturn(cqlLookUpXml);
+        when(matXpath.processXmlValue(cqlLookUpXml, "library")).thenReturn("CWP_HEDIS_2020");
+        when(matXpath.processXmlValue(cqlLookUpXml, "version")).thenReturn("1.2.000");
+        when(hapiFhirServer.getBaseURL()).thenReturn("http://mick.mouse.com/");
+        when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any())).thenReturn("json");
+        when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString())).thenReturn(convertedCql);
+
+        draftMeasureXmlProcessor.process(measure);
+
+        verify(matXmlProcessor).getXml(measure, XmlSource.MEASURE);
+        verify(matXpath).toQualityData(MEASURE_XML);
+        verify(matXpath).processXmlValue(cqlLookUpXml, "library");
+        verify(matXpath).processXmlValue(cqlLookUpXml, "version");
+    }
+
+    private void setUpReporter() {
         ConversionReporter.setInThreadLocal(MEASURE_ID,
                 "TEST",
                 mock(ConversionResultsService.class),
@@ -64,19 +83,5 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil {
                 XmlSource.SIMPLE,
                 Boolean.TRUE,
                 null);
-
-        Measure measure = new Measure();
-
-        when(matXmlProcessor.getXml(measure, XmlSource.MEASURE)).thenReturn(MEASURE_XML.getBytes());
-        when(matXpath.toQualityData(MEASURE_XML)).thenReturn(cqlLookUpXml);
-        when(matXpath.processXmlValue(cqlLookUpXml, "library")).thenReturn("CWP_HEDIS_2020");
-        when(matXpath.processXmlValue(cqlLookUpXml, "version")).thenReturn("1.2.000");
-        when(hapiFhirServer.getBaseURL()).thenReturn("http://mick.mouse.com/");
-
-        when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any())).thenReturn("json");
-
-        when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString())).thenReturn(convertedCql);
-
-        draftMeasureXmlProcessor.process(measure);
     }
 }
