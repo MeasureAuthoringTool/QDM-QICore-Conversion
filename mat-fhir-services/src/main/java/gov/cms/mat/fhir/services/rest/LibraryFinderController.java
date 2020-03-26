@@ -1,6 +1,9 @@
 package gov.cms.mat.fhir.services.rest;
 
 
+import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.elements.IncludeProperties;
+import gov.cms.mat.cql.elements.LibraryProperties;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.components.library.FhirCqlLibraryFileHandler;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
@@ -19,13 +22,21 @@ import org.hl7.fhir.r4.model.Library;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
+import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import java.util.Base64;
 
 import java.util.List;
 import java.util.Optional;
 
 import static gov.cms.mat.fhir.services.translate.MatLibraryTranslator.CQL_CONTENT_TYPE;
+import java.util.ArrayList;
+import java.util.Iterator;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping(path = "/library/find")
@@ -98,6 +109,56 @@ public class LibraryFinderController implements CqlVersionConverter {
             }
         }
     }
+    
+    @Operation(summary = "Find Include Library in FHIR.",
+            description = "Finding included FHIR libraries using the main measure library")
+    @PostMapping(path = "/includeLibrarySearch", consumes = "text/plain", produces = "application/json")
+    public FhirIncludeLibraryResult findIncudedFhirLibraries(@RequestBody String cqlContent) {
+        FhirIncludeLibraryResult res = new FhirIncludeLibraryResult();
+        List<FhirIncludeLibraryReferences> includeRefs = new ArrayList<FhirIncludeLibraryReferences>();
+        String libraryName = "";
+        String libraryVersion = "";
+        try {
+            CqlParser cqlParser = new CqlParser(cqlContent);
+            LibraryProperties props = cqlParser.getLibrary();
+            libraryName = props.getName();
+            libraryVersion = props.getVersion();
+            res.setLibraryName(libraryName);
+            res.setLibraryVersion(libraryVersion);
+            boolean result = true;
+            List<IncludeProperties> includes =   cqlParser.getIncludes();
+            Iterator iter = includes.iterator();
+            while (iter.hasNext()) {
+                IncludeProperties include = (IncludeProperties)iter.next();
+                FhirIncludeLibraryReferences iRefs = new FhirIncludeLibraryReferences();
+                String includeLibraryName = include.getName();
+                String includeLibraryVersion = include.getVersion();
+                iRefs.setName(includeLibraryName);
+                iRefs.setVersion(includeLibraryVersion);                
+                boolean includeResults = true;
+                String referenceEndpoint = "";
+                try {
+                    Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(includeLibraryVersion, includeLibraryName);
+                    referenceEndpoint = bundle.getEntry().get(0).getFullUrl();
+                    iRefs.setReferenceEndpoint(referenceEndpoint);
+                }
+                catch(Exception nx) {
+                    nx.printStackTrace();
+                    includeResults = false; 
+                }
+
+                iRefs.setSearchResult(includeResults);
+                includeRefs.add(iRefs);
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            log.warn("Failed to process library "+libraryName +" "+libraryVersion);
+        }
+        res.setLibraryReferences(includeRefs);
+        return res;
+    }
+ 
 
     @Operation(summary = "load.",
             description = "Load")
