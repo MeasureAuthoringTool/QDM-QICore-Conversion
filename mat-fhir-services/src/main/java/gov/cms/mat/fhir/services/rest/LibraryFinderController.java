@@ -105,7 +105,7 @@ public class LibraryFinderController implements CqlVersionConverter {
     @Operation(summary = "Find Include Library in FHIR.",
             description = "Finding included FHIR libraries using the main measure library")
     @PostMapping(path = "/includeLibrarySearch", consumes = "text/plain", produces = "application/json")
-    public FhirIncludeLibraryResult findIncudedFhirLibraries(@RequestBody String cqlContent) { // for fhr cql only
+    public FhirIncludeLibraryResult findIncludedFhirLibraries(@RequestBody String cqlContent) { // for fhr cql only
         FhirIncludeLibraryResult res = new FhirIncludeLibraryResult();
         List<FhirIncludeLibraryReferences> includeRefs = new ArrayList<FhirIncludeLibraryReferences>();
         String libraryName = "";
@@ -116,10 +116,14 @@ public class LibraryFinderController implements CqlVersionConverter {
             LibraryProperties props = cqlParser.getLibrary();
             libraryName = props.getName();
             libraryVersion = props.getVersion();
+
             res.setLibraryName(libraryName);
             res.setLibraryVersion(libraryVersion);
+
             List<IncludeProperties> includes =   cqlParser.getIncludes();
             Iterator iter = includes.iterator();
+
+
             while (iter.hasNext()) {
                 IncludeProperties include = (IncludeProperties)iter.next();
                 FhirIncludeLibraryReferences iRefs = new FhirIncludeLibraryReferences();
@@ -147,6 +151,7 @@ public class LibraryFinderController implements CqlVersionConverter {
             ex.printStackTrace();
             log.warn("Failed to process library "+libraryName +" "+libraryVersion);
         }
+
         res.setOutcome(result);
         res.setLibraryReferences(includeRefs);
         return res;

@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.components.library;
 
-import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql.elements.LibraryProperties;
 import gov.cms.mat.cql.parsers.ParseException;
 import gov.cms.mat.fhir.services.config.LibraryConversionFileConfig;
@@ -9,6 +8,7 @@ import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.translate.FhirLibraryTranslator;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.commons.lang3.StringUtils;
 
 @Component
 @Slf4j
@@ -44,6 +43,8 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     }
 
     private String getData(String name) {
+        log.debug("Processing include file: {} ", name);
+
         try (InputStream i = getClass().getResourceAsStream("/fhir/" + name)) {
             return new String(i.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -52,7 +53,7 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     }
 
     private void processHapiFhir(String cql) {
-        
+
         String[] lines = cql.split("\\r?\\n");
         LibraryProperties libraryProperties = getLibrary(lines);
 
@@ -81,7 +82,7 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
             log.error("Error processing Standard Fhir cql lib url: {}", libraryProperties, e);
         }
     }
-    
+
     private LibraryProperties getLibrary(String[] lines) {
         return Arrays.stream(lines)
                 .filter(l -> l.startsWith("library"))
@@ -104,6 +105,6 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
 
     private String getLibraryVersion(String line) {
         return StringUtils.substringBetween(line, " version '", "'");
-    }    
+    }
 
 }
