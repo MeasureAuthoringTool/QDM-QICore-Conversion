@@ -1,5 +1,10 @@
 package gov.cms.mat.cql_elm_translation.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import gov.cms.mat.cql_elm_translation.data.RequestData;
 import gov.cms.mat.cql_elm_translation.service.CqlConversionService;
 import gov.cms.mat.cql_elm_translation.service.MatXmlConversionService;
@@ -7,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.cqframework.cql.cql2elm.LibraryBuilder;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UncheckedIOException;
 
 @RestController
 @RequestMapping(path = "/cql/translator")
@@ -88,48 +95,44 @@ public class CqlConversionController {
      * "type": "CqlToElmInfo"
      * },
      */
-    private static class TranslatorOptionsRemover {
-        private final static String START_TAG = "translatorOptions\" :";
-        private final static String END_TAG = "},";
-
+    static class TranslatorOptionsRemover {
         final String json;
 
         TranslatorOptionsRemover(String json) {
             this.json = json;
         }
 
-        private String clean() {
-            int tagStart = json.indexOf(START_TAG);
+        String clean() {
 
-            if (tagStart < 0) {
-                return json;
-            }
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode rootNode = objectMapper.readTree(json);
+                JsonNode libraryNode = rootNode.get("library");
+                JsonNode annotationNode = libraryNode.get("annotation");
 
-            int start = findOpenBracket(tagStart);
-            int end = json.indexOf(END_TAG, tagStart);
-
-            if (end < 0) {
-                throw new IllegalArgumentException("Cannot find close bracket");
-            }
-
-            String translatorOptionTag = json.substring(start, end + END_TAG.length());
-
-            String cleanedJson = json.replace(translatorOptionTag, "");
-
-            log.debug(cleanedJson);
-
-            return cleanedJson;
-        }
-
-        private int findOpenBracket(int start) {
-            while (start > 0) {
-                if (json.charAt(start) == '{') {
-                    return start;
+                if (annotationNode.isMissingNode()) {
+                    return json;
                 }
-                start = start - 1;
+
+                if (annotationNode.size() < 2) {
+                    if (libraryNode instanceof ObjectNode) {
+                        ObjectNode objectNode = (ObjectNode) libraryNode;
+                        objectNode.remove("annotation");
+                    }
+                } else {
+                    if (annotationNode instanceof ArrayNode) {
+                        ArrayNode arrayNode = (ArrayNode) annotationNode;
+                        arrayNode.remove(0);
+                    }
+                }
+
+                return rootNode.toPrettyString();
+
+            } catch (JsonProcessingException e) {
+                throw new UncheckedIOException(e);
             }
 
-            throw new IllegalArgumentException("Cannot find open bracket");
         }
+
     }
 }
