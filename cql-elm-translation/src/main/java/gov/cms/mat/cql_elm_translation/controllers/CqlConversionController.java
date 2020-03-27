@@ -45,7 +45,9 @@ public class CqlConversionController {
 
         cqlConversionService.setUpMatLibrarySourceProvider(cqlData);
 
-        return cqlConversionService.processCqlDataWithErrors(requestData);
+        String json = cqlConversionService.processCqlDataWithErrors(requestData);
+        TranslatorOptionsRemover remover = new TranslatorOptionsRemover(json);
+        return remover.clean();
     }
 
     @PutMapping(path = "/xml", consumes = "text/plain", produces = "application/elm+json")
@@ -74,6 +76,60 @@ public class CqlConversionController {
                 .validateUnits(validateUnits)
                 .build();
 
-        return cqlConversionService.processCqlDataWithErrors(requestData);
+        String json = cqlConversionService.processCqlDataWithErrors(requestData);
+        TranslatorOptionsRemover remover = new TranslatorOptionsRemover(json);
+        return remover.clean();
+    }
+
+    /**
+     * Removes this node which blows up array processing for annotation array.
+     * {
+     * "translatorOptions": "DisableMethodInvocation,EnableLocators,DisableListPromotion,EnableDetailedErrors,EnableAnnotations,DisableListDemotion",
+     * "type": "CqlToElmInfo"
+     * },
+     */
+    private static class TranslatorOptionsRemover {
+        private final static String START_TAG = "translatorOptions\" :";
+        private final static String END_TAG = "},";
+
+        final String json;
+
+        TranslatorOptionsRemover(String json) {
+            this.json = json;
+        }
+
+        private String clean() {
+            int tagStart = json.indexOf(START_TAG);
+
+            if (tagStart < 0) {
+                return json;
+            }
+
+            int start = findOpenBracket(tagStart);
+            int end = json.indexOf(END_TAG, tagStart);
+
+            if (end < 0) {
+                throw new IllegalArgumentException("Cannot find close bracket");
+            }
+
+            String translatorOptionTag = json.substring(start, end + END_TAG.length());
+
+            String cleanedJson = json.replace(translatorOptionTag, "");
+
+            log.debug(cleanedJson);
+
+            return cleanedJson;
+        }
+
+        private int findOpenBracket(int start) {
+            while (start > 0) {
+                if (json.charAt(start) == '{') {
+                    return start;
+                }
+                start = start - 1;
+            }
+
+            throw new IllegalArgumentException("Cannot find open bracket");
+        }
     }
 }
