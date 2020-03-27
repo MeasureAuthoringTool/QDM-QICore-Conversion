@@ -35,7 +35,7 @@ public class CqlConversionError extends CqlConversionBase {
     }
 
     public String getTargetIncludeLibraryVersionId() {
-        if (StringUtils.isNotEmpty(targetIncludeLibraryId)) {
+        if (StringUtils.isNotEmpty(targetIncludeLibraryVersionId)) {
             return targetIncludeLibraryVersionId;
         } else {
             return libraryVersion;
