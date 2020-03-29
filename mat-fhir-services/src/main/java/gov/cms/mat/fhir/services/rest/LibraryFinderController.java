@@ -1,12 +1,9 @@
 package gov.cms.mat.fhir.services.rest;
 
 
-import gov.cms.mat.cql.CqlParser;
-import gov.cms.mat.cql.elements.IncludeProperties;
-import gov.cms.mat.cql.elements.LibraryProperties;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
-import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
+import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
 import gov.cms.mat.fhir.services.components.library.FhirCqlLibraryFileHandler;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -23,8 +20,6 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,13 +33,16 @@ public class LibraryFinderController implements CqlVersionConverter {
     private final CqlLibraryDataService cqlLibraryDataService;
     private final HapiFhirServer hapiFhirServer;
     private final FhirCqlLibraryFileHandler fhirCqlLibraryFileHandler;
+    private final FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor;
 
     public LibraryFinderController(CqlLibraryDataService cqlLibraryDataService,
                                    HapiFhirServer hapiFhirServer,
-                                   FhirCqlLibraryFileHandler fhirCqlLibraryFileHandler) {
+                                   FhirCqlLibraryFileHandler fhirCqlLibraryFileHandler,
+                                   FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor) {
         this.cqlLibraryDataService = cqlLibraryDataService;
         this.hapiFhirServer = hapiFhirServer;
         this.fhirCqlLibraryFileHandler = fhirCqlLibraryFileHandler;
+        this.fhirIncludeLibraryProcessor = fhirIncludeLibraryProcessor;
     }
 
     @Operation(summary = "Find Cql-XML in mat.",
@@ -106,57 +104,9 @@ public class LibraryFinderController implements CqlVersionConverter {
             description = "Finding included FHIR libraries using the main measure library")
     @PostMapping(path = "/includeLibrarySearch", consumes = "text/plain", produces = "application/json")
     public FhirIncludeLibraryResult findIncludedFhirLibraries(@RequestBody String cqlContent) { // for fhr cql only
-        FhirIncludeLibraryResult res = new FhirIncludeLibraryResult();
-        List<FhirIncludeLibraryReferences> includeRefs = new ArrayList<FhirIncludeLibraryReferences>();
-        String libraryName = "";
-        String libraryVersion = "";
-        boolean result = true;
-        try {
-            CqlParser cqlParser = new CqlParser(cqlContent);
-            LibraryProperties props = cqlParser.getLibrary();
-            libraryName = props.getName();
-            libraryVersion = props.getVersion();
-
-            res.setLibraryName(libraryName);
-            res.setLibraryVersion(libraryVersion);
-
-            List<IncludeProperties> includes =   cqlParser.getIncludes();
-            Iterator iter = includes.iterator();
-
-
-            while (iter.hasNext()) {
-                IncludeProperties include = (IncludeProperties)iter.next();
-                FhirIncludeLibraryReferences iRefs = new FhirIncludeLibraryReferences();
-                String includeLibraryName = include.getName();
-                String includeLibraryVersion = include.getVersion();
-                iRefs.setName(includeLibraryName);
-                iRefs.setVersion(includeLibraryVersion);                
-                boolean includeResults = true;
-                String referenceEndpoint = "";
-                try {
-                    Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(includeLibraryVersion, includeLibraryName);
-                    referenceEndpoint = bundle.getEntry().get(0).getFullUrl();
-                    iRefs.setReferenceEndpoint(referenceEndpoint);
-                }
-                catch(Exception nx) {
-                    nx.printStackTrace();
-                    includeResults = false;
-                    result = includeResults;
-                }
-                iRefs.setSearchResult(includeResults);
-                includeRefs.add(iRefs);
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-            log.warn("Failed to process library "+libraryName +" "+libraryVersion);
-        }
-
-        res.setOutcome(result);
-        res.setLibraryReferences(includeRefs);
-        return res;
+        return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(cqlContent);
     }
- 
+
 
     @Operation(summary = "load.",
             description = "Load")

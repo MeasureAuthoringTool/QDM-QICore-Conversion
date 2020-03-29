@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -15,5 +16,5 @@ public class FhirIncludeLibraryResult {
     String libraryName;
     String libraryVersion;
     boolean outcome;
-    List<FhirIncludeLibraryReferences> libraryReferences;
+    List<FhirIncludeLibraryReferences> libraryReferences = new ArrayList<>();
 }

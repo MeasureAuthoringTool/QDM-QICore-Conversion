@@ -3,16 +3,18 @@ package gov.cms.mat.fhir.services.components.fhir;
 import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql.elements.IncludeProperties;
 import gov.cms.mat.cql.elements.LibraryProperties;
+import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
+import gov.cms.mat.fhir.services.exceptions.CqlNotFhirException;
+import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundException;
+import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 @Component
 @Slf4j
@@ -24,57 +26,76 @@ public class FhirIncludeLibraryProcessor {
         this.hapiFhirServer = hapiFhirServer;
     }
 
+    public FhirIncludeLibraryResult findIncludedFhirLibraries(String cqlContent) {
+        if (StringUtils.isEmpty(cqlContent)) {
+            throw new IllegalArgumentException("CQL is null or empty");
+        } else {
+            return processContent(cqlContent);
+        }
+    }
 
-    public FhirIncludeLibraryResult findIncludedFhirLibraries(String cqlContent) { // for fhr cql only
+    private FhirIncludeLibraryResult processContent(String cqlContent) {
+        CqlParser cqlParser = new CqlParser(cqlContent);
+
+        checkIsFhir(cqlParser);
+
+        return processParser(cqlParser);
+    }
+
+    private void checkIsFhir(CqlParser cqlParser) {
+        UsingProperties usingProperties = cqlParser.getUsing();
+
+        if (!usingProperties.isFhir()) {
+            throw new CqlNotFhirException(usingProperties);
+        }
+    }
+
+
+    private FhirIncludeLibraryResult processParser(CqlParser cqlParser) {
         FhirIncludeLibraryResult res = new FhirIncludeLibraryResult();
-        List<FhirIncludeLibraryReferences> includeRefs = new ArrayList<FhirIncludeLibraryReferences>();
-        String libraryName = "";
-        String libraryVersion = "";
+
         boolean result = true;
-        try {
-            CqlParser cqlParser = new CqlParser(cqlContent);
-            LibraryProperties props = cqlParser.getLibrary();
-            libraryName = props.getName();
-            libraryVersion = props.getVersion();
 
-            res.setLibraryName(libraryName);
-            res.setLibraryVersion(libraryVersion);
+        LibraryProperties libraryProperties = cqlParser.getLibrary();
 
-            List<IncludeProperties> includes = cqlParser.getIncludes();
-            Iterator iter = includes.iterator();
+        res.setLibraryName(libraryProperties.getName());
+        res.setLibraryVersion(libraryProperties.getVersion());
 
+        for (IncludeProperties include : cqlParser.getIncludes()) {
+            FhirIncludeLibraryReferences libraryReferences = new FhirIncludeLibraryReferences();
 
-            while (iter.hasNext()) {
-                IncludeProperties include = (IncludeProperties) iter.next();
-                FhirIncludeLibraryReferences iRefs = new FhirIncludeLibraryReferences();
-                String includeLibraryName = include.getName();
-                String includeLibraryVersion = include.getVersion();
-                iRefs.setName(includeLibraryName);
-                iRefs.setVersion(includeLibraryVersion);
-                boolean includeResults = true;
-                String referenceEndpoint = "";
+            libraryReferences.setName(include.getName());
+            libraryReferences.setVersion(include.getVersion());
 
-                try {
-                    Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(includeLibraryVersion, includeLibraryName);
-                    referenceEndpoint = bundle.getEntry().get(0).getFullUrl();
-                    iRefs.setReferenceEndpoint(referenceEndpoint);
-                } catch (Exception nx) {
-                    nx.printStackTrace();
-                    includeResults = false;
-                    result = includeResults;
-                }
-
-                iRefs.setSearchResult(includeResults);
-                includeRefs.add(iRefs);
+            try {
+                Bundle bundle = fetchBundle(include);
+                libraryReferences.setSearchResult(true);
+                libraryReferences.setReferenceEndpoint(bundle.getEntry().get(0).getFullUrl());
+            } catch (Exception e) {
+                log.debug("Error when processing include: {}", include);
+                libraryReferences.setSearchResult(false);
+                result = false;
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            log.warn("Failed to process library " + libraryName + " " + libraryVersion);
+
+            res.getLibraryReferences().add(libraryReferences);
         }
 
         res.setOutcome(result);
-        res.setLibraryReferences(includeRefs);
+
         return res;
     }
 
+    private Bundle fetchBundle(IncludeProperties include) {
+        Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(include.getVersion(), include.getName());
+
+        if (CollectionUtils.isEmpty(bundle.getEntry())) {
+            throw new FhirLibraryNotFoundException(include);
+        }
+
+        if (bundle.getEntry().size() > 1) {
+            throw new FhirNotUniqueException(include.toString(), bundle.getEntry().size());
+        }
+
+        return bundle;
+    }
 }
