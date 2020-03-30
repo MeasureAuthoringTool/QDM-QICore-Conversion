@@ -5,6 +5,8 @@ import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.cql_elm_translation.cql_translator.MatLibrarySourceProvider;
 import gov.cms.mat.cql_elm_translation.cql_translator.TranslationResource;
 import gov.cms.mat.cql_elm_translation.data.RequestData;
+import gov.cms.mat.cql_elm_translation.service.filters.AnnotationErrorFilter;
+import gov.cms.mat.cql_elm_translation.service.filters.CqlTranslatorExceptionFilter;
 import gov.cms.mat.cql_elm_translation.service.support.CqlExceptionErrorProcessor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +39,16 @@ public class CqlConversionService {
 
     public String processCqlDataWithErrors(RequestData requestData) {
         CqlTranslator cqlTranslator = processCqlData(requestData);
-        List<CqlTranslatorException> errors = processErrors(cqlTranslator.getExceptions());
 
-        return attachErrorsToJson(errors, cqlTranslator.toJson(), cqlTranslator.getTranslatedLibrary());
+        List<CqlTranslatorException> errors =
+                processErrors(requestData.getCqlData(), requestData.getShowErrors(), cqlTranslator.getExceptions());
+
+        AnnotationErrorFilter annotationErrorFilter =
+                new AnnotationErrorFilter(requestData.getCqlData(), requestData.getShowErrors(), cqlTranslator.toJson());
+
+        String processedJson = annotationErrorFilter.filter();
+
+        return attachErrorsToJson(errors, processedJson, cqlTranslator.getTranslatedLibrary());
     }
 
     private String attachErrorsToJson(List<CqlTranslatorException> errors, String json, TranslatedLibrary translatedLibrary) {
@@ -59,13 +68,21 @@ public class CqlConversionService {
                 .buildTranslator(requestData.getCqlDataInputStream(), requestData.createMap());
     }
 
-    private List<CqlTranslatorException> processErrors(List<CqlTranslatorException> exceptions) {
+    private List<CqlTranslatorException> processErrors(String cqlData,
+                                                       boolean showErrors,
+                                                       List<CqlTranslatorException> exceptions) {
         if (CollectionUtils.isEmpty(exceptions)) {
             log.debug("No CQL Errors found");
             return Collections.emptyList();
         } else {
             logErrors(exceptions);
-            return exceptions;
+
+            CqlTranslatorExceptionFilter cqlTranslatorExceptionFilter =
+                    new CqlTranslatorExceptionFilter(cqlData, showErrors, exceptions);
+
+            List<CqlTranslatorException> filtered = cqlTranslatorExceptionFilter.filter();
+
+            return filtered;
         }
     }
 
