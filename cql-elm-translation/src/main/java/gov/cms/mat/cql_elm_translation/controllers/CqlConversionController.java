@@ -33,6 +33,7 @@ public class CqlConversionController {
     public String cqlToElmJson(
             @RequestBody String cqlData,
             @RequestParam(required = false) LibraryBuilder.SignatureLevel signatures,
+            @RequestParam(defaultValue = "false") Boolean showErrors,
             @RequestParam(defaultValue = "true") Boolean annotations,
             @RequestParam(defaultValue = "true") Boolean locators,
             @RequestParam(value = "disable-list-demotion", defaultValue = "true") Boolean disableListDemotion,
@@ -41,6 +42,7 @@ public class CqlConversionController {
             @RequestParam(value = "validate-units", defaultValue = "true") Boolean validateUnits) {
         RequestData requestData = RequestData.builder()
                 .cqlData(cqlData)
+                .showErrors(showErrors)
                 .signatures(signatures)
                 .annotations(annotations)
                 .locators(locators)
