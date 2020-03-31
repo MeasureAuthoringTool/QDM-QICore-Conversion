@@ -33,7 +33,7 @@ public class CqlConversionController {
     public String cqlToElmJson(
             @RequestBody String cqlData,
             @RequestParam(required = false) LibraryBuilder.SignatureLevel signatures,
-            @RequestParam(defaultValue = "false") Boolean showErrors,
+            @RequestParam(defaultValue = "false") Boolean showWarnings,
             @RequestParam(defaultValue = "true") Boolean annotations,
             @RequestParam(defaultValue = "true") Boolean locators,
             @RequestParam(value = "disable-list-demotion", defaultValue = "true") Boolean disableListDemotion,
@@ -42,7 +42,7 @@ public class CqlConversionController {
             @RequestParam(value = "validate-units", defaultValue = "true") Boolean validateUnits) {
         RequestData requestData = RequestData.builder()
                 .cqlData(cqlData)
-                .showErrors(showErrors)
+                .showWarnings(showWarnings)
                 .signatures(signatures)
                 .annotations(annotations)
                 .locators(locators)
@@ -62,6 +62,7 @@ public class CqlConversionController {
     @PutMapping(path = "/xml", consumes = "text/plain", produces = "application/elm+json")
     public String xmlToElmJson(
             @RequestBody String xml,
+            @RequestParam(defaultValue = "false") Boolean showWarnings,
             @RequestParam(required = false) LibraryBuilder.SignatureLevel signatures,
             @RequestParam(defaultValue = "true") Boolean annotations,
             @RequestParam(defaultValue = "true") Boolean locators,
@@ -76,6 +77,7 @@ public class CqlConversionController {
 
         RequestData requestData = RequestData.builder()
                 .cqlData(cqlData)
+                .showWarnings(showWarnings)
                 .signatures(signatures)
                 .annotations(annotations)
                 .locators(locators)

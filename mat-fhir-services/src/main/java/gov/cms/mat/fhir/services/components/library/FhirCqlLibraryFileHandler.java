@@ -39,7 +39,7 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     public void loaLibs() {
         libraryConversionFileConfig.getOrder().stream()
                 .map(this::getData)
-                .forEach(this::processHapiFhir);
+                .forEach(cql -> processHapiFhir(cql, false));
     }
 
     private String getData(String name) {
@@ -52,7 +52,7 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
         }
     }
 
-    private void processHapiFhir(String cql) {
+    private void processHapiFhir(String cql, boolean showWarnings) {
 
         String[] lines = cql.split("\\r?\\n");
         LibraryProperties libraryProperties = getLibrary(lines);
@@ -68,7 +68,7 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
                 log.info("Already Exists Standard Fhir cql lib url: {}, : Properties: {}",
                         library.get().getUrl(), libraryProperties);
             } else {
-                String elm = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, cql);
+                String elm = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, cql, showWarnings);
 
                 FhirLibraryTranslator fhirLibraryTranslator = new FhirLibraryTranslator(cql.getBytes(),
                         elm.getBytes(),

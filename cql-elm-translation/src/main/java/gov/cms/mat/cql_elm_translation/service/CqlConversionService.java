@@ -41,10 +41,10 @@ public class CqlConversionService {
         CqlTranslator cqlTranslator = processCqlData(requestData);
 
         List<CqlTranslatorException> errors =
-                processErrors(requestData.getCqlData(), requestData.getShowErrors(), cqlTranslator.getExceptions());
+                processErrors(requestData.getCqlData(), requestData.isShowWarnings(), cqlTranslator.getExceptions());
 
         AnnotationErrorFilter annotationErrorFilter =
-                new AnnotationErrorFilter(requestData.getCqlData(), requestData.getShowErrors(), cqlTranslator.toJson());
+                new AnnotationErrorFilter(requestData.getCqlData(), requestData.isShowWarnings(), cqlTranslator.toJson());
 
         String processedJson = annotationErrorFilter.filter();
 
@@ -69,7 +69,7 @@ public class CqlConversionService {
     }
 
     private List<CqlTranslatorException> processErrors(String cqlData,
-                                                       boolean showErrors,
+                                                       boolean showWarningss,
                                                        List<CqlTranslatorException> exceptions) {
         if (CollectionUtils.isEmpty(exceptions)) {
             log.debug("No CQL Errors found");
@@ -78,7 +78,7 @@ public class CqlConversionService {
             logErrors(exceptions);
 
             CqlTranslatorExceptionFilter cqlTranslatorExceptionFilter =
-                    new CqlTranslatorExceptionFilter(cqlData, showErrors, exceptions);
+                    new CqlTranslatorExceptionFilter(cqlData, showWarningss, exceptions);
 
             List<CqlTranslatorException> filtered = cqlTranslatorExceptionFilter.filter();
 

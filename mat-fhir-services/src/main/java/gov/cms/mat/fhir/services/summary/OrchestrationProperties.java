@@ -33,6 +33,8 @@ public class OrchestrationProperties {
 
     String vsacGrantingTicket;
 
+    boolean showWarnings;
+
     @Setter
     org.hl7.fhir.r4.model.Measure fhirMeasure;
 
