@@ -15,7 +15,7 @@ public class RequestData {
     LibraryBuilder.SignatureLevel signatures;
 
     @Getter
-    Boolean showErrors;
+    boolean showWarnings;
 
     Boolean annotations;
     Boolean locators;

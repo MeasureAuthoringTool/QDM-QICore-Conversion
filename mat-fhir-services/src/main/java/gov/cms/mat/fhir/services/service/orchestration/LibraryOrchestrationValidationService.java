@@ -69,7 +69,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         this.libraryConversionFileConfig = libraryConversionFileConfig;
     }
 
-    public void processIncludedLibrary(IncludeProperties include, UsingProperties using) {
+    public void processIncludedLibrary(IncludeProperties include, UsingProperties using, boolean showWarnings) {
         CqlLibraryFindData data = buildFindData(include, using);
         String unconvertedName = unConvertedCqlLibraryHandler.makeCqlName(data);
 
@@ -91,7 +91,8 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 log.info("Already exists in mongo for key: {}", unconvertedName);
             } else {
                 CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);
-                String cql = cqlLibraryTranslationService.convertMatXmlToCql(cqlLibrary.getCqlXml(), null);
+                String cql =
+                        cqlLibraryTranslationService.convertMatXmlToCql(cqlLibrary.getCqlXml(), null, showWarnings);
                 unConvertedCqlLibraryHandler.write(data, cql);
             }
         } else {
@@ -112,13 +113,13 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 .build();
     }
 
-    public void processIncludes(String cql) {
+    public void processIncludes(String cql, boolean showWarnings) {
         CqlParser cqlParser = new CqlParser(cql);
         UsingProperties using = cqlParser.getUsing();
 
         List<IncludeProperties> includes = cqlParser.getIncludes();
 
-        includes.forEach(includeProperties -> processIncludedLibrary(includeProperties, using));
+        includes.forEach(includeProperties -> processIncludedLibrary(includeProperties, using, showWarnings));
     }
 
 
@@ -141,7 +142,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
             ConversionReporter.setTerminalMessage(VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
         }
 
-        properties.getCqlLibraries().forEach(this::convertQdmToFhir);
+        properties.getCqlLibraries().forEach(c -> convertQdmToFhir(c, properties.isShowWarnings()));
 
         // When no errors we would then convert to fhir and validate - for initial testing do for ALL
 
@@ -151,7 +152,9 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         return atomicBoolean.get();
     }
 
-    private void findFhirLibararyAndValidate(OrchestrationProperties properties, AtomicBoolean atomicBoolean, CqlLibrary matLib) {
+    private void findFhirLibararyAndValidate(OrchestrationProperties properties,
+                                             AtomicBoolean atomicBoolean,
+                                             CqlLibrary matLib) {
 
         var optional = ConversionReporter.findFhirLibraryId(matLib.getId());
 
@@ -162,26 +165,27 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         }
     }
 
-    private void convertQdmToFhir(CqlLibrary matLib) {
+    private void convertQdmToFhir(CqlLibrary matLib, boolean showWarnings) {
         String qdmCql = ConversionReporter.getCql(matLib.getId());
         String fhirCql = cqlLibraryConverter.convert(qdmCql);
         ConversionReporter.setFhirCql(fhirCql, matLib.getId());
 
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
-        String fhirJson = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, fhirCql);
+        String fhirJson = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, fhirCql, showWarnings);
         String cleanedJson = cleanJsonFromMatExceptions(fhirJson);
         ConversionReporter.setFhirJson(cleanedJson, matLib.getId());
 
         cqlLibraryTranslationService.processJsonForError(FHIR, fhirJson, matLib.getId());
     }
 
-    private void validateQdm(CqlLibrary matLib, AtomicBoolean atomicBoolean) {
+    private void validateQdm(CqlLibrary matLib, AtomicBoolean atomicBoolean, boolean showWarnings) {
         String cql = ConversionReporter.getCql(matLib.getId());
 
         String json = cqlLibraryTranslationService.convertToJson(matLib,
                 atomicBoolean,
                 cql,
-                CQLLibraryTranslationService.ConversionType.QDM);
+                CQLLibraryTranslationService.ConversionType.QDM,
+                showWarnings);
 
         String cleanedJson = cleanJsonFromMatExceptions(json);
         ConversionReporter.setElm(cleanedJson, matLib.getId());
@@ -218,7 +222,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
         return fhirLibrary;
     }
-
 
 
     private FhirLibraryResourceValidationResult validate(CqlLibrary matCqlLibrary, Library fhirLibrary, AtomicBoolean atomicBoolean) {

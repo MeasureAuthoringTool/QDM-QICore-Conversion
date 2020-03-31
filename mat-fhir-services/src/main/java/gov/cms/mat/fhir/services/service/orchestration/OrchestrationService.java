@@ -81,29 +81,29 @@ public class OrchestrationService {
     }
 
     private void processDraft(OrchestrationProperties properties) {
-        draftMeasureXmlProcessor.process(properties.getMatMeasure());
+        draftMeasureXmlProcessor.process(properties.getMatMeasure(), properties.isShowWarnings());
     }
 
     public void processAndGetCqlLibraries(OrchestrationProperties properties) {
 
         List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesNotInHapi(properties);
 
-        cqlLibraries.forEach(this::processCqlLibrary);
+        cqlLibraries.forEach(c -> processCqlLibrary(c, properties.isShowWarnings()));
 
         properties.getCqlLibraries()
                 .addAll(cqlLibraries);
     }
 
-    private void processCqlLibrary(CqlLibrary cqlLibrary) {
+    private void processCqlLibrary(CqlLibrary cqlLibrary, boolean showWarnings) {
 
         if (StringUtils.isEmpty(cqlLibrary.getCqlXml())) {
             throw new CqlConversionException("Cql Xml is blank for library : " + cqlLibrary.getCqlName());
         }
 
-        String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml());
+        String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml(), showWarnings);
         ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
 
-        libraryOrchestrationValidationService.processIncludes(cql);
+        libraryOrchestrationValidationService.processIncludes(cql, showWarnings);
     }
 
 

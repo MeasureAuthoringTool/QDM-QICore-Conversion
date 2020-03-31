@@ -1,13 +1,15 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.dto.*;
+import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
+import gov.cms.mat.fhir.rest.dto.CqlConversionResult;
+import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
+import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.exceptions.BatchIdNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsTooLargeException;
 import gov.cms.mat.fhir.services.rest.TranslationReportController;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -64,9 +66,9 @@ public class ConversionResultProcessorService {
     }
 
     private ConversionResultDto buildDto(ConversionResult conversionResult) {
-        if (BooleanUtils.isFalse(conversionResult.getShowWarnings())) {
-            removeWarnings(conversionResult);
-        }
+//        if (BooleanUtils.isFalse(conversionResult.getShowWarnings())) {
+//            removeWarnings(conversionResult);
+//        }
 
         conversionResult.getLibraryConversionResults().forEach(this::addLibraryData);
 
@@ -93,27 +95,27 @@ public class ConversionResultProcessorService {
         }
     }
 
-    private void removeWarnings(ConversionResult conversionResult) {
-        if (CollectionUtils.isNotEmpty(conversionResult.getValueSetConversionResults())) {
-            conversionResult.getValueSetConversionResults().forEach(v -> removeFhirWarnings(v.getValueSetFhirValidationResults()));
-        }
+//    private void removeWarnings(ConversionResult conversionResult) {
+//        if (CollectionUtils.isNotEmpty(conversionResult.getValueSetConversionResults())) {
+//            conversionResult.getValueSetConversionResults().forEach(v -> removeFhirWarnings(v.getValueSetFhirValidationResults()));
+//        }
+//
+//        if (CollectionUtils.isNotEmpty(conversionResult.getLibraryConversionResults())) {
+//            conversionResult.getLibraryConversionResults().forEach(l -> removeFhirWarnings(l.getLibraryFhirValidationResults()));
+//        }
+//
+//        if (conversionResult.getMeasureConversionResults() != null) {
+//            removeFhirWarnings(conversionResult.getMeasureConversionResults().getMeasureFhirValidationResults());
+//        }
+//    }
 
-        if (CollectionUtils.isNotEmpty(conversionResult.getLibraryConversionResults())) {
-            conversionResult.getLibraryConversionResults().forEach(l -> removeFhirWarnings(l.getLibraryFhirValidationResults()));
-        }
-
-        if (conversionResult.getMeasureConversionResults() != null) {
-            removeFhirWarnings(conversionResult.getMeasureConversionResults().getMeasureFhirValidationResults());
-        }
-    }
-
-    private void removeFhirWarnings(List<FhirValidationResult> valueSetFhirValidationResults) {
-        if (CollectionUtils.isEmpty(valueSetFhirValidationResults)) {
-            log.debug("NO Fhir Validation Results");
-        } else {
-            valueSetFhirValidationResults.removeIf(v -> v.getSeverity().equals("WARNING"));
-        }
-    }
+//    private void removeFhirWarnings(List<FhirValidationResult> valueSetFhirValidationResults) {
+//        if (CollectionUtils.isEmpty(valueSetFhirValidationResults)) {
+//            log.debug("NO Fhir Validation Results");
+//        } else {
+//            valueSetFhirValidationResults.removeIf(v -> v.getSeverity().equals("WARNING"));
+//        }
+//    }
 
 
     public Set<String> findMissingValueSets(String batchId) {

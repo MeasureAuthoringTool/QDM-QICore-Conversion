@@ -19,8 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -73,10 +72,11 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil {
         when(matXpath.processXmlValue(cqlLookUpXml, "version")).thenReturn("1.2.000");
         when(hapiFhirServer.getBaseURL()).thenReturn("http://mick.mouse.com/");
 
-        when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any())).thenReturn("json");
+        when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any(), anyBoolean()))
+                .thenReturn("json");
 
-        when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString())).thenReturn(convertedCql);
+        when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString(), anyBoolean())).thenReturn(convertedCql);
 
-        draftMeasureXmlProcessor.process(measure);
+        draftMeasureXmlProcessor.process(measure, false);
     }
 }

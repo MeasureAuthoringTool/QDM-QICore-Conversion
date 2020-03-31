@@ -15,18 +15,18 @@ import java.util.stream.Collectors;
 public class CqlTranslatorExceptionFilter implements CqlLibraryFinder {
     @Getter
     private final String cqlData;
-    private final boolean showErrors;
+    private final boolean showWarnings;
     private final List<CqlTranslatorException> exceptions;
 
-
-    public CqlTranslatorExceptionFilter(String cqlData, boolean showErrors, List<CqlTranslatorException> exceptions) {
+    public CqlTranslatorExceptionFilter(String cqlData,
+                                        boolean showWarnings,
+                                        List<CqlTranslatorException> exceptions) {
         this.cqlData = cqlData;
-        this.showErrors = showErrors;
+        this.showWarnings = showWarnings;
         this.exceptions = exceptions;
     }
 
     public List<CqlTranslatorException> filter() {
-
         if (CollectionUtils.isEmpty(exceptions)) {
             return Collections.emptyList();
         } else {
@@ -64,17 +64,17 @@ public class CqlTranslatorExceptionFilter implements CqlLibraryFinder {
 
 
     private List<CqlTranslatorException> filterOutWarnings() {
-        List<CqlTranslatorException> warningsRemovedErrors;
+        List<CqlTranslatorException> warningsRemovedList;
 
-        if (showErrors) {
-            warningsRemovedErrors = exceptions;
+        if (showWarnings) {
+            warningsRemovedList = exceptions;
         } else {
-            warningsRemovedErrors = exceptions.stream()
+            warningsRemovedList = exceptions.stream()
                     .filter(this::isError)
                     .collect(Collectors.toList());
-
         }
-        return warningsRemovedErrors;
+
+        return warningsRemovedList;
     }
 
     private boolean isError(CqlTranslatorException e) {

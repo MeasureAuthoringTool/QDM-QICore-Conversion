@@ -82,6 +82,7 @@ public class OrchestrationController implements OrchestrationParameterChecker {
                 return conversionResultProcessorService.process(threadSessionKey);
             } else {
                 orchestrationProperties = OrchestrationProperties.builder()
+                        .showWarnings(showWarnings)
                         .matMeasure(matMeasure)
                         .conversionType(conversionType)
                         .xmlSource(xmlSource)

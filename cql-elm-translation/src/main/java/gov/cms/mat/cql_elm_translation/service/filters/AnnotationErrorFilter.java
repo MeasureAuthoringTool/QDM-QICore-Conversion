@@ -3,8 +3,8 @@ package gov.cms.mat.cql_elm_translation.service.filters;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql.elements.LibraryProperties;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class AnnotationErrorFilter {
+public class AnnotationErrorFilter implements CqlLibraryFinder {
+
+    @Getter
     private final String cqlData;
     private final boolean showWarnings;
     private final String json;
@@ -113,10 +115,6 @@ public class AnnotationErrorFilter {
         return p.getName().equals(libraryId) && p.getVersion().equals(version);
     }
 
-    private LibraryProperties parseLibrary() {
-        CqlParser cqlParser = new CqlParser(cqlData);
-        return cqlParser.getLibrary();
-    }
 
     private List<Integer> filterOutWarnings(ArrayNode annotationArrayNode) {
         List<Integer> deleteIndexes = new ArrayList<>();
