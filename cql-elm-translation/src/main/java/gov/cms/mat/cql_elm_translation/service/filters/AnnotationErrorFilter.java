@@ -51,10 +51,15 @@ public class AnnotationErrorFilter implements CqlLibraryFinder {
 
             deleteArray.forEach(annotationArrayNode::remove);
 
-            return rootNode.toPrettyString();
+            String cleanedJson = rootNode.toPrettyString();
+            return fixErrorTags(cleanedJson);
         } catch (Exception e) {
             return json;
         }
+    }
+
+    private String fixErrorTags(String cleanedJson) {
+        return cleanedJson.replace("\"errorSeverity\" : \"error\"", "\"errorSeverity\" : \"Error\"");
     }
 
     private Optional<ArrayNode> getAnnotationNode(JsonNode rootNode) {
@@ -122,7 +127,6 @@ public class AnnotationErrorFilter implements CqlLibraryFinder {
 
         for (JsonNode node : annotationArrayNode) {
             JsonNode errorSeverityNode = node.path("errorSeverity");
-
 
             var optional = checkErrorSeverityValue(errorSeverityNode);
 
