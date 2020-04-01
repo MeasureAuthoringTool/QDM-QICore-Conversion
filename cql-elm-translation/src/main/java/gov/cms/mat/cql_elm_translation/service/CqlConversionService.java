@@ -69,7 +69,7 @@ public class CqlConversionService {
     }
 
     private List<CqlTranslatorException> processErrors(String cqlData,
-                                                       boolean showWarningss,
+                                                       boolean showWarnings,
                                                        List<CqlTranslatorException> exceptions) {
         if (CollectionUtils.isEmpty(exceptions)) {
             log.debug("No CQL Errors found");
@@ -78,7 +78,7 @@ public class CqlConversionService {
             logErrors(exceptions);
 
             CqlTranslatorExceptionFilter cqlTranslatorExceptionFilter =
-                    new CqlTranslatorExceptionFilter(cqlData, showWarningss, exceptions);
+                    new CqlTranslatorExceptionFilter(cqlData, showWarnings, exceptions);
 
             List<CqlTranslatorException> filtered = cqlTranslatorExceptionFilter.filter();
 
