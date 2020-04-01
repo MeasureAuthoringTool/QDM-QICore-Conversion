@@ -3,7 +3,7 @@ library NCQA_Common_FHIR4 version '5.1.000'
 //Bren didn't provide this library to us yet and we have to have something here.
 
 using FHIR version '4.0.0'
-include FHIRHelpers version '4.0.0' called FHIRHelpers
+include FHIRHelpers version '4.0.000' called FHIRHelpers
 
 codesystem "LOINC": 'http://loinc.org'
 codesystem "SNOMEDCT": 'http://snomed.info/sct/731000124108'

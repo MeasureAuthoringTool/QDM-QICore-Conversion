@@ -2,7 +2,7 @@ library NCQACommon_FHIR version '3.10.000'
 
 using FHIR version '3.0.0'
 
-include FHIRHelpers version '3.0.0' called FHIRHelpers
+include FHIRHelpers version '3.0.000' called FHIRHelpers
 
 codesystem "LOINC": 'urn:oid:2.16.840.1.113883.6.1'
 codesystem "SNOMEDCT": 'urn:oid:2.16.840.1.113883.6.96'

@@ -1,8 +1,8 @@
-library SupplementalDataElements_FHIR4 version '1.0.0'
+library SupplementalDataElements_FHIR4 version '1.0.000'
 
 using FHIR version '4.0.0'
 
-include FHIRHelpers version '4.0.0' called FHIRHelpers
+include FHIRHelpers version '4.0.000' called FHIRHelpers
 
 valueset "ONC Administrative Sex": 'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1'
 valueset "Race": 'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.114222.4.11.836'
