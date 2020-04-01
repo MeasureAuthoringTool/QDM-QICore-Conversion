@@ -2,9 +2,9 @@ library TJCOverall_FHIR4 version '4.0.000'
 
 using FHIR version '4.0.0'
 // NOTE: BTR 2019-07-30: Updated version dependencies
-include FHIRHelpers version '4.0.0' called FHIRHelpers
+include FHIRHelpers version '4.0.000' called FHIRHelpers
 include MATGlobalCommonFunctions_FHIR4 version '4.0.000' called Global
-include SupplementalDataElements_FHIR4 version '1.0.0' called SDE
+include SupplementalDataElements_FHIR4 version '1.0.000' called SDE
 
 codesystem "SNOMEDCT": 'http://snomed.info/sct/731000124108'
 codesystem "LOINC": 'http://loinc.org'

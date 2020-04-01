@@ -4,7 +4,7 @@ library VTEICU_FHIR4 version '3.1.000'
 
 using FHIR version '4.0.0'
 
-include FHIRHelpers version '4.0.0' called FHIRHelpers
+include FHIRHelpers version '4.0.000' called FHIRHelpers
 // NOTE: BTR 2019-07-30: Updated dependencies
 include MATGlobalCommonFunctions_FHIR4 version '4.0.000' called Global
 
