@@ -13,7 +13,7 @@ export HAPI_DB_PASS=FIXME!
 
 export MONGO_DB_URL='mongodb://host.docker.internal:27018'
 
-export HAPI_FHIR_URL_PUBLIC='http://host-docker-internal:6060/hapi-fhir-jpaserver/'
+export HAPI_FHIR_URL_PUBLIC='http://localhost:6060/hapi-fhir-jpaserver/fhir'
 export HAPI_FHIR_URL='http://hapi-fhir-jpaserver:6060/hapi-fhir-jpaserver/fhir/'
 export FHIR_SERVICES_URL='http://host.docker.internal:9080'
 export QDM_QICORE_URL='http://host.docker.internal:9090'
