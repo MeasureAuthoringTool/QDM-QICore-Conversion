@@ -6,7 +6,7 @@ such as NLMs VSAC to gather valueSets needed for measure evaluation.
 ## Requirements
 1.  Java 11 or newer
 2.  Maven 3.6.3 or newer
-2.  MySQL 5.7.x (Mat DB)
+2.  MySQL 5.7.x or newer (Mat DB)
 4.  User login to NLM VSAC system via UMLS.
 
 # Initial Setup
