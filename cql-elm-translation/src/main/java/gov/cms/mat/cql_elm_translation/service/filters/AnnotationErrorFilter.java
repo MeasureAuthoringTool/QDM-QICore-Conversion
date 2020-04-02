@@ -1,25 +1,27 @@
 package gov.cms.mat.cql_elm_translation.service.filters;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import gov.cms.mat.cql.elements.LibraryProperties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class AnnotationErrorFilter implements CqlLibraryFinder {
-
+public class AnnotationErrorFilter implements CqlLibraryFinder, JsonHelpers {
     @Getter
     private final String cqlData;
     private final boolean showWarnings;
     private final String json;
-    private ObjectMapper objectMapper = new ObjectMapper();
+
+    private LibraryProperties libraryProperties;
+
+    private List<JsonNode> keeperList = new ArrayList<>();
 
     public AnnotationErrorFilter(String cqlData, boolean showWarnings, String json) {
         this.cqlData = cqlData;
@@ -29,44 +31,61 @@ public class AnnotationErrorFilter implements CqlLibraryFinder {
 
     public String filter() {
         try {
-            JsonNode rootNode = objectMapper.readTree(json);
+            JsonNode rootNode = readRootNode();
 
-            var optional = getAnnotationNode(rootNode);
+            Optional<ArrayNode> optionalArrayNode = getAnnotationNode(rootNode);
 
-            if (optional.isEmpty()) {
+            if (optionalArrayNode.isEmpty()) {
                 return json;
+            } else {
+                libraryProperties = parseLibrary();
+                return processArrayNode(rootNode, optionalArrayNode.get());
             }
-
-            ArrayNode annotationArrayNode = optional.get();
-
-            List<Integer> deleteArray = new ArrayList<>();
-
-            if (showWarnings) {
-                deleteArray.addAll(filterOutWarnings(annotationArrayNode));
-            }
-
-            if (annotationArrayNode.size() > 0) {
-                deleteArray.addAll(filterByLibrary(annotationArrayNode));
-            }
-
-            deleteArray.forEach(annotationArrayNode::remove);
-
-            String cleanedJson = rootNode.toPrettyString();
-            return fixErrorTags(cleanedJson);
         } catch (Exception e) {
+            log.info("Error filtering annotations", e);
             return json;
         }
     }
 
+    private JsonNode readRootNode() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readTree(json);
+    }
+
+    private String processArrayNode(JsonNode rootNode, ArrayNode annotationArrayNode) {
+        annotationArrayNode.forEach(this::filterByNode);
+
+        annotationArrayNode.removeAll();
+        annotationArrayNode.addAll(keeperList);
+
+        String cleanedJson = rootNode.toPrettyString();
+        return fixErrorTags(cleanedJson);
+    }
+
+    private void filterByNode(JsonNode jsonNode) {
+        if (filterNodeByLibrary(jsonNode)) {
+            if (showWarnings) {
+                keeperList.add(jsonNode);
+            } else if (isError(jsonNode)) {
+                keeperList.add(jsonNode);
+            }
+        }
+    }
+
     private String fixErrorTags(String cleanedJson) {
-        return cleanedJson.replace("\"errorSeverity\" : \"error\"", "\"errorSeverity\" : \"Error\"");
+        return cleanedJson.replace("\"errorSeverity\" : \"error\"",
+                "\"errorSeverity\" : \"Error\"");
     }
 
     private Optional<ArrayNode> getAnnotationNode(JsonNode rootNode) {
         JsonNode libraryNode = rootNode.get("library");
         JsonNode annotationNode = libraryNode.get("annotation");
 
-        if (annotationNode.isMissingNode()) {
+        return validateArrayNode(annotationNode);
+    }
+
+    private Optional<ArrayNode> validateArrayNode(JsonNode annotationNode) {
+        if (annotationNode == null || annotationNode.isMissingNode()) {
             log.info("Annotation node is missing");
             return Optional.empty();
         }
@@ -85,84 +104,36 @@ public class AnnotationErrorFilter implements CqlLibraryFinder {
     }
 
 
-    private List<Integer> filterByLibrary(ArrayNode annotationArrayNode) {
-        List<Integer> deleteIndexes = new ArrayList<>();
-        LibraryProperties libraryProperties = parseLibrary();
+    private boolean filterNodeByLibrary(JsonNode node) {
+        Optional<String> optionalLibraryId = getTextFromNodeId(node, "libraryId");
+        Optional<String> optionalLibraryVersion = getTextFromNodeId(node, "libraryVersion");
 
-        int index = 0;
-
-        for (JsonNode node : annotationArrayNode) {
-            JsonNode libraryIdNode = node.path("libraryId");
-            var optionalLibraryId = getTextFromNode(libraryIdNode);
-
-            JsonNode libraryVersionNode = node.path("libraryVersion");
-            var optionalLibraryVersion = getTextFromNode(libraryVersionNode);
-
-            if (optionalLibraryId.isEmpty() || optionalLibraryVersion.isEmpty()) {
-                log.debug("Library and/or version is missing");
-                deleteIndexes.add(index);
-            } else {
-                String libraryId = optionalLibraryId.get();
-                String libraryVersion = optionalLibraryVersion.get();
-
-                if (!isPointingToSameLibrary(libraryProperties, libraryId, libraryVersion)) {
-                    deleteIndexes.add(index);
-                }
-            }
-
-            index++;
+        if (optionalLibraryId.isEmpty() || optionalLibraryVersion.isEmpty()) {
+            log.debug("Library and/or version is missing");
+            return false;
+        } else {
+            return isPointingToSameLibrary(libraryProperties,
+                    optionalLibraryId.get(),
+                    optionalLibraryVersion.get());
         }
-
-        return deleteIndexes;
     }
 
-    private boolean isPointingToSameLibrary(LibraryProperties p, String libraryId, String version) {
+    private boolean isPointingToSameLibrary(LibraryProperties p,
+                                            String libraryId,
+                                            String version) {
         return p.getName().equals(libraryId) && p.getVersion().equals(version);
     }
 
+    private boolean isError(JsonNode node) {
+        JsonNode errorSeverityNode = node.path("errorSeverity");
 
-    private List<Integer> filterOutWarnings(ArrayNode annotationArrayNode) {
-        List<Integer> deleteIndexes = new ArrayList<>();
-        int index = 0;
+        var optional = getSeverityValueFromNode(errorSeverityNode);
 
-        for (JsonNode node : annotationArrayNode) {
-            JsonNode errorSeverityNode = node.path("errorSeverity");
-
-            var optional = checkErrorSeverityValue(errorSeverityNode);
-
-            if (optional.isPresent() && optional.get().equals("error")) {
-                index++;
-                continue;
-            }
-
-            deleteIndexes.add(index);
-
-            index++;
-        }
-
-        return deleteIndexes;
+        return optional.isPresent() && optional.get().equals("error");
     }
 
-    private Optional<String> checkErrorSeverityValue(JsonNode errorSeverityNode) {
+    private Optional<String> getSeverityValueFromNode(JsonNode errorSeverityNode) {
         var optional = getTextFromNode(errorSeverityNode);
         return optional.map(s -> s.toLowerCase().trim());
-    }
-
-    private Optional<String> getTextFromNode(JsonNode jsonNode) {
-        if (jsonNode.isMissingNode()) {
-            log.info("jsonNode is missing");
-            return Optional.empty();
-        }
-
-        String textValue = jsonNode.toString();
-
-        if (StringUtils.isEmpty(textValue)) {
-            log.info("jsonNode is empty");
-            return Optional.empty();
-        }
-
-        textValue = StringUtils.replace(textValue, "\"", "");
-
-        return Optional.of(textValue);
     }
 }
