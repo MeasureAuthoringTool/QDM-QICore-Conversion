@@ -70,20 +70,34 @@ You just need to run this once on a newly setup hapi-fhir-server.
 curl -X GET "http://localhost:9080/library/find/load" -H "accept: */*"
 
 ### Urls
-mat-fhir-services:
--  Actuator:  http://localhost:9080/actuator
--  Swagger: http://localhost:9080/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
+#### mat-fhir-services:
+-  Actuator: 
+   -  (local) http://localhost:9080/actuator
+   -  (dev) https://matdev.semanticbits.com/mat-fhir-services/actuator
+-  Swagger:  
+   -  (local) http://localhost:9080/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
+   -  (dev) https://matdev.semanticbits.com/mat-fhir-services/swagger-ui/index.html?url=/mat-fhir-services/v3/api-docs&validatorUrl=#/
 
-qdm-qicore-mapping-services:
--  Actuator:  http://localhost:9090/actuator
--  Swagger: http://localhost:9090/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
+#### hapi-fhir-server:
+-  Test Overlay: 
+    - (local) http://localhost:6060/
+    - (dev) https://matdev.semanticbits.com/hapi-fhir-jpaserver/
 
-cql-elm-translation:
--  Actuator: http://localhost:7070/actuator
--  Swagger: http://localhost:7070/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
+#### qdm-qicore-mapping-services:
+-  Actuator:  
+   -  (local) http://localhost:9090/actuator
+   -  (dev) https://matdev.semanticbits.com/qdm-qicore-mapping-services/actuator   
+-  Swagger:   
+   - (local) http://localhost:9090/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
+   - (dev) http://matdev.semanticbits.com/qdm-qicore-mapping-services/swagger-ui/index.html?url=/qdm-qicore-mapping-services/v3/api-docs&validatorUrl=#/   
 
-hapi-fhir-server:
--  Test Overlay: http://localhost:6060/
+#### cql-elm-translation:
+-  Actuator: 
+   - (local) http://localhost:7070/actuator
+   -  (dev) https://matdev.semanticbits.com/cql-elm-translation/actuator   
+-  Swagger:  
+   - (local) http://localhost:7070/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
+   - (dev) http://matdev.semanticbits.com/cql-elm-translation/swagger-ui/index.html?url=/cql-elm-translation/v3/api-docs&validatorUrl=#/ 
 
 ## Configure for Running as Micro-service Locally
 1. Using vi, your IDE, or some other editor modify the mat-fhir-services project 'application.yaml' and 'application-local.yaml files they can be found QDM-QICore-Conversion/mat-fhir-services/src/main/resources.
