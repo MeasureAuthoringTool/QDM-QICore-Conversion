@@ -4,8 +4,8 @@ to Fast Healthcare Interoperable Resources(FHIR) release R4.  It utilizes MAT my
 such as NLMs VSAC to gather valueSets needed for measure evaluation.
 
 ## Requirements
-1.  Java 1.11
-2.  Maven 3.3.9 or higher
+1.  Java 11 or newer
+2.  Maven 3.6.3 or newer
 2.  MySQL 5.7.x (Mat DB)
 4.  User login to NLM VSAC system via UMLS.
 
@@ -48,6 +48,20 @@ mvn clean install
 or to skip testing
 ```shell script
 mvn clean install -DskipTests
+```
+
+
+### install vsac dependency
+
+This app has a dependency on `vsac-1.0.jar` being present in the local `.m2` directory.
+If MAT app has been setup, the above jar may be available in the `.m2` directory.
+
+If not, `vsac-1.0.jar` can be installed into the local `.m2` directory 
+by going to the parent directory of the MAT app via terminal and executing the following command: 
+
+
+```
+mvn install:install-file -Dfile=lib/vsac-1.0.jar -DgroupId=mat -DartifactId=vsac -Dversion=1.0 -Dpackaging=jar
 ```
 
 ### Docker Compose
