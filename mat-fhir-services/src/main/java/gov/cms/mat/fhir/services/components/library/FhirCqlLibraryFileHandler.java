@@ -106,5 +106,4 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     private String getLibraryVersion(String line) {
         return StringUtils.substringBetween(line, " version '", "'");
     }
-
 }

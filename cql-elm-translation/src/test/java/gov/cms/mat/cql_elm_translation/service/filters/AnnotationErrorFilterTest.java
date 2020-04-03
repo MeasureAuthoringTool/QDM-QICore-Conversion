@@ -34,7 +34,6 @@ class AnnotationErrorFilterTest implements ResourceFileUtil {
         verifySourceAndCleanedTheSame();
     }
 
-
     @Test
     void filter_VerifyEmptyAnnotations() {
         sourceJson = getData("/fhir4_std_lib_empty_array_annotations.json");

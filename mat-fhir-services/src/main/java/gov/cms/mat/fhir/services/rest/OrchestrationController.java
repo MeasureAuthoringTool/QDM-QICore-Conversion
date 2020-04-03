@@ -58,7 +58,7 @@ public class OrchestrationController implements OrchestrationParameterChecker {
             @RequestParam @Min(10) String id,
             @RequestParam ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
-            @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId,
+            @RequestParam(required = false, defaultValue = "MEASURE-ORCHESTRATION") String batchId,
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
             @RequestParam(required = false, defaultValue = "") String vsacGrantingTicket) {
 

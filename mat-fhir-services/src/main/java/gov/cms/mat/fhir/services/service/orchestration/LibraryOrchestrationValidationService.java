@@ -38,7 +38,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.LIBRARY_VALIDATION_FAILED;
 import static gov.cms.mat.fhir.services.service.CQLLibraryTranslationService.ConversionType.FHIR;
 
 @Component
@@ -133,28 +132,19 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
     private boolean validateLibs(OrchestrationProperties properties) {
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
 
-        //  properties.getCqlLibraries()
-        //        .forEach(matLib -> validateQdm(matLib, atomicBoolean));
-
-        if (!atomicBoolean.get()) {
-            //log.warn("IGNORED FOR TESTING: Terminal message errorMessage: {},  ConversionOutcome:{}",
-            //         VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
-            ConversionReporter.setTerminalMessage(VALIDATION_FAILURE_MESSAGE, LIBRARY_VALIDATION_FAILED);
-        }
-
-        properties.getCqlLibraries().forEach(c -> convertQdmToFhir(c, properties.isShowWarnings()));
+        properties.getCqlLibraries()
+                .forEach(cqlLibrary -> convertQdmToFhir(cqlLibrary, properties.isShowWarnings()));
 
         // When no errors we would then convert to fhir and validate - for initial testing do for ALL
-
         properties.getCqlLibraries()
-                .forEach(matLib -> findFhirLibararyAndValidate(properties, atomicBoolean, matLib));
+                .forEach(matLib -> findFhirLibraryAndValidate(properties, atomicBoolean, matLib));
 
         return atomicBoolean.get();
     }
 
-    private void findFhirLibararyAndValidate(OrchestrationProperties properties,
-                                             AtomicBoolean atomicBoolean,
-                                             CqlLibrary matLib) {
+    private void findFhirLibraryAndValidate(OrchestrationProperties properties,
+                                            AtomicBoolean atomicBoolean,
+                                            CqlLibrary matLib) {
 
         var optional = ConversionReporter.findFhirLibraryId(matLib.getId());
 
@@ -218,7 +208,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
         results.setFhirLibraryJson(hapiFhirServer.toJson(fhirLibrary));
 
-        // ConversionReporter.saveConversionResult(conversionResult);
 
         return fhirLibrary;
     }
@@ -228,39 +217,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
         return validateFhirLibrary(matCqlLibrary.getId(), matCqlLibrary.getMeasureId(), fhirLibrary, atomicBoolean);
 
-
-//        FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(matCqlLibrary.getId());
-//        response.setMeasureId(matCqlLibrary.getMeasureId());
-//
-//        validateResource(response, fhirLibrary, hapiFhirServer.getCtx());
-//
-//        List<FhirValidationResult> list = buildResults(response);
-//        ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibrary.getId());
-//
-//        if (list.isEmpty()) {
-//            ConversionReporter.setLibraryValidationLink(null, HapiResourcePersistedState.VALIDATION, matCqlLibrary.getId());
-//        } else {
-//            list.forEach(validationResult -> processValidation(validationResult, atomicBoolean, matCqlLibrary.getId()));
-//        }
-//
-//        ConversionResult conversionResult = ConversionReporter.getConversionResult();
-//
-//        response.setLibraryConversionResults(conversionResult.getLibraryConversionResults());
-//        response.setLibraryConversionType(conversionResult.getConversionType());
-//
-//        var optional = find(conversionResult.getLibraryConversionResults(), matCqlLibrary.getId());
-//
-//        if (optional.isPresent()) {
-//            LibraryConversionResults results = optional.get();
-//
-//            CqlConversionResult cqlConversionResult = results.getCqlConversionResult();
-//
-//            if (!cqlConversionResult.getFhirCqlConversionErrors().isEmpty()) {
-//                ConversionReporter.setLibraryValidationError("Fhir Validation failed", matCqlLibrary.getId());
-//            }
-//        }
-//
-//        return response;
     }
 
     public FhirLibraryResourceValidationResult validateFhirLibrary(String matCqlLibraryId,
