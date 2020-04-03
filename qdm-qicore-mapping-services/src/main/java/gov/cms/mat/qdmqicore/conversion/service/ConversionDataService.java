@@ -66,6 +66,7 @@ public class ConversionDataService {
                 .dropDownValues(entry.getDropDownValues())
                 .recommendationValues(entry.getRecommendationsValues())
                 .hashValue(entry.hashCode())
+                .helpWording(entry.getHelpWordingData())
                 .build();
     }
 

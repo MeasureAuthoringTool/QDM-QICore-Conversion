@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface CqlLibraryRepository extends JpaRepository<CqlLibrary, String> {
     @Query("select a from CqlLibrary a where a.id = :id")
     CqlLibrary getCqlLibraryById(String id);
+
+    Optional<CqlLibrary> findById(String id);
 
     @Query("select a from CqlLibrary a where a.measureId = :measureId")
     List<CqlLibrary> getCqlLibraryByMeasureId(String measureId);

@@ -39,13 +39,13 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
     }
 
-    public void process(Measure measure) {
+    public void process(Measure measure, boolean showWarnings) {
         String cqlLookUpXml = getMeasureXml(measure);
         String library = matXpath.processXmlValue(cqlLookUpXml, "library");
         String version = matXpath.processXmlValue(cqlLookUpXml, "version");
         XmlKey xmlKey = new XmlKey(library, version);
 
-        Library fhirLibrary = getLibrary(xmlKey, cqlLookUpXml);
+        Library fhirLibrary = getLibrary(xmlKey, cqlLookUpXml, showWarnings);
 
         libraryOrchestrationValidationService.validateFhirLibrary(xmlKey.create(),
                 measure.getId(),
@@ -58,18 +58,18 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         return matXpath.toQualityData(measureXml);
     }
 
-    private Library getLibrary(XmlKey key, String cqlLookUpXml) {
-        String cql = getCql(key, cqlLookUpXml);
+    private Library getLibrary(XmlKey key, String cqlLookUpXml, boolean showWarnings) {
+        String cql = getCql(key, cqlLookUpXml, showWarnings);
 
-        String json = getJson(key, cql);
+        String json = getJson(key, cql, showWarnings);
 
         Library library = getLibrary(key, cql, json);
         ConversionReporter.setFhirJson(hapiFhirServer.toJson(library), key.create());
         return library;
     }
 
-    private String getCql(XmlKey key, String cqlLookUpXml) {
-        String cql = cqlLibraryTranslationService.convertMatXmlToCql(cqlLookUpXml, key.create());
+    private String getCql(XmlKey key, String cqlLookUpXml, boolean showWarnings) {
+        String cql = cqlLibraryTranslationService.convertMatXmlToCql(cqlLookUpXml, key.create(), showWarnings);
         ConversionReporter.setFhirCql(cql, key.create());
         return cql;
     }
@@ -86,11 +86,12 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         return xmlLibraryTranslator.translateToFhir(versionBigDecimal.toString());
     }
 
-    private String getJson(XmlKey key, String cql) {
+    private String getJson(XmlKey key, String cql, boolean showWarnings) {
         String json = cqlLibraryTranslationService.convertCqlToJson(key.create(),
                 new AtomicBoolean(),
                 cql,
-                CQLLibraryTranslationService.ConversionType.FHIR);
+                CQLLibraryTranslationService.ConversionType.FHIR,
+                showWarnings);
 
         ConversionReporter.setFhirJson(json, key.create());
 
