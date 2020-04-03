@@ -6,8 +6,8 @@ export MAT_DB_URL='jdbc:mysql://host.docker.internal:3306/MAT_APP_BLANK?serverTi
 export MAT_DB_USER=FIXME!
 export MAT_DB_PASS=FIXME!
 
-export HAPI_DB=hapi_r4
-export HAPI_DB_URL='jdbc:mysql://hapi-fhir-mysql:3306/'${HAPI_DB}'?serverTimezone=UTC&max_allowed_packet=16777216'
+export HAPI_DB=hapi
+export HAPI_DB_URL='jdbc:mysql://hapi-fhir-mysql:3306/'${HAPI_DB}'?serverTimezone=UTC&max_allowed_packet=16777216&createDatabaseIfNotExist=true&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false'
 export HAPI_DB_USER=FIXME!
 export HAPI_DB_PASS=FIXME!
 
