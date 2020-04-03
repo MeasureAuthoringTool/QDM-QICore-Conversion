@@ -21,45 +21,47 @@ public class CqlConversionClient {
         this.restTemplate = restTemplate;
     }
 
-    public ResponseEntity<String> getJson(String cql) {
-        RequestEntity<String> requestEntity = buildConvertCqlToJsonRequestEntity(cql);
+    public ResponseEntity<String> getJson(String cql, boolean showWarnings) {
+        RequestEntity<String> requestEntity = buildConvertCqlToJsonRequestEntity(cql, showWarnings);
         log.trace("PUT-JSON requestEntity: {}", requestEntity.getUrl());
 
         return restTemplate.exchange(requestEntity, String.class);
     }
 
-    public ResponseEntity<String> getCql(String cqlXml) {
-        RequestEntity<String> requestEntity = buildConvertXmlRequestEntity(cqlXml);
+    public ResponseEntity<String> getCql(String cqlXml, boolean showWarnings) {
+        RequestEntity<String> requestEntity = buildConvertXmlRequestEntity(cqlXml, showWarnings);
         log.debug("PUT-CQL requestEntity: {}", requestEntity.getUrl());
 
         return restTemplate.exchange(requestEntity, String.class);
     }
 
-    private RequestEntity<String> buildConvertCqlToJsonRequestEntity(String xml) {
+    private RequestEntity<String> buildConvertCqlToJsonRequestEntity(String xml, boolean showWarnings) {
         return RequestEntity
-                .put(buildUriJson())
+                .put(buildUriJson(showWarnings))
                 .body(xml);
     }
 
-    private URI buildUriJson() {
+    private URI buildUriJson(boolean showWarnings) {
         return UriComponentsBuilder
                 .fromHttpUrl(baseURL + "/cql/translator/cql")
+                .queryParam("showWarnings", showWarnings)
                 .build()
                 .encode()
                 .toUri();
     }
 
-    private URI buildUriCql() {
+    private URI buildUriCql(boolean showWarnings) {
         return UriComponentsBuilder
                 .fromHttpUrl(baseURL + "/cql/marshaller")
+                .queryParam("showWarnings", showWarnings)
                 .build()
                 .encode()
                 .toUri();
     }
 
-    public RequestEntity<String> buildConvertXmlRequestEntity(String cqlXml) {
+    public RequestEntity<String> buildConvertXmlRequestEntity(String cqlXml, boolean showWarnings) {
         return RequestEntity
-                .put(buildUriCql())
+                .put(buildUriCql(showWarnings))
                 .body(cqlXml);
     }
 }

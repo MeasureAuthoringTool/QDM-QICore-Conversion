@@ -1,6 +1,7 @@
 package gov.cms.mat.cql_elm_translation.data;
 
 import lombok.Builder;
+import lombok.Getter;
 import org.cqframework.cql.cql2elm.LibraryBuilder;
 
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -12,6 +13,10 @@ import java.io.InputStream;
 public class RequestData {
     String cqlData;
     LibraryBuilder.SignatureLevel signatures;
+
+    @Getter
+    boolean showWarnings;
+
     Boolean annotations;
     Boolean locators;
     Boolean disableListDemotion;
@@ -23,6 +28,10 @@ public class RequestData {
         return new ByteArrayInputStream(cqlData.getBytes());
     }
 
+    public String getCqlData() {
+        return new String(cqlData.getBytes());
+    }
+
     public MultivaluedMap<String, String> createMap() {
         MultivaluedMap<String, String> map = new MultivaluedHashMap<>();
 
@@ -31,6 +40,7 @@ public class RequestData {
         map.add("disable-list-demotion", disableListDemotion.toString());
         map.add("disable-list-promotion", disableListPromotion.toString());
         map.add("disable-method-invocation", disableMethodInvocation.toString());
+        map.add("validate-units", validateUnits.toString());
         map.add("validate-units", validateUnits.toString());
 
         map.add("detailed-errors", Boolean.TRUE.toString());

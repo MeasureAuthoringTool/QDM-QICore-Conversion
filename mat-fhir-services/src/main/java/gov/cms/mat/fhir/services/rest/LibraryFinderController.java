@@ -2,6 +2,8 @@ package gov.cms.mat.fhir.services.rest;
 
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
+import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
+import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
 import gov.cms.mat.fhir.services.components.library.FhirCqlLibraryFileHandler;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -16,11 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.Base64;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +33,16 @@ public class LibraryFinderController implements CqlVersionConverter {
     private final CqlLibraryDataService cqlLibraryDataService;
     private final HapiFhirServer hapiFhirServer;
     private final FhirCqlLibraryFileHandler fhirCqlLibraryFileHandler;
+    private final FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor;
 
     public LibraryFinderController(CqlLibraryDataService cqlLibraryDataService,
                                    HapiFhirServer hapiFhirServer,
-                                   FhirCqlLibraryFileHandler fhirCqlLibraryFileHandler) {
+                                   FhirCqlLibraryFileHandler fhirCqlLibraryFileHandler,
+                                   FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor) {
         this.cqlLibraryDataService = cqlLibraryDataService;
         this.hapiFhirServer = hapiFhirServer;
         this.fhirCqlLibraryFileHandler = fhirCqlLibraryFileHandler;
+        this.fhirIncludeLibraryProcessor = fhirIncludeLibraryProcessor;
     }
 
     @Operation(summary = "Find Cql-XML in mat.",
@@ -98,6 +99,14 @@ public class LibraryFinderController implements CqlVersionConverter {
             }
         }
     }
+
+    @Operation(summary = "Find Include Library in FHIR.",
+            description = "Finding included FHIR libraries using the main measure library")
+    @PostMapping(path = "/includeLibrarySearch", consumes = "text/plain", produces = "application/json")
+    public FhirIncludeLibraryResult findIncludedFhirLibraries(@RequestBody String cqlContent) { // for fhr cql only
+        return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(cqlContent);
+    }
+
 
     @Operation(summary = "load.",
             description = "Load")
