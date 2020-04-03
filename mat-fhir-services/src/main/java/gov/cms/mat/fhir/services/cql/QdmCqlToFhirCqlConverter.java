@@ -36,7 +36,6 @@ public class QdmCqlToFhirCqlConverter {
     private UsingProperties usingProperties;
 
     public QdmCqlToFhirCqlConverter(String cqlText, QdmQiCoreDataService qdmQiCoreDataService) {
-
         cqlParser = new CqlParser(cqlText);
         this.qdmQiCoreDataService = qdmQiCoreDataService;
         standardIncludeProperties = createStandardIncludes();
@@ -71,11 +70,17 @@ public class QdmCqlToFhirCqlConverter {
         convertUsing();
         convertIncludes();
         convertDefines();
+        convertValueSets();
 
         checkUnion(matLibId);
 
         String cql = addDefaultFhirLibraries();
         return fixSDE(cql);
+    }
+
+    private void convertValueSets() {
+        List<ValueSetProperties> properties = cqlParser.getValueSets();
+        properties.forEach(this::setToFhir);
     }
 
     private String fixSDE(String cql) {

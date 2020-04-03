@@ -84,6 +84,7 @@ public class VSACOrchestrationController {
             }
 
             OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder()
+                    .showWarnings(showWarnings)
                     .matMeasure(matMeasure)
                     .conversionType(conversionType)
                     .xmlSource(xmlSource)

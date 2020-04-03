@@ -94,6 +94,7 @@ public class ValueSetBackGroundService {
 
     private OrchestrationProperties buildProperties(ConversionResult conversionResult, ThreadSessionKey threadSessionKey, Measure matMeasure) {
         return OrchestrationProperties.builder()
+                .showWarnings(false)
                 .matMeasure(matMeasure)
                 .conversionType(conversionResult.getConversionType())
                 .xmlSource(conversionResult.getXmlSource())

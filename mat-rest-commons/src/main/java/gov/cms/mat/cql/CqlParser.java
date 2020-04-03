@@ -7,10 +7,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CqlParser implements IncludeParser, UsingParser, LibraryParser, DefineParser, UnionParser {
-    @Getter
+@Getter
+public class CqlParser implements
+        IncludeParser, UsingParser, LibraryParser, DefineParser, UnionParser, ValueSetParser {
+
     final String[] lines;
-    @Getter
     String cql;
 
     public CqlParser(String cql) {

@@ -19,10 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 
 @ExtendWith(MockitoExtension.class)
 class DraftMeasureXmlProcessorTest implements ResourceFileUtil {
@@ -51,20 +50,12 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil {
     public void setUp() {
         cqlLookUpXml = getStringFromResource("/cqlLookUpXmlFhir.xml");
         convertedCql = getStringFromResource("/translated.cql");
+
+        setUpReporter();
     }
 
     @Test
     void process() {
-
-        ConversionReporter.setInThreadLocal(MEASURE_ID,
-                "TEST",
-                mock(ConversionResultsService.class),
-                Instant.now(),
-                ConversionType.CONVERSION,
-                XmlSource.SIMPLE,
-                Boolean.TRUE,
-                null);
-
         Measure measure = new Measure();
 
         when(matXmlProcessor.getXml(measure, XmlSource.MEASURE)).thenReturn(MEASURE_XML.getBytes());
@@ -73,10 +64,29 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil {
         when(matXpath.processXmlValue(cqlLookUpXml, "version")).thenReturn("1.2.000");
         when(hapiFhirServer.getBaseURL()).thenReturn("http://mick.mouse.com/");
 
-        when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any())).thenReturn("json");
+        when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any(), anyBoolean()))
+                .thenReturn("json");
 
-        when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString())).thenReturn(convertedCql);
+        when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString(), anyBoolean())).thenReturn(convertedCql);
+        when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any(), anyBoolean())).thenReturn("json");
+        when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString(), anyBoolean())).thenReturn(convertedCql);
 
-        draftMeasureXmlProcessor.process(measure);
+        draftMeasureXmlProcessor.process(measure, false);
+
+        verify(matXmlProcessor).getXml(measure, XmlSource.MEASURE);
+        verify(matXpath).toQualityData(MEASURE_XML);
+        verify(matXpath).processXmlValue(cqlLookUpXml, "library");
+        verify(matXpath).processXmlValue(cqlLookUpXml, "version");
+    }
+
+    private void setUpReporter() {
+        ConversionReporter.setInThreadLocal(MEASURE_ID,
+                "TEST",
+                mock(ConversionResultsService.class),
+                Instant.now(),
+                ConversionType.CONVERSION,
+                XmlSource.SIMPLE,
+                Boolean.TRUE,
+                null);
     }
 }
