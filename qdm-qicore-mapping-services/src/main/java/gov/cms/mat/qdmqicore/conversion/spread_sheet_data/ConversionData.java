@@ -8,7 +8,6 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConversionData {
-
     Feed feed;
 
     @Data

@@ -31,6 +31,8 @@ public class ConversionMapping {
 
     List<String> recommendationValues;
 
+    String helpWording;
+
     public ConversionMapping(int hashValue,
                              String title,
                              String matDataTypeDescription,
@@ -40,7 +42,8 @@ public class ConversionMapping {
                              String fhirElement,
                              String fhirType,
                              List<String> dropDownValues,
-                             List<String> recommendationValues) {
+                             List<String> recommendationValues,
+                             String helpWording) {
         this.hashValue = hashValue;
         this.title = title;
         this.matDataTypeDescription = matDataTypeDescription;
@@ -51,6 +54,7 @@ public class ConversionMapping {
         this.fhirR4QiCoreMapping = fhirR4QiCoreMapping;
         this.dropDownValues = dropDownValues;
         this.recommendationValues = recommendationValues;
+        this.helpWording = helpWording;
     }
 
     public ConversionMapping() {

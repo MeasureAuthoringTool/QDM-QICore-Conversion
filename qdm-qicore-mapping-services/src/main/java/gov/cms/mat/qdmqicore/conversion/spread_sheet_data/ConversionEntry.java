@@ -38,6 +38,9 @@ public class ConversionEntry {
     @JsonProperty("gsx$fhirtype")
     Cell fhirType;
 
+    @JsonProperty("gsx$helpwording")
+    Cell helpWording;
+
     @JsonProperty("gsx$dropdownvalues")
     Cell dropDown;
 
@@ -68,6 +71,9 @@ public class ConversionEntry {
         return getCellData(fhirElement);
     }
 
+    public String getHelpWordingData() {
+        return getCellData(helpWording);
+    }
 
     public String getFhirTypeData() {
         return getCellData(fhirType);

@@ -38,7 +38,7 @@ class CqlConversionClientTest {
         when(restTemplate.exchange(any(RequestEntity.class), eq(String.class)))
                 .thenReturn(new ResponseEntity<>(JSON, HttpStatus.ACCEPTED));
 
-        ResponseEntity<String> entity = cqlConversionClient.getJson("CQL");
+        ResponseEntity<String> entity = cqlConversionClient.getJson("CQL", true);
         assertEquals(JSON, entity.getBody());
         assertEquals(HttpStatus.ACCEPTED, entity.getStatusCode());
         verify(restTemplate).exchange(any(RequestEntity.class), eq(String.class));
@@ -49,7 +49,7 @@ class CqlConversionClientTest {
         when(restTemplate.exchange(any(RequestEntity.class), eq(String.class)))
                 .thenReturn(new ResponseEntity<>(JSON, HttpStatus.ACCEPTED));
 
-        ResponseEntity<String> entity = cqlConversionClient.getCql(XML);
+        ResponseEntity<String> entity = cqlConversionClient.getCql(XML, true);
         assertEquals(JSON, entity.getBody());
         assertEquals(HttpStatus.ACCEPTED, entity.getStatusCode());
         verify(restTemplate).exchange(any(RequestEntity.class), eq(String.class));
