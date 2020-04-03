@@ -22,8 +22,13 @@ public class CqlLibrary implements Serializable {
     @Column(name = "MEASURE_ID")
     private String measureId;
     @Basic(optional = false)
+
+    @Column(name = "LIBRARY_MODEL")
+    private String libraryModel;
+
     @Column(name = "SET_ID")
     private String setId;
+
     @Column(name = "CQL_NAME")
     private String cqlName;
     @Column(name = "DRAFT")
@@ -79,6 +84,14 @@ public class CqlLibrary implements Serializable {
         this.id = id;
         this.setId = setId;
         this.qdmVersion = qdmVersion;
+    }
+
+    public String getLibraryModel() {
+        return libraryModel;
+    }
+
+    public void setLibraryModel(String libraryModel) {
+        this.libraryModel = libraryModel;
     }
 
     @XmlElement
@@ -275,10 +288,7 @@ public class CqlLibrary implements Serializable {
             return false;
         }
         CqlLibrary other = (CqlLibrary) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return (this.id != null || other.id == null) && (this.id == null || this.id.equals(other.id));
     }
 
     @Override

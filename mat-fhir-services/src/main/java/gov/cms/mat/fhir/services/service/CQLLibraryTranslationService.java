@@ -45,15 +45,13 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         if (cqlLibraries.isEmpty()) {
             return true;
         } else {
-            return processLibs(id, cqlLibraries, showWarnings);
+            return processLibs(cqlLibraries, showWarnings);
         }
     }
 
-    private boolean processLibs(String id, List<CqlLibrary> cqlLibraries, boolean showWarnings) {
-        log.info("CQLLibraryTranslationService processing measure id: {}", id);
-
+    private boolean processLibs(List<CqlLibrary> cqlLibraries, boolean showWarnings) {
         AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
-        cqlLibraries.forEach(c -> processCqlLibrary(c, atomicBoolean, showWarnings));
+        cqlLibraries.forEach(cqlLibrary -> processCqlLibrary(cqlLibrary, atomicBoolean, showWarnings));
 
         if (!atomicBoolean.get()) {
             ConversionReporter.setTerminalMessage("CQLLibraryTranslationService failed",
@@ -61,7 +59,6 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         }
 
         return atomicBoolean.get();
-
     }
 
     private void processCqlLibrary(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean, boolean showWarnings) {
@@ -209,7 +206,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
     }
 
     public boolean validate(OrchestrationProperties properties) {
-        return processLibs(properties.getMeasureId(), properties.getCqlLibraries(), properties.isShowWarnings());
+        return processLibs(properties.getCqlLibraries(), properties.isShowWarnings());
     }
 
     public enum ConversionType {QDM, FHIR}
