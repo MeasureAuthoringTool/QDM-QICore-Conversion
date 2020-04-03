@@ -30,9 +30,6 @@ services:
       HAPI_DB_URL: ${HAPI_DB_URL}
       HAPI_DB_USER: ${HAPI_DB_USER}
       HAPI_DB_PASS: ${HAPI_DB_PASS}
-    build:
-      context: ../mat-fhir-jpaserver/hapi-fhir-jpaserver-starter
-      dockerfile: Dockerfile
     ports:
       - 6060:6060
 
