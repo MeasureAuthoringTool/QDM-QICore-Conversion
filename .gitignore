@@ -10,6 +10,7 @@
 *.tar.gz
 *.rar
 docker-env.sh
+temp
 
 #Intellij files.
 *.iml
