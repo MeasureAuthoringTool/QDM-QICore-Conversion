@@ -13,9 +13,6 @@
     <name>hapi-fhir-jpaserver</name>
     <description>Hhapi-fhir-jpaserver Spriing Boot</description>
 
-    <properties>
-        <hapi.fhir.version>4.1.0</hapi.fhir.version>
-    </properties>
 
     <dependencies>
         <dependency>

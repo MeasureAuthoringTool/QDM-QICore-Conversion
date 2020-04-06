@@ -22,7 +22,6 @@
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-structures-r4</artifactId>
-            <version>4.0.1</version>
         </dependency>
 
         <dependency>
