@@ -9,7 +9,8 @@
 *.zip
 *.tar.gz
 *.rar
-docker-env.sh
+./docker-env.sh
+temp
 
 #Intellij files.
 *.iml
