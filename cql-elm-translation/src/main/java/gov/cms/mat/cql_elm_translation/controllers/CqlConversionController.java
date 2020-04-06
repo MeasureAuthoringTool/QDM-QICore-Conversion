@@ -114,7 +114,7 @@ public class CqlConversionController {
                 JsonNode libraryNode = rootNode.get("library");
                 JsonNode annotationNode = libraryNode.get("annotation");
 
-                if (annotationNode.isMissingNode()) {
+                if (annotationNode == null || annotationNode.isMissingNode()) {
                     return json;
                 }
 
