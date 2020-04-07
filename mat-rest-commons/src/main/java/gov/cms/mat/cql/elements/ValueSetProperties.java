@@ -5,12 +5,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Builder
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = false)
 public class ValueSetProperties extends BaseProperties {
+
+    private static final String BASE_URL = "http://cts.nlm.nih.gov/fhir/ValueSet/";
 
     //valueset "Ethnicity": 'urn:oid:2.16.840.1.114222.4.11.837'
     //valueset "ONC Administrative Sex": 'urn:oid:2.16.840.1.113762.1.4.1'
@@ -25,14 +28,14 @@ public class ValueSetProperties extends BaseProperties {
     };
 
     String name;
-    String oid;
+    String urnOid;
     String line;
 
-    boolean isSde = false;
+    boolean isSde;
 
     @Override
     public void setToFhir() {
-        isSde = ArrayUtils.contains(SDE_OIDS, oid);
+        isSde = ArrayUtils.contains(SDE_OIDS, urnOid);
     }
 
     @Override
@@ -40,7 +43,12 @@ public class ValueSetProperties extends BaseProperties {
         if (isSde) {
             return "";
         } else {
-            return line;
+            String oid = parseOid();
+            return line.replace(urnOid, BASE_URL + oid);
         }
+    }
+
+    private String parseOid() {
+        return StringUtils.substringAfter(urnOid, "urn:oid:");
     }
 }
