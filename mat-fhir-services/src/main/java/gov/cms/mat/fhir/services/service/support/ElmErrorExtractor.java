@@ -81,7 +81,6 @@ public class ElmErrorExtractor {
                 .build();
     }
 
-
     public List<MatCqlConversionException> parseForErrorExceptions() {
         try {
             JsonNode errorExceptionsNode = getErrorExceptionsNode();
