@@ -791,7 +791,7 @@ public class XmlProcessor {
         if (supplementaDataElementsElement == null) {
             supplementaDataElementsElement = originalDoc
                     .createElement("supplementalDataElements");
-            ((Element) measureStratificationsNode.getParentNode())
+            measureStratificationsNode.getParentNode()
                     .insertBefore(supplementaDataElementsElement,
                             measureStratificationsNode.getNextSibling());
         }
@@ -799,14 +799,14 @@ public class XmlProcessor {
         if (findNode(originalDoc, XPATH_MEASURE_ELEMENT_LOOKUP) == null) {
             Element elementLookUpElement = originalDoc
                     .createElement("elementLookUp");
-            ((Element) supplementaDataElementsElement.getParentNode())
+            supplementaDataElementsElement.getParentNode()
                     .insertBefore(elementLookUpElement,
                             supplementaDataElementsElement.getNextSibling());
         }
         if (findNode(originalDoc, XPATH_MEASURE_SUBTREE_LOOKUP) == null) {
             Element subTreeLookUpElement = originalDoc
                     .createElement("subTreeLookUp");
-            ((Element) supplementaDataElementsElement.getParentNode())
+            supplementaDataElementsElement.getParentNode()
                     .insertBefore(subTreeLookUpElement,
                             supplementaDataElementsElement.getNextSibling());
         }
@@ -814,7 +814,7 @@ public class XmlProcessor {
         if (findNode(originalDoc, XPATH_MEASURE_GROUPING) == null) {
             Element measureGroupingElement = originalDoc
                     .createElement("measureGrouping");
-            ((Element) supplementaDataElementsElement.getParentNode())
+            supplementaDataElementsElement.getParentNode()
                     .insertBefore(measureGroupingElement,
                             supplementaDataElementsElement.getNextSibling());
         }
@@ -824,12 +824,12 @@ public class XmlProcessor {
         if (riskAdjustmentVariablesElement == null) {
             riskAdjustmentVariablesElement = originalDoc
                     .createElement("riskAdjustmentVariables");
-            ((Element) supplementaDataElementsElement.getParentNode())
+            supplementaDataElementsElement.getParentNode()
                     .insertBefore(riskAdjustmentVariablesElement,
                             supplementaDataElementsElement.getNextSibling());
         }
 
-        System.out.println("Original Doc: " + originalDoc.toString());
+
     }
 
     /**
@@ -1084,7 +1084,7 @@ public class XmlProcessor {
         String cleanedString = "";
         for (int i = 0; i < originalString.length(); i++) {
             char c = originalString.charAt(i);
-            int intc = (int) c;
+            int intc = c;
 
             if (c == '_' || (intc >= 48 && intc <= 57) || (intc >= 65 && intc <= 90) || (intc >= 97 && intc <= 122)) {
 
@@ -1176,7 +1176,7 @@ public class XmlProcessor {
                 Node currentNode = nodeList.item(i);
                 String codeSystemOID = currentNode.getAttributes().getNamedItem(ATTRIBUTE_CODE_SYSTEM_OID).getNodeValue();
                 if (codeSystemOIDsToRemove.contains(codeSystemOID)) {
-                    codeSystemOIDsToRemove.remove(codeSystemOIDsToRemove.indexOf(codeSystemOID));
+                    codeSystemOIDsToRemove.remove(codeSystemOID);
                 }
             }
 

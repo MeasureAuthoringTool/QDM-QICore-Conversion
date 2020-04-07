@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -149,6 +150,13 @@ public class ConversionResultsService {
 
     public void addFhirJson(ThreadSessionKey key, String json, String matLibraryId) {
         addLibraryData(key, json, matLibraryId, LibraryType.FHIR_ELM);
+    }
+
+    public void addExternalLibraryErrors(ThreadSessionKey key, Map<String, List<CqlConversionError>> map, String matLibraryId) {
+        ConversionResult conversionResult = findOrCreate(key);
+        LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
+        libraryConversionResults.setExternalErrors(map);
+        save(conversionResult);
     }
 
     public void addFhirLibraryId(ThreadSessionKey key, String fhirLibraryId, String matLibraryId) {
@@ -398,4 +406,6 @@ public class ConversionResultsService {
         conversionResult.setVsacGrantingTicket(vsacGrantingTicket);
         save(conversionResult);
     }
+
+
 }

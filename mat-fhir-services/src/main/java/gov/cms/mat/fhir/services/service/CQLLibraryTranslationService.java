@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.CQL_LIBRARY_TRANSLATION_FAILED;
@@ -109,6 +110,8 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
 
         List<CqlConversionError> cqlConversionErrors = getCqlConversionErrors(matLibraryId, extractor);
         List<MatCqlConversionException> matCqlConversionExceptions = extractor.parseForErrorExceptions();
+        Map<String, List<CqlConversionError>> map = extractor.parseForExternalErrors();
+        ConversionReporter.setExternalLibraryErrors(map, matLibraryId);
 
         if (cqlConversionErrors.isEmpty() && matCqlConversionExceptions.isEmpty()) {
             processCqlConversionResultSuccess(matLibraryId);

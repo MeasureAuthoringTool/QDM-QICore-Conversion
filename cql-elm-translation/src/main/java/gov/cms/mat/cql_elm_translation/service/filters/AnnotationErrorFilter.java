@@ -6,12 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import gov.cms.mat.cql.elements.LibraryProperties;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -175,50 +175,5 @@ public class AnnotationErrorFilter implements CqlLibraryFinder, JsonHelpers {
         return optional.map(s -> s.toLowerCase().trim());
     }
 
-    private Map<LibraryKey, List<JsonNode>> buildMap() {
-        if (externalList.isEmpty()) {
-            return Map.of();
-        } else {
-            return buildLibraryKeyListMap();
-        }
-    }
-
-    private Map<LibraryKey, List<JsonNode>> buildLibraryKeyListMap() {
-        Map<LibraryKey, List<JsonNode>> map = new HashMap<>();
-
-        for (JsonNode jsonNode : externalList) {
-            LibraryKey key = buildKey(jsonNode);
-
-            if (!map.containsKey(key)) {
-                map.put(key, new ArrayList<>());
-            }
-
-            map.get(key).add(jsonNode);
-        }
-
-        return map;
-    }
-
-    private LibraryKey buildKey(JsonNode node) {
-        Optional<String> optionalLibraryId = getLibraryId(node);
-        Optional<String> optionalLibraryVersion = getLibraryVersion(node);
-
-        if (optionalLibraryId.isEmpty() || optionalLibraryVersion.isEmpty()) {
-            throw new IllegalArgumentException("Cannot find library properties");
-        } else {
-            return LibraryKey.builder()
-                    .libraryId(optionalLibraryId.get())
-                    .libraryVersion(optionalLibraryVersion.get())
-                    .build();
-        }
-    }
-
-    @Builder
-    @ToString
-    @Getter
-    private static class LibraryKey {
-        String libraryId;
-        String libraryVersion;
-    }
 
 }

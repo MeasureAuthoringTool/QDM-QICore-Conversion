@@ -254,7 +254,6 @@ public class CQLLibraryDataSetObject implements IsSerializable, BaseModel {
 		String markupRegExp = "<[^>]+>";
 		if (this.getCqlName() != null) {
 			String noMarkupText = this.getCqlName().trim().replaceAll(markupRegExp, "");
-			System.out.println("CQL Library name:" + noMarkupText);
 			if (this.getCqlName().trim().length() > noMarkupText.length()) {
 				this.setCqlName(noMarkupText);
 			}

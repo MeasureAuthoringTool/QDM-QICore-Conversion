@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -88,6 +89,11 @@ public class ConversionReporter {
     public static void setCqlNameAndVersion(String name, String version, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addCqlNameAndVersion(name, version, matLibraryId);
+    }
+
+    public static void setExternalLibraryErrors(Map<String, List<CqlConversionError>> map, String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addExternalLibraryErrors(map, matLibraryId);
     }
 
     public static void setFhirCql(String fhirCql, String matLibraryId) {
@@ -402,6 +408,11 @@ public class ConversionReporter {
     private void addFhirCql(String cql, String matLibraryId) {
         conversionResultsService.addFhirCql(key, cql, matLibraryId);
     }
+
+    private void addExternalLibraryErrors(Map<String, List<CqlConversionError>> map, String matLibraryId) {
+        conversionResultsService.addExternalLibraryErrors(key, map, matLibraryId);
+    }
+
 
     private void addFhirJson(String json, String matLibraryId) {
         conversionResultsService.addFhirJson(key, json, matLibraryId);
