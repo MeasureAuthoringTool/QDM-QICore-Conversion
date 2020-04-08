@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -20,10 +21,9 @@ public class LibraryConversionResults {
     Boolean success;
     String link;
     String fhirLibraryJson;
-
+    Map<String, List<CqlConversionError>> externalErrors;
     /* Error results when validating the  */
     private List<FhirValidationResult> libraryFhirValidationResults = new ArrayList<>(); // KEEP
-
     private CqlConversionResult cqlConversionResult = new CqlConversionResult();
 
     public LibraryConversionResults(String matLibraryId) {

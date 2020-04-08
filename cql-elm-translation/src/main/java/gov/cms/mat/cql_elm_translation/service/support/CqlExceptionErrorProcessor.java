@@ -75,7 +75,6 @@ public class CqlExceptionErrorProcessor {
     private boolean filterByMessage(CqlTranslatorException cqlTranslatorException) {
         List<Object> objectList = library.getAnnotation(); //todo revisit
 
-
         if (CollectionUtils.isEmpty(objectList)) {
             return true;
         } else {

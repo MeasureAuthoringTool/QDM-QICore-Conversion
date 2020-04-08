@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CqlConversionServiceTest implements ResourceFileUtil {
+class CqlConversionServicePropertyTest implements ResourceFileUtil {
     CqlConversionService cqlConversionService = new CqlConversionService(null);
 
     String cqlData;
@@ -30,6 +30,8 @@ class CqlConversionServiceTest implements ResourceFileUtil {
         disableListPromotion = Boolean.TRUE;
         disableMethodInvocation = Boolean.TRUE;
         validateUnits = Boolean.TRUE;
+
+        cqlConversionService = new CqlConversionService(null);
     }
 
     @Test
@@ -88,27 +90,6 @@ class CqlConversionServiceTest implements ResourceFileUtil {
         assertNotEquals(jsonDefault, jsonSignatureLevelNone); // data changed
     }
 
-//    @Test
-//    void process_disableListPromotion() {
-//        String jsonDefault = getJson();
-//
-//        disableListPromotion = Boolean.FALSE;
-//
-//        String jsonAnnotations = getJson();
-//
-//        assertEquals(jsonDefault, jsonAnnotations); // NO change TODO not expected
-//    }
-
-//    @Test
-//    void process_disableMethodInvocation() {
-//        String jsonDefault = getJson();
-//
-//        disableMethodInvocation = Boolean.FALSE;
-//
-//        String jsonAnnotations = getJson();
-//
-//        assertEquals(jsonDefault, jsonAnnotations); // NO change TODO not expected
-//    }
 
     @Test
     void process_validateUnits() {
@@ -121,16 +102,6 @@ class CqlConversionServiceTest implements ResourceFileUtil {
         assertEquals(jsonDefault, jsonAnnotations); // NO change TODO not expected
     }
 
-//    @Test
-//    void process_disableListDemotion() {
-//        String jsonDefault = getJson();
-//
-//        disableListDemotion = Boolean.FALSE;
-//
-//        String jsonAnnotations = getJson();
-//
-//        assertEquals(jsonDefault, jsonAnnotations); // NO change TODO not expected
-//    }
 
     private String getJson() {
         CqlTranslator cqlTranslator = buildCqlTranslator();

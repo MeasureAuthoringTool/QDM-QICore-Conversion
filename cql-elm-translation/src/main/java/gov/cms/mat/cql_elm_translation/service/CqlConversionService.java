@@ -80,9 +80,7 @@ public class CqlConversionService {
             CqlTranslatorExceptionFilter cqlTranslatorExceptionFilter =
                     new CqlTranslatorExceptionFilter(cqlData, showWarnings, exceptions);
 
-            List<CqlTranslatorException> filtered = cqlTranslatorExceptionFilter.filter();
-
-            return filtered;
+            return cqlTranslatorExceptionFilter.filter();
         }
     }
 

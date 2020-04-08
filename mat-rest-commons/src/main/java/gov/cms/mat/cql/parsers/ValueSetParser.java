@@ -25,7 +25,6 @@ public interface ValueSetParser {
                 .build();
     }
 
-
     default String findName(String line) {
         return StringUtils.substringBetween(line, "\"", "\"");
     }

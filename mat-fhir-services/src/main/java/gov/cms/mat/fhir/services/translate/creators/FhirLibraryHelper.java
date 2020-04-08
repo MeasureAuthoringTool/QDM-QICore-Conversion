@@ -70,6 +70,7 @@ public interface FhirLibraryHelper {
 
             ObjectNode root = (ObjectNode) mapper.readTree(json);
             root.remove("errorExceptions");
+            root.remove("externalErrors");
 
             ObjectNode node = (ObjectNode) root.get("library");
             node.remove("annotation");
