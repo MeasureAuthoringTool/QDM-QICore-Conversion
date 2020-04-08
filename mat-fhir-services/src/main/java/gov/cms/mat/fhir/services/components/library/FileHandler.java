@@ -2,10 +2,10 @@ package gov.cms.mat.fhir.services.components.library;
 
 import gov.cms.mat.fhir.services.exceptions.ConfigException;
 import gov.cms.mat.fhir.services.exceptions.LibraryFileNotFoundException;
-import org.eclipse.jetty.io.RuntimeIOException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,7 +41,7 @@ public interface FileHandler {
                     .sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new RuntimeIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -53,7 +53,7 @@ public interface FileHandler {
             try {
                 return new String(Files.readAllBytes(cqlPath));
             } catch (IOException e) {
-                throw new RuntimeIOException(e);
+                throw new UncheckedIOException(e);
             }
         } else {
             throw new LibraryFileNotFoundException(name);
