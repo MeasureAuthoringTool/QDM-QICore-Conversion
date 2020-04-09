@@ -21,7 +21,7 @@ public interface ValueSetParser {
         return ValueSetProperties.builder()
                 .line(line)
                 .name(findName(line))
-                .oid(findOid(line))
+                .urnOid(findOid(line))
                 .build();
     }
 
