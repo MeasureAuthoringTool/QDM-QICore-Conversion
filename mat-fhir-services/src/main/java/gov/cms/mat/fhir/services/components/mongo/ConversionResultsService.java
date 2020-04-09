@@ -142,6 +142,8 @@ public class ConversionResultsService {
         save(conversionResult);
 
         addLibraryData(key, cql, matLibraryId, LibraryType.QDM_CQL);
+
+
     }
 
     public void addFhirCql(ThreadSessionKey key, String cql, String matLibraryId) {
@@ -190,6 +192,8 @@ public class ConversionResultsService {
                 matLibraryId,
                 type,
                 data);
+
+        save(conversionResult);
     }
 
     public String getCql(ThreadSessionKey key, String matLibraryId) {

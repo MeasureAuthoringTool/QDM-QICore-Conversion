@@ -6,6 +6,7 @@ import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
 import gov.cms.mat.fhir.services.components.library.FhirCqlLibraryFileHandler;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
+import gov.cms.mat.fhir.services.exceptions.ExternalHapiLibraryNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
@@ -73,7 +74,7 @@ public class LibraryFinderController implements CqlVersionConverter {
         Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(version, name);
 
         if (CollectionUtils.isEmpty(bundle.getEntry())) {
-            throw new CqlLibraryNotFoundException("Cannot find library for name: " + name + ", version: " + version);
+            throw new ExternalHapiLibraryNotFoundException(name, version);
         } else {
             Optional<Library> optional = hapiFhirServer.findResourceInBundle(bundle, Library.class);
 

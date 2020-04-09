@@ -75,7 +75,12 @@ public class QdmCqlToFhirCqlConverter {
         checkUnion(matLibId);
 
         String cql = addDefaultFhirLibraries();
+        cql = fixDateTime(cql);
         return fixSDE(cql);
+    }
+
+    private String fixDateTime(String cql) {
+        return cql.replace("Patient.birthDatetime", "Patient.birthDate");
     }
 
     private void convertValueSets() {

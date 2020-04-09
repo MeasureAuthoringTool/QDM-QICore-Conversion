@@ -28,7 +28,6 @@ logging:
     org.exolab: ${MAT_LOG_LEVEL:WARN}
     org.springframework.data.mongodb.core.MongoTemplate: ${MAT_LOG_LEVEL:WARN}
     org.hl7.fhir.r4.hapi.validation: WARN
-
   file:
     name: mat-fhir-services.log
 
