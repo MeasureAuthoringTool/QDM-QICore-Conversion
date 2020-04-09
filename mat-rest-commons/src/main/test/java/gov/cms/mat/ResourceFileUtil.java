@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.rest.dto;
+package gov.cms.mat;
 
 import java.io.File;
 import java.io.IOException;
