@@ -45,7 +45,8 @@ public class TranslationReportController {
             description = "Find and return json for a measure.")
     @GetMapping(path = "/findLastFhirMeasureJson")
     public String findLastFhirMeasureJson(@RequestParam String measureId) {
-        List<ConversionResultDto> resultDtoList = conversionResultProcessorService.processOne(measureId, DocumentsToFind.LAST);
+        List<ConversionResultDto> resultDtoList =
+                conversionResultProcessorService.processOne(measureId, DocumentsToFind.LAST);
 
         if (resultDtoList.isEmpty()) {
             throw new MeasureJsonNotFoundException(measureId);

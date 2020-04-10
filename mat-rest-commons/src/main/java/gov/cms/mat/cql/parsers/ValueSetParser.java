@@ -30,7 +30,7 @@ public interface ValueSetParser {
     }
 
     default String findOid(String line) {
-        return StringUtils.substringBetween(line, "'", "'");
+        return StringUtils.substringBetween(line, ": '", "'");
     }
 
 
