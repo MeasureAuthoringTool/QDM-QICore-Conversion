@@ -1,44 +1,35 @@
 package mat.model.cql;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 import java.util.Objects;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * The Class CQLCode.
  */
 public class CQLCode implements CQLExpression, IsSerializable {
 
-    /**
-     * The id.
-     */
+    /** The id. */
     private String id;
 
-    /**
-     * The code system.
-     */
+    /** The code system. */
     private String codeName;
 
-    /**
-     * The code system name.
-     */
+    /** The code system name. */
     private String codeSystemName;
 
-    /**
-     * The code system version.
-     */
+    /** The code system version. */
     private String codeSystemVersion;
+
+    /** The code system version uri. */
+    private String codeSystemVersionUri;
 
     private String codeSystemOID;
 
-    /**
-     * The OID.
-     */
+    /** The OID. */
     private String codeOID;
 
-    /**
-     * The Display Name.
-     */
+    /** The Display Name. */
     private String displayName;
 
 
@@ -55,6 +46,7 @@ public class CQLCode implements CQLExpression, IsSerializable {
     public boolean isIsCodeSystemVersionIncluded() {
         return isCodeSystemVersionIncluded;
     }
+
 
 
     public void setIsCodeSystemVersionIncluded(boolean isCodeSystemVersionIncluded) {
@@ -161,7 +153,7 @@ public class CQLCode implements CQLExpression, IsSerializable {
 
     @Override
     public boolean equals(final Object other) {
-        if (!(other instanceof CQLCode)) {
+        if ( !(other instanceof CQLCode) ){
             return false;
         }
         CQLCode castOther = (CQLCode) other;
@@ -212,9 +204,18 @@ public class CQLCode implements CQLExpression, IsSerializable {
     }
 
 
+
     @Override
     public void setLogic(String logic) {
         // TODO Auto-generated method stub
 
+    }
+
+    public String getCodeSystemVersionUri() {
+        return codeSystemVersionUri;
+    }
+
+    public void setCodeSystemVersionUri(String codeSystemVersionUri) {
+        this.codeSystemVersionUri = codeSystemVersionUri;
     }
 }

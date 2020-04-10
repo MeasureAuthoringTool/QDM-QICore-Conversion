@@ -10,6 +10,6 @@ import org.springframework.stereotype.Service;
 public class MatXmlConversionService {
     public String processCqlXml(String xml) {
         CQLModel cqlModel = CQLUtilityClass.getCQLModelFromXML(xml);
-        return CQLUtilityClass.getCqlString(cqlModel, "");
+        return CQLUtilityClass.getCqlString(cqlModel, "").getLeft();
     }
 }
