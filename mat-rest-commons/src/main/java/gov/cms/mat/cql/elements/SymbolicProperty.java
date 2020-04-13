@@ -33,8 +33,8 @@ public class SymbolicProperty {
                 log.info("Ignoring negations: {}", matDataTypeDescription);
                 return matDataTypeDescription;
             }
-
-            throw new QdmMappingException(matDataTypeDescription);
+            log.warn("QDM Spreadsheet error! Could not find fhir mapping for: {}", matDataTypeDescription);
+            return matDataTypeDescription;
         } else {
             return conversionMappings.get(0).getFhirResource(); // should I check if all the same
         }
