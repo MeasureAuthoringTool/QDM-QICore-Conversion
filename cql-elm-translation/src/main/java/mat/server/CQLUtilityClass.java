@@ -303,7 +303,7 @@ public final class CQLUtilityClass {
                 XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
                 cqlModel = (CQLModel) xmlMarshalUtil.convertXMLToObject("CQLModelMapping.xml", cqlLookUpXMLString, CQLModel.class);
             } catch (Exception e) {
-                log.warn("Error while getting codeystems", e);
+                log.warn("Error while getting codesystems", e);
             }
         }
 
@@ -426,7 +426,7 @@ public final class CQLUtilityClass {
                             if (code.isIsCodeSystemVersionIncluded()) {
                                 csName = csName + ":" + code.getCodeSystemVersion();
                             }
-                            sb.append("codeystem \"").append(csName).append('"').append(": ").
+                            sb.append("codesystem \"").append(csName).append('"').append(": ").
                                     append("'").append(csUri).append("' ");
                             if (StringUtils.isNotBlank(csVersionUri)) {
                                 sb.append("version '" + csVersionUri + "'");
