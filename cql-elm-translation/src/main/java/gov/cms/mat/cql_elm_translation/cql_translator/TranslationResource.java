@@ -55,7 +55,7 @@ public class TranslationResource {
         this.modelManager = new ModelManager();
 
         if (isFhir) {
-            modelManager.resolveModel("FHIR", "4.0.0");
+            modelManager.resolveModel("FHIR", "4.0.1");
         }
 
         this.libraryManager = new LibraryManager(modelManager);
