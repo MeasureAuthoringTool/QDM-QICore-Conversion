@@ -49,7 +49,7 @@ public class FhirCqlLibraryFileHandler implements FileHandler, FhirCreator {
     public void loaLibs() {
         libraryConversionFileConfig.getOrder().stream()
                 .map(this::getData)
-                .forEach(cql -> processHapiFhir(cql));
+                .forEach(this::processHapiFhir);
     }
 
     private String getData(String name) {

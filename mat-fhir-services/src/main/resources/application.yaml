@@ -29,6 +29,18 @@ library-files:
     - Hospice_FHIR4-1.0.000.cql
     - NCQA_Common_FHIR4-5.1.000.cql
 
+conversion-lib-lookup-4-1:
+  map:
+    FHIRHelpers: 4.0.001
+    AdultOutpatientEncounters: 2.0.000
+    AdvancedIllnessandFrailtyExclusion: 5.0.000
+    Hospice: 2.0.000
+    MATGlobalCommonFunctions: 5.0.000
+    SupplementalDataElements: 2.0.000
+    TJCOverall: 5.0.000
+    VTEICU: 4.0.000
+
+
 measures:
   allowed:
     versions: v5.5,v5.6,v5.7,v5.8,v5.9,v6.0

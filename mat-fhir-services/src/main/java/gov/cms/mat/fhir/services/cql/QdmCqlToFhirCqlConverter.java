@@ -21,9 +21,9 @@ public class QdmCqlToFhirCqlConverter {
     private static final String SDE_TEMPLATE = "  SDE.\"SDE %s\"";
 
     private static final StandardLib[] STANDARD_LIBS = {
-            new StandardLib("FHIRHelpers", "4.0.000", "FHIRHelpers"),
-            new StandardLib("SupplementalDataElements_FHIR4", "1.0.000", "SDE"),
-            new StandardLib("MATGlobalCommonFunctions_FHIR4", "4.0.000", "Global")
+            new StandardLib("FHIRHelpers", "4.0.001", "FHIRHelpers"),
+            new StandardLib("SupplementalDataElements_FHIR4", "2.0.000", "SDE"),
+            new StandardLib("MATGlobalCommonFunctions_FHIR4", "5.0.000", "Global")
     };
 
     private static final String ERROR_MESSAGE =
