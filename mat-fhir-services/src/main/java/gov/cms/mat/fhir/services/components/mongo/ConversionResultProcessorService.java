@@ -66,10 +66,6 @@ public class ConversionResultProcessorService {
     }
 
     private ConversionResultDto buildDto(ConversionResult conversionResult) {
-//        if (BooleanUtils.isFalse(conversionResult.getShowWarnings())) {
-//            removeWarnings(conversionResult);
-//        }
-
         conversionResult.getLibraryConversionResults().forEach(this::addLibraryData);
 
         return ConversionResultDto.builder()
@@ -94,28 +90,6 @@ public class ConversionResultProcessorService {
             cqlConversionResult.setFhirElm(ConversionReporter.getFhirElm(libraryConversionResults.getMatLibraryId()));
         }
     }
-
-//    private void removeWarnings(ConversionResult conversionResult) {
-//        if (CollectionUtils.isNotEmpty(conversionResult.getValueSetConversionResults())) {
-//            conversionResult.getValueSetConversionResults().forEach(v -> removeFhirWarnings(v.getValueSetFhirValidationResults()));
-//        }
-//
-//        if (CollectionUtils.isNotEmpty(conversionResult.getLibraryConversionResults())) {
-//            conversionResult.getLibraryConversionResults().forEach(l -> removeFhirWarnings(l.getLibraryFhirValidationResults()));
-//        }
-//
-//        if (conversionResult.getMeasureConversionResults() != null) {
-//            removeFhirWarnings(conversionResult.getMeasureConversionResults().getMeasureFhirValidationResults());
-//        }
-//    }
-
-//    private void removeFhirWarnings(List<FhirValidationResult> valueSetFhirValidationResults) {
-//        if (CollectionUtils.isEmpty(valueSetFhirValidationResults)) {
-//            log.debug("NO Fhir Validation Results");
-//        } else {
-//            valueSetFhirValidationResults.removeIf(v -> v.getSeverity().equals("WARNING"));
-//        }
-//    }
 
 
     public Set<String> findMissingValueSets(String batchId) {

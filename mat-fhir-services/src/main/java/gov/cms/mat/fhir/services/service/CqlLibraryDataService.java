@@ -53,12 +53,26 @@ public class CqlLibraryDataService {
     }
 
     public CqlLibrary findCqlLibrary(CqlLibraryFindData cqlLibraryFindData) {
+        List<CqlLibrary> libraries;
 
-        List<CqlLibrary> libraries =
-                cqlLibraryRepo.findByQdmVersionAndCqlNameAndVersionAndFinalizedDateIsNotNull(
-                        cqlLibraryFindData.getQdmVersion(),
-                        cqlLibraryFindData.getName(),
-                        cqlLibraryFindData.getMatVersion());
+        if (cqlLibraryFindData.getType().equals("QDM")) {
+            libraries =
+                    cqlLibraryRepo.findByQdmVersionAndCqlNameAndVersionAndLibraryModelAndFinalizedDateIsNotNull(
+                            cqlLibraryFindData.getQdmVersion(),
+                            cqlLibraryFindData.getName(),
+                            cqlLibraryFindData.getMatVersion(),
+                            cqlLibraryFindData.getType());
+
+        } else if (cqlLibraryFindData.getType().equals("FHIR")) {
+            libraries =
+                    cqlLibraryRepo.findByVersionAndCqlNameAndRevisionNumberAndLibraryModel(
+                            cqlLibraryFindData.getPair().getLeft(),
+                            cqlLibraryFindData.getName(),
+                            cqlLibraryFindData.getPair().getRight(),
+                            cqlLibraryFindData.getType());
+        } else {
+            throw new IllegalArgumentException("Invalid library type: " + cqlLibraryFindData.getType());
+        }
 
         if (libraries.isEmpty()) {
             throw new CqlLibraryNotFoundException(cqlLibraryFindData);

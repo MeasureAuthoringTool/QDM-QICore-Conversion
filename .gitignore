@@ -30,3 +30,4 @@ hs_err_pid*
 /docker-compose-mike.yml
 /mat-rest-commons/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
 /mat-rest-commons/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+/hapi-fhir-jpaserver/overlays/

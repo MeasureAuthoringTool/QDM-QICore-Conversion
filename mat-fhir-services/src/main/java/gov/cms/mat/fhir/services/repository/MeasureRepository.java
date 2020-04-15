@@ -12,7 +12,7 @@ public interface MeasureRepository extends JpaRepository<Measure, String> {
     @Query("select ms.id from Measure ms")
     List<String> findAllIds();
 
-    @Query("select ms.id from Measure ms where ms.releaseVersion in :allowedVersions")
+    @Query("select ms.id from Measure ms where ms.draft = false and ms.releaseVersion in :allowedVersions")
     List<String> findAllIdsWithAllowedVersions(Collection<String> allowedVersions);
 
 }

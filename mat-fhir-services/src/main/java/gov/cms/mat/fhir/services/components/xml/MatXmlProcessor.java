@@ -8,14 +8,12 @@ import gov.cms.mat.fhir.services.repository.MeasureXmlRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 @Slf4j
 public class MatXmlProcessor {
     private final MeasureExportRepository measureExportRepo;
     private final MeasureRepository measureRepository;
-    private MeasureXmlRepository measureXmlRepository;
+    private final MeasureXmlRepository measureXmlRepository;
 
     public MatXmlProcessor(MeasureXmlRepository measureXmlRepository,
                            MeasureExportRepository measureExportRepo,
@@ -48,19 +46,19 @@ public class MatXmlProcessor {
     byte[] getSimpleXml(Measure measure) {
         var optionalMeasureExport = measureExportRepo.findByMeasureId(measure.getId());
         log.debug("SIMPLE_XML row: " + measure);
-        return processBytes(optionalMeasureExport);
+
+        return optionalMeasureExport
+                .map(MatXmlBytes::getXmlBytes)
+                .orElse(null);
     }
 
     byte[] getMeasureXml(Measure measure) {
         var optionalMeasureXml = measureXmlRepository.findByMeasureId(measure.getId());
         log.debug("MEASURE_XML row: {}", optionalMeasureXml);
-        return processBytes(optionalMeasureXml);
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private byte[] processBytes(Optional<? extends MatXmlBytes> optionalMatXmlBytes) {
-        return optionalMatXmlBytes
+        return optionalMeasureXml
                 .map(MatXmlBytes::getXmlBytes)
                 .orElse(null);
     }
+
+
 }

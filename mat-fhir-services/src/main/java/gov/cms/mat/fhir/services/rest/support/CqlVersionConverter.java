@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.rest.support;
 
 import gov.cms.mat.fhir.services.exceptions.InvalidVersionException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 
@@ -51,4 +52,35 @@ public interface CqlVersionConverter {
             return ".00";
         }
     }
+
+
+    default Pair<BigDecimal, Integer> versionToVersionAndRevision(String version) {
+        if (isValidVersion(version)) {
+            String[] sp = version.split("\\.");
+            return Pair.of(new BigDecimal(sp[0] + "." + sp[1]), Integer.parseInt(sp[2]));
+        } else {
+            throw new InvalidVersionException("Invalid version: " + version);
+        }
+    }
+
+    private boolean isValidVersion(String version) {
+        boolean result = true;
+        String[] parts = version.split("\\.");
+        if (parts.length == 3) {
+            for (String p : parts) {
+                try {
+                    Integer.parseInt(p);
+                } catch (NumberFormatException nfe) {
+                    result = false;
+                    break;
+                }
+            }
+            result = result && parts[2].length() == 3;
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+
 }

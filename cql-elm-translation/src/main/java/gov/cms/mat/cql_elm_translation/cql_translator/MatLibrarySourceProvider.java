@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.Base64;
 
 @Slf4j
 public class MatLibrarySourceProvider implements LibrarySourceProvider {
@@ -46,13 +45,23 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
 
     public InputStream processLibrary(VersionedIdentifier libraryIdentifier, String usingVersion, String key) {
         if (threadLocalValue.get().getLibraryType().equals("QDM")) {
-            String cql = matFhirServices.getMatCql(libraryIdentifier.getId(), libraryIdentifier.getVersion(), usingVersion);
+            String cql = matFhirServices.getMatCql(libraryIdentifier.getId(),
+                    libraryIdentifier.getVersion(),
+                    usingVersion,
+                    "QDM");
             return processCqlFromService(key, cql);
         } else if (threadLocalValue.get().getLibraryType().equals("FHIR")) {
-            String cql = matFhirServices.getFhirCql(libraryIdentifier.getId(), libraryIdentifier.getVersion());
-            byte[] bCql = Base64.getDecoder().decode(cql);
-            String sCql = new String(bCql);
-            return processCqlFromService(key, sCql);
+//            String cql = matFhirServices.getFhirCql(libraryIdentifier.getId(), libraryIdentifier.getVersion());
+//            byte[] bCql = Base64.getDecoder().decode(cql);
+//            String sCql = new String(bCql);
+//            return processCqlFromService(key, sCql);
+
+            String cql = matFhirServices.getMatCql(libraryIdentifier.getId(),
+                    libraryIdentifier.getVersion(),
+                    usingVersion,
+                    "FHIR");
+            return processCqlFromService(key, cql);
+
         } else {
             log.error("Cannot process Library for key: {}", key);
             return null;

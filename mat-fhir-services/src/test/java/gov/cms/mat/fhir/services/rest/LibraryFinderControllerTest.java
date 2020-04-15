@@ -25,7 +25,7 @@ class LibraryFinderControllerTest {
     @Test
     void findLibraryXmlInvalidVersion() {
         Assertions.assertThrows(InvalidVersionException.class, () -> {
-            libraryFinderController.findLibraryXml("qdmVersion", "name", "invalid_version");
+            libraryFinderController.findLibraryXml("qdmVersion", "name", "invalid_version", "QDM");
         });
 
         verifyNoInteractions(cqlLibraryDataService);
@@ -39,7 +39,7 @@ class LibraryFinderControllerTest {
         when(cqlLibraryDataService.findCqlLibrary(any())).thenReturn(cqlLibrary);
 
         Assertions.assertThrows(CqlLibraryNotFoundException.class, () -> {
-            libraryFinderController.findLibraryXml("qdmVersion", "name", "4.0.000");
+            libraryFinderController.findLibraryXml("qdmVersion", "name", "4.0.000", "QDM");
         });
 
         verify(cqlLibraryDataService).findCqlLibrary(any());
@@ -53,7 +53,7 @@ class LibraryFinderControllerTest {
 
         when(cqlLibraryDataService.findCqlLibrary(any())).thenReturn(cqlLibrary);
 
-        String libraryXml = libraryFinderController.findLibraryXml("qdmVersion", "name", "3.0.000");
+        String libraryXml = libraryFinderController.findLibraryXml("qdmVersion", "name", "3.0.000", "QDM");
 
         assertEquals(xml, libraryXml);
 

@@ -11,7 +11,7 @@ public interface LibraryResultsHelper {
 
     default Optional<LibraryConversionResults> findFirstLibraryResult(String matLibraryId) {
         return getLibraryConversionResults().stream()
-                .filter(l -> l.getMatLibraryId().equals(matLibraryId))
+                .filter(result -> result.getMatLibraryId() != null && result.getMatLibraryId().equals(matLibraryId))
                 .findFirst();
     }
 

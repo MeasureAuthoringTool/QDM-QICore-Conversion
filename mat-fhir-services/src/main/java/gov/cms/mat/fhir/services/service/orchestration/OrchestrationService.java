@@ -85,7 +85,7 @@ public class OrchestrationService {
 
     public void processAndGetCqlLibraries(OrchestrationProperties properties) {
 
-        List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesNotInHapi(properties);
+        List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesRequired(properties);
 
         cqlLibraries.forEach(c -> processCqlLibrary(c, properties.isShowWarnings()));
 

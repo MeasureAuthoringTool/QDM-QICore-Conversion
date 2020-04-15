@@ -85,9 +85,11 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         String narrative = "";
 
         if (properties.getXmlSource() == XmlSource.SIMPLE) {
-            MeasureExport measureExport = measureExportDataService.findByIdRequired(properties.getMeasureId());
+            var measureExport = measureExportDataService.findById(properties.getMeasureId());
             //human-readable may exist not an error if it doesn't
-            narrative = getNarrative(measureExport);
+            if (measureExport.isPresent()) {
+                narrative = getNarrative(measureExport.get());
+            }
         }
         return createFhirMeasure(properties.getXmlSource(), properties.getMatMeasure(), xmlBytes, narrative);
     }

@@ -16,11 +16,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,12 +51,21 @@ public class LibraryFinderController implements CqlVersionConverter {
     @Operation(summary = "Find Cql-XML in mat.",
             description = "Find Cql-XML in mat using the request params")
     @GetMapping("/mat")
-    public String findLibraryXml(@RequestParam String qdmVersion, @RequestParam String name, @RequestParam String version) {
+    public String findLibraryXml(@RequestParam String qdmVersion,
+                                 @RequestParam String name,
+                                 @RequestParam String version,
+                                 @RequestParam String type) {
+
+        Pair<BigDecimal, Integer> pair = versionToVersionAndRevision(version);
+
+
         CqlLibraryFindData data = CqlLibraryFindData.builder()
                 .qdmVersion(qdmVersion)
                 .name(name)
                 .matVersion(convertVersionToBigDecimal(version))
                 .version(version)
+                .type(type)
+                .pair(pair)
                 .build();
 
         CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);

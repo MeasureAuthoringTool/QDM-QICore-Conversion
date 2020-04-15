@@ -70,6 +70,13 @@ public class TranslationReportController {
         return conversionResultProcessorService.processAllForBatch(batchId);
     }
 
+    @Operation(summary = "Find all Reports for batch.",
+            description = "Find and return the reports for all the measures in the batch.")
+    @GetMapping(path = "/libraryErrors")
+    public List<ConversionResultDto> findAllLibraryErrors(@RequestParam String batchId) {
+        return conversionResultProcessorService.processAllForBatch(batchId);
+    }
+
     public enum DocumentsToFind {
         ALL, LAST
     }
