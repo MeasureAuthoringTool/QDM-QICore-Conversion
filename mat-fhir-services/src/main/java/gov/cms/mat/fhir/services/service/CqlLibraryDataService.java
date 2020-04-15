@@ -74,6 +74,10 @@ public class CqlLibraryDataService {
             throw new IllegalArgumentException("Invalid library type: " + cqlLibraryFindData.getType());
         }
 
+        return getCqlLibrary(cqlLibraryFindData, libraries);
+    }
+
+    public CqlLibrary getCqlLibrary(CqlLibraryFindData cqlLibraryFindData, List<CqlLibrary> libraries) {
         if (libraries.isEmpty()) {
             throw new CqlLibraryNotFoundException(cqlLibraryFindData);
         } else if (libraries.size() > 1) {

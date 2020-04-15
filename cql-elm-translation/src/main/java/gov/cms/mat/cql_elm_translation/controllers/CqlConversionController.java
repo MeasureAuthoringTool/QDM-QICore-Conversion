@@ -63,6 +63,10 @@ public class CqlConversionController {
     public String xmlToElmJson(
             @RequestBody String xml,
             @RequestParam(defaultValue = "false") Boolean showWarnings,
+
+            @RequestParam(defaultValue = "true") Boolean isDraft,
+
+
             @RequestParam(required = false) LibraryBuilder.SignatureLevel signatures,
             @RequestParam(defaultValue = "true") Boolean annotations,
             @RequestParam(defaultValue = "true") Boolean locators,

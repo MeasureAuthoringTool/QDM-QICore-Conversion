@@ -1,9 +1,12 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
+import gov.cms.mat.fhir.rest.dto.cql.CqlPayload;
+import gov.cms.mat.fhir.rest.dto.cql.CqlPayloadType;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.InvalidVersionException;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
+import gov.cms.mat.fhir.services.service.LibraryFinderService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +22,9 @@ import static org.mockito.Mockito.*;
 class LibraryFinderControllerTest {
     @Mock
     private CqlLibraryDataService cqlLibraryDataService;
+    @Mock
+    private LibraryFinderService libraryFinderService;
+
     @InjectMocks
     private LibraryFinderController libraryFinderController;
 
@@ -36,27 +42,30 @@ class LibraryFinderControllerTest {
         CqlLibrary cqlLibrary = new CqlLibrary();
         cqlLibrary.setCqlXml(null);
 
-        when(cqlLibraryDataService.findCqlLibrary(any())).thenReturn(cqlLibrary);
+        when(libraryFinderService.findLibrary(any())).thenThrow(new CqlLibraryNotFoundException("oops"));
 
         Assertions.assertThrows(CqlLibraryNotFoundException.class, () -> {
             libraryFinderController.findLibraryXml("qdmVersion", "name", "4.0.000", "QDM");
         });
 
-        verify(cqlLibraryDataService).findCqlLibrary(any());
+        verify(libraryFinderService).findLibrary(any());
     }
 
     @Test
     void findLibraryXml_HappyCase() {
         String xml = "</xml>";
-        CqlLibrary cqlLibrary = new CqlLibrary();
-        cqlLibrary.setCqlXml(xml);
 
-        when(cqlLibraryDataService.findCqlLibrary(any())).thenReturn(cqlLibrary);
+        CqlPayload cqlPayload = CqlPayload.builder()
+                .type(CqlPayloadType.XML)
+                .data(xml)
+                .build();
 
-        String libraryXml = libraryFinderController.findLibraryXml("qdmVersion", "name", "3.0.000", "QDM");
+        when(libraryFinderService.findLibrary(any())).thenReturn(cqlPayload);
 
-        assertEquals(xml, libraryXml);
+        CqlPayload payload = libraryFinderController.findLibraryXml("qdmVersion", "name", "3.0.000", "QDM");
 
-        verify(cqlLibraryDataService).findCqlLibrary(any());
+        assertEquals(xml, payload.getData());
+
+        verify(libraryFinderService).findLibrary(any());
     }
 }

@@ -1,5 +1,7 @@
 package gov.cms.mat.cql_elm_translation.service;
 
+import gov.cms.mat.fhir.rest.dto.cql.CqlPayload;
+import gov.cms.mat.fhir.rest.dto.cql.CqlPayloadType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +29,20 @@ public class MatFhirServices {
         URI uri = buildFindMatUri(name, version, qdmVersion, libraryType);
         log.info("Getting Mat library: {} ", uri);
 
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
+        ResponseEntity<CqlPayload> responseEntity = restTemplate.getForEntity(uri, CqlPayload.class);
 
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             if (responseEntity.hasBody()) {
-                return matXmlConversionService.processCqlXml(responseEntity.getBody());
+                CqlPayload cqlPayload = responseEntity.getBody();
+
+                if (cqlPayload == null || cqlPayload.getType() == null) {
+                    log.error("cqlPayload is invalid");
+                    return null;
+                } else if (cqlPayload.getType() == CqlPayloadType.XML) {
+                    return matXmlConversionService.processCqlXml(cqlPayload.getData());
+                } else {
+                    return cqlPayload.getData();
+                }
             } else {
                 return null;
             }
