@@ -10,6 +10,7 @@ import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Bundle;
@@ -36,7 +37,7 @@ public class LibraryFinderService implements CqlVersionConverter {
     public CqlPayload findLibrary(CqlLibraryFindData data) {
         CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);
 
-        if (cqlLibrary.getDraft() == null || !cqlLibrary.getDraft()) {
+        if (!BooleanUtils.toBoolean(cqlLibrary.getDraft())) {
             return buildCqlPayload(data.getName(), data.getVersion());
         } else {
             return buildXmlPayload(cqlLibrary);
