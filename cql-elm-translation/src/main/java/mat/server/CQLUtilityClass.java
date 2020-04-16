@@ -419,7 +419,7 @@ public final class CQLUtilityClass {
                         if (code.isIsCodeSystemVersionIncluded()) {
                             csName = csName + ":" + code.getCodeSystemVersion();
                         }
-                        if (!codeSystemAlreadyUsed.contains(code.getCodeSystemName())) {
+                        if (!codeSystemAlreadyUsed.contains(csName)) {
                             // Fhir4 code system
                             // codesystem "SNOMEDCT:2017-09": 'http://snomed.info/sct/731000124108' version 'http://snomed.info/sct/731000124108/version/201709'
                             //       or
