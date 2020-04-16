@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
  * @author duanedecouteau
  */
 public class QdmCqlToFhirCql {
-    private String FHIR_MODEL = "using FHIR version '4.0.0'";
+    private String FHIR_MODEL = "using FHIR version '4.0.1'";
     private List<String> outputList = new ArrayList<String>();
     private List<String> inputList = new ArrayList<String>();
     private StringBuffer sb = new StringBuffer();
