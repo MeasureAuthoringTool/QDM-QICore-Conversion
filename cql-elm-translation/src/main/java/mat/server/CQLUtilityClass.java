@@ -326,7 +326,6 @@ public final class CQLUtilityClass {
     }
 
 
-
     private static List<CQLQualityDataSetDTO> convertCodesToQualityDataSetDTO(List<CQLCode> codeList) {
         List<CQLQualityDataSetDTO> convertedCQLDataSetList = new ArrayList<CQLQualityDataSetDTO>();
         for (CQLCode tempDataSet : codeList) {
@@ -407,9 +406,10 @@ public final class CQLUtilityClass {
     private static String createCodeSystemsSection(List<CQLCode> codeSystemList) {
         StringBuilder sb = new StringBuilder();
 
-        List<String> codeSystemAlreadyUsed = new ArrayList<>();
+        //Use a set to prevent duplicate entries automatically.
+        Set<String> codeSystemAlreadyUsed = new HashSet<>();
 
-        if (!CollectionUtils.isEmpty(codeSystemList)) {
+        if (!org.springframework.util.CollectionUtils.isEmpty(codeSystemList)) {
             for (CQLCode code : codeSystemList) {
                 if (code.getCodeSystemOID() != null && !code.getCodeSystemOID().isEmpty() && !"null".equals(code.getCodeSystemOID())) {
                     boolean isUrlCodeSystem = StringUtils.startsWith(code.getCodeSystemOID(), "http");
