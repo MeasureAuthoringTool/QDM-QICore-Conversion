@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,13 +32,16 @@ public class QdmCqlToFhirCqlConverter {
                     "consider creating define statements limited to single FHIR Resource.";
     private final CqlParser cqlParser;
     private final QdmQiCoreDataService qdmQiCoreDataService;
+    private final Map<String, String> conversionLibLookupMap;
+
     List<IncludeProperties> includeProperties;
     List<IncludeProperties> standardIncludeProperties;
     private UsingProperties usingProperties;
 
-    public QdmCqlToFhirCqlConverter(String cqlText, QdmQiCoreDataService qdmQiCoreDataService) {
+    public QdmCqlToFhirCqlConverter(String cqlText, QdmQiCoreDataService qdmQiCoreDataService, Map<String, String> conversionLibLookupMap) {
         cqlParser = new CqlParser(cqlText);
         this.qdmQiCoreDataService = qdmQiCoreDataService;
+        this.conversionLibLookupMap = conversionLibLookupMap;
         standardIncludeProperties = createStandardIncludes();
     }
 
@@ -210,10 +214,21 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void convertIncludes() {
+        includeProperties.forEach(this::processStandardLibrary);
+
         includeProperties.forEach(this::processIncludesCalled);
 
         includeProperties
                 .forEach(this::setToFhir);
+    }
+
+    private void processStandardLibrary(IncludeProperties includeProperties) {
+
+        String version = conversionLibLookupMap.get(includeProperties.getName());
+
+        if (version != null) {
+            includeProperties.setVersion(version);
+        }
     }
 
     private void processIncludesCalled(IncludeProperties include) {

@@ -2,6 +2,15 @@ library JEK_TobaccoUseScreeningandCessationInterventionCQL version '2.0.000'
 
 using QDM version '5.4'
 
+include MATGlobalCommonFunctions version '4.0.000' called Global
+include SupplementalDataElements version '1.0.0' called SDE
+
+include AdultOutpatientEncounters version '1.2.345' called ADP
+include AdvancedIllnessandFrailtyExclusion version '5.6.789' called AVI
+include Hospice version '0.1.234' called HSP
+include TJCOverall version '5.6.789' called TJC
+include VTEICU version '5.6.789' called VTE
+
 valueset "Current Smoking Tobacco User": 'urn:oid:2.16.840.1.113762.1.4.1111.99'
 valueset "Current Tobacco Non User": 'urn:oid:2.16.840.1.113762.1.4.1111.96'
 valueset "Current Tobacco Smoker": 'urn:oid:2.16.840.1.113883.3.600.2390'

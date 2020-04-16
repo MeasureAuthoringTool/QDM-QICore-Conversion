@@ -12,6 +12,7 @@ public class IncludeProperties extends BaseProperties {
     private static final String TEMPLATE = "include %s version '%s' %s";  // include myFunctions version '4.1.000' called Global
 
     String name;
+    @Setter
     String version;
     String using; //can be empty string ""
     String line;
