@@ -414,18 +414,17 @@ public final class CQLUtilityClass {
                 if (code.getCodeSystemOID() != null && !code.getCodeSystemOID().isEmpty() && !"null".equals(code.getCodeSystemOID())) {
                     boolean isUrlCodeSystem = StringUtils.startsWith(code.getCodeSystemOID(), "http");
                     if (isUrlCodeSystem) {
+                        String csName = code.getCodeSystemName();
+                        String csVersionUri = code.getCodeSystemVersionUri();
+                        if (code.isIsCodeSystemVersionIncluded()) {
+                            csName = csName + ":" + code.getCodeSystemVersion();
+                        }
                         if (!codeSystemAlreadyUsed.contains(code.getCodeSystemName())) {
                             // Fhir4 code system
                             // codesystem "SNOMEDCT:2017-09": 'http://snomed.info/sct/731000124108' version 'http://snomed.info/sct/731000124108/version/201709'
                             //       or
                             // codesystem "SNOMEDCT:2017-09": 'http://snomed.info/sct/731000124108'
-                            String csName = code.getCodeSystemName();
                             String csUri = code.getCodeSystemOID();
-                            String csVersionUri = code.getCodeSystemVersionUri();
-
-                            if (code.isIsCodeSystemVersionIncluded()) {
-                                csName = csName + ":" + code.getCodeSystemVersion();
-                            }
                             sb.append("codesystem \"").append(csName).append('"').append(": ").
                                     append("'").append(csUri).append("' ");
                             if (StringUtils.isNotBlank(csVersionUri)) {
