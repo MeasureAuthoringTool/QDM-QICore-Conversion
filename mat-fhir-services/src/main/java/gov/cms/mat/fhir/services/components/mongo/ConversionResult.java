@@ -48,21 +48,14 @@ public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHe
     private String sourceMeasureId;
 
     private String batchId;
-
     private XmlSource xmlSource;
-
     private Boolean showWarnings;
-
     private String errorReason;
     private ConversionOutcome outcome;
-
     private ConversionType conversionType;
-
     private Instant start;
     private Instant finished;
-
     private Instant valueSetsProcessed;
-
     private String vsacGrantingTicket;
     private String valueSetProcessingMemo;
 }
