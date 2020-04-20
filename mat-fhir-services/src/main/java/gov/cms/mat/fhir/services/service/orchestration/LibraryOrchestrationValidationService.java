@@ -109,6 +109,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 .name(include.getName())
                 .matVersion(convertVersionToBigDecimal(include.getVersion()))
                 .version(include.getVersion())
+                .type(using.isFhir() ? "FHIR" : "QDM")
                 .build();
     }
 
