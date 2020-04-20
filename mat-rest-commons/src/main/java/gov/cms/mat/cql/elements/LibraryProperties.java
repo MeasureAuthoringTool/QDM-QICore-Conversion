@@ -17,7 +17,7 @@ public class LibraryProperties extends BaseProperties {
 
     @Override
     public void setToFhir() {
-        name = name + LIBRARY_FHIR_EXTENSION;
+       // name = name + LIBRARY_FHIR_EXTENSION;
     }
 
     @Override

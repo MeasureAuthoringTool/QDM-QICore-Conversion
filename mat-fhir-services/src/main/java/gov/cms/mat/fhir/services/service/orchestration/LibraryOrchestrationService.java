@@ -132,7 +132,7 @@ public class LibraryOrchestrationService {
     }
 
     public boolean validate(OrchestrationProperties properties) {
-        return cqlLibraryTranslationService.validate(properties) &&
+        return cqlLibraryTranslationService.validate(properties) &
                 libraryOrchestrationValidationService.validate(properties);
     }
 }
