@@ -40,10 +40,7 @@ public class CqlFileGenerator {
     public void generateCqlFiles() {
         Path outputDir = createOutputDirectory();
 
-        List<CqlLibrary> allowedCqlLibraryIds = findAllAllowedCqlLibraryIds();
-
-        allowedCqlLibraryIds.stream()
-                .limit(20)
+        findAllAllowedCqlLibraryIds().stream()
                 .forEach(cqlLibrary -> processLibraryId(outputDir, cqlLibrary));
 
         log.info(DASH_LINE);
@@ -113,11 +110,23 @@ public class CqlFileGenerator {
         log.info("created : [{}]", outputFilePath.toFile().getName());
     }
 
+    private String toFilename(CqlLibrary cqlLibrary) {
+        return new StringBuilder()
+                .append(cqlLibrary.getCqlName())
+                .append("_")
+                .append(cqlLibrary.getReleaseVersion())
+                .append(cqlLibrary.getDraft() ? "_draft_" :"_")
+                .append(cqlLibrary.getVersion())
+                .append(".cql")
+                .toString();
+    }
+
     private Path createFile(Path outputFilePath) {
         Path file = null;
         try {
             file = Files.createFile(outputFilePath);
         } catch (IOException e) {
+            log.error("Duplicate filename. Skip this row");
             throw new UncheckedIOException(e);
         }
         return file;
@@ -131,12 +140,5 @@ public class CqlFileGenerator {
         }
     }
 
-    private String toFilename(CqlLibrary cqlLibrary) {
-        return new StringBuilder()
-                .append(cqlLibrary.getCqlName())
-                .append(cqlLibrary.getDraft() ? "_draft_" :"_")
-                .append(cqlLibrary.getVersion())
-                .append(".cql")
-                .toString();
-    }
+
 }
