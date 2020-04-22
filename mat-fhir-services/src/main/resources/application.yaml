@@ -57,3 +57,7 @@ management:
 info:
   app:
     name: Mat Fhir Services
+
+
+output:
+  directory: ${java.io.tmpdir}jobdownloads/cql_exports/

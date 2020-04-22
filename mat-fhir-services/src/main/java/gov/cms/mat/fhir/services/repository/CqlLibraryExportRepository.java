@@ -15,5 +15,5 @@ public interface CqlLibraryExportRepository extends JpaRepository<CqlLibraryExpo
     @Query("SELECT c.cql " +
             " FROM CqlLibraryExport c " +
             "WHERE c.cqlLibraryId = :cqlLibraryId")
-    List<String> findByCqlLibraryId(String cqlLibraryId);
+    List<byte[]> findByCqlLibraryId(String cqlLibraryId);
 }
