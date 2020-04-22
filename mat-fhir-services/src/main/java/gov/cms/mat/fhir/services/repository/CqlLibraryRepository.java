@@ -32,5 +32,13 @@ public interface CqlLibraryRepository extends JpaRepository<CqlLibrary, String> 
     List<CqlLibrary> findByVersionAndCqlNameAndRevisionNumberAndLibraryModel(BigDecimal version,
                                                                              String cqlName,
                                                                              int revision,
-                                                                             String libraryModel);
+                                                                            String libraryModel);
+
+//    @Query("SELECT c.id " +
+//            " FROM CqlLibrary c " +
+//            "WHERE c.releaseVersion IN :allowedVersions")
+//    List<String> findAllowedCqlLibraries(List<String> allowedVersions);
+
+    @Query("FROM CqlLibrary c  WHERE c.releaseVersion IN :allowedVersions ")
+    List<CqlLibrary> findAllowedCqlLibraries(List<String> allowedVersions);
 }
