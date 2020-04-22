@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -43,21 +42,9 @@ public class CqlFileGenerator {
 
         List<CqlLibrary> allowedCqlLibraryIds = findAllAllowedCqlLibraryIds();
 
-//        List<String> allCqls = new ArrayList<>();
-//        List<String> IdsWithoutCqlExports = new ArrayList<>();
         allowedCqlLibraryIds.stream()
                 .limit(20)
                 .forEach(cqlLibrary -> processLibraryId(outputDir, cqlLibrary));
-
-//        log.info(DASH_LINE);
-//        log.warn("There were [{}] CQL_LIBRARY_IDs without a row in CQL_LIBRARY_EXPORT table. They are as follows: ", IdsWithoutCqlExports.size());
-//        log.warn("{}", IdsWithoutCqlExports);
-//
-//        log.info(DASH_LINE);
-//
-//        log.info(DASH_LINE);
-//        log.info("Found {} CQLs in total from all the allowed CqlLibraries", allCqls.size());
-//        log.info(DASH_LINE);
 
         log.info(DASH_LINE);
         log.info("Done.");
@@ -100,10 +87,18 @@ public class CqlFileGenerator {
             throw new RuntimeException("Found Multiple cql_library_exports rows");
         }
         if (!exportCQLs.isEmpty()) {
-            writeToFile(outputDir, cqlLibrary, exportCQLs);
+            exportCQL(outputDir, cqlLibrary, exportCQLs);
         }
     }
-    private void writeToFile(Path outputDirPath, CqlLibrary cqlLibrary, List<byte[]> exportCQLs) {
+
+    /**
+     * writes CQL string into a file
+     *
+     * @param outputDirPath
+     * @param cqlLibrary
+     * @param exportCQLs
+     */
+    private void exportCQL(Path outputDirPath, CqlLibrary cqlLibrary, List<byte[]> exportCQLs) {
         if (exportCQLs.size() != 1) {
             var errMsg = "Multiple CQL_LIBRARY_EXPORT rows found for CQL_LIBRARY_ID: [{}]" + cqlLibrary.getId();
             throw new RuntimeException(errMsg);
@@ -112,14 +107,28 @@ public class CqlFileGenerator {
         String filename = toFilename(cqlLibrary);
         Path outputFilePath = Paths.get(outputDirPath.toString(), filename);
 
+        Path file = createFile(outputFilePath);
+        exportCQL(exportCQLs, file);
+
+        log.info("created : [{}]", outputFilePath.toFile().getName());
+    }
+
+    private Path createFile(Path outputFilePath) {
+        Path file = null;
         try {
-            Path file = Files.createFile(outputFilePath);
+            file = Files.createFile(outputFilePath);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return file;
+    }
+
+    private void exportCQL(List<byte[]> exportCQLs, Path file) {
+        try {
             Files.write(file, exportCQLs.get(0));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-
-        log.info("created : [{}]", outputFilePath.toFile().getName());
     }
 
     private String toFilename(CqlLibrary cqlLibrary) {
