@@ -104,10 +104,15 @@ public class CqlFileGenerator {
         String filename = toFilename(cqlLibrary);
         Path outputFilePath = Paths.get(outputDirPath.toString(), filename);
 
-        Path file = createFile(outputFilePath);
-        writeToFile(exportCQLs, file);
+        final Path file;
+        try {
+            file = Files.createFile(outputFilePath);
+        } catch (IOException e) {
+            log.error("Duplicate filename [{}]. Skip this row", filename);
+            return;
+        }
 
-        log.info("created : [{}]", outputFilePath.toFile().getName());
+        writeToFile(exportCQLs, file);
     }
 
     private String toFilename(CqlLibrary cqlLibrary) {
@@ -119,17 +124,6 @@ public class CqlFileGenerator {
                 .append(cqlLibrary.getVersion())
                 .append(".cql")
                 .toString();
-    }
-
-    private Path createFile(Path outputFilePath) {
-        Path file = null;
-        try {
-            file = Files.createFile(outputFilePath);
-        } catch (IOException e) {
-            log.error("Duplicate filename. Skip this row");
-            throw new UncheckedIOException(e);
-        }
-        return file;
     }
 
     private void writeToFile(List<byte[]> exportCQLs, Path file) {
