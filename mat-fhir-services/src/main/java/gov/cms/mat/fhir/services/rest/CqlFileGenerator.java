@@ -39,45 +39,40 @@ public class CqlFileGenerator {
 
     @GetMapping
     public void generateCqlFiles() {
-        logAllowedVersions();
-
         Path outputDir = createOutputDirectory();
 
         List<CqlLibrary> allowedCqlLibraryIds = findAllAllowedCqlLibraryIds();
 
-        List<String> allCqls = new ArrayList<>();
-        List<String> IdsWithoutCqlExports = new ArrayList<>();
+//        List<String> allCqls = new ArrayList<>();
+//        List<String> IdsWithoutCqlExports = new ArrayList<>();
         allowedCqlLibraryIds.stream()
                 .limit(20)
-                .forEach(cqlLibrary -> processLibraryId(outputDir, allCqls, IdsWithoutCqlExports, cqlLibrary));
+                .forEach(cqlLibrary -> processLibraryId(outputDir, cqlLibrary));
+
+//        log.info(DASH_LINE);
+//        log.warn("There were [{}] CQL_LIBRARY_IDs without a row in CQL_LIBRARY_EXPORT table. They are as follows: ", IdsWithoutCqlExports.size());
+//        log.warn("{}", IdsWithoutCqlExports);
+//
+//        log.info(DASH_LINE);
+//
+//        log.info(DASH_LINE);
+//        log.info("Found {} CQLs in total from all the allowed CqlLibraries", allCqls.size());
+//        log.info(DASH_LINE);
 
         log.info(DASH_LINE);
-        log.warn("There were [{}] CQL_LIBRARY_IDs without a row in CQL_LIBRARY_EXPORT table. They are as follows: ", IdsWithoutCqlExports.size());
-        log.warn("{}", IdsWithoutCqlExports);
-
+        log.info("Done.");
         log.info(DASH_LINE);
-
-        log.info(DASH_LINE);
-        log.info("Found {} CQLs in total from all the allowed CqlLibraries", allCqls.size());
-        log.info(DASH_LINE);
-    }
-
-    private void logAllowedVersions() {
-        log.debug(DASH_LINE);
-        log.debug("allowedMeasuresVersion : {}", allowedMeasuresVersions);
-        log.debug(DASH_LINE);
     }
 
     private Path createOutputDirectory() {
         log.debug(DASH_LINE);
-        log.debug("efsMount : {}", tmpOutputDirectory);
-        log.debug(DASH_LINE);
+        log.debug("OutputDirectory : {}", tmpOutputDirectory);
 
         Path outputDir;
         Path outputDirPath = Paths.get(tmpOutputDirectory, "" + Instant.now().getNano());
         try {
             outputDir = Files.createDirectories(outputDirPath);
-            log.info("Created directory : [{}]", outputDir.toAbsolutePath().toString());
+            log.info("Created directory : [{}] ", outputDir.toAbsolutePath().toString());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -86,15 +81,17 @@ public class CqlFileGenerator {
 
     private List<CqlLibrary> findAllAllowedCqlLibraryIds() {
         List<CqlLibrary> allowedCqlLibraryIds = cqlLibraryRepo.findAllowedCqlLibraries(allowedMeasuresVersions);
+
         log.info(DASH_LINE);
         log.info("Found [{}] CqlLibraries with allowedMeasureVersions", allowedCqlLibraryIds.size(), allowedMeasuresVersions);
         log.info(DASH_LINE);
+
         return allowedCqlLibraryIds;
     }
 
 
 
-    private void processLibraryId(Path outputDir, List<String> allCqls, List<String> idsWithoutCqlExports, CqlLibrary cqlLibrary) {
+    private void processLibraryId(Path outputDir, CqlLibrary cqlLibrary) {
         List<byte[]> exportCQLs = cqlLibraryExportRepo.findByCqlLibraryId(cqlLibrary.getId());
         if (exportCQLs.size() > 1) {
             log.info(DASH_LINE);
@@ -102,27 +99,19 @@ public class CqlFileGenerator {
             log.info(DASH_LINE);
             throw new RuntimeException("Found Multiple cql_library_exports rows");
         }
-        if (exportCQLs.isEmpty()) {
-            idsWithoutCqlExports.add(cqlLibrary.getId());
-
-        } else {
-
-            String cql = writeToFile(outputDir, cqlLibrary, exportCQLs);
-            allCqls.add(cql);
+        if (!exportCQLs.isEmpty()) {
+            writeToFile(outputDir, cqlLibrary, exportCQLs);
         }
     }
-    private String writeToFile(Path outputDirPath, CqlLibrary cqlLibrary, List<byte[]> exportCQLs) {
+    private void writeToFile(Path outputDirPath, CqlLibrary cqlLibrary, List<byte[]> exportCQLs) {
         if (exportCQLs.size() != 1) {
             var errMsg = "Multiple CQL_LIBRARY_EXPORT rows found for CQL_LIBRARY_ID: [{}]" + cqlLibrary.getId();
             throw new RuntimeException(errMsg);
         }
-        String cql = new String(exportCQLs.get(0));
 
         String filename = toFilename(cqlLibrary);
         Path outputFilePath = Paths.get(outputDirPath.toString(), filename);
 
-        System.out.println("created \t\t ...: " + outputFilePath.toFile().getName());
-//        System.out.println("created \t\t ...: " + outputFilePath.toAbsolutePath().toString());
         try {
             Path file = Files.createFile(outputFilePath);
             Files.write(file, exportCQLs.get(0));
@@ -130,7 +119,7 @@ public class CqlFileGenerator {
             throw new UncheckedIOException(e);
         }
 
-        return cql;
+        log.info("created : [{}]", outputFilePath.toFile().getName());
     }
 
     private String toFilename(CqlLibrary cqlLibrary) {
