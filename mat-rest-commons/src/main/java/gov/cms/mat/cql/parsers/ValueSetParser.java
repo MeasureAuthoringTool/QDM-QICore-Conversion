@@ -1,13 +1,12 @@
 package gov.cms.mat.cql.parsers;
 
 import gov.cms.mat.cql.elements.ValueSetProperties;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface ValueSetParser {
+public interface ValueSetParser extends OidParser {
     String[] getLines();
 
     default List<ValueSetProperties> getValueSets() {
@@ -24,14 +23,4 @@ public interface ValueSetParser {
                 .urnOid(findOid(line))
                 .build();
     }
-
-    default String findName(String line) {
-        return StringUtils.substringBetween(line, "\"", "\"");
-    }
-
-    default String findOid(String line) {
-        return StringUtils.substringBetween(line, ": '", "'");
-    }
-
-
 }

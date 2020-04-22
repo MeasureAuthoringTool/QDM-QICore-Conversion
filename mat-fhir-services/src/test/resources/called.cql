@@ -8,6 +8,8 @@ codesystem "LOINC": 'urn:oid:2.16.840.1.113883.6.1'
 codesystem "CPT": 'urn:oid:2.16.840.1.113883.6.12'
 codesystem "SNOMEDCT": 'urn:oid:2.16.840.1.113883.6.96'
 
+codesystem "MIKE": 'urn:oid:2.16.840.1.113883.4.642.4.1261'
+
 valueset "Aortic Dissection": 'urn:oid:2.16.840.1.113883.17.4077.3.1026'
 valueset "Chest CT with Contrast": 'urn:oid:2.16.840.1.113883.17.4077.3.2064'
 valueset "CT Pulmonary Angiogram CTPA": 'urn:oid:2.16.840.1.113883.17.4077.3.1020'

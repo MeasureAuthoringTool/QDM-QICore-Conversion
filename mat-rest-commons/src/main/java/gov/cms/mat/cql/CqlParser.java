@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Getter
 public class CqlParser implements
-        IncludeParser, UsingParser, LibraryParser, DefineParser, UnionParser, ValueSetParser {
+        IncludeParser, UsingParser, LibraryParser, DefineParser, UnionParser, ValueSetParser, CodeSystemParser {
 
     final String[] lines;
     String cql;

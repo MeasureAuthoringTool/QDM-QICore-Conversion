@@ -4,10 +4,14 @@ import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql.elements.*;
 import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.CodeSystem;
+import org.hl7.fhir.r4.model.Resource;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,15 +37,23 @@ public class QdmCqlToFhirCqlConverter {
     private final CqlParser cqlParser;
     private final QdmQiCoreDataService qdmQiCoreDataService;
     private final Map<String, String> conversionLibLookupMap;
+    private final Map<String, String> codeSystemLookupMap;
+    private final HapiFhirServer hapiFhirServer;
 
     List<IncludeProperties> includeProperties;
     List<IncludeProperties> standardIncludeProperties;
     private UsingProperties usingProperties;
 
-    public QdmCqlToFhirCqlConverter(String cqlText, QdmQiCoreDataService qdmQiCoreDataService, Map<String, String> conversionLibLookupMap) {
+    public QdmCqlToFhirCqlConverter(String cqlText,
+                                    QdmQiCoreDataService qdmQiCoreDataService,
+                                    Map<String, String> conversionLibLookupMap,
+                                    Map<String, String> codeSystemLookupMap,
+                                    HapiFhirServer hapiFhirServer) {
         cqlParser = new CqlParser(cqlText);
         this.qdmQiCoreDataService = qdmQiCoreDataService;
         this.conversionLibLookupMap = conversionLibLookupMap;
+        this.codeSystemLookupMap = codeSystemLookupMap;
+        this.hapiFhirServer = hapiFhirServer;
         standardIncludeProperties = createStandardIncludes();
     }
 
@@ -76,6 +88,8 @@ public class QdmCqlToFhirCqlConverter {
         convertDefines();
         convertValueSets();
 
+        convertCodeSystems();
+
         checkUnion(matLibId);
 
         String cql = addDefaultFhirLibraries();
@@ -91,6 +105,62 @@ public class QdmCqlToFhirCqlConverter {
         List<ValueSetProperties> properties = cqlParser.getValueSets();
         properties.forEach(this::setToFhir);
     }
+
+    private void convertCodeSystems() {
+        List<CodeSystemProperties> properties = cqlParser.getCodeSystems();
+
+        properties.forEach(this::processCodeSystem);
+
+        properties.forEach(this::setToFhir);
+    }
+
+    private void processCodeSystem(CodeSystemProperties codeSystemProperties) {
+
+        if (StringUtils.isNotEmpty(codeSystemProperties.getVersion())) {
+            log.debug("Code system has version : {}, so not processing", codeSystemProperties.getVersion());
+        } else {
+            if (!processCodeSystemInGlobalMap(codeSystemProperties)) {
+                processCodeSystemFhir(codeSystemProperties);
+            }
+        }
+    }
+
+    private void processCodeSystemFhir(CodeSystemProperties codeSystemProperties) {
+        String oid = codeSystemProperties.getUrnOid();
+        Bundle bundle = hapiFhirServer.getCodeSystemBundle(oid);
+
+        if (bundle.hasEntry()) {
+            Bundle.BundleEntryComponent bundleEntryComponent = bundle.getEntry().get(0);
+            Resource resource = bundleEntryComponent.getResource();
+
+            if (resource instanceof CodeSystem) {
+                CodeSystem codeSystem = (CodeSystem) resource;
+                log.debug("Code system {} set to CodeSystem URL: {}", codeSystemProperties.getName(), codeSystem.getUrl());
+                codeSystemProperties.setUrnOid(codeSystem.getUrl());
+            }
+
+        } else {
+            log.info("NOT found with oid: {}", oid);
+
+        }
+    }
+
+    private boolean processCodeSystemInGlobalMap(CodeSystemProperties codeSystemProperties) {
+        String name = codeSystemProperties.getName();
+
+        String codeSystemReference = codeSystemLookupMap.get(name);
+
+        if (StringUtils.isEmpty(codeSystemReference)) {
+            log.debug("Cannot find code system with name: {}", name);
+            return false;
+        } else {
+            log.debug("Found code system with name: {} reference: {}", name, codeSystemProperties);
+            codeSystemProperties.setUrnOid(codeSystemReference);
+            return true;
+        }
+
+    }
+
 
     private String fixSDE(String cql) {
         String[] lines = cql.split("\\r?\\n");

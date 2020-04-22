@@ -4,7 +4,7 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
-import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateException;
+import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -141,14 +141,14 @@ public class HapiFhirServer {
     private void validatePersistedBundle(Resource resource, Bundle bundle) {
         if (CollectionUtils.isEmpty(bundle.getEntry()) || bundle.getEntry().size() > 1) {
             log.error("Bundle size is invalid: {}", bundle.getEntry() != null ? bundle.getEntry().size() : null);
-            throw new HapiFhirCreateException(resource.getIdElement().getValue());
+            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
         }
 
         Bundle.BundleEntryComponent bundleEntryComponent = bundle.getEntry().get(0);
 
         if (!bundleEntryComponent.hasResponse()) {
             log.error("Bundle does not contain a response");
-            throw new HapiFhirCreateException(resource.getIdElement().getValue());
+            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
         }
 
         if (bundleEntryComponent.getResponse().getStatus() != null &&
@@ -160,7 +160,7 @@ public class HapiFhirServer {
             log.error("FAILED Persisted resource: {} with id: {} status:{}",
                     resource.getResourceType().name(), resource.getId(),
                     bundleEntryComponent.getResponse().getStatus());
-            throw new HapiFhirCreateException(resource.getIdElement().getValue());
+            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
         }
     }
 
@@ -207,8 +207,16 @@ public class HapiFhirServer {
     }
 
     public Bundle getValueSetBundle(String oid) {
+        return getOidBundle(ValueSet.class, oid);
+    }
+
+    public Bundle getCodeSystemBundle(String oid) {
+        return getOidBundle(CodeSystem.class, oid);
+    }
+
+    private Bundle getOidBundle(Class<? extends IBaseResource> resource, String oid) {
         return hapiClient.search()
-                .forResource(ValueSet.class)
+                .forResource(resource)
                 .where(ValueSet.IDENTIFIER.exactly().systemAndIdentifier("urn:ietf:rfc:3986", oid))
                 .returnBundle(Bundle.class)
                 .execute();
@@ -225,6 +233,7 @@ public class HapiFhirServer {
     public Bundle getLibraryBundle(String id) {
         return hapiClient.search()
                 .forResource(Library.class)
+                .where(Library.NAME.contains().value("foo"))
                 .where(Library.URL.matches().value(baseURL + "Library/" + id))
                 .returnBundle(Bundle.class)
                 .execute();

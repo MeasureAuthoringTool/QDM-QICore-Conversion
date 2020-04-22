@@ -1,7 +1,9 @@
 package gov.cms.mat.fhir.services.components.cql;
 
 import gov.cms.mat.fhir.services.ResourceFileUtil;
+import gov.cms.mat.fhir.services.config.CodeSystemLookup;
 import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
+import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -20,19 +22,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 class CqlLibraryConverterTest implements ResourceFileUtil {
 
-    CqlLibraryConverter cqlLibraryConverter;
-    ConversionLibraryLookup conversionLibraryLookup;
+    private CqlLibraryConverter cqlLibraryConverter;
 
     @BeforeEach
     void setUp() {
-        conversionLibraryLookup = new ConversionLibraryLookup();
+        CodeSystemLookup codeSystemLookup = new CodeSystemLookup();
+        codeSystemLookup.setMap(createCodeSystemLookUpMap());
+
+        ConversionLibraryLookup conversionLibraryLookup = new ConversionLibraryLookup();
         conversionLibraryLookup.setMap(createConvertedLibLookUpMap());
 
         RestTemplate restTemplate = new RestTemplate();
         QdmQiCoreDataService qdmQiCoreDataService = new QdmQiCoreDataService(restTemplate);
         ReflectionTestUtils.setField(qdmQiCoreDataService, "baseURL", "http://localhost:9090");
 
-        cqlLibraryConverter = new CqlLibraryConverter(qdmQiCoreDataService, conversionLibraryLookup);
+        HapiFhirServer hapiFhirServer = new HapiFhirServer();
+        ReflectionTestUtils.setField(hapiFhirServer, "baseURL", "http://localhost:6060/hapi-fhir-jpaserver/fhir/");
+        hapiFhirServer.setUp();
+
+        cqlLibraryConverter = new CqlLibraryConverter(qdmQiCoreDataService, conversionLibraryLookup, codeSystemLookup, hapiFhirServer);
     }
 
     private Map<String, String> createConvertedLibLookUpMap() {
@@ -47,13 +55,21 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
                 "VTEICU", "4.0.000");
     }
 
+    private Map<String, String> createCodeSystemLookUpMap() {
+        return Map.of(
+                "LOINC", "http://loinc.org",
+                "SNOMEDCT", "http://snomed.info/sct/731000124108",
+                "Diagnosis Role", "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+                "RoleCode", "http://hl7.org/fhir/v3/RoleCode");
+    }
+
     @Test
     void convert() {
         String cql = getStringFromResource("/fhir/Hospice_FHIR4-1.0.000.cql");
 
         String converted = cqlLibraryConverter.convert(cql);
 
-        assertTrue(converted.contains("library Hospice_FHIR4_FHIR4 version '1.0.000'"));
+        assertTrue(converted.contains("library Hospice_FHIR4 version '1.0.000'"));
     }
 
     @Test

@@ -2,7 +2,7 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState;
-import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateException;
+import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
@@ -83,7 +83,7 @@ public class ValueSetOrchestrationConversionService {
                 log.debug("Persisted valueSet to Hapi link : {}", link);
                 addToReport(link, optional.get(), CREATED);
             } else {
-                throw new HapiFhirCreateException("Cannot find ValueSet json for url: " + link);
+                throw new HapiFhirCreateMeasureException("Cannot find ValueSet json for url: " + link);
             }
 
         } catch (Exception e) {

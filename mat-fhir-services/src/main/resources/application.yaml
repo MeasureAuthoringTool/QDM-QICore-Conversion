@@ -40,6 +40,12 @@ conversion-lib-lookup-4-1:
     TJCOverall: 5.0.000
     VTEICU: 4.0.000
 
+code-systemlookup-4-1:
+  map:
+    LOINC: http://loinc.org
+    SNOMEDCT: http://snomed.info/sct/731000124108
+    Diagnosis Role: http://terminology.hl7.org/CodeSystem/diagnosis-role
+    RoleCode: http://hl7.org/fhir/v3/RoleCode
 
 measures:
   allowed:
