@@ -1,11 +1,10 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
-import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,21 +22,20 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/cql/file/generator")
+@RequiredArgsConstructor
 public class CqlFileGenerator {
 
     private static final String DASH_LINE = "---------------------------------";
+
     @Value("${measures.allowed.versions}")
     private List<String> allowedMeasuresVersions;
-//    private List<String> allowedMeasuresVersion = List.of("v5.5", "v5.6", "v5.7", "v5.8", "v5.9", "v6.0");
 
-    @Value("${efs.mount}")
-    private String efsMount;
+    @Value("${output.directory}")
+    private String tmpOutputDirectory;
 
-    @Autowired
-    private CqlLibraryExportRepository cqlLibraryExportRepo;
+    private final CqlLibraryExportRepository cqlLibraryExportRepo;
 
-    @Autowired
-    private CqlLibraryRepository cqlLibraryRepo;
+    private final CqlLibraryRepository cqlLibraryRepo;
 
     @GetMapping
     public void generateCqlFiles() {
@@ -72,11 +70,11 @@ public class CqlFileGenerator {
 
     private Path createOutputDirectory() {
         log.debug(DASH_LINE);
-        log.debug("efsMount : {}", efsMount);
+        log.debug("efsMount : {}", tmpOutputDirectory);
         log.debug(DASH_LINE);
 
         Path outputDir;
-        Path outputDirPath = Paths.get(efsMount, "" + Instant.now().getNano());
+        Path outputDirPath = Paths.get(tmpOutputDirectory, "" + Instant.now().getNano());
         try {
             outputDir = Files.createDirectories(outputDirPath);
             log.info("Created directory : [{}]", outputDir.toAbsolutePath().toString());
@@ -124,11 +122,7 @@ public class CqlFileGenerator {
         Path outputFilePath = Paths.get(outputDirPath.toString(), filename);
 
         System.out.println("created \t\t ...: " + outputFilePath.toFile().getName());
-        System.out.println("created \t\t ...: " + outputFilePath.toAbsolutePath().toString());
-//        System.out.println(outputFilePath.toAbsolutePath().toString() + "\t\t ... \t\tcreated");
-//        log.info("{} \t\t CQL : [{}]", outputFilePath.toFile().getName(), cql.substring(0, 100));
-//        System.out.println(outputFilePath.toFile().getName() + "\t\t CQL : " + cql.substring(0, 100));
-//        log.info("{} \t\t\t created with CQL : [{}]", outputFilePath.toAbsolutePath(), cql.substring(0, 50));
+//        System.out.println("created \t\t ...: " + outputFilePath.toAbsolutePath().toString());
         try {
             Path file = Files.createFile(outputFilePath);
             Files.write(file, exportCQLs.get(0));
