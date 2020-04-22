@@ -108,7 +108,7 @@ public class CqlFileGenerator {
         Path outputFilePath = Paths.get(outputDirPath.toString(), filename);
 
         Path file = createFile(outputFilePath);
-        exportCQL(exportCQLs, file);
+        writeToFile(exportCQLs, file);
 
         log.info("created : [{}]", outputFilePath.toFile().getName());
     }
@@ -123,7 +123,7 @@ public class CqlFileGenerator {
         return file;
     }
 
-    private void exportCQL(List<byte[]> exportCQLs, Path file) {
+    private void writeToFile(List<byte[]> exportCQLs, Path file) {
         try {
             Files.write(file, exportCQLs.get(0));
         } catch (IOException e) {
@@ -134,7 +134,7 @@ public class CqlFileGenerator {
     private String toFilename(CqlLibrary cqlLibrary) {
         return new StringBuilder()
                 .append(cqlLibrary.getCqlName())
-                .append(cqlLibrary.getDraft() ? "_Draft_" :"_")
+                .append(cqlLibrary.getDraft() ? "_draft_" :"_")
                 .append(cqlLibrary.getVersion())
                 .append(".cql")
                 .toString();
