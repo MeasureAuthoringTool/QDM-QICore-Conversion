@@ -44,7 +44,27 @@ code-systemlookup-4-1:
   map:
     LOINC: http://loinc.org
     SNOMEDCT: http://snomed.info/sct/731000124108
-    Diagnosis Role: http://terminology.hl7.org/CodeSystem/diagnosis-role
+    RoleCode: http://hl7.org/fhir/v3/RoleCode
+    '2.16.840.1.113883.6.96': http://snomed.info/sct/731000124108
+
+code-systemlookup-oid-4-1:
+  map:
+    LOINC: http://loinc.org
+    '2.16.840.1.113883.6.96': http://snomed.info/sct/731000124108
+    '2.16.840.1.113883.5.1001': http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status
+    '2.16.840.1.113883.5.1': http://terminology.hl7.org/CodeSystem/v3-AdministrativeGender
+    '2.16.840.1.113883.3.221.5': http://tobedone.com
+    '2.16.840.1.113883.6.90': http://hl7.org/fhir/sid/icd-10-cm
+    '2.16.840.1.113883.6.285': http://hl7.org/fhir/us/core/ValueSet-us-core-procedure-code.json.html
+    '2.16.840.1.113883.12.112': http://tobedone.com
+    '2.16.840.1.113883.6.1': http://loinc.org
+    '2.16.840.1.113883.6.259': http://tobedone.com
+    '2.16.840.1.113883.12.292': http://hl7.org/fhir/sid/cvx
+    '2.16.840.1.113883.6.88': http://www.nlm.nih.gov/research/umls/rxnorm
+    '2.16.840.1.113883.6.12':
+
+
+
     RoleCode: http://hl7.org/fhir/v3/RoleCode
 
 measures:
@@ -63,3 +83,8 @@ management:
 info:
   app:
     name: Mat Fhir Services
+
+
+json:
+  data:
+    url: https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json

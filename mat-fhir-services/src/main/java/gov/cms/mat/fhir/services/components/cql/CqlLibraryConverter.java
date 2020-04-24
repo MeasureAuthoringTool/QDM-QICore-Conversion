@@ -3,11 +3,11 @@ package gov.cms.mat.fhir.services.components.cql;
 import gov.cms.mat.cql.exceptions.QdmMappingException;
 import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.config.CodeSystemLookup;
 import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
 import gov.cms.mat.fhir.services.cql.QdmCqlToFhirCqlConverter;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.service.CodeSystemConversionDataService;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.springframework.stereotype.Component;
 
@@ -15,18 +15,16 @@ import org.springframework.stereotype.Component;
 public class CqlLibraryConverter {
     private final QdmQiCoreDataService qdmQiCoreDataService;
     private final ConversionLibraryLookup conversionLibraryLookup;
-
-    private final CodeSystemLookup codeSystemLookup;
-
+    private final CodeSystemConversionDataService codeSystemConversionDataService;
     private final HapiFhirServer hapiFhirServer;
 
     public CqlLibraryConverter(QdmQiCoreDataService qdmQiCoreDataService,
                                ConversionLibraryLookup conversionLibraryLookup,
-                               CodeSystemLookup codeSystemLookup,
+                               CodeSystemConversionDataService codeSystemConversionDataService,
                                HapiFhirServer hapiFhirServer) {
         this.qdmQiCoreDataService = qdmQiCoreDataService;
         this.conversionLibraryLookup = conversionLibraryLookup;
-        this.codeSystemLookup = codeSystemLookup;
+        this.codeSystemConversionDataService = codeSystemConversionDataService;
         this.hapiFhirServer = hapiFhirServer;
     }
 
@@ -35,7 +33,7 @@ public class CqlLibraryConverter {
             QdmCqlToFhirCqlConverter qdmCqlToFhirCql = new QdmCqlToFhirCqlConverter(cqlText,
                     qdmQiCoreDataService,
                     conversionLibraryLookup.getMap(),
-                    codeSystemLookup.getMap(),
+                    codeSystemConversionDataService.getConversionData(),
                     hapiFhirServer);
 
             return qdmCqlToFhirCql.convert(null);

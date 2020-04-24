@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.config.CodeSystemLookup;
 import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.service.CodeSystemConversionDataService;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -26,13 +27,21 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
 
     @BeforeEach
     void setUp() {
+        RestTemplate restTemplate = new RestTemplate();
+        CodeSystemConversionDataService codeSystemConversionDataService = new CodeSystemConversionDataService(restTemplate);
+        ReflectionTestUtils.setField(codeSystemConversionDataService,
+                "url",
+                "https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json");
+        codeSystemConversionDataService.postConstruct();
+
+
         CodeSystemLookup codeSystemLookup = new CodeSystemLookup();
         codeSystemLookup.setMap(createCodeSystemLookUpMap());
 
         ConversionLibraryLookup conversionLibraryLookup = new ConversionLibraryLookup();
         conversionLibraryLookup.setMap(createConvertedLibLookUpMap());
 
-        RestTemplate restTemplate = new RestTemplate();
+
         QdmQiCoreDataService qdmQiCoreDataService = new QdmQiCoreDataService(restTemplate);
         ReflectionTestUtils.setField(qdmQiCoreDataService, "baseURL", "http://localhost:9090");
 
@@ -40,7 +49,10 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
         ReflectionTestUtils.setField(hapiFhirServer, "baseURL", "http://localhost:6060/hapi-fhir-jpaserver/fhir/");
         hapiFhirServer.setUp();
 
-        cqlLibraryConverter = new CqlLibraryConverter(qdmQiCoreDataService, conversionLibraryLookup, codeSystemLookup, hapiFhirServer);
+        cqlLibraryConverter = new CqlLibraryConverter(qdmQiCoreDataService,
+                conversionLibraryLookup,
+                codeSystemConversionDataService,
+                hapiFhirServer);
     }
 
     private Map<String, String> createConvertedLibLookUpMap() {

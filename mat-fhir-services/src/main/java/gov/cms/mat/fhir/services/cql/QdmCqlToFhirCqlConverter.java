@@ -4,8 +4,11 @@ import gov.cms.mat.cql.CqlParser;
 import gov.cms.mat.cql.elements.*;
 import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.exceptions.CodeSystemOidNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
+import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
+import gov.cms.mat.fhir.services.summary.ConversionData;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +40,7 @@ public class QdmCqlToFhirCqlConverter {
     private final CqlParser cqlParser;
     private final QdmQiCoreDataService qdmQiCoreDataService;
     private final Map<String, String> conversionLibLookupMap;
-    private final Map<String, String> codeSystemLookupMap;
+    private final ConversionData conversionData;
     private final HapiFhirServer hapiFhirServer;
 
     List<IncludeProperties> includeProperties;
@@ -47,12 +50,12 @@ public class QdmCqlToFhirCqlConverter {
     public QdmCqlToFhirCqlConverter(String cqlText,
                                     QdmQiCoreDataService qdmQiCoreDataService,
                                     Map<String, String> conversionLibLookupMap,
-                                    Map<String, String> codeSystemLookupMap,
+                                    ConversionData conversionData,
                                     HapiFhirServer hapiFhirServer) {
         cqlParser = new CqlParser(cqlText);
         this.qdmQiCoreDataService = qdmQiCoreDataService;
         this.conversionLibLookupMap = conversionLibLookupMap;
-        this.codeSystemLookupMap = codeSystemLookupMap;
+        this.conversionData = conversionData;
         this.hapiFhirServer = hapiFhirServer;
         standardIncludeProperties = createStandardIncludes();
     }
@@ -117,11 +120,9 @@ public class QdmCqlToFhirCqlConverter {
     private void processCodeSystem(CodeSystemProperties codeSystemProperties) {
 
         if (StringUtils.isNotEmpty(codeSystemProperties.getVersion())) {
-            log.debug("Code system has version : {}, so not processing", codeSystemProperties.getVersion());
+            log.debug("CodeSystem has version : {}, so not processing", codeSystemProperties.getVersion());
         } else {
-            if (!processCodeSystemInGlobalMap(codeSystemProperties)) {
-                processCodeSystemFhir(codeSystemProperties);
-            }
+            processCodeSystemInGlobalMap(codeSystemProperties);
         }
     }
 
@@ -130,37 +131,60 @@ public class QdmCqlToFhirCqlConverter {
         Bundle bundle = hapiFhirServer.getCodeSystemBundle(oid);
 
         if (bundle.hasEntry()) {
-            Bundle.BundleEntryComponent bundleEntryComponent = bundle.getEntry().get(0);
-            Resource resource = bundleEntryComponent.getResource();
+            processBundleWithEntry(codeSystemProperties, bundle);
+        } else {
+            log.info("CodeSystem NOT found with oid: {}", oid);
+        }
+    }
 
-            if (resource instanceof CodeSystem) {
-                CodeSystem codeSystem = (CodeSystem) resource;
-                log.debug("Code system {} set to CodeSystem URL: {}", codeSystemProperties.getName(), codeSystem.getUrl());
-                codeSystemProperties.setUrnOid(codeSystem.getUrl());
+    private void processBundleWithEntry(CodeSystemProperties codeSystemProperties, Bundle bundle) {
+        Bundle.BundleEntryComponent bundleEntryComponent = bundle.getEntry().get(0);
+        Resource resource = bundleEntryComponent.getResource();
+
+        if (resource instanceof CodeSystem) {
+            CodeSystem codeSystem = (CodeSystem) resource;
+            log.debug("CodeSystem {} set to CodeSystem URL: {}", codeSystemProperties.getName(), codeSystem.getUrl());
+            codeSystemProperties.setUrnOid(codeSystem.getUrl());
+        } else {
+            log.info("Resource is not a CodeSystem it is a: {}", resource.getClass().getName());
+        }
+    }
+
+    private void processCodeSystemInGlobalMap(CodeSystemProperties codeSystemProperties) {
+
+        String name = codeSystemProperties.getName();
+        CodeSystemEntry entry = findCodeSystemEntry(codeSystemProperties.getUrnOid());
+
+        if (name.contains(":")) {
+            String version = StringUtils.substringAfter(name, ":");
+
+            if (name.startsWith("SNOMEDCT")) {
+                version = fixSnoMedVersion(version, entry.getUrlData());
             }
 
+            codeSystemProperties.setVersion(version);
+
         } else {
-            log.info("NOT found with oid: {}", oid);
-
-        }
-    }
-
-    private boolean processCodeSystemInGlobalMap(CodeSystemProperties codeSystemProperties) {
-        String name = codeSystemProperties.getName();
-
-        String codeSystemReference = codeSystemLookupMap.get(name);
-
-        if (StringUtils.isEmpty(codeSystemReference)) {
-            log.debug("Cannot find code system with name: {}", name);
-            return false;
-        } else {
-            log.debug("Found code system with name: {} reference: {}", name, codeSystemProperties);
-            codeSystemProperties.setUrnOid(codeSystemReference);
-            return true;
+            codeSystemProperties.setVersion(null);
         }
 
+        codeSystemProperties.setUrnOid(entry.getUrl().getData());
     }
 
+    private String fixSnoMedVersion(String version, String url) {
+        String urlVersion = version.replace("-", "");
+
+        return url + "/" + urlVersion;
+    }
+
+    private CodeSystemEntry findCodeSystemEntry(String urnOid) {
+        return conversionData.getFeed().getEntry()
+                .stream()
+                .filter(entry -> StringUtils.isNotEmpty(entry.getOidData()))
+                .filter(entry -> entry.getOidData().equals(urnOid))
+                .findFirst()
+                .orElseThrow(() -> new CodeSystemOidNotFoundException(urnOid));
+    }
 
     private String fixSDE(String cql) {
         String[] lines = cql.split("\\r?\\n");
@@ -206,7 +230,6 @@ public class QdmCqlToFhirCqlConverter {
         return cleanLines(cql);
     }
 
-
     private String cleanLines(String cql) {
         String[] lines = cql.split("\\r?\\n");
         StringBuilder output = new StringBuilder();
@@ -228,7 +251,6 @@ public class QdmCqlToFhirCqlConverter {
 
         return output.toString();
     }
-
 
     private void checkUnion(String matLibId) {
         List<UnionProperties> unions = cqlParser.getUnions();

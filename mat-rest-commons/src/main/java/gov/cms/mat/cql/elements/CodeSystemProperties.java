@@ -10,9 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 public class CodeSystemProperties extends BaseProperties {
-
-    //"codesystem \"SNOMEDCT:2017-09\": 'http://snomed.info/sct/731000124108' version 'urn:hl7:version:2016-09'";
-
     private static final String CODE_SYSTEM_TEMPLATE = "codesystem \"%s\": '%s'";
     private static final String VERSION_TEMPLATE = " version '%s'";
 
@@ -20,8 +17,8 @@ public class CodeSystemProperties extends BaseProperties {
     @Setter
     String urnOid;
     String line;
+    @Setter
     String version;
-
 
     @Override
     public void setToFhir() {
