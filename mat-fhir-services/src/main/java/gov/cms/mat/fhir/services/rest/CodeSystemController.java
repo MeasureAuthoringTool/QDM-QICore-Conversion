@@ -23,9 +23,9 @@ public class CodeSystemController {
         this.codeSystemService = codeSystemService;
     }
 
-    @Operation(summary = "getCodesystemMappings",
+    @Operation(summary = "mappings",
             description = "Returns the codesystem oid <-> url mappings.")
-    @GetMapping("/getCodesystemMappings")
+    @GetMapping("/mappings")
     public ConversionData getCodesystemMappings() {
         return codeSystemService.reload();
     }
