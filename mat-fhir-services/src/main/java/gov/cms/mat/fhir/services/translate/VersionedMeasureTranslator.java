@@ -33,7 +33,7 @@ public class VersionedMeasureTranslator implements MeasureTranslator {
     private final String humanReadable;
 
     private final String baseURL;
-    private gov.cms.mat.fhir.commons.model.Measure matMeasure;
+    private final gov.cms.mat.fhir.commons.model.Measure matMeasure;
 
     public VersionedMeasureTranslator(gov.cms.mat.fhir.commons.model.Measure matMeasure,
                                       ManageCompositeMeasureDetailModel measureCompositeModel,
@@ -47,7 +47,7 @@ public class VersionedMeasureTranslator implements MeasureTranslator {
 
     @Override
     public Measure translateToFhir(String uuid) {
-        Measure result = new Measure();
+        Measure result = buildMeasure();
 
         result.setId(uuid);
         result.setUrl(baseURL + "Measure/" + uuid);

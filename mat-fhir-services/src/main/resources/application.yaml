@@ -17,18 +17,6 @@ vsac-client:
   use-cache: on
   cache-directory: /opt/vsac/cache
 
-library-files:
-  order:
-    - FHIRHelpers_FHIR4-4.0.000.cql
-    - SupplementalDataElements_FHIR4-1.0.000.cql
-    - AdultOutpatientEncounters_FHIR4-1.1.000.cql
-    - MATGlobalCommonFunctions_FHIR4-4.0.000.cql
-    - AdvancedIllnessandFrailtyExclusion_FHIR4-4.0.000.cql
-    - TJCOverall_FHIR4-4.0.000.cql
-    - VTEICU_FHIR4-3.1.000.cql
-    - Hospice_FHIR4-1.0.000.cql
-    - NCQA_Common_FHIR4-5.1.000.cql
-
 conversion-lib-lookup-4-1:
   map:
     FHIRHelpers: 4.0.001
@@ -39,33 +27,6 @@ conversion-lib-lookup-4-1:
     SupplementalDataElements: 2.0.000
     TJCOverall: 5.0.000
     VTEICU: 4.0.000
-
-code-systemlookup-4-1:
-  map:
-    LOINC: http://loinc.org
-    SNOMEDCT: http://snomed.info/sct/731000124108
-    RoleCode: http://hl7.org/fhir/v3/RoleCode
-    '2.16.840.1.113883.6.96': http://snomed.info/sct/731000124108
-
-code-systemlookup-oid-4-1:
-  map:
-    LOINC: http://loinc.org
-    '2.16.840.1.113883.6.96': http://snomed.info/sct/731000124108
-    '2.16.840.1.113883.5.1001': http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status
-    '2.16.840.1.113883.5.1': http://terminology.hl7.org/CodeSystem/v3-AdministrativeGender
-    '2.16.840.1.113883.3.221.5': http://tobedone.com
-    '2.16.840.1.113883.6.90': http://hl7.org/fhir/sid/icd-10-cm
-    '2.16.840.1.113883.6.285': http://hl7.org/fhir/us/core/ValueSet-us-core-procedure-code.json.html
-    '2.16.840.1.113883.12.112': http://tobedone.com
-    '2.16.840.1.113883.6.1': http://loinc.org
-    '2.16.840.1.113883.6.259': http://tobedone.com
-    '2.16.840.1.113883.12.292': http://hl7.org/fhir/sid/cvx
-    '2.16.840.1.113883.6.88': http://www.nlm.nih.gov/research/umls/rxnorm
-    '2.16.840.1.113883.6.12':
-
-
-
-    RoleCode: http://hl7.org/fhir/v3/RoleCode
 
 measures:
   allowed:

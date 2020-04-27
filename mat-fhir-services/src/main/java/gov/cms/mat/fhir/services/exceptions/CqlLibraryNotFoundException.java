@@ -12,7 +12,8 @@ import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.CQLLIBRARY_NOT_FOUND;
 @Slf4j
 public class CqlLibraryNotFoundException extends RuntimeException {
     private static final String NOT_FOUND_BY_MEASURE_ID = "Cannot find a CqlLibrary for measureId: %s";
-    private static final String NOT_FOUND_BY_FIND_DATA = "Cannot find a CqlLibrary with: %s, %s, %s";
+    private static final String NOT_FOUND_BY_FIND_DATA = "Cannot find a %s CqlLibrary with: %s, " +
+            "QdmVersion: %s, MatVersion: %s";
 
     private static final String NOT_FOUND_BY_MEASURE_ID_VERSION_LIBRARY = NOT_FOUND_BY_MEASURE_ID + " library: %s and version: %s";
 
@@ -34,7 +35,9 @@ public class CqlLibraryNotFoundException extends RuntimeException {
     }
 
     public CqlLibraryNotFoundException(CqlLibraryFindData cqlLibraryFindData) {
-        super(String.format(NOT_FOUND_BY_FIND_DATA, cqlLibraryFindData.getName(),
+        super(String.format(NOT_FOUND_BY_FIND_DATA,
+                cqlLibraryFindData.getType(),
+                cqlLibraryFindData.getName(),
                 cqlLibraryFindData.getQdmVersion(),
                 cqlLibraryFindData.getMatVersion()));
         log.warn(getMessage());

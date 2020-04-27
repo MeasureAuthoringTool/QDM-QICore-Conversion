@@ -65,6 +65,8 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
         value.setLanguage(expressionString);
         value.setExpression(clauseDetail.getDisplayName());
         component.setCode(buildCodeableConcept(clauseDetail.getType(), SYSTEM, clauseDetail.getDisplayName()));
+
+        component.setCriteria(value);
         return component;
     }
 }

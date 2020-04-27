@@ -1,7 +1,6 @@
 package gov.cms.mat.fhir.services.components.cql;
 
 import gov.cms.mat.fhir.services.ResourceFileUtil;
-import gov.cms.mat.fhir.services.config.CodeSystemLookup;
 import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.CodeSystemConversionDataService;
@@ -34,10 +33,6 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
                 "https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json");
         codeSystemConversionDataService.postConstruct();
 
-
-        CodeSystemLookup codeSystemLookup = new CodeSystemLookup();
-        codeSystemLookup.setMap(createCodeSystemLookUpMap());
-
         ConversionLibraryLookup conversionLibraryLookup = new ConversionLibraryLookup();
         conversionLibraryLookup.setMap(createConvertedLibLookUpMap());
 
@@ -65,14 +60,6 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
                 "SupplementalDataElements", "2.0.000",
                 "TJCOverall", "5.0.000",
                 "VTEICU", "4.0.000");
-    }
-
-    private Map<String, String> createCodeSystemLookUpMap() {
-        return Map.of(
-                "LOINC", "http://loinc.org",
-                "SNOMEDCT", "http://snomed.info/sct/731000124108",
-                "Diagnosis Role", "http://terminology.hl7.org/CodeSystem/diagnosis-role",
-                "RoleCode", "http://hl7.org/fhir/v3/RoleCode");
     }
 
     @Test
