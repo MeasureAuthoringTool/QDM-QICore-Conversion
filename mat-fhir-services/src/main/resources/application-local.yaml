@@ -48,3 +48,7 @@ self:
   health:
     baseurl: ${FHIR_SERVICES_URL}
 
+json:
+  data:
+    url: https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json
+

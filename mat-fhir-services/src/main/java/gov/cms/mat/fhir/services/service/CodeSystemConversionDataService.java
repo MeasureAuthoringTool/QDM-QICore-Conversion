@@ -24,10 +24,15 @@ public class CodeSystemConversionDataService {
         this.restTemplate = restTemplate;
     }
 
-    @PostConstruct
-    public void postConstruct() {
+    public ConversionData reload() {
         conversionData = restTemplate.getForObject(url, ConversionData.class);
         log.info("Received {} records from the spreadsheet's JSON, URL: {}",
                 conversionData.getFeed().getEntry().size(), url);
+        return conversionData;
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        reload();
     }
 }

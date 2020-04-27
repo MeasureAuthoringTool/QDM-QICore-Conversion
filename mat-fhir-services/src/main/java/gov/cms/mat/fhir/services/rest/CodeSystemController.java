@@ -1,7 +1,9 @@
 package gov.cms.mat.fhir.services.rest;
 
 
+import gov.cms.mat.fhir.services.service.CodeSystemConversionDataService;
 import gov.cms.mat.fhir.services.service.FhirLoaderService;
+import gov.cms.mat.fhir.services.summary.ConversionData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -15,20 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class CodeSystemController {
 
-    private final FhirLoaderService fhirLoaderService;
+    private final CodeSystemConversionDataService codeSystemService;
 
-    public CodeSystemController(FhirLoaderService fhirLoaderService) {
-        this.fhirLoaderService = fhirLoaderService;
+    public CodeSystemController(CodeSystemConversionDataService codeSystemService) {
+        this.codeSystemService = codeSystemService;
     }
 
-    @Operation(summary = "load.",
-            description = "Load")
-    @GetMapping("/load")
-    public String load() {
-        fhirLoaderService.load();
-
-        return "OK";
+    @Operation(summary = "getCodesystemMappings",
+            description = "Returns the codesystem oid <-> url mappings.")
+    @GetMapping("/getCodesystemMappings")
+    public ConversionData getCodesystemMappings() {
+        return codeSystemService.reload();
     }
-
-
 }

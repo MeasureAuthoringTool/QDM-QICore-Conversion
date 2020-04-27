@@ -23,5 +23,6 @@ export VSAC_SERVICE_URL='http://umlsks.nlm.nih.gov'
 export HEALTH_CHECK_URL='http://host.docker.internal:9080'
 
 export QDM_SPREADSHEET='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json'
+export CODESYSTEM_SHEET_URL="https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json"
 
 export MAT_LOG_LEVEL='WARN'

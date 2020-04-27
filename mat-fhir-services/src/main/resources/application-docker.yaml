@@ -47,3 +47,7 @@ self:
   health:
     baseurl: ${FHIR_SERVICES_URL}
 
+json:
+  data:
+    url: ${CODESYSTEM_SHEET_URL}
+
