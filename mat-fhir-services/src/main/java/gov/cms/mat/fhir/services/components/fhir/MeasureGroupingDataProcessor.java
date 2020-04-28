@@ -58,15 +58,14 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
     }
 
     private Measure.MeasureGroupPopulationComponent createPopulation(MeasurePackageClauseDetail clauseDetail) {
-        Measure.MeasureGroupPopulationComponent component = new Measure.MeasureGroupPopulationComponent();
+        return new Measure.MeasureGroupPopulationComponent()
+                .setCriteria(buildExpression(clauseDetail.getDisplayName()))
+                .setCode(buildCodeableConcept(clauseDetail.getType(), SYSTEM, clauseDetail.getDisplayName()));
+    }
 
-        Expression value = new Expression();
-        String expressionString = (Expression.ExpressionLanguage.TEXT_CQL).getDisplay();
-        value.setLanguage(expressionString);
-        value.setExpression(clauseDetail.getDisplayName());
-        component.setCode(buildCodeableConcept(clauseDetail.getType(), SYSTEM, clauseDetail.getDisplayName()));
-
-        component.setCriteria(value);
-        return component;
+    private Expression buildExpression(String displayName) {
+        return new Expression()
+                .setLanguage(Expression.ExpressionLanguage.TEXT_CQL.toCode())
+                .setExpression(displayName);
     }
 }
