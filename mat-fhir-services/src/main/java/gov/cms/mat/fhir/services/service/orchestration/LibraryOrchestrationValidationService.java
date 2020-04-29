@@ -121,6 +121,9 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     boolean validate(OrchestrationProperties properties) {
 
+        properties.getCqlLibraries()
+                .forEach(cqlLibrary -> convertQdmToFhir(cqlLibrary, properties.isShowWarnings()));
+
         translateCqlMatLibsToFhir(properties);
 
         return validateLibs(properties);
@@ -128,9 +131,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     private boolean validateLibs(OrchestrationProperties properties) {
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
-
-        properties.getCqlLibraries()
-                .forEach(cqlLibrary -> convertQdmToFhir(cqlLibrary, properties.isShowWarnings()));
 
         // When no errors we would then convert to fhir and validate - for initial testing do for ALL
         properties.getCqlLibraries()
@@ -178,12 +178,15 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
         LibraryConversionResults results = conversionResult.findLibraryConversionResultsRequired(cqlLibrary.getId());
 
-        String cql = ConversionReporter.getCql(cqlLibrary.getId());
-        String elm = ConversionReporter.getElm(cqlLibrary.getId());
+        // String cql = ConversionReporter.getCql(cqlLibrary.getId());
+        // String elm = ConversionReporter.getElm(cqlLibrary.getId());
+
+        String fhirCql = ConversionReporter.getFhirCql(cqlLibrary.getId());
+        String fhirElm = ConversionReporter.getFhirElm(cqlLibrary.getId());
 
         MatLibraryTranslator matLibraryTranslator = new MatLibraryTranslator(cqlLibrary,
-                cql.getBytes(),
-                elm.getBytes(),
+                fhirCql.getBytes(),
+                fhirElm.getBytes(),
                 hapiFhirServer.getBaseURL(),
                 createId());
 

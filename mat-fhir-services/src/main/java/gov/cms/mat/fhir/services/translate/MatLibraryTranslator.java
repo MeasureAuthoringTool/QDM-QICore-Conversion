@@ -12,7 +12,11 @@ public class MatLibraryTranslator extends LibraryTranslatorBase {
     private final CqlLibrary cqlLibrary;
     private final String uuid;
 
-    public MatLibraryTranslator(CqlLibrary cqlLibrary, byte[] cql, byte[] elm, String baseURL, String uuid) {
+    public MatLibraryTranslator(CqlLibrary cqlLibrary,
+                                byte[] cql,
+                                byte[] elm,
+                                String baseURL,
+                                String uuid) {
         super(cql, elm, baseURL);
 
         this.cqlLibrary = cqlLibrary;
