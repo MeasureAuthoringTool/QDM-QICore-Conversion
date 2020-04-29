@@ -24,11 +24,18 @@ public interface FhirValidatorProcessor {
         instanceValidator.setNoTerminologyChecks(true);
 
         ValidationOptions options = new ValidationOptions();
-        //options.addProfile( "http://build.fhir.org/ig/HL7/cqf-measures/branches/R4_Lift/StructureDefinition-library-cqfm.json");
+
+
+        //if (resource instanceof Measure)
+        //   options.addProfile("http://build.fhir.org/ig/HL7/cqf-measures/branches/R4_Lift/StructureDefinition-measure-cqfm.json");
+
+        // if (resource instanceof Library)
+        //     options.addProfile("http://build.fhir.org/ig/HL7/cqf-measures/branches/R4_Lift/StructureDefinition-library-cqfm.json");
+
 
         ValidationResult validationResult = validator.validateWithResult(resource, options);
 
-       validationResult.getMessages()
+        validationResult.getMessages()
                 .forEach(n -> fhirResourceValidationResult.getValidationErrorList().add(buildValidationError(n)));
     }
 

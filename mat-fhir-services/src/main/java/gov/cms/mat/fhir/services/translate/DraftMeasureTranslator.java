@@ -7,29 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import mat.server.util.MeasureUtility;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.ContactDetail;
-import org.hl7.fhir.r4.model.ContactPoint;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Measure;
-import org.hl7.fhir.r4.model.Meta;
-import org.hl7.fhir.r4.model.Narrative;
-import org.hl7.fhir.r4.model.Period;
-import org.hl7.fhir.r4.model.RelatedArtifact;
-import org.hl7.fhir.r4.model.UsageContext;
+import org.hl7.fhir.r4.model.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.CITATION;
-import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.DOCUMENTATION;
-import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.JUSTIFICATION;
+import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.*;
 
 @Slf4j
 public class DraftMeasureTranslator implements MeasureTranslator {
@@ -40,12 +23,11 @@ public class DraftMeasureTranslator implements MeasureTranslator {
 
     public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
 
-    //private final ManageCompositeMeasureDetailModel matCompositeMeasureModel;
     private final String humanReadable;
 
     private final String baseURL;
-    private gov.cms.mat.fhir.commons.model.Measure matMeasure;
-    private gov.cms.mat.fhir.commons.model.MeasureDetails matDetails;
+    private final gov.cms.mat.fhir.commons.model.Measure matMeasure;
+    private final gov.cms.mat.fhir.commons.model.MeasureDetails matDetails;
 
     public DraftMeasureTranslator(gov.cms.mat.fhir.commons.model.Measure matMeasure,
                                   String humanReadable,
@@ -58,7 +40,7 @@ public class DraftMeasureTranslator implements MeasureTranslator {
 
     @Override
     public Measure translateToFhir(String uuid) {
-        Measure fhirMeasure = new Measure();
+        Measure fhirMeasure = buildMeasure();
 
         fhirMeasure.setId(matMeasure.getId());
         fhirMeasure.setUrl(baseURL + "Measure/" + fhirMeasure.getId());
@@ -75,7 +57,7 @@ public class DraftMeasureTranslator implements MeasureTranslator {
         fhirMeasure.setPurpose("Unknown");
         fhirMeasure.setCopyright(matDetails.getCopyright());
         fhirMeasure.setDisclaimer(matDetails.getDisclaimer());
-        fhirMeasure.setPurpose("Unknown");
+
 
         //set Extensions if any known, QICore Extension below
         //QICore Not Done Extension
@@ -102,8 +84,10 @@ public class DraftMeasureTranslator implements MeasureTranslator {
         processRelatedArtifacts(fhirMeasure);
         processScoring(fhirMeasure);
 
+
         return fhirMeasure;
     }
+
 
     public void processTopic(Measure fhirMeasure) {
         fhirMeasure.setTopic(new ArrayList<>());

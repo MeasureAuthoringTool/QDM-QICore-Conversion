@@ -4,7 +4,6 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import gov.cms.mat.fhir.rest.dto.cql.CqlPayload;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
-import gov.cms.mat.fhir.services.components.library.FhirCqlLibraryFileHandler;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.service.LibraryFinderService;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
@@ -22,14 +21,11 @@ import java.math.BigDecimal;
 @Slf4j
 public class LibraryFinderController implements CqlVersionConverter {
     private final LibraryFinderService libraryFinderService;
-    private final FhirCqlLibraryFileHandler fhirCqlLibraryFileHandler;
     private final FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor;
 
     public LibraryFinderController(LibraryFinderService libraryFinderService,
-                                   FhirCqlLibraryFileHandler fhirCqlLibraryFileHandler,
                                    FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor) {
         this.libraryFinderService = libraryFinderService;
-        this.fhirCqlLibraryFileHandler = fhirCqlLibraryFileHandler;
         this.fhirIncludeLibraryProcessor = fhirIncludeLibraryProcessor;
     }
 
@@ -70,12 +66,4 @@ public class LibraryFinderController implements CqlVersionConverter {
         return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(cqlContent);
     }
 
-
-    @Operation(summary = "load.",
-            description = "Load")
-    @GetMapping("/load")
-    public String load() {
-        fhirCqlLibraryFileHandler.loaLibs();
-        return "OK";
-    }
 }

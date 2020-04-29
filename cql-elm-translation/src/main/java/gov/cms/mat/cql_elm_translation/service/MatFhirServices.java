@@ -51,29 +51,6 @@ public class MatFhirServices {
         }
     }
 
-    public String getFhirCql(String name, String version) {
-        URI uri = buildFindFhirUri(name, version);
-        log.info("Getting Fhir library: {} ", uri);
-
-        ResponseEntity<String> responseEntity;
-        try {
-            responseEntity = restTemplate.getForEntity(uri, String.class);
-        } catch (Exception e) {
-            return null;
-        }
-
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            if (responseEntity.hasBody()) {
-                return responseEntity.getBody();
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-
     private URI buildFindMatUri(String name, String version, String qdmVersion, String type) {
         return UriComponentsBuilder
                 .fromHttpUrl(baseURL + "/library/find/mat")
@@ -81,16 +58,6 @@ public class MatFhirServices {
                 .queryParam("name", name)
                 .queryParam("version", version)
                 .queryParam("type", type)
-                .build()
-                .encode()
-                .toUri();
-    }
-
-    private URI buildFindFhirUri(String name, String version) {
-        return UriComponentsBuilder
-                .fromHttpUrl(baseURL + "/library/find/hapi")
-                .queryParam("name", name)
-                .queryParam("version", version)
                 .build()
                 .encode()
                 .toUri();

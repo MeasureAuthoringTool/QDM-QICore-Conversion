@@ -33,7 +33,7 @@ public class VersionedMeasureTranslator implements MeasureTranslator {
     private final String humanReadable;
 
     private final String baseURL;
-    private gov.cms.mat.fhir.commons.model.Measure matMeasure;
+    private final gov.cms.mat.fhir.commons.model.Measure matMeasure;
 
     public VersionedMeasureTranslator(gov.cms.mat.fhir.commons.model.Measure matMeasure,
                                       ManageCompositeMeasureDetailModel measureCompositeModel,
@@ -47,49 +47,49 @@ public class VersionedMeasureTranslator implements MeasureTranslator {
 
     @Override
     public Measure translateToFhir(String uuid) {
-        Measure result = new Measure();
+        Measure fhirMeasure = buildMeasure();
 
-        result.setId(uuid);
-        result.setUrl(baseURL + "Measure/" + uuid);
-        result.setRationale(matCompositeMeasureModel.getRationale());
-        result.setClinicalRecommendationStatement(matCompositeMeasureModel.getClinicalRecomms());
-        result.setGuidance(matCompositeMeasureModel.getGuidance());
-        result.setVersion(matCompositeMeasureModel.getVersionNumber());
-        result.setName(matCompositeMeasureModel.getMeasureName());
-        result.setTitle(matCompositeMeasureModel.getShortName());  //measure title
-        result.setExperimental(false); //Mat does not have concept experimental
-        result.setDescription(matCompositeMeasureModel.getDescription());
-        result.setPublisher(matCompositeMeasureModel.getStewardValue());
-        result.setPurpose("Unknown");
-        result.setCopyright(matCompositeMeasureModel.getCopyright());
-        result.setDisclaimer(matCompositeMeasureModel.getDisclaimer());
-        result.setPurpose("Unknown");
+        fhirMeasure.setId(uuid);
+        fhirMeasure.setUrl(baseURL + "Measure/" + uuid);
+        fhirMeasure.setRationale(matCompositeMeasureModel.getRationale());
+        fhirMeasure.setClinicalRecommendationStatement(matCompositeMeasureModel.getClinicalRecomms());
+        fhirMeasure.setGuidance(matCompositeMeasureModel.getGuidance());
+        fhirMeasure.setVersion(matCompositeMeasureModel.getVersionNumber());
+        fhirMeasure.setName(matCompositeMeasureModel.getMeasureName());
+        fhirMeasure.setTitle(matCompositeMeasureModel.getShortName());  //measure title
+        fhirMeasure.setExperimental(false); //Mat does not have concept experimental
+        fhirMeasure.setDescription(matCompositeMeasureModel.getDescription());
+        fhirMeasure.setPublisher(matCompositeMeasureModel.getStewardValue());
+        fhirMeasure.setPurpose("Unknown");
+        fhirMeasure.setCopyright(matCompositeMeasureModel.getCopyright());
+        fhirMeasure.setDisclaimer(matCompositeMeasureModel.getDisclaimer());
+        fhirMeasure.setPurpose("Unknown");
 
         //set Extensions if any known, QICore Extension below
         //QICore Not Done Extension
         //EncounterProcedureExtension
         //Military Service Extension
         //RAND Appropriateness Score Extension
-        result.setExtension(new ArrayList<>());
+        fhirMeasure.setExtension(new ArrayList<>());
 
         //TODO No  Contact Mapping
-        result.setContact(createContactDetailUrl("https://cms.gov"));
+        fhirMeasure.setContact(createContactDetailUrl("https://cms.gov"));
 
-        result.setUseContext(createUsageContext("program", "eligible-provider"));
+        fhirMeasure.setUseContext(createUsageContext("program", "eligible-provider"));
 
         // proessMeta(fhirMeasure);  TODO needs fixing
-        processHumanReadable(result);
-        processIdentifiers(result);
-        processStatus(result);
-        processFinalizeDate(result);
-        processTypes(result);
-        processJurisdiction(result);
-        processPeriod(result);
-        processTopic(result);
-        processRelatedArtifacts(result);
-        processScoring(result);
+        processHumanReadable(fhirMeasure);
+        processIdentifiers(fhirMeasure);
+        processStatus(fhirMeasure);
+        processFinalizeDate(fhirMeasure);
+        processTypes(fhirMeasure);
+        processJurisdiction(fhirMeasure);
+        processPeriod(fhirMeasure);
+        processTopic(fhirMeasure);
+        processRelatedArtifacts(fhirMeasure);
+        processScoring(fhirMeasure);
 
-        return result;
+        return fhirMeasure;
     }
 
     public void processTopic(Measure fhirMeasure) {
