@@ -8,7 +8,6 @@ import gov.cms.mat.fhir.services.exceptions.CodeSystemOidNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
-import gov.cms.mat.fhir.services.summary.ConversionData;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +39,7 @@ public class QdmCqlToFhirCqlConverter {
     private final CqlParser cqlParser;
     private final QdmQiCoreDataService qdmQiCoreDataService;
     private final Map<String, String> conversionLibLookupMap;
-    private final ConversionData conversionData;
+    private final List<CodeSystemEntry> codeSystemMappings;
     private final HapiFhirServer hapiFhirServer;
 
     List<IncludeProperties> includeProperties;
@@ -50,12 +49,12 @@ public class QdmCqlToFhirCqlConverter {
     public QdmCqlToFhirCqlConverter(String cqlText,
                                     QdmQiCoreDataService qdmQiCoreDataService,
                                     Map<String, String> conversionLibLookupMap,
-                                    ConversionData conversionData,
+                                    List<CodeSystemEntry> codeSystemMappings,
                                     HapiFhirServer hapiFhirServer) {
         cqlParser = new CqlParser(cqlText);
         this.qdmQiCoreDataService = qdmQiCoreDataService;
         this.conversionLibLookupMap = conversionLibLookupMap;
-        this.conversionData = conversionData;
+        this.codeSystemMappings = codeSystemMappings;
         this.hapiFhirServer = hapiFhirServer;
         standardIncludeProperties = createStandardIncludes();
     }
@@ -159,16 +158,14 @@ public class QdmCqlToFhirCqlConverter {
             String version = StringUtils.substringAfter(name, ":");
 
             if (name.startsWith("SNOMEDCT")) {
-                version = fixSnoMedVersion(version, entry.getUrlData());
+                version = fixSnoMedVersion(version, entry.getUrl());
             }
-
             codeSystemProperties.setVersion(version);
-
         } else {
             codeSystemProperties.setVersion(null);
         }
 
-        codeSystemProperties.setUrnOid(entry.getUrl().getData());
+        codeSystemProperties.setUrnOid(entry.getUrl());
     }
 
     private String fixSnoMedVersion(String version, String url) {
@@ -178,10 +175,9 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private CodeSystemEntry findCodeSystemEntry(String urnOid) {
-        return conversionData.getFeed().getEntry()
+        return codeSystemMappings
                 .stream()
-                .filter(entry -> StringUtils.isNotEmpty(entry.getOidData()))
-                .filter(entry -> entry.getOidData().equals(urnOid))
+                .filter(e -> StringUtils.equals(urnOid, e.getOid()))
                 .findFirst()
                 .orElseThrow(() -> new CodeSystemOidNotFoundException(urnOid));
     }
