@@ -33,7 +33,7 @@ public class CqlLibraryConverter {
             QdmCqlToFhirCqlConverter qdmCqlToFhirCql = new QdmCqlToFhirCqlConverter(cqlText,
                     qdmQiCoreDataService,
                     conversionLibraryLookup.getMap(),
-                    codeSystemConversionDataService.getConversionData(),
+                    codeSystemConversionDataService.getCodeSystemMappings(),
                     hapiFhirServer);
 
             return qdmCqlToFhirCql.convert(null);

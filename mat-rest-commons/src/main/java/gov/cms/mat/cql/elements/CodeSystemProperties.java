@@ -28,11 +28,6 @@ public class CodeSystemProperties extends BaseProperties {
     @Override
     public String createCql() {
         String converted = String.format(CODE_SYSTEM_TEMPLATE, name, urnOid);
-
-        if (StringUtils.isEmpty(version)) {
-            return converted;
-        } else {
-            return converted + String.format(VERSION_TEMPLATE, version);
-        }
+        return StringUtils.isEmpty(version) ? converted : converted + String.format(VERSION_TEMPLATE, version);
     }
 }
