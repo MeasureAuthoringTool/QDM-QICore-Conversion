@@ -97,7 +97,6 @@
         <module>vsac-mat-conversion</module>
         <module>qdm-qicore-mapping-services</module>
         <module>cql-elm-translation</module>
-        <module>mat-standalone-utils</module>
     </modules>
 
     <repositories>
