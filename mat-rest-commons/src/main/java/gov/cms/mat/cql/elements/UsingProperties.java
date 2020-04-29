@@ -24,7 +24,7 @@ public class UsingProperties extends BaseProperties {
     }
 
     public boolean isFhir() {
-        return StringUtils.isNotEmpty(libraryType) && libraryType.equals(BaseProperties.LIBRARY_FHIR_TYPE);
+        return StringUtils.isNotEmpty(libraryType) && (libraryType.equals(BaseProperties.LIBRARY_FHIR_TYPE) || libraryType.equals("4.0.0"));
     }
 
     @Override

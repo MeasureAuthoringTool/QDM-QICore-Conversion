@@ -1,4 +1,5 @@
 FROM openjdk:11-jdk
+RUN mkdir -p /opt/fhir/distribution
 RUN mkdir -p /opt/vsac/cache
 COPY ./cache  /opt/vsac/cache
 

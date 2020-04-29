@@ -2,14 +2,14 @@
 export VSAC_USER=FIXME
 export VSAC_PASS=FIXME
 
-export MAT_DB_URL='jdbc:mysql://host.docker.internal:3306/MAT_APP_BLANK?serverTimezone=UTC&max_allowed_packet=16777216'
-export MAT_DB_USER=FIXME!
-export MAT_DB_PASS=FIXME!
+export MAT_DB_URL='jdbc:mysql://host.docker.internal:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216'
+export MAT_DB_USER=root
+export MAT_DB_PASS=changeme
 
 export HAPI_DB=hapi
 export HAPI_DB_URL='jdbc:mysql://hapi-fhir-mysql:3306/'${HAPI_DB}'?serverTimezone=UTC&max_allowed_packet=16777216&createDatabaseIfNotExist=true&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false'
-export HAPI_DB_USER=FIXME!
-export HAPI_DB_PASS=FIXME!
+export HAPI_DB_USER=admin	
+export HAPI_DB_PASS=admin
 
 export MONGO_DB_URL='mongodb://host.docker.internal:27018'
 
@@ -25,4 +25,4 @@ export HEALTH_CHECK_URL='http://host.docker.internal:9080'
 export QDM_SPREADSHEET='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json'
 export CODESYSTEM_SHEET_URL="https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json"
 
-export MAT_LOG_LEVEL='WARN'
+export MAT_LOG_LEVEL='INFO'

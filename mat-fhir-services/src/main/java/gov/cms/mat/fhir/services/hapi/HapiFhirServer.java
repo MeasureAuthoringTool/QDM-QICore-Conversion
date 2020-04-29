@@ -271,14 +271,17 @@ public class HapiFhirServer {
     }
 
     public String toJson(Resource resource) {
-        return getCtx().newJsonParser()
-                .setPrettyPrint(true)
+        return ctx.newJsonParser()
+                .encodeResourceToString(resource);
+    }
+    
+    public String toXml(Resource resource) {
+        return ctx.newXmlParser()
                 .encodeResourceToString(resource);
     }
 
     public <T extends Resource> T parseResource(Class<T> resourceClass, String resourceJson) {
-        return getCtx()
-                .newJsonParser()
+        return ctx.newJsonParser()
                 .parseResource(resourceClass, resourceJson);
     }
 }

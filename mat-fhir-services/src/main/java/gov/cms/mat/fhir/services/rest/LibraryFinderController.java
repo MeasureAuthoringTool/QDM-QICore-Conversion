@@ -56,7 +56,6 @@ public class LibraryFinderController implements CqlVersionConverter {
     @GetMapping("/hapi")
     public String findLibraryHapiCql(@RequestParam String name, @RequestParam String version) {
         return libraryFinderService.getCqlFromFire(name, version);
-
     }
 
     @Operation(summary = "Find Include Library in FHIR.",
