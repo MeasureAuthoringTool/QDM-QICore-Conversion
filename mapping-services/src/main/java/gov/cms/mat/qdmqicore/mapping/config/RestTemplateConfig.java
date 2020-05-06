@@ -1,4 +1,4 @@
-package gov.cms.mat.qdmqicore.conversion.config;
+package gov.cms.mat.qdmqicore.mapping.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
