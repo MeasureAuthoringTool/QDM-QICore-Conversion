@@ -1,0 +1,8 @@
+json:
+  data:
+    mat-attributes-url: ${GOOGLE_MAT_ATTRIBUTES_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json}
+    qdm-qi-core-mapping-url: ${GOOGLE_QDM_QI_CORE_MAPPING_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/ohe8k21/public/values?alt=json}
+    data-types-url: ${GOOGLE_DATA_TYPES_URLL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/ox8mj1u/public/values?alt=json}
+    required-measure-fields-url: ${GOOGLE_REQJUIRED_MEASURE_FIELDS_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/opl7qh/public/values?alt=json}
+    resource-definition-url: ${GOOGLE_RESOURCE_DEFINITION_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o1h1xy0/public/values?alt=json}
+

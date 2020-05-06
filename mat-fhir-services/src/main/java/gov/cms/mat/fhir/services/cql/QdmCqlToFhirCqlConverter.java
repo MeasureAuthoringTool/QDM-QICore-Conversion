@@ -298,7 +298,7 @@ public class QdmCqlToFhirCqlConverter {
     private void processSymbolic(SymbolicProperty symbolicProperty) {
         List<ConversionMapping> conversionMappings =
                 qdmQiCoreDataService.findAllFilteredByMatDataTypeDescription(symbolicProperty.getMatDataTypeDescription());
-        symbolicProperty.setConversionMappings(conversionMappings);
+        // symbolicProperty.setConversionMappings(conversionMappings); TODO MCG carson
     }
 
     private void convertIncludes() {
