@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.translate.creators;
 import gov.cms.mat.cql.elements.LibraryProperties;
 import org.hl7.fhir.r4.model.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -60,5 +61,15 @@ public interface FhirCreator {
 
     default String createLibraryUuid(String name, String version) {
         return name.replace('_', '-') + "-" + version.replace('.', '-');
+    }
+
+    default String createVersion(BigDecimal version, Integer revision) {
+        String[] parts = version.toString().split("\\.");
+
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Cannot parse version: " + version);
+        } else {
+            return parts[0] + '.' + revision + '.' + parts[1];
+        }
     }
 }

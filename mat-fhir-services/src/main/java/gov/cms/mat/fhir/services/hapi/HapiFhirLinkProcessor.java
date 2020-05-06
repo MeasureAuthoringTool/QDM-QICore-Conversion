@@ -41,7 +41,7 @@ public class HapiFhirLinkProcessor {
         log.debug("Fetching HAPI_FHIR {} url: {}", resourceClass.getSimpleName(), url);
         Optional<String> optionalJson = fetchJson(url);
 
-        if (!optionalJson.isPresent()) {
+        if (optionalJson.isEmpty()) {
             return Optional.empty();
         }
 

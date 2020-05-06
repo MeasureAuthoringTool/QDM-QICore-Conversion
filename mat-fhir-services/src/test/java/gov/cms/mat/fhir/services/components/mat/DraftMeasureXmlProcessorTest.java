@@ -71,7 +71,7 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil {
         when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any(), anyBoolean())).thenReturn("json");
         when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString(), anyBoolean())).thenReturn(convertedCql);
 
-        draftMeasureXmlProcessor.process(measure, false);
+        draftMeasureXmlProcessor.processMeasure(measure, false);
 
         verify(matXmlProcessor).getXml(measure, XmlSource.MEASURE);
         verify(matXpath).toQualityData(MEASURE_XML);

@@ -7,9 +7,10 @@ public interface MeasureTranslator extends FhirCreator {
     Measure translateToFhir(String uuid);
 
     default Measure buildMeasure() {
-        Measure fhirMeasure = new Measure();
-
-        return fhirMeasure;
+        return new Measure();
     }
 
+    default String createVersion(gov.cms.mat.fhir.commons.model.Measure matMeasure) {
+        return createVersion(matMeasure.getVersion(), matMeasure.getRevisionNumber());
+    }
 }

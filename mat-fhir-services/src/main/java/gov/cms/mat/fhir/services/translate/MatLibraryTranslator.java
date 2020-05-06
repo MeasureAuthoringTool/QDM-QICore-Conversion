@@ -32,7 +32,7 @@ public class MatLibraryTranslator extends LibraryTranslatorBase {
         if (StringUtils.isNotEmpty(version)) {
             fhirLibrary.setVersion(version);
         } else if (cqlLibrary.getVersion() != null) {
-            fhirLibrary.setVersion(cqlLibrary.getVersion().toString());
+            fhirLibrary.setVersion(createVersion(cqlLibrary));
         }
 
         fhirLibrary.setName(cqlLibrary.getCqlName());

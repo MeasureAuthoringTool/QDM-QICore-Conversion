@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.cql;
 
+import gov.cms.mat.fhir.services.HapiFhirServerTest;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled
 @ExtendWith(MockitoExtension.class)
-class CqlLibraryConverterTest implements ResourceFileUtil {
+class CqlLibraryConverterTest implements ResourceFileUtil, HapiFhirServerTest {
 
     private CqlLibraryConverter cqlLibraryConverter;
 
@@ -40,9 +41,7 @@ class CqlLibraryConverterTest implements ResourceFileUtil {
         QdmQiCoreDataService qdmQiCoreDataService = new QdmQiCoreDataService(restTemplate);
         ReflectionTestUtils.setField(qdmQiCoreDataService, "baseURL", "http://localhost:9090");
 
-        HapiFhirServer hapiFhirServer = new HapiFhirServer();
-        ReflectionTestUtils.setField(hapiFhirServer, "baseURL", "http://localhost:6060/hapi-fhir-jpaserver/fhir/");
-        hapiFhirServer.setUp();
+        HapiFhirServer hapiFhirServer = createTestHapiServer();
 
         cqlLibraryConverter = new CqlLibraryConverter(qdmQiCoreDataService,
                 conversionLibraryLookup,

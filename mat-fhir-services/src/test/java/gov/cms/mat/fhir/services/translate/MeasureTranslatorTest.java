@@ -10,6 +10,7 @@ import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,6 +93,8 @@ class MeasureTranslatorTest implements IdGenerator {
         matMeasure.setMeasureDetailsCollection(new ArrayList<>());
         matMeasure.getMeasureDetailsCollection().add(new MeasureDetails());
         matMeasure.setId(compositeModel.getId());
+        matMeasure.setVersion(new BigDecimal("1.000"));
+        matMeasure.setRevisionNumber(5);
 
         measureTranslator = new VersionedMeasureTranslator(matMeasure, compositeModel, humanReadable, baseURL);
     }
