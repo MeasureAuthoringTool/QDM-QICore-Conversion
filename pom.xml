@@ -95,7 +95,7 @@
         <module>mat-server-commons</module>
         <module>mat-rest-commons</module>
         <module>vsac-mat-conversion</module>
-        <module>qdm-qicore-mapping-services</module>
+        <module>mapping-services</module>
         <module>cql-elm-translation</module>
     </modules>
 
