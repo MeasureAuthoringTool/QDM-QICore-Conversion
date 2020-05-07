@@ -1,6 +1,8 @@
 package gov.cms.mat.fhir.services.service;
 
-import gov.cms.mat.fhir.rest.dto.ConversionMapping;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToFhirMappingHelper;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToQicoreMapping;
 import gov.cms.mat.fhir.services.exceptions.QdmQiCoreDataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,10 +15,15 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class QdmQiCoreDataServiceImplTest {
@@ -28,49 +35,27 @@ class QdmQiCoreDataServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(qdmQiCoreDataService, "baseURL", "http://howdy.doody.com");
+        ReflectionTestUtils.setField(qdmQiCoreDataService, "matAtttributesUrl", "http://howdy.doody.com");
+        ReflectionTestUtils.setField(qdmQiCoreDataService, "self", qdmQiCoreDataService);
     }
 
     @Test
     void findByFhirR4QiCoreMapping_Success() {
-        ConversionMapping conversionToReturn = ConversionMapping.builder().build();
-        when(restTemplate.getForObject(any(), any())).thenReturn(conversionToReturn);
+        var attrs = new QdmToQicoreMapping[1];
+        attrs[0] = new QdmToQicoreMapping();
+        attrs[0].setMatAttributeType("bar");
+        attrs[0].setMatDataType("ValueSet");
+        attrs[0].setFhirQICoreMapping("FhirValueSet.fhirBar");
+        when(restTemplate.getForObject("http://howdy.doody.com", QdmToQicoreMapping[].class)).thenReturn(attrs);
 
-        ConversionMapping conversionReturned =
-                qdmQiCoreDataService.findByFhirR4QiCoreMapping("ValueSet.bar", "core");
+        QdmToFhirMappingHelper helper = qdmQiCoreDataService.getQdmToFhirMappingHelper();
 
-        assertEquals(conversionToReturn, conversionReturned);
+        assertEquals("FhirValueSet", helper.convertType("ValueSet"));
+        assertEquals("FhirValueSet.fhirBar", helper.convertTypeAndAttribute("ValueSet","bar"));
+        assertEquals("Nada", helper.convertType("Nada"));
+        assertEquals("Nada.indude", helper.convertTypeAndAttribute("Nada","indude"));
+        assertEquals("FhirValueSet.indude", helper.convertTypeAndAttribute("ValueSet","indude"));
 
-        verify(restTemplate).getForObject(any(), any());
-    }
-
-    @Test
-    void findByFhirR4QiCoreMapping_BadMatObjectWithAttribute() {
-        String badMatObjectWithAttribute = "mat";
-
-        QdmQiCoreDataException thrown =
-                Assertions.assertThrows(QdmQiCoreDataException.class, () -> {
-                    qdmQiCoreDataService.findByFhirR4QiCoreMapping(badMatObjectWithAttribute, "core");
-                });
-
-        assertTrue(thrown.getMessage().contains(badMatObjectWithAttribute));
-
-        verifyNoInteractions(restTemplate);
-    }
-
-    @Test
-    void findByFhirR4QiCoreMapping_RestTemplateThrows() {
-        String errorMessage = "mat error!!";
-
-        when(restTemplate.getForObject(any(), any())).thenThrow(new RestClientException(errorMessage));
-
-        QdmQiCoreDataException thrown =
-                Assertions.assertThrows(QdmQiCoreDataException.class, () -> {
-                    qdmQiCoreDataService.findByFhirR4QiCoreMapping("Mat.foo", "core");
-                });
-
-        assertTrue(thrown.getMessage().contains(errorMessage));
-
-        verify(restTemplate).getForObject(any(), any());
+        verify(restTemplate).getForObject("http://howdy.doody.com", QdmToQicoreMapping[].class);
     }
 }

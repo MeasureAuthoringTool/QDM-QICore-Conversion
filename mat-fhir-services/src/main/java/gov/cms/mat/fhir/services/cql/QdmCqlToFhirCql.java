@@ -6,7 +6,7 @@
 package gov.cms.mat.fhir.services.cql;
 
 import com.google.common.io.Files;
-import gov.cms.mat.fhir.rest.dto.ConversionMapping;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToFhirMappingHelper;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,7 +31,7 @@ public class QdmCqlToFhirCql {
     private StringBuffer sbFinal = new StringBuffer();
     private String outputFileName = "/Users/duanedecouteau/Downloads/CMS145v2_FHIR.cql";
     private final RestTemplate restTemplate = new RestTemplate();
-    private List<ConversionMapping> cList = new ArrayList<ConversionMapping>();
+    private QdmToFhirMappingHelper qdmToFhirMapper;
     private QdmQiCoreDataService qdmQicoreDataService;
     private List<CqlDomainSymbolic> csList = new ArrayList<CqlDomainSymbolic>();
     
@@ -52,8 +52,9 @@ public class QdmCqlToFhirCql {
     
     
     private void loadMappings() {
+
         qdmQicoreDataService = new QdmQiCoreDataService(restTemplate);
-        cList = qdmQicoreDataService.findAllFiltered();
+        qdmToFhirMapper = qdmQicoreDataService.getQdmToFhirMappingHelper();
     }
     /**
      * @param args the command line arguments
@@ -263,25 +264,10 @@ public class QdmCqlToFhirCql {
     }
     
     private String getFHIRResourceName(String matDataTypeDesc) {
-        String res = "Unknown";
-        for (ConversionMapping cm : cList) {
-            if (cm.getMatDataTypeDescription().equals(matDataTypeDesc) && !cm.getFhirResource().isEmpty()) {
-                res = cm.getFhirResource();
-                break;
-            }
-        }
-        return res;
+        return qdmToFhirMapper.convertType(matDataTypeDesc);
     }
     
     private String getFHIRAttribute(String matDataType, String matAttribute) {
-        String res = "Unknown";
-        for (ConversionMapping cm : cList) {
-            if (cm.getMatDataTypeDescription().equals(matDataType.trim()) && cm.getMatAttributeName().equals(matAttribute.trim())) {
-                res = cm.getFhirElement();
-                break;
-            }
-        }
-        return res;
+        return qdmToFhirMapper.convertTypeAndAttribute(matDataType,matAttribute);
     }
-      
 }
