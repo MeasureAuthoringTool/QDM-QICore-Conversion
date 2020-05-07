@@ -1,8 +1,15 @@
 package gov.cms.mat.fhir.services.cql;
 
 import gov.cms.mat.cql.CqlParser;
-import gov.cms.mat.cql.elements.*;
-import gov.cms.mat.fhir.rest.dto.ConversionMapping;
+import gov.cms.mat.cql.elements.BaseProperties;
+import gov.cms.mat.cql.elements.CodeSystemProperties;
+import gov.cms.mat.cql.elements.DefineProperties;
+import gov.cms.mat.cql.elements.IncludeProperties;
+import gov.cms.mat.cql.elements.SymbolicProperty;
+import gov.cms.mat.cql.elements.UnionProperties;
+import gov.cms.mat.cql.elements.UsingProperties;
+import gov.cms.mat.cql.elements.ValueSetProperties;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CodeSystemOidNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -291,14 +298,9 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void processSymbolics(DefineProperties properties) {
-        properties.getSymbolicProperties()
-                .forEach(this::processSymbolic);
-    }
-
-    private void processSymbolic(SymbolicProperty symbolicProperty) {
-        List<ConversionMapping> conversionMappings =
-                qdmQiCoreDataService.findAllFilteredByMatDataTypeDescription(symbolicProperty.getMatDataTypeDescription());
-        symbolicProperty.setConversionMappings(conversionMappings);
+        properties.getSymbolicProperties().forEach(p -> {
+            p.setHelper(qdmQiCoreDataService.getQdmToFhirMappingHelper());
+        });
     }
 
     private void convertIncludes() {

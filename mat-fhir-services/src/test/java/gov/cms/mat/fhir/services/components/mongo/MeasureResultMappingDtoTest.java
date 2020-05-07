@@ -1,7 +1,8 @@
+
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,10 +12,10 @@ class MeasureResultMappingDtoTest {
     @Test
     void testEquals() {
         FieldConversionResult result = FieldConversionResult.builder().build();
-        ConversionMapping conversionMapping = ConversionMapping.builder().build();
+        MatAttribute matAttr = new MatAttribute();
 
-        MeasureResultMappingDto lhs = new MeasureResultMappingDto(result, conversionMapping);
-        MeasureResultMappingDto rhs = new MeasureResultMappingDto(result, conversionMapping);
+        MeasureResultMappingDto lhs = new MeasureResultMappingDto(result, matAttr);
+        MeasureResultMappingDto rhs = new MeasureResultMappingDto(result, matAttr);
 
         assertEquals(lhs, rhs);
         assertNotEquals(lhs, new MeasureResultMappingDto(result, "ERROR"));
