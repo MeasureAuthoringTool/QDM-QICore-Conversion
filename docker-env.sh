@@ -22,7 +22,12 @@ export VSAC_VASE_URL='https://vsac.nlm.nih.gov'
 export VSAC_SERVICE_URL='http://umlsks.nlm.nih.gov'
 export HEALTH_CHECK_URL='http://host.docker.internal:9080'
 
-export QDM_SPREADSHEET='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json'
+export GOOGLE_MAT_ATTRIBUTES_URL='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json'
+export GOOGLE_QDM_QI_CORE_MAPPING_URL='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/ohe8k21/public/values?alt=json'
+export GOOGLE_DATA_TYPES_URL='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/ox8mj1u/public/values?alt=json'
+export GOOGLE_REQJUIRED_MEASURE_FIELDS_URL='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/opl7qh/public/values?alt=json'
+export GOOGLE_RESOURCE_DEFINITION_URL='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o1h1xy0/public/values?alt=json'
+
 export CODESYSTEM_SHEET_URL="https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json"
 
 export MAT_LOG_LEVEL='INFO'
