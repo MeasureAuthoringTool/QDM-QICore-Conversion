@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
+import gov.cms.mat.fhir.services.service.packaging.PackageFormat;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -233,7 +234,6 @@ public class HapiFhirServer {
     public Bundle getLibraryBundle(String id) {
         return hapiClient.search()
                 .forResource(Library.class)
-                .where(Library.NAME.contains().value("foo"))
                 .where(Library.URL.matches().value(baseURL + "Library/" + id))
                 .returnBundle(Bundle.class)
                 .execute();
@@ -270,11 +270,22 @@ public class HapiFhirServer {
                 .execute();
     }
 
+    public String formatResource(Resource resource, PackageFormat packageFormat) {
+        switch (packageFormat) {
+            case XML:
+                return toXml(resource);
+            case JSON:
+                return toJson(resource);
+            default:
+                throw new IllegalArgumentException("Format invalid " + packageFormat);
+        }
+    }
+
     public String toJson(Resource resource) {
         return ctx.newJsonParser()
                 .encodeResourceToString(resource);
     }
-    
+
     public String toXml(Resource resource) {
         return ctx.newXmlParser()
                 .encodeResourceToString(resource);

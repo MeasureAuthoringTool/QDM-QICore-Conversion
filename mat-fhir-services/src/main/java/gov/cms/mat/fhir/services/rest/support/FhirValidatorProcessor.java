@@ -14,6 +14,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public interface FhirValidatorProcessor {
+    default FhirResourceValidationResult validateResource(
+            IBaseResource resource,
+            FhirContext ctx) {
+        FhirResourceValidationResult fhirResourceValidationResult = new FhirResourceValidationResult();
+
+        validateResource(fhirResourceValidationResult, resource, ctx);
+
+        return fhirResourceValidationResult;
+    }
+
     default void validateResource(FhirResourceValidationResult fhirResourceValidationResult,
                                   IBaseResource resource,
                                   FhirContext ctx) {

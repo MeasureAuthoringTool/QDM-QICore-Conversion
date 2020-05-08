@@ -30,9 +30,9 @@ public class CqlLibraryDataService {
         List<CqlLibrary> cqlLibs = cqlLibraryRepo.getCqlLibraryByMeasureId(measureId);
 
         if (cqlLibs.isEmpty()) {
-            return findLibrariesByAssociation(measureId);
+            return findLibrariesByAssociation(measureId); //todo carson do we need to do this ???
         } else {
-            return cqlLibs;
+            return cqlLibs;  //todo carson can there be more than one
         }
     }
 
@@ -74,10 +74,10 @@ public class CqlLibraryDataService {
             throw new IllegalArgumentException("Invalid library type: " + cqlLibraryFindData.getType());
         }
 
-        return getCqlLibrary(cqlLibraryFindData, libraries);
+        return processLibraries(cqlLibraryFindData, libraries);
     }
 
-    public CqlLibrary getCqlLibrary(CqlLibraryFindData cqlLibraryFindData, List<CqlLibrary> libraries) {
+    private CqlLibrary processLibraries(CqlLibraryFindData cqlLibraryFindData, List<CqlLibrary> libraries) {
         if (libraries.isEmpty()) {
             throw new CqlLibraryNotFoundException(cqlLibraryFindData);
         } else if (libraries.size() > 1) {
@@ -87,7 +87,7 @@ public class CqlLibraryDataService {
         }
     }
 
-    public CqlLibrary findLatestByFinalizedDate(List<CqlLibrary> libraries) {
+    private CqlLibrary findLatestByFinalizedDate(List<CqlLibrary> libraries) {
         return libraries.stream()
                 .max(Comparator.comparing(CqlLibrary::getFinalizedDate))
                 .orElseThrow(() -> new CqlLibraryNotFoundException("Too many cql libraries found"));

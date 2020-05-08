@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.rest.dto.spreadsheet;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

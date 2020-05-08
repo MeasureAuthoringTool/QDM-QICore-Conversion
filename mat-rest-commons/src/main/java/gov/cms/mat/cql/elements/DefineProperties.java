@@ -52,8 +52,8 @@ public class DefineProperties extends BaseProperties {
         String qdmType = symbolicAttributeProperty.getSymbolicName();
         String qdmAttrib = symbolicAttributeProperty.getMatAttributeName();
 
-        defineData =  defineData.replace(symbolicAttributeProperty.getUsing(),
-                symbolicProperty.getHelper().convertTypeAndAttribute(qdmType,qdmAttrib));
+        defineData = defineData.replace(symbolicAttributeProperty.getUsing(),
+                symbolicProperty.getHelper().convertTypeAndAttribute(qdmType, qdmAttrib));
     }
 
 

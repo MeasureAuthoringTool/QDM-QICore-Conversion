@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
 import gov.cms.mat.fhir.rest.dto.*;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
 import org.junit.jupiter.api.Assertions;
@@ -15,8 +16,7 @@ import java.time.Instant;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ConversionResultProcessorServiceTest {
@@ -35,10 +35,16 @@ class ConversionResultProcessorServiceTest {
 
     @BeforeEach
     public void setUp() {
-        threadSessionKey = ThreadSessionKey.builder()
-                .measureId(MEASURE_ID)
-                .start(Instant.now())
-                .build();
+        ConversionResultsService conversionResultsService = mock(ConversionResultsService.class);
+
+        threadSessionKey = ConversionReporter.setInThreadLocal(MEASURE_ID,
+                "2",
+                conversionResultsService,
+                Instant.now(),
+                ConversionType.CONVERSION,
+                XmlSource.SIMPLE,
+                true,
+                null);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
+import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Attachment;
@@ -14,10 +15,9 @@ import java.util.List;
 @Slf4j
 public abstract class LibraryTranslatorBase implements FhirCreator {
     public static final String CQL_CONTENT_TYPE = "text/cql";
+    public static final String ELM_CONTENT_TYPE = "application/elm+json";
     static final String SYSTEM_TYPE = "http://hl7.org/fhir/codesystem-library-type.html";
     static final String SYSTEM_CODE = "logic-library";
-    public static final String ELM_CONTENT_TYPE = "application/elm+json";
-
     final byte[] cql;
     final byte[] elm;
     final String baseURL;
@@ -55,5 +55,9 @@ public abstract class LibraryTranslatorBase implements FhirCreator {
         attachments.add(createAttachment(CQL_CONTENT_TYPE, cql));
 
         return attachments;
+    }
+
+    String createVersion(CqlLibrary cqlLibrary) {
+        return createVersion(cqlLibrary.getVersion(), cqlLibrary.getRevisionNumber());
     }
 }

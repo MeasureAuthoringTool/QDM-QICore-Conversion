@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mat.DraftMeasureXmlProcessor;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
@@ -32,42 +33,38 @@ import java.time.Instant;
 @Slf4j
 public class StandAloneLibraryController implements FhirValidatorProcessor {
     private final LibraryOrchestrationService libraryOrchestrationService;
-
     private final ConversionResultsService conversionResultsService;
-
     private final CqlLibraryRepository cqlLibraryRepository;
     private final ConversionResultProcessorService conversionResultProcessorService;
+    private final DraftMeasureXmlProcessor draftMeasureXmlProcessor;
 
     public StandAloneLibraryController(LibraryOrchestrationService libraryOrchestrationService,
                                        ConversionResultsService conversionResultsService,
                                        CqlLibraryRepository cqlLibraryRepository,
-                                       ConversionResultProcessorService conversionResultProcessorService) {
+                                       ConversionResultProcessorService conversionResultProcessorService,
+                                       DraftMeasureXmlProcessor draftMeasureXmlProcessor) {
 
         this.libraryOrchestrationService = libraryOrchestrationService;
         this.conversionResultsService = conversionResultsService;
         this.cqlLibraryRepository = cqlLibraryRepository;
         this.conversionResultProcessorService = conversionResultProcessorService;
+        this.draftMeasureXmlProcessor = draftMeasureXmlProcessor;
     }
 
-    @Operation(summary = "Orchestrate Hapi FHIR Library with the id",
-            description = "Find the Hapi Library and convert and persist to FHIR",
+    @Operation(summary = "Orchestrate QDM to Hapi FHIR Library with the id",
+            description = "Find the CQL QDM Library and convert and persist to FHIR",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Value set found and json returned"),
                     @ApiResponse(responseCode = "404", description = "CqlLibrary is not found in the mat db using the id")})
-    @PostMapping
-    public ConversionResultDto convert(@RequestParam @Min(10) String id,
-                                       @RequestParam ConversionType conversionType,
-                                       @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
-                                       @RequestParam(required = false, defaultValue = "LIBRARY-ORCHESTRATION") String batchId) {
-        var optional = cqlLibraryRepository.findById(id);
+    @PostMapping("/convertStandAlone")
+    public ConversionResultDto convertQdmToFhir(
+            @RequestParam @Min(10) String id,
+            @RequestParam ConversionType conversionType,
+            @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
+            @RequestParam(required = false, defaultValue = "LIBRARY-QDM-ORCHESTRATION") String batchId) {
+        CqlLibrary cqlLibrary = findCqlLibrary(id);
 
-        if (optional.isEmpty()) {
-            throw new CqlLibraryNotFoundException("Cannot find with cqlLibrary with ", id);
-        }
-
-        CqlLibrary cqlLibrary = optional.get();
-
-        checkCqlLibrary(cqlLibrary);
+        checkCqlLibrary(cqlLibrary, "QDM");
 
         ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, conversionType, showWarnings, batchId);
 
@@ -81,9 +78,41 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
         return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
     }
 
-    private void checkCqlLibrary(CqlLibrary cqlLibrary) {
-        if (!"QDM".equals(cqlLibrary.getLibraryModel())) {
-            throw new CqlConversionException("Library is not QDM");
+    @Operation(summary = "Orchestrate Stand alone Hapi FHIR Library with the id",
+            description = "Find the HAPI stand alone Library and persist to FHIR",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Value set found and json returned"),
+                    @ApiResponse(responseCode = "404", description = "CqlLibrary is not found in the mat db using the id")})
+    @PostMapping("/pushStandAloneLibrary")
+    public String convertStandAloneFromMatToFhir(
+            @RequestParam @Min(10) String id,
+            @RequestParam(required = false, defaultValue = "LIBRARY-STANDALONE-ORCHESTRATION") String batchId) {
+        CqlLibrary cqlLibrary = findCqlLibrary(id);
+
+        checkCqlLibrary(cqlLibrary, "FHIR");
+
+        ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, ConversionType.CONVERSION, Boolean.FALSE, batchId);
+
+        OrchestrationProperties orchestrationProperties =
+                buildProperties(ConversionType.CONVERSION, Boolean.FALSE, threadSessionKey);
+        orchestrationProperties.getCqlLibraries().add(cqlLibrary);
+
+        return draftMeasureXmlProcessor.pushStandAlone(id, cqlLibrary.getCqlXml());
+    }
+
+    public CqlLibrary findCqlLibrary(String id) {
+        var optional = cqlLibraryRepository.findById(id);
+
+        if (optional.isEmpty()) {
+            throw new CqlLibraryNotFoundException("Cannot find cqlLibrary with ", id);
+        }
+
+        return optional.get();
+    }
+
+    private void checkCqlLibrary(CqlLibrary cqlLibrary, String type) {
+        if (!type.equals(cqlLibrary.getLibraryModel())) {
+            throw new CqlConversionException("Library is not " + type);
         }
 
         if (cqlLibrary.getMeasureId() != null) {

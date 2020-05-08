@@ -80,7 +80,7 @@ public class OrchestrationService {
     }
 
     private void processDraft(OrchestrationProperties properties) {
-        draftMeasureXmlProcessor.process(properties.getMatMeasure(), properties.isShowWarnings());
+        draftMeasureXmlProcessor.processMeasure(properties.getMatMeasure(), properties.isShowWarnings());
     }
 
     public void processAndGetCqlLibraries(OrchestrationProperties properties) {

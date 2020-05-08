@@ -54,7 +54,7 @@ public class VersionedMeasureTranslator implements MeasureTranslator {
         fhirMeasure.setRationale(matCompositeMeasureModel.getRationale());
         fhirMeasure.setClinicalRecommendationStatement(matCompositeMeasureModel.getClinicalRecomms());
         fhirMeasure.setGuidance(matCompositeMeasureModel.getGuidance());
-        fhirMeasure.setVersion(matCompositeMeasureModel.getVersionNumber());
+        fhirMeasure.setVersion(createVersion(matMeasure));
         fhirMeasure.setName(matCompositeMeasureModel.getMeasureName());
         fhirMeasure.setTitle(matCompositeMeasureModel.getShortName());  //measure title
         fhirMeasure.setExperimental(false); //Mat does not have concept experimental

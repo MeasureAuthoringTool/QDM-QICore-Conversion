@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -97,5 +98,16 @@ public class FhirIncludeLibraryProcessor {
         }
 
         return bundle;
+    }
+
+    public Library fetchLibraryBundle(String version, String name) {
+        IncludeProperties include = IncludeProperties.builder()
+                .version(version)
+                .name(name)
+                .build();
+
+        Bundle bundle = fetchBundle(include);
+
+        return (Library) bundle.getEntry().get(0).getResource();
     }
 }

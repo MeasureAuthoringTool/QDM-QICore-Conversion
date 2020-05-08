@@ -4,7 +4,6 @@ import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
 import gov.cms.mat.fhir.commons.model.MeasureReferenceType;
 import gov.cms.mat.fhir.commons.model.MeasureTypeAssociation;
 import lombok.extern.slf4j.Slf4j;
-import mat.server.util.MeasureUtility;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.*;
@@ -47,7 +46,7 @@ public class DraftMeasureTranslator implements MeasureTranslator {
         fhirMeasure.setRationale(matDetails.getRationale());
         fhirMeasure.setClinicalRecommendationStatement(matDetails.getClinicalRecommendation());
         fhirMeasure.setGuidance(matDetails.getGuidance());
-        fhirMeasure.setVersion(getVersion());
+        fhirMeasure.setVersion(createVersion(matMeasure));
 
         fhirMeasure.setName(matMeasure.getCqlName());
         fhirMeasure.setTitle(matMeasure.getAbbrName());  //measure title
@@ -181,13 +180,6 @@ public class DraftMeasureTranslator implements MeasureTranslator {
         }
     }
 
-    public void proecssMeta(Measure fhirMeasure) {
-        Meta measureMeta = new Meta();
-        measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
-        measureMeta.setVersionId(getVersion());
-        measureMeta.setLastUpdated(new Date());
-        fhirMeasure.setMeta(measureMeta);
-    }
 
     public void processHumanReadable(Measure fhirMeasure) {
         //set narrative
@@ -268,10 +260,7 @@ public class DraftMeasureTranslator implements MeasureTranslator {
     }
 
     private String getVersion() {
-        return MeasureUtility.getVersionTextWithRevisionNumber(
-                "" + matMeasure.getVersionNumber(),
-                matMeasure.getRevisionNumber().toString(),
-                matMeasure.getDraft());
+        return matMeasure.getVersion() + "." + matMeasure.getVersion();
     }
 }
 
