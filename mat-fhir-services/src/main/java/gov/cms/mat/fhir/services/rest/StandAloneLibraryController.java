@@ -28,7 +28,7 @@ import javax.validation.constraints.Min;
 import java.time.Instant;
 
 @RestController
-@RequestMapping(path = "/library/convertStandAlone")
+@RequestMapping(path = "/library")
 @Tag(name = "Library-Controller", description = "API for converting stand alone Libraries to FHIR")
 @Slf4j
 public class StandAloneLibraryController implements FhirValidatorProcessor {
