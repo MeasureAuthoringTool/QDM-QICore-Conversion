@@ -75,7 +75,7 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
 
         libraryOrchestrationService.process(orchestrationProperties);
 
-        return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
+        return conversionResultProcessorService.processLibrary(orchestrationProperties.getThreadSessionKey());
     }
 
     @Operation(summary = "Orchestrate Stand alone Hapi FHIR Library with the id",
