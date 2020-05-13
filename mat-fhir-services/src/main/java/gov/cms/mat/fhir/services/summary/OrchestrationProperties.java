@@ -35,6 +35,8 @@ public class OrchestrationProperties {
 
     boolean showWarnings;
 
+    Boolean includeStdLibs ;
+
     @Setter
     org.hl7.fhir.r4.model.Measure fhirMeasure;
 

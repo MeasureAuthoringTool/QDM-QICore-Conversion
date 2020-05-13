@@ -126,6 +126,7 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
         return OrchestrationProperties.builder()
                 .showWarnings(showWarnings)
                 .conversionType(conversionType)
+                .includeStdLibs(false)
                 .xmlSource(XmlSource.MEASURE)
                 .threadSessionKey(threadSessionKey)
                 .build();

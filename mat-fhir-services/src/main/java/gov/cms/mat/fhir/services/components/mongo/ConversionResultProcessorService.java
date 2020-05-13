@@ -76,9 +76,11 @@ public class ConversionResultProcessorService {
     public ConversionResultDto processLibrary(ThreadSessionKey key) {
         Optional<ConversionResult> optional = conversionResultsService.findByThreadSessionKey(key);
         if (optional.isPresent()) {
+
             ConversionResult c = optional.get();
             List<FhirValidationResult> errorsForAllLibs = new ArrayList<>();
             List<CqlConversionError> cqlConversionErrors = new ArrayList<>();
+
             c.libraryConversionResults.stream().forEach(r -> {
                 if (CollectionUtils.isNotEmpty(r.getLibraryFhirValidationResults())) {
                     errorsForAllLibs.addAll(r.getLibraryFhirValidationResults());

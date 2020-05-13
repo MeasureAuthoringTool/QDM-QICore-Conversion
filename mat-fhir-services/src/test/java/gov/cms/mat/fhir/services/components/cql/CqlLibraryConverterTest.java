@@ -39,7 +39,7 @@ class CqlLibraryConverterTest implements ResourceFileUtil, HapiFhirServerTest {
 
 
         QdmQiCoreDataService qdmQiCoreDataService = new QdmQiCoreDataService(restTemplate);
-        ReflectionTestUtils.setField(qdmQiCoreDataService, "baseURL", "http://localhost:9090");
+        ReflectionTestUtils.setField(qdmQiCoreDataService, "matAtttributesUrl", "http://localhost:9090/qdmToQicoreMappings");
 
         HapiFhirServer hapiFhirServer = createTestHapiServer();
 
@@ -65,7 +65,7 @@ class CqlLibraryConverterTest implements ResourceFileUtil, HapiFhirServerTest {
     void convert() {
         String cql = getStringFromResource("/fhir/Hospice_FHIR4-1.0.000.cql");
 
-        String converted = cqlLibraryConverter.convert(cql);
+        String converted = cqlLibraryConverter.convert(cql, true);
 
         assertTrue(converted.contains("library Hospice_FHIR4 version '1.0.000'"));
     }
@@ -74,7 +74,7 @@ class CqlLibraryConverterTest implements ResourceFileUtil, HapiFhirServerTest {
     void convert_VerifyStandardLibs() {
         String cql = getStringFromResource("/test_std_includes.cql");
 
-        String converted = cqlLibraryConverter.convert(cql);
+        String converted = cqlLibraryConverter.convert(cql, true);
 
         //assertTrue(converted.contains(STD_FHIR_LIBS));
         assertTrue(converted.contains("define \"SDE Ethnicity\""));
@@ -88,7 +88,7 @@ class CqlLibraryConverterTest implements ResourceFileUtil, HapiFhirServerTest {
         String cql = getStringFromResource("/called.cql");
         assertTrue(cql.contains(matGlobalCommonFunctions));
 
-        String converted = cqlLibraryConverter.convert(cql);
+        String converted = cqlLibraryConverter.convert(cql, true);
 
         System.out.println(converted);
 
@@ -114,17 +114,33 @@ class CqlLibraryConverterTest implements ResourceFileUtil, HapiFhirServerTest {
         assertTrue(cql.contains("include TJCOverall version '5.6.789' called TJC"));
         assertTrue(cql.contains("include VTEICU version '5.6.789' called VTE"));
 
-        String converted = cqlLibraryConverter.convert(cql);
+        String converted = cqlLibraryConverter.convert(cql, true);
 
         System.out.println(converted);
 
-
         assertTrue(converted.contains("include VTEICU_FHIR4 version '4.0.000' called VTE"));
-
-
         assertTrue(converted.contains("include FHIRHelpers version '4.0.001' called FHIRHelpers"));
         assertTrue(converted.contains("include SupplementalDataElements_FHIR4 version '2.0.000' called SDE"));
         assertTrue(converted.contains("include MATGlobalCommonFunctions_FHIR4 version '5.0.000' called Global"));
+
+        assertFalse(converted.contains(matGlobalCommonFunctions));
+    }
+
+    @Test
+    void convert_TestIgnoreIncludeProcessing() {
+        String matGlobalCommonFunctions = "include MATGlobalCommonFunctions version '4.0.000' called Global";
+
+        String cql = getStringFromResource("/test_include_processing.cql");
+        assertTrue(cql.contains(matGlobalCommonFunctions));
+
+
+        String converted = cqlLibraryConverter.convert(cql, false);
+
+        assertTrue(converted.contains("include VTEICU_FHIR4 version '4.0.000' called VTE"));
+
+        assertFalse(converted.contains("include FHIRHelpers version '4.0.001' called FHIRHelpers"));
+        assertFalse(converted.contains("include SupplementalDataElements_FHIR4 version '2.0.000' called SDE"));
+        assertFalse(converted.contains("include MATGlobalCommonFunctions_FHIR4 version '5.0.000' called Global"));
 
         assertFalse(converted.contains(matGlobalCommonFunctions));
     }

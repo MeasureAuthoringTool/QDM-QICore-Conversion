@@ -35,94 +35,25 @@ import static gov.cms.mat.fhir.services.service.CQLLibraryTranslationService.Con
 public class LibraryOrchestrationValidationService extends LibraryOrchestrationBase
         implements FhirValidatorProcessor, ErrorSeverityChecker, CqlVersionConverter, FhirLibraryHelper, IdGenerator {
 
-    // private static final String VALIDATION_FAILURE_MESSAGE = "Library validation failed";
-    // private static final String HAPI_FAILURE_MESSAGE = "Cannot find hapi fhir library with name: %s and version: %s";
-
-    // private final CqlLibraryDataService cqlLibraryDataService;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
-    // private final UnConvertedCqlLibraryHandler unConvertedCqlLibraryHandler;
     private final CqlLibraryConverter cqlLibraryConverter;
-    //  private final LibraryConversionFileConfig libraryConversionFileConfig;
 
     public LibraryOrchestrationValidationService(HapiFhirServer hapiFhirServer,
-                                                 // CqlLibraryDataService cqlLibraryDataService,
                                                  CQLLibraryTranslationService cqlLibraryTranslationService,
-                                                 //  UnConvertedCqlLibraryHandler unConvertedCqlLibraryHandler,
                                                  CqlLibraryConverter cqlLibraryConverter) {
-        // LibraryConversionFileConfig libraryConversionFileConfig)
 
         super(hapiFhirServer);
-        //this.cqlLibraryDataService = cqlLibraryDataService;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
-        // this.unConvertedCqlLibraryHandler = unConvertedCqlLibraryHandler;
         this.cqlLibraryConverter = cqlLibraryConverter;
-        // this.libraryConversionFileConfig = libraryConversionFileConfig;
     }
 
-//    public void processIncludedLibrary(IncludeProperties include, UsingProperties using, boolean showWarnings) {
-//        if( true ) {
-//            return;
-//        }
-//
-//
-//        CqlLibraryFindData data = buildFindData(include, using);
-//        String unconvertedName = unConvertedCqlLibraryHandler.makeCqlName(data);
-//
-//        String fhir4Name = include.getName() + BaseProperties.LIBRARY_FHIR_EXTENSION;
-//        String version = include.getVersion();
-//
-//        var optional = findLibFile(libraryConversionFileConfig.getOrder(), fhir4Name);
-//
-//
-//        if (optional.isPresent()) {
-//            version = findVersion(optional.get(), version);
-//        }
-//
-//        Bundle bundle = hapiFhirServer.fetchLibraryBundleByVersionAndName(version,
-//                include.getName() + BaseProperties.LIBRARY_FHIR_EXTENSION);
-//
-//        if (CollectionUtils.isEmpty(bundle.getEntry())) {
-//            if (unConvertedCqlLibraryHandler.exists(data)) {
-//                log.info("Already exists in mongo for key: {}", unconvertedName);
-//            } else {
-//                CqlLibrary cqlLibrary = cqlLibraryDataService.findCqlLibrary(data);
-//                String cql =
-//                        cqlLibraryTranslationService.convertMatXmlToCql(cqlLibrary.getCqlXml(), null, showWarnings);
-//                unConvertedCqlLibraryHandler.write(data, cql);
-//            }
-//        } else {
-//            log.debug("Included Library already in fhir: {}", include);
-//
-//            if (unConvertedCqlLibraryHandler.delete(data)) {
-//                log.info("Removed from mongo for key: {}", unconvertedName); // making progress
-//            }
-//        }
-//    }
 
-//    private CqlLibraryFindData buildFindData(IncludeProperties include, UsingProperties using) {
-//        return CqlLibraryFindData.builder()
-//                .qdmVersion(using.getVersion())
-//                .name(include.getName())
-//                .matVersion(convertVersionToBigDecimal(include.getVersion()))
-//                .version(include.getVersion())
-//                .type(using.isFhir() ? "FHIR" : "QDM")
-//                .build();
-//    }
-
-//    public void processIncludes(String cql, boolean showWarnings) {
-//        CqlParser cqlParser = new CqlParser(cql);
-//        UsingProperties using = cqlParser.getUsing();
-//
-//        List<IncludeProperties> includes = cqlParser.getIncludes();
-//
-//       // includes.forEach(includeProperties -> processIncludedLibrary(includeProperties, using, showWarnings));
-//    }
 
 
     boolean validate(OrchestrationProperties properties) {
 
         properties.getCqlLibraries()
-                .forEach(cqlLibrary -> convertQdmToFhir(cqlLibrary, properties.isShowWarnings()));
+                .forEach(cqlLibrary -> convertQdmToFhir(cqlLibrary, properties.isShowWarnings(), properties.getIncludeStdLibs()));
 
         translateCqlMatLibsToFhir(properties);
 
@@ -152,9 +83,9 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         }
     }
 
-    private void convertQdmToFhir(CqlLibrary matLib, boolean showWarnings) {
+    private void convertQdmToFhir(CqlLibrary matLib, boolean showWarnings, boolean includeStdLibs) {
         String qdmCql = ConversionReporter.getCql(matLib.getId());
-        String fhirCql = cqlLibraryConverter.convert(qdmCql);
+        String fhirCql = cqlLibraryConverter.convert(qdmCql, includeStdLibs);
         ConversionReporter.setFhirCql(fhirCql, matLib.getId());
 
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
@@ -177,9 +108,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
     private Library translateCqlLib(CqlLibrary cqlLibrary) {
         ConversionResult conversionResult = ConversionReporter.getConversionResult();
         LibraryConversionResults results = conversionResult.findLibraryConversionResultsRequired(cqlLibrary.getId());
-
-        // String cql = ConversionReporter.getCql(cqlLibrary.getId());
-        // String elm = ConversionReporter.getElm(cqlLibrary.getId());
 
         String fhirCql = ConversionReporter.getFhirCql(cqlLibrary.getId());
         String fhirElm = ConversionReporter.getFhirElm(cqlLibrary.getId());

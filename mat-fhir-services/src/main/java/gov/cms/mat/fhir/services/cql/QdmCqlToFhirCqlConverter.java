@@ -49,11 +49,14 @@ public class QdmCqlToFhirCqlConverter {
     private final List<CodeSystemEntry> codeSystemMappings;
     private final HapiFhirServer hapiFhirServer;
 
+ private  final boolean includeStdLibraries;
+
     List<IncludeProperties> includeProperties;
     List<IncludeProperties> standardIncludeProperties;
     private UsingProperties usingProperties;
 
     public QdmCqlToFhirCqlConverter(String cqlText,
+                                    boolean includeStdLibraries,
                                     QdmQiCoreDataService qdmQiCoreDataService,
                                     Map<String, String> conversionLibLookupMap,
                                     List<CodeSystemEntry> codeSystemMappings,
@@ -64,6 +67,8 @@ public class QdmCqlToFhirCqlConverter {
         this.codeSystemMappings = codeSystemMappings;
         this.hapiFhirServer = hapiFhirServer;
         standardIncludeProperties = createStandardIncludes();
+
+        this.includeStdLibraries = includeStdLibraries;
     }
 
     private List<IncludeProperties> createStandardIncludes() {
@@ -102,6 +107,8 @@ public class QdmCqlToFhirCqlConverter {
         checkUnion(matLibId);
 
         String cql = addDefaultFhirLibraries();
+
+
         cql = fixDateTime(cql);
         return fixSDE(cql);
     }
@@ -225,12 +232,16 @@ public class QdmCqlToFhirCqlConverter {
 
     private String addDefaultFhirLibraries() {
         String cqlUsingLine = usingProperties.createCql();
-        String cqlReplacement = cqlUsingLine + createStandardIncludesCql();
 
-        String cql = cqlParser.getCql()
-                .replace(cqlUsingLine, cqlReplacement);
+        if( includeStdLibraries) {
+            String cqlReplacement = cqlUsingLine + createStandardIncludesCql();
 
-        return cleanLines(cql);
+            String cql = cqlParser.getCql()
+                    .replace(cqlUsingLine, cqlReplacement);
+            return cleanLines(cql);
+        } else {
+            return cleanLines(cqlParser.getCql());
+        }
     }
 
     private String cleanLines(String cql) {
@@ -362,7 +373,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     @Data
-    static class StandardLib {
+    public static class StandardLib {
         final String name;
         final String version;
         final String defaultCalled;

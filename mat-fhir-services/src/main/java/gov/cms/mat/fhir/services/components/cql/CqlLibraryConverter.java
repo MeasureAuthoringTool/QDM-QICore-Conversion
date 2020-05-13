@@ -28,9 +28,10 @@ public class CqlLibraryConverter {
         this.hapiFhirServer = hapiFhirServer;
     }
 
-    public String convert(String cqlText) {
+    public String convert(String cqlText, boolean includeStdLibraries) {
         try {
             QdmCqlToFhirCqlConverter qdmCqlToFhirCql = new QdmCqlToFhirCqlConverter(cqlText,
+                    includeStdLibraries,
                     qdmQiCoreDataService,
                     conversionLibraryLookup.getMap(),
                     codeSystemConversionDataService.getCodeSystemMappings(),

@@ -83,6 +83,7 @@ public class OrchestrationController implements OrchestrationParameterChecker {
             } else {
                 orchestrationProperties = OrchestrationProperties.builder()
                         .showWarnings(showWarnings)
+                        .includeStdLibs(true)
                         .matMeasure(matMeasure)
                         .conversionType(conversionType)
                         .xmlSource(xmlSource)
