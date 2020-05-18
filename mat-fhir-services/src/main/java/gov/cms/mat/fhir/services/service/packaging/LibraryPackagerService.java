@@ -10,36 +10,36 @@ import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
 import gov.cms.mat.fhir.services.exceptions.cql.LibraryAttachmentNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
+import gov.cms.mat.fhir.services.rest.support.FhirValidatorService;
 import gov.cms.mat.fhir.services.service.packaging.dto.LibraryPackageFullHapi;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.CollectionUtils;
-import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.CQL_CONTENT_TYPE;
-
 @Service
 @Slf4j
 public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibraryHelper {
     private final HapiFhirServer hapiFhirServer;
     private final FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor;
+    private final FhirValidatorService fhirValidatorService;
 
     public LibraryPackagerService(HapiFhirServer hapiFhirServer,
-                                  FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor) {
+                                  FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor,
+                                  FhirValidatorService fhirValidatorService) {
         this.hapiFhirServer = hapiFhirServer;
         this.fhirIncludeLibraryProcessor = fhirIncludeLibraryProcessor;
+        this.fhirValidatorService = fhirValidatorService;
     }
 
     public Library packageMinimum(String id) {
         Library library = fetchLibraryFromHapi(id);
 
-        FhirResourceValidationResult result = validateResource(library, hapiFhirServer.getCtx());
+        FhirResourceValidationResult result = fhirValidatorService.validate(library);
 
         if (CollectionUtils.isEmpty(result.getValidationErrorList())) {
             return library;
@@ -77,7 +77,7 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
                 .build();
     }
 
-     Bundle buildIncludeBundle(Library library) {
+    Bundle buildIncludeBundle(Library library) {
         Bundle includedLibraryBundle = new Bundle();
         includedLibraryBundle.setType(Bundle.BundleType.COLLECTION);
 
@@ -90,21 +90,16 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
         if (CollectionUtils.isEmpty(library.getContent())) {
             throw new LibraryAttachmentNotFoundException(library);
         } else {
-            Attachment cqlAttachment = getCqlAttachment(library);
-            byte[] cqlBytes = Base64.decodeBase64(cqlAttachment.getData());
-            return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(new String(cqlBytes));
+            return findIncludedLibraries(library, fhirIncludeLibraryProcessor);
         }
     }
 
-    private Attachment getCqlAttachment(Library library) {
-        return findCqlAttachment(library, CQL_CONTENT_TYPE);
-    }
 
     private void processIncludedLibraries(Bundle libraryBundle, FhirIncludeLibraryResult fhirIncludeLibraryResult) {
         List<FhirIncludeLibraryReferences> libraryReferences = fhirIncludeLibraryResult.getLibraryReferences();
 
         for (FhirIncludeLibraryReferences reference : libraryReferences) {
-            if( reference.getLibrary() == null) {
+            if (reference.getLibrary() == null) {
                 log.debug("Library not fond ");
             } else {
                 Library library = reference.getLibrary();
