@@ -16,7 +16,7 @@ import java.util.List;
 public abstract class LibraryTranslatorBase implements FhirCreator {
     public static final String CQL_CONTENT_TYPE = "text/cql";
     public static final String JSON_ELM_CONTENT_TYPE = "application/elm+json";
-    public static final String XML_ELM_CONTENT_TYPE = "application/xml+json";
+    public static final String XML_ELM_CONTENT_TYPE = "application/elm+xml";
     static final String SYSTEM_TYPE = "http://hl7.org/fhir/codesystem-library-type.html";
     static final String SYSTEM_CODE = "logic-library";
     final byte[] cql;
