@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Deprecated // use for reference refactor and remove
 @RestController
 @RequestMapping(path = "/package")
-@Tag(name = "Packaging-Controller", description = "API for packaging measures")
+@Tag(name = "Packaging-Controller", description = "API for packaging measures Deprecated")
 @Slf4j
 public class PackagingController implements FhirValidatorProcessor {
     private final PackagingOrchestrationService packagingOrchestrationService;

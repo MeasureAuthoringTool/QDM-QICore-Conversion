@@ -14,10 +14,11 @@ public class MatLibraryTranslator extends LibraryTranslatorBase {
 
     public MatLibraryTranslator(CqlLibrary cqlLibrary,
                                 byte[] cql,
-                                byte[] elm,
+                                byte[] elmJson,
+                                byte[] elmXml,
                                 String baseURL,
                                 String uuid) {
-        super(cql, elm, baseURL);
+        super(cql, elmJson, elmXml, baseURL);
 
         this.cqlLibrary = cqlLibrary;
         this.uuid = uuid;

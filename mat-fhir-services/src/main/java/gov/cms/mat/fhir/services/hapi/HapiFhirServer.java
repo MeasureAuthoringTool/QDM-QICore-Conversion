@@ -5,7 +5,7 @@ import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
-import gov.cms.mat.fhir.services.service.packaging.PackageFormat;
+import gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

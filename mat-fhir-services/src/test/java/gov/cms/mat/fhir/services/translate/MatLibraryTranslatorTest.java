@@ -16,7 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class MatLibraryTranslatorTest implements IdGenerator {
     private String MEASURE_ID;
     private byte[] cql;
-    private byte[] elm;
+    private byte[] elmJsom;
+    private byte[] elmXml;
     private CqlLibrary cqlLib;
     private String baseURL;
     private String fhirResourceURL;
@@ -28,17 +29,18 @@ class MatLibraryTranslatorTest implements IdGenerator {
         MEASURE_ID = createId();
         cqlLib = new CqlLibrary();
         cqlLib.setMeasureId(MEASURE_ID);
-        cqlLib.setVersion(new BigDecimal(0.0001));
+        cqlLib.setVersion(new BigDecimal("0.0001"));
         cqlLib.setFinalizedDate(new Date());
         cqlLib.setQdmVersion("v5.5");
         cqlName = "Test CQL Library";
         cqlLib.setCqlName(cqlName);
         cql = "test cql".getBytes();
-        elm = "test elm".getBytes();
+        elmJsom = "test elm json".getBytes();
+        elmXml = "test elm xml".getBytes();
         baseURL = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
         fhirResourceURL = baseURL + "Library/" + MEASURE_ID;
         System.out.println(fhirResourceURL);
-        matLibraryTranslator = new MatLibraryTranslator(cqlLib, cql, elm, baseURL, MEASURE_ID);
+        matLibraryTranslator = new MatLibraryTranslator(cqlLib, cql, elmJsom, elmXml,baseURL, MEASURE_ID);
     }
 
     @Test
@@ -47,8 +49,6 @@ class MatLibraryTranslatorTest implements IdGenerator {
 
         assertEquals(library.getDate().getTime(), new Date().getTime(), 10L);
         assertEquals(cqlName,  library.getName());
-        //TODO determine why below passes at runtime but not during unit test
-        //assertEquals(fhirResourceURL, library.getUrl());
 
         assertEquals(1, library.getType().getCoding().size());
         assertEquals(SYSTEM_TYPE, library.getType().getCoding().get(0).getSystem());
@@ -58,17 +58,18 @@ class MatLibraryTranslatorTest implements IdGenerator {
 
     @Test
     void testTranslateToFhir_verifyAttachments() {
-
-
         Library library = matLibraryTranslator.translateToFhir(null);
 
-        assertEquals(2, library.getContent().size());
+        assertEquals(3, library.getContent().size());
 
-        assertEquals(new String(elm), decodeBase64(library.getContent().get(0).getData()));
-        assertEquals(ELM_CONTENT_TYPE, library.getContent().get(0).getContentType());
+        assertEquals(new String(elmJsom), decodeBase64(library.getContent().get(0).getData()));
+        assertEquals(JSON_ELM_CONTENT_TYPE, library.getContent().get(0).getContentType());
 
         assertEquals(new String(cql), decodeBase64(library.getContent().get(1).getData()));
         assertEquals(CQL_CONTENT_TYPE, library.getContent().get(1).getContentType());
+
+        assertEquals(new String(elmXml), decodeBase64(library.getContent().get(2).getData()));
+        assertEquals(XML_ELM_CONTENT_TYPE, library.getContent().get(2).getContentType());
     }
 
     private String decodeBase64(byte[] bytes) {

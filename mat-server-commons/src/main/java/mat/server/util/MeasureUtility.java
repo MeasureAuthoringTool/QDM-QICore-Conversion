@@ -142,7 +142,7 @@ public class MeasureUtility {
 	}
 	
 	/**
-	 * Method to set latest QDM Version in Draft's or clones of CQL type measure or CQL Stand Alone Library.
+	 * Method to set latest QDM Version in Draft's or clones of CQL type measure or CQL Measure.
 	 * 
 	 * **/
 	public static void updateLatestQDMVersion(XmlProcessor processor) throws XPathExpressionException {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.cql_elm_translation.data.RequestData;
 import gov.cms.mat.cql_elm_translation.service.CqlConversionService;
 import gov.cms.mat.cql_elm_translation.service.MatXmlConversionService;
@@ -30,7 +31,7 @@ public class CqlConversionController {
     }
 
     @PutMapping(path = "/cql", consumes = "text/plain", produces = "application/elm+json")
-    public String cqlToElmJson(
+    public CqlConversionPayload cqlToElmJson(
             @RequestBody String cqlData,
             @RequestParam(required = false) LibraryBuilder.SignatureLevel signatures,
             @RequestParam(defaultValue = "false") Boolean showWarnings,
@@ -54,9 +55,11 @@ public class CqlConversionController {
 
         cqlConversionService.setUpMatLibrarySourceProvider(cqlData);
 
-        String json = cqlConversionService.processCqlDataWithErrors(requestData);
-        TranslatorOptionsRemover remover = new TranslatorOptionsRemover(json);
-        return remover.clean();
+        CqlConversionPayload payload = cqlConversionService.processCqlDataWithErrors(requestData);
+        TranslatorOptionsRemover remover = new TranslatorOptionsRemover(payload.getJson());
+        String cleanedJson =  remover.clean();
+        payload.setJson(cleanedJson);
+        return payload;
     }
 
     @PutMapping(path = "/xml", consumes = "text/plain", produces = "application/elm+json")
@@ -91,8 +94,8 @@ public class CqlConversionController {
                 .validateUnits(validateUnits)
                 .build();
 
-        String json = cqlConversionService.processCqlDataWithErrors(requestData);
-        TranslatorOptionsRemover remover = new TranslatorOptionsRemover(json);
+        CqlConversionPayload payload =  cqlConversionService.processCqlDataWithErrors(requestData);
+        TranslatorOptionsRemover remover = new TranslatorOptionsRemover(payload.getJson());
         return remover.clean();
     }
 

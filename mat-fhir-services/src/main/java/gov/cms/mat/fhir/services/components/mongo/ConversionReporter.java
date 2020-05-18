@@ -101,9 +101,14 @@ public class ConversionReporter {
         conversionReporter.addFhirCql(fhirCql, matLibraryId);
     }
 
-    public static void setFhirJson(String fhirJson, String matLibraryId) {
+    public static void setFhirElmJson(String fhirJson, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addFhirJson(fhirJson, matLibraryId);
+        conversionReporter.addFhirElmJson(fhirJson, matLibraryId);
+    }
+
+    public static void setFhirElmXml(String fhirJson, String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+        conversionReporter.addFhirElmXml(fhirJson, matLibraryId);
     }
 
     public static void setFhirLibraryId(String fhirLibraryId, String matLibraryId) {
@@ -128,10 +133,16 @@ public class ConversionReporter {
         return conversionReporter.getElmString(matLibraryId);
     }
 
-    public static String getFhirElm(String matLibraryId) {
+    public static String getFhirElmJson(String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        return conversionReporter.getFhirElmString(matLibraryId);
+        return conversionReporter.getFhirElmJsonString(matLibraryId);
+    }
+
+    public static String getFhirElmXml(String matLibraryId) {
+        ConversionReporter conversionReporter = getConversionReporter();
+
+        return conversionReporter.getFhirElmXmlString(matLibraryId);
     }
 
     public static String getFhirCql(String matLibraryId) {
@@ -140,10 +151,10 @@ public class ConversionReporter {
         return conversionReporter.getFhirCqlString(matLibraryId);
     }
 
-    public static void setElm(String json, String matLibraryId) {
+    public static void setElmJson(String json, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
 
-        conversionReporter.addElm(json, matLibraryId);
+        conversionReporter.addElmJson(json, matLibraryId);
     }
 
 
@@ -414,8 +425,12 @@ public class ConversionReporter {
     }
 
 
-    private void addFhirJson(String json, String matLibraryId) {
-        conversionResultsService.addFhirJson(key, json, matLibraryId);
+    private void addFhirElmJson(String json, String matLibraryId) {
+        conversionResultsService.addFhirElmJson(key, json, matLibraryId);
+    }
+
+    private void addFhirElmXml(String xml, String matLibraryId) {
+        conversionResultsService.addFhirElmXml(key, xml, matLibraryId);
     }
 
     private void addFhirLibraryId(String fhirLibraryId, String matLibraryId) {
@@ -434,15 +449,19 @@ public class ConversionReporter {
         return conversionResultsService.getElm(key, matLibraryId);
     }
 
-    private String getFhirElmString(String matLibraryId) {
-        return conversionResultsService.getFhirElm(key, matLibraryId);
+    private String getFhirElmJsonString(String matLibraryId) {
+        return conversionResultsService.getFhirElmJson(key, matLibraryId);
+    }
+
+    private String getFhirElmXmlString(String matLibraryId) {
+        return conversionResultsService.getFhirElmXml(key, matLibraryId);
     }
 
     private String getFhirCqlString(String matLibraryId) {
         return conversionResultsService.getFhirCql(key, matLibraryId);
     }
 
-    private void addElm(String json, String matLibraryId) {
+    private void addElmJson(String json, String matLibraryId) {
         conversionResultsService.addElm(key, json, matLibraryId);
     }
 

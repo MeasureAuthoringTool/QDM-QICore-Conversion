@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.service;
 
+import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.CqlConversionError;
@@ -66,17 +67,17 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         String cql = convertMatXmlToCql(cqlLibrary.getCqlXml(), cqlLibrary.getId(), showWarnings);
         ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
 
-        String json = convertToJson(cqlLibrary, atomicBoolean, cql, ConversionType.QDM, showWarnings);
+        CqlConversionPayload json = convertToJson(cqlLibrary, atomicBoolean, cql, ConversionType.QDM, showWarnings);
 
-        String cleanedJson = cleanJsonFromMatExceptions(json);
-        ConversionReporter.setElm(cleanedJson, cqlLibrary.getId());
+        String cleanedJson = cleanJsonFromMatExceptions(json.getJson());
+        ConversionReporter.setElmJson(cleanedJson, cqlLibrary.getId());
     }
 
-    public String convertToJson(CqlLibrary cqlLibrary,
-                                AtomicBoolean atomicBoolean,
-                                String cql,
-                                ConversionType type,
-                                boolean showWarnings) {
+    public CqlConversionPayload convertToJson(CqlLibrary cqlLibrary,
+                                              AtomicBoolean atomicBoolean,
+                                              String cql,
+                                              ConversionType type,
+                                              boolean showWarnings) {
         return convertCqlToJson(cqlLibrary == null ? null : cqlLibrary.getId(),
                 atomicBoolean,
                 cql,
@@ -85,14 +86,14 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
 
     }
 
-    public String convertCqlToJson(String cqlLibraryId,
-                                   AtomicBoolean atomicBoolean,
-                                   String cql,
-                                   ConversionType type,
-                                   boolean showWarnings) {
-        String json = convertCqlToJson(cql, showWarnings);
+    public CqlConversionPayload convertCqlToJson(String cqlLibraryId,
+                                                 AtomicBoolean atomicBoolean,
+                                                 String cql,
+                                                 ConversionType type,
+                                                 boolean showWarnings) {
+        CqlConversionPayload json = convertCqlToJson(cql, showWarnings);
 
-        boolean success = processJsonForError(type, json, cqlLibraryId);
+        boolean success = processJsonForError(type, json.getJson(), cqlLibraryId);
 
         if (!success) {
             atomicBoolean.set(Boolean.FALSE);
@@ -101,7 +102,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         return json;
     }
 
-    public String convertToJsonFromFhirCql(AtomicBoolean atomicBoolean, String cql, boolean showWarnings) {
+    public CqlConversionPayload convertToJsonFromFhirCql(AtomicBoolean atomicBoolean, String cql, boolean showWarnings) {
         return convertToJson(null, atomicBoolean, cql, ConversionType.FHIR, showWarnings);
     }
 
@@ -192,9 +193,9 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         }
     }
 
-    private String convertCqlToJson(String cql, boolean showWarnings) {
+    private CqlConversionPayload convertCqlToJson(String cql, boolean showWarnings) {
         try {
-            ResponseEntity<String> entity = cqlConversionClient.getJson(cql, showWarnings);
+            ResponseEntity<CqlConversionPayload> entity = cqlConversionClient.getJson(cql, showWarnings);
             return entity.getBody();
         } catch (Exception e) {
             log.warn("Error convertCqlToJson", e);

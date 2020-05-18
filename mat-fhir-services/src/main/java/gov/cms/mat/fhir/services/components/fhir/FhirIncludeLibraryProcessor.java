@@ -72,6 +72,7 @@ public class FhirIncludeLibraryProcessor {
                 Bundle bundle = fetchBundle(include);
                 libraryReferences.setSearchResult(true);
                 libraryReferences.setReferenceEndpoint(bundle.getEntry().get(0).getFullUrl());
+                libraryReferences.setLibrary((Library) bundle.getEntry().get(0).getResource());
             } catch (Exception e) {
                 log.debug("Error when processing include: {}", include);
                 libraryReferences.setSearchResult(false);

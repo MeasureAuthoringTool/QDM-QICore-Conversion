@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.cql;
 
+import gov.cms.mat.cql.dto.CqlConversionPayload;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,13 +36,19 @@ class CqlConversionClientTest {
 
     @Test
     void getJson() {
-        when(restTemplate.exchange(any(RequestEntity.class), eq(String.class)))
-                .thenReturn(new ResponseEntity<>(JSON, HttpStatus.ACCEPTED));
+        CqlConversionPayload payload = CqlConversionPayload.builder()
+                .json(JSON)
+                .xml(XML)
+                .build();
 
-        ResponseEntity<String> entity = cqlConversionClient.getJson("CQL", true);
-        assertEquals(JSON, entity.getBody());
+        when(restTemplate.exchange(any(RequestEntity.class), eq(CqlConversionPayload.class)))
+                .thenReturn(new ResponseEntity<>(payload, HttpStatus.ACCEPTED));
+
+        ResponseEntity<CqlConversionPayload> entity = cqlConversionClient.getJson("CQL", true);
+        assertEquals(JSON, entity.getBody().getJson());
+        assertEquals(XML, entity.getBody().getXml());
         assertEquals(HttpStatus.ACCEPTED, entity.getStatusCode());
-        verify(restTemplate).exchange(any(RequestEntity.class), eq(String.class));
+        verify(restTemplate).exchange(any(RequestEntity.class), eq(CqlConversionPayload.class));
     }
 
     @Test

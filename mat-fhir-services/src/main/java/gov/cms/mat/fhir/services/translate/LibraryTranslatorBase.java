@@ -15,16 +15,20 @@ import java.util.List;
 @Slf4j
 public abstract class LibraryTranslatorBase implements FhirCreator {
     public static final String CQL_CONTENT_TYPE = "text/cql";
-    public static final String ELM_CONTENT_TYPE = "application/elm+json";
+    public static final String JSON_ELM_CONTENT_TYPE = "application/elm+json";
+    public static final String XML_ELM_CONTENT_TYPE = "application/xml+json";
     static final String SYSTEM_TYPE = "http://hl7.org/fhir/codesystem-library-type.html";
     static final String SYSTEM_CODE = "logic-library";
     final byte[] cql;
-    final byte[] elm;
+    final byte[] elmJson;
+    final byte[] elmXml;
+
     final String baseURL;
 
-    public LibraryTranslatorBase(byte[] cql, byte[] elm, String baseURL) {
+    public LibraryTranslatorBase(byte[] cql, byte[] elmJson, byte[] elmXml, String baseURL) {
         this.cql = cql;
-        this.elm = elm;
+        this.elmJson = elmJson;
+        this.elmXml = elmXml;
         this.baseURL = baseURL;
     }
 
@@ -51,8 +55,9 @@ public abstract class LibraryTranslatorBase implements FhirCreator {
     List<Attachment> createContent() {
         List<Attachment> attachments = new ArrayList<>(2);
 
-        attachments.add(createAttachment(ELM_CONTENT_TYPE, elm));
+        attachments.add(createAttachment(JSON_ELM_CONTENT_TYPE, elmJson));
         attachments.add(createAttachment(CQL_CONTENT_TYPE, cql));
+        attachments.add(createAttachment(XML_ELM_CONTENT_TYPE, elmXml));
 
         return attachments;
     }

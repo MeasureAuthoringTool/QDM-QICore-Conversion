@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 
 @RestController
 @RequestMapping(path = "/library/find")
-@Tag(name = "LibraryFinder-Controller", description = "API for finding MAT Libraries ")
+@Tag(name = "Library-Controller", description = "API for Libraries ")
 @Slf4j
 public class LibraryFinderController implements CqlVersionConverter {
     private final LibraryFinderService libraryFinderService;

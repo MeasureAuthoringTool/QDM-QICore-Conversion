@@ -29,7 +29,7 @@ import java.time.Instant;
 
 @RestController
 @RequestMapping(path = "/library")
-@Tag(name = "Library-Controller", description = "API for converting stand alone Libraries to FHIR")
+@Tag(name = "Library-Controller", description = "API for Libraries")
 @Slf4j
 public class StandAloneLibraryController implements FhirValidatorProcessor {
     private final LibraryOrchestrationService libraryOrchestrationService;

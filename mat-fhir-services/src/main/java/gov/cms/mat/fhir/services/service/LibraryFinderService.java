@@ -8,6 +8,7 @@ import gov.cms.mat.fhir.services.exceptions.ExternalHapiLibraryNotFoundException
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
+import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -25,7 +26,7 @@ import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.CQL_CONT
 
 @Service
 @Slf4j
-public class LibraryFinderService implements CqlVersionConverter {
+public class LibraryFinderService implements CqlVersionConverter, FhirLibraryHelper {
     private final CqlLibraryDataService cqlLibraryDataService;
     private final HapiFhirServer hapiFhirServer;
 
@@ -98,11 +99,7 @@ public class LibraryFinderService implements CqlVersionConverter {
             throw new CqlLibraryNotFoundException("Cannot find attachments for library name: " + name + ", version: " + version);
         }
 
-        Attachment cql = attachments.stream()
-                .filter(a -> a.getContentType().equals(CQL_CONTENT_TYPE))
-                .findFirst()
-                .orElseThrow(() -> new CqlLibraryNotFoundException("Cannot find attachment type " + CQL_CONTENT_TYPE +
-                        " for library  name: " + name + ", version: " + version));
+        Attachment cql = findCqlAttachment(library, CQL_CONTENT_TYPE);
 
         return new String(cql.getData());
     }

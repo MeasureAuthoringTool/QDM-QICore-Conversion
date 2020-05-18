@@ -1,6 +1,14 @@
 package gov.cms.mat.fhir.services.components.mongo;
 
-import gov.cms.mat.fhir.rest.dto.*;
+import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
+import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.rest.dto.CqlConversionError;
+import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
+import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
+import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
+import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
+import gov.cms.mat.fhir.rest.dto.MeasureConversionResults;
+import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import lombok.extern.slf4j.Slf4j;
@@ -143,15 +151,18 @@ public class ConversionResultsService {
 
         addLibraryData(key, cql, matLibraryId, LibraryType.QDM_CQL);
 
-
     }
 
     public void addFhirCql(ThreadSessionKey key, String cql, String matLibraryId) {
         addLibraryData(key, cql, matLibraryId, LibraryType.FHIR_CQL);
     }
 
-    public void addFhirJson(ThreadSessionKey key, String json, String matLibraryId) {
-        addLibraryData(key, json, matLibraryId, LibraryType.FHIR_ELM);
+    public void addFhirElmJson(ThreadSessionKey key, String json, String matLibraryId) {
+        addLibraryData(key, json, matLibraryId, LibraryType.FHIR_ELM_JSON);
+    }
+
+    public void addFhirElmXml(ThreadSessionKey key, String xml, String matLibraryId) {
+        addLibraryData(key, xml, matLibraryId, LibraryType.FHIR_ELM_XML);
     }
 
     public void addExternalLibraryErrors(ThreadSessionKey key, Map<String, List<CqlConversionError>> map, String matLibraryId) {
@@ -204,8 +215,12 @@ public class ConversionResultsService {
         return getLibraryData(key, matLibraryId, LibraryType.QDM_ELM);
     }
 
-    public String getFhirElm(ThreadSessionKey key, String matLibraryId) {
-        return getLibraryData(key, matLibraryId, LibraryType.FHIR_ELM);
+    public String getFhirElmJson(ThreadSessionKey key, String matLibraryId) {
+        return getLibraryData(key, matLibraryId, LibraryType.FHIR_ELM_JSON);
+    }
+
+    public String getFhirElmXml(ThreadSessionKey key, String matLibraryId) {
+        return getLibraryData(key, matLibraryId, LibraryType.FHIR_ELM_XML);
     }
 
     public String getFhirCql(ThreadSessionKey key, String matLibraryId) {

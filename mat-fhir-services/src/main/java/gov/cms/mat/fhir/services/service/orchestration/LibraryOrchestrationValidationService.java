@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
+import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.CqlConversionResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
@@ -89,11 +90,12 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         ConversionReporter.setFhirCql(fhirCql, matLib.getId());
 
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
-        String fhirJson = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, fhirCql, showWarnings);
-        String cleanedJson = cleanJsonFromMatExceptions(fhirJson);
-        ConversionReporter.setFhirJson(cleanedJson, matLib.getId());
+        CqlConversionPayload fhirJson = cqlLibraryTranslationService.convertToJsonFromFhirCql(atomicBoolean, fhirCql, showWarnings);
+        String cleanedJson = cleanJsonFromMatExceptions(fhirJson.getJson());
+        ConversionReporter.setFhirElmJson(cleanedJson, matLib.getId());
+        ConversionReporter.setFhirElmXml(fhirJson.getXml(), matLib.getId());
 
-        cqlLibraryTranslationService.processJsonForError(FHIR, fhirJson, matLib.getId());
+        cqlLibraryTranslationService.processJsonForError(FHIR, fhirJson.getJson(), matLib.getId());
     }
 
 
@@ -110,11 +112,14 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         LibraryConversionResults results = conversionResult.findLibraryConversionResultsRequired(cqlLibrary.getId());
 
         String fhirCql = ConversionReporter.getFhirCql(cqlLibrary.getId());
-        String fhirElm = ConversionReporter.getFhirElm(cqlLibrary.getId());
+        String fhirElm = ConversionReporter.getFhirElmJson(cqlLibrary.getId());
+
+        String fhirXml = ConversionReporter.getFhirElmXml(cqlLibrary.getId());
 
         MatLibraryTranslator matLibraryTranslator = new MatLibraryTranslator(cqlLibrary,
                 fhirCql.getBytes(),
                 fhirElm.getBytes(),
+                fhirXml.getBytes(),
                 hapiFhirServer.getBaseURL(),
                 createId());
 

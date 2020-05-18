@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.mat;
 
+import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
@@ -19,8 +20,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -64,11 +69,16 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil {
         when(matXpath.processXmlValue(cqlLookUpXml, "version")).thenReturn("1.2.000");
         when(hapiFhirServer.getBaseURL()).thenReturn("http://mick.mouse.com/");
 
+        CqlConversionPayload payload = CqlConversionPayload.builder()
+                .json("json")
+                .xml("xml")
+                .build();
+
         when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any(), anyBoolean()))
-                .thenReturn("json");
+                .thenReturn(payload);
 
         when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString(), anyBoolean())).thenReturn(convertedCql);
-        when(cqlLibraryTranslationService.convertCqlToJson(anyString(), any(), anyString(), any(), anyBoolean())).thenReturn("json");
+
         when(cqlLibraryTranslationService.convertMatXmlToCql(any(), anyString(), anyBoolean())).thenReturn(convertedCql);
 
         draftMeasureXmlProcessor.processMeasure(measure, false);

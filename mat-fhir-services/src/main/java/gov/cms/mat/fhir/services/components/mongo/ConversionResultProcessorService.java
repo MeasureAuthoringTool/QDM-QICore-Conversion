@@ -6,7 +6,6 @@ import gov.cms.mat.fhir.rest.dto.CqlConversionError;
 import gov.cms.mat.fhir.rest.dto.CqlConversionResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
-import gov.cms.mat.fhir.rest.dto.MeasureConversionResults;
 import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.exceptions.BatchIdNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
@@ -26,7 +25,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.services.rest.TranslationReportController.DocumentsToFind.ALL;
-import static org.apache.commons.collections4.MapUtils.isNotEmpty;
 
 @Service
 @Slf4j
@@ -129,7 +127,7 @@ public class ConversionResultProcessorService {
             cqlConversionResult.setElm(ConversionReporter.getElm(libraryConversionResults.getMatLibraryId()));
 
             cqlConversionResult.setFhirCql(ConversionReporter.getFhirCql(libraryConversionResults.getMatLibraryId()));
-            cqlConversionResult.setFhirElm(ConversionReporter.getFhirElm(libraryConversionResults.getMatLibraryId()));
+            cqlConversionResult.setFhirElm(ConversionReporter.getFhirElmJson(libraryConversionResults.getMatLibraryId()));
         }
     }
 

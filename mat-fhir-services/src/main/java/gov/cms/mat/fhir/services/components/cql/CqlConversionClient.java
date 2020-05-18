@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.cql;
 
+import gov.cms.mat.cql.dto.CqlConversionPayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.RequestEntity;
@@ -21,11 +22,11 @@ public class CqlConversionClient {
         this.restTemplate = restTemplate;
     }
 
-    public ResponseEntity<String> getJson(String cql, boolean showWarnings) {
+    public ResponseEntity<CqlConversionPayload> getJson(String cql, boolean showWarnings) {
         RequestEntity<String> requestEntity = buildConvertCqlToJsonRequestEntity(cql, showWarnings);
         log.trace("PUT-JSON requestEntity: {}", requestEntity.getUrl());
 
-        return restTemplate.exchange(requestEntity, String.class);
+        return restTemplate.exchange(requestEntity, CqlConversionPayload.class);
     }
 
     public ResponseEntity<String> getCql(String cqlXml, boolean showWarnings) {

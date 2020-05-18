@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.mat;
 
+import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
@@ -83,41 +84,42 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
 
     public Library buildLibraryFromXml(XmlKey key, String cqlLookUpXml, boolean showWarnings) {
         String cql = convertXmlToCql(key, cqlLookUpXml, showWarnings);
-        String json = convertCqlToJson(key, cql, showWarnings);
+        CqlConversionPayload payload = convertCqlToJson(key, cql, showWarnings);
 
-        Library library = translateLibrary(key, cql, json);
-
-        ConversionReporter.setFhirJson(hapiFhirServer.toJson(library), key.create());
+        Library library = translateLibrary(key, cql, payload.getJson(), payload.getXml());
 
         return library;
     }
 
     private String convertXmlToCql(XmlKey key, String cqlLookUpXml, boolean showWarnings) {
         String cql = cqlLibraryTranslationService.convertMatXmlToCql(cqlLookUpXml, key.create(), showWarnings);
-        ConversionReporter.setFhirCql(cql, key.create());
+        ConversionReporter.setFhirCql(cql,  key.create());
+
         return cql;
     }
 
-    private Library translateLibrary(XmlKey key, String cql, String json) {
+    private Library translateLibrary(XmlKey key, String cql, String json,  String xml) {
         XmlLibraryTranslator xmlLibraryTranslator = new XmlLibraryTranslator(key.library,
                 cql,
                 json,
+                xml,
                 hapiFhirServer.getBaseURL(),
                 UUID.randomUUID().toString());
 
         return xmlLibraryTranslator.translateToFhir(key.version);
     }
 
-    private String convertCqlToJson(XmlKey key, String cql, boolean showWarnings) {
-        String json = cqlLibraryTranslationService.convertCqlToJson(key.create(),
+    private CqlConversionPayload convertCqlToJson(XmlKey key, String cql, boolean showWarnings) {
+        CqlConversionPayload payload = cqlLibraryTranslationService.convertCqlToJson(key.create(),
                 new AtomicBoolean(),
                 cql,
                 CQLLibraryTranslationService.ConversionType.FHIR,
                 showWarnings);
 
-        ConversionReporter.setFhirJson(json, key.create());
+        ConversionReporter.setFhirElmJson(payload.getJson(), key.create());
+        ConversionReporter.setFhirElmXml(payload.getXml(), key.create());
 
-        return json;
+        return payload;
     }
 
     private String findMeasureXml(Measure measure) {

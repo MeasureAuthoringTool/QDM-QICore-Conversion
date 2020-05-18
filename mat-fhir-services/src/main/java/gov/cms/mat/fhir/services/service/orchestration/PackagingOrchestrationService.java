@@ -30,8 +30,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.CQL_CONTENT_TYPE;
-import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.ELM_CONTENT_TYPE;
+import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.JSON_ELM_CONTENT_TYPE;
 
+@Deprecated
 @Service
 @Slf4j
 public class PackagingOrchestrationService {
@@ -395,6 +396,8 @@ public class PackagingOrchestrationService {
                 .findFirst()
                 .orElseThrow(() -> new CqlLibraryNotFoundException("Cannot find attachment type " + CQL_CONTENT_TYPE +
                         " for library  name: " + name + ", version: " + version));
+
+
         byte[] bytes = Base64.decodeBase64(cql.getData());
         String cqlContent = new String(bytes);
 
@@ -445,9 +448,9 @@ public class PackagingOrchestrationService {
 
         attachments = library.getContent();
         Attachment elm = attachments.stream()
-                .filter(a -> a.getContentType().equals(ELM_CONTENT_TYPE))
+                .filter(a -> a.getContentType().equals(JSON_ELM_CONTENT_TYPE))
                 .findFirst()
-                .orElseThrow(() -> new CqlLibraryNotFoundException("Cannot find attachment type " + ELM_CONTENT_TYPE +
+                .orElseThrow(() -> new CqlLibraryNotFoundException("Cannot find attachment type " + JSON_ELM_CONTENT_TYPE +
                         " for library  name: " + name + ", version: " + version));
         byte[] elmBytes = Base64.decodeBase64(cql.getData());
         String elmText = new String(elmBytes);

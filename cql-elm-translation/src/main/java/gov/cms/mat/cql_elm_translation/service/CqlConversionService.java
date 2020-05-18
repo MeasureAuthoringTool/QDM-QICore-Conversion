@@ -1,6 +1,7 @@
 package gov.cms.mat.cql_elm_translation.service;
 
 import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.cql_elm_translation.cql_translator.MatLibrarySourceProvider;
 import gov.cms.mat.cql_elm_translation.cql_translator.TranslationResource;
@@ -37,7 +38,7 @@ public class CqlConversionService {
         MatLibrarySourceProvider.setFhirServicesService(matFhirServices);
     }
 
-    public String processCqlDataWithErrors(RequestData requestData) {
+    public CqlConversionPayload processCqlDataWithErrors(RequestData requestData) {
         CqlTranslator cqlTranslator = processCqlData(requestData);
 
         List<CqlTranslatorException> errors =
@@ -48,7 +49,12 @@ public class CqlConversionService {
 
         String processedJson = annotationErrorFilter.filter();
 
-        return attachErrorsToJson(errors, processedJson, cqlTranslator.getTranslatedLibrary());
+        String jsonWithErrors = attachErrorsToJson(errors, processedJson, cqlTranslator.getTranslatedLibrary());
+
+        return CqlConversionPayload.builder()
+                .json(jsonWithErrors)
+                .xml(cqlTranslator.toXml())
+                .build();
     }
 
     private String attachErrorsToJson(List<CqlTranslatorException> errors, String json, TranslatedLibrary translatedLibrary) {
