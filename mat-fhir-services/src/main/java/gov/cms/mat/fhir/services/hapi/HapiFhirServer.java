@@ -4,6 +4,7 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
+import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
 import gov.cms.mat.fhir.services.service.packaging.PackageFormat;
 import lombok.Getter;
@@ -234,7 +235,7 @@ public class HapiFhirServer {
     public Bundle getLibraryBundle(String id) {
         return hapiClient.search()
                 .forResource(Library.class)
-                .where(Library.URL.matches().value(baseURL + "Library/" + id))
+                .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
                 .execute();
     }
