@@ -1,6 +1,8 @@
 package gov.cms.mat.fhir.services.service.packaging;
 
+import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
+import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import org.hl7.fhir.r4.model.Bundle;
@@ -17,7 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class LibraryPackagerServiceTest implements LibraryHelper {
+class LibraryPackagerServiceTest implements ResourceFileUtil, LibraryHelper {
+
+    private Library qiCorePatternLibrary;
+    private String qiCorePatternCql;
+
+    private Library fhirHelpersLibrary;
+    private String fhirHelpersCql;
+
+
+
     private final String ID = "id";
 
     @Mock
@@ -30,6 +41,11 @@ class LibraryPackagerServiceTest implements LibraryHelper {
 
     @BeforeEach
     void setUp() {
+        qiCorePatternCql = getStringFromResource("/includes/QICorePatterns.cql");
+        qiCorePatternLibrary = createLib(qiCorePatternCql);
+
+        fhirHelpersCql = getStringFromResource("/includes/FHIRHelpers.cql");
+        fhirHelpersLibrary = createLib(fhirHelpersCql);
     }
 
     @Test
@@ -42,24 +58,22 @@ class LibraryPackagerServiceTest implements LibraryHelper {
     }
 
     @Test
-    void packageMinimumFoundInHapi() {
+    void packageTooManyFoundInHapi() {
+        Bundle bundle = new Bundle();
 
-        //todo get lib from cql
-//        Bundle bundle = new Bundle();
-//
-//        Bundle.BundleEntryComponent first = bundle.addEntry();
-//        first.setResource(new Library());
-//
-//        Bundle.BundleEntryComponent second = bundle.addEntry();
-//        second.setResource(new Library());
-//
-//        assertTrue(bundle.hasEntry());
-//
-//        when(hapiFhirServer.getLibraryBundle(ID)).thenReturn(bundle);
-//
-//        Assertions.assertThrows(HapiResourceNotFoundException.class, () -> {
-//            libraryPackagerService.packageMinimum(ID);
-//        });
+        Bundle.BundleEntryComponent first = bundle.addEntry();
+        first.setResource(qiCorePatternLibrary);
+
+        Bundle.BundleEntryComponent second = bundle.addEntry();
+        second.setResource(fhirHelpersLibrary);
+
+        assertTrue(bundle.hasEntry());
+
+        when(hapiFhirServer.getLibraryBundle(ID)).thenReturn(bundle);
+
+        Assertions.assertThrows(FhirNotUniqueException.class, () -> {
+            libraryPackagerService.packageMinimum(ID);
+        });
     }
 
 
