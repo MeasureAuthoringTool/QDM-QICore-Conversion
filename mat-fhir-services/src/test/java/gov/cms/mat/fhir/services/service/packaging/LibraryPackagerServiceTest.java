@@ -6,6 +6,7 @@ import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
+import gov.cms.mat.fhir.services.exceptions.FhirIncludeLibrariesNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
@@ -132,12 +133,12 @@ class LibraryPackagerServiceTest implements ResourceFileUtil, LibraryHelper {
     }
 
     @Test
-    void packageFullIncludedLibrariesFound() {
+    void packageFullIncludedLibrariesNotFound() {
         buildAndSetUpBundle(qiCorePatternLibrary);
         when(fhirValidatorService.validate(qiCorePatternLibrary)).thenReturn(new FhirResourceValidationResult());
 
-
         FhirIncludeLibraryResult result = new FhirIncludeLibraryResult();
+
         FhirIncludeLibraryReferences referenceMissing = FhirIncludeLibraryReferences.builder()
                 .name("missing")
                 .version("1.0.000")
@@ -157,10 +158,37 @@ class LibraryPackagerServiceTest implements ResourceFileUtil, LibraryHelper {
         when(fhirIncludeLibraryProcessor.findIncludedFhirLibraries(qiCorePatternCql))
                 .thenReturn(result);
 
+        Assertions.assertThrows(FhirIncludeLibrariesNotFoundException.class, () -> libraryPackagerService.packageFull(ID));
+
+        verify(hapiFhirServer).getLibraryBundle(ID);
+        verify(fhirValidatorService).validate(qiCorePatternLibrary);
+        verify(fhirIncludeLibraryProcessor).findIncludedFhirLibraries(qiCorePatternCql);
+    }
+
+    @Test
+    void packageFullIncludedLibrariesFound() {
+        buildAndSetUpBundle(qiCorePatternLibrary);
+        when(fhirValidatorService.validate(qiCorePatternLibrary)).thenReturn(new FhirResourceValidationResult());
+
+        FhirIncludeLibraryResult result = new FhirIncludeLibraryResult();
+
+        FhirIncludeLibraryReferences referenceFound = FhirIncludeLibraryReferences.builder()
+                .name(fhirHelpersLibrary.getName())
+                .version(fhirHelpersLibrary.getVersion())
+                .searchResult(true)
+                .library(fhirHelpersLibrary)
+                .referenceEndpoint("http://stay.athome.com")
+                .build();
+        result.getLibraryReferences().add(referenceFound);
+
+        when(fhirIncludeLibraryProcessor.findIncludedFhirLibraries(qiCorePatternCql))
+                .thenReturn(result);
+
         LibraryPackageFullHapi fullHapi = libraryPackagerService.packageFull(ID);
+
+
         assertEquals(qiCorePatternLibrary, fullHapi.getLibrary());
         assertTrue(fullHapi.getIncludeBundle().hasEntry());
-
         assertEquals(1, fullHapi.getIncludeBundle().getEntry().size());
         assertEquals(fhirHelpersLibrary, fullHapi.getIncludeBundle().getEntry().get(0).getResource());
 
@@ -168,7 +196,6 @@ class LibraryPackagerServiceTest implements ResourceFileUtil, LibraryHelper {
         verify(fhirValidatorService).validate(qiCorePatternLibrary);
         verify(fhirIncludeLibraryProcessor).findIncludedFhirLibraries(qiCorePatternCql);
     }
-
 
     private void buildAndSetUpBundle(Library... library) {
         Bundle bundle = new Bundle();

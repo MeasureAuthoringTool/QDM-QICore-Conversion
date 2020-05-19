@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
+import gov.cms.mat.fhir.services.exceptions.FhirIncludeLibrariesNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
@@ -20,6 +21,7 @@ import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -82,7 +84,7 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
         includedLibraryBundle.setType(Bundle.BundleType.COLLECTION);
 
         FhirIncludeLibraryResult result = findIncludedFhirLibraries(library);
-        processIncludedLibraries(includedLibraryBundle, result);
+        processIncludedLibraries(includedLibraryBundle, result, library.getId());
         return includedLibraryBundle;
     }
 
@@ -95,17 +97,23 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
     }
 
 
-    private void processIncludedLibraries(Bundle libraryBundle, FhirIncludeLibraryResult fhirIncludeLibraryResult) {
+    private void processIncludedLibraries(Bundle libraryBundle, FhirIncludeLibraryResult fhirIncludeLibraryResult, String id) {
         List<FhirIncludeLibraryReferences> libraryReferences = fhirIncludeLibraryResult.getLibraryReferences();
 
-        for (FhirIncludeLibraryReferences reference : libraryReferences) {
-            if (reference.getLibrary() == null) {
-                log.debug("Library not fond ");
-            } else {
+        List<String> missingLibs = libraryReferences.stream()
+                .filter(r -> r.getLibrary() == null)
+                .map(r -> r.getName() + '-' + r.getVersion())
+                .collect(Collectors.toList());
+
+        if (missingLibs.isEmpty()) {
+            for (FhirIncludeLibraryReferences reference : libraryReferences) {
                 Library library = reference.getLibrary();
                 library.setId(createLibraryName(library));
                 libraryBundle.addEntry().setResource(library);
             }
+        } else {
+            String missing = String.join(", ", missingLibs);
+            throw new FhirIncludeLibrariesNotFoundException(id, missing);
         }
     }
 }

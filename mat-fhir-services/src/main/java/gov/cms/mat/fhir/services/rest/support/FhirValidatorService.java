@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.rest.support;
 
-
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -21,5 +20,4 @@ public class FhirValidatorService implements FhirValidatorProcessor {
 
         return fhirResourceValidationResult;
     }
-
 }
