@@ -11,7 +11,7 @@ export HAPI_DB_URL='jdbc:mysql://hapi-fhir-mysql:3306/'${HAPI_DB}'?serverTimezon
 export HAPI_DB_USER=admin	
 export HAPI_DB_PASS=admin
 
-export MONGO_DB_URL='mongodb://host.docker.internal:27018'
+export MONGO_DB_URL='mongodb://host.docker.internal:27017'
 
 export HAPI_FHIR_URL_PUBLIC='http://localhost:6060/hapi-fhir-jpaserver/fhir'
 export HAPI_FHIR_URL='http://hapi-fhir-jpaserver:6060/hapi-fhir-jpaserver/fhir/'
