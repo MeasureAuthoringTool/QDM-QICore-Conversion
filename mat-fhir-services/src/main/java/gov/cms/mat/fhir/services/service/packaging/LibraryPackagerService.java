@@ -71,7 +71,7 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
     public LibraryPackageFullHapi packageFull(String id) {
         Library library = packageMinimum(id);
 
-        Bundle includedLibraryBundle = buildIncludeBundle(library);
+        Bundle includedLibraryBundle = buildIncludeBundle(library, id);
 
         return LibraryPackageFullHapi.builder()
                 .library(library)
@@ -79,12 +79,12 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
                 .build();
     }
 
-    Bundle buildIncludeBundle(Library library) {
+    Bundle buildIncludeBundle(Library library, String id) {
         Bundle includedLibraryBundle = new Bundle();
         includedLibraryBundle.setType(Bundle.BundleType.COLLECTION);
 
         FhirIncludeLibraryResult result = findIncludedFhirLibraries(library);
-        processIncludedLibraries(includedLibraryBundle, result, library.getId());
+        processIncludedLibraries(includedLibraryBundle, result, id);
         return includedLibraryBundle;
     }
 

@@ -70,7 +70,7 @@ public class DraftMeasureTranslator implements MeasureTranslator {
 
         fhirMeasure.setUseContext(createUsageContext("program", "eligible-provider"));
 
-        //TO DO: Needs fixing.
+        //TODO: Needs fixing.
         //proessMeta(fhirMeasure);
         processHumanReadable(fhirMeasure);
         processIdentifiers(fhirMeasure);
@@ -83,10 +83,8 @@ public class DraftMeasureTranslator implements MeasureTranslator {
         processRelatedArtifacts(fhirMeasure);
         processScoring(fhirMeasure);
 
-
         return fhirMeasure;
     }
-
 
     public void processTopic(Measure fhirMeasure) {
         fhirMeasure.setTopic(new ArrayList<>());
@@ -180,7 +178,6 @@ public class DraftMeasureTranslator implements MeasureTranslator {
         }
     }
 
-
     public void processHumanReadable(Measure fhirMeasure) {
         //set narrative
         if (!humanReadable.isEmpty()) {
@@ -257,10 +254,6 @@ public class DraftMeasureTranslator implements MeasureTranslator {
         return new RelatedArtifact()
                 .setCitation(ref.getReference())
                 .setType(mapReferenceType(ref.getReferenceType()));
-    }
-
-    private String getVersion() {
-        return matMeasure.getVersion() + "." + matMeasure.getVersion();
     }
 }
 

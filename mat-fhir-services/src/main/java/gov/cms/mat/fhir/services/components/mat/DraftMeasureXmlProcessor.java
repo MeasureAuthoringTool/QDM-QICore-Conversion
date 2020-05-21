@@ -44,10 +44,10 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
     }
 
-    public String pushStandAlone(String id, String xml) {
+    public String pushStandAlone(String libraryId, String xml) {
         DraftMeasureXmlProcessor.XmlKey xmlKey = getXmlKey(xml);
         Library library = buildLibraryFromXml(xmlKey, xml, Boolean.FALSE);
-        library.setId(id);
+        library.setId(libraryId);
         library.setVersion(xmlKey.getVersion());
 
         FhirResourceValidationResult result = validateResource(library, hapiFhirServer.getCtx());
@@ -55,7 +55,7 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         if (CollectionUtils.isEmpty(result.getValidationErrorList())) {
             return hapiFhirServer.persist(library);
         } else {
-            throw new HapiResourceValidationException(id, "Library");
+            throw new HapiResourceValidationException(libraryId, "Library");
         }
     }
 
@@ -86,9 +86,7 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         String cql = convertXmlToCql(key, cqlLookUpXml, showWarnings);
         CqlConversionPayload payload = convertCqlToJson(key, cql, showWarnings);
 
-        Library library = translateLibrary(key, cql, payload.getJson(), payload.getXml());
-
-        return library;
+        return translateLibrary(key, cql, payload.getJson(), payload.getXml());
     }
 
     private String convertXmlToCql(XmlKey key, String cqlLookUpXml, boolean showWarnings) {

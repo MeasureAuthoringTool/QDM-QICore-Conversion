@@ -1,7 +1,6 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
 
-import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
@@ -43,7 +42,7 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         this.fhirMeasureCreator = fhirMeasureCreator;
     }
 
-    boolean validate(OrchestrationProperties properties) {
+   public boolean validate(OrchestrationProperties properties) {
         log.info("Validating measure hapi measureId: {}", properties.getMeasureId());
         return validateMeasure(properties);
     }
@@ -91,7 +90,8 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
                 narrative = getNarrative(measureExport.get());
             }
         }
-        return createFhirMeasure(properties.getXmlSource(), properties.getMatMeasure(), xmlBytes, narrative);
+
+        return fhirMeasureCreator.create(properties.getXmlSource(), properties.getMatMeasure(), xmlBytes, narrative);
     }
 
     public String getNarrative(MeasureExport measureExport) {
@@ -101,9 +101,5 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
             log.warn("Narrative not found: {}", ex.getMessage());
             return "";
         }
-    }
-
-    public org.hl7.fhir.r4.model.Measure createFhirMeasure(XmlSource source, Measure matMeasure, byte[] xmlBytes, String narrative) {
-        return fhirMeasureCreator.create(source, matMeasure, xmlBytes, narrative);
     }
 }

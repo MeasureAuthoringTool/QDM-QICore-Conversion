@@ -28,10 +28,6 @@ public class MeasureDataService {
         this.measureRepository = measureRepository;
     }
 
-    public List<String> findAllIds() {
-        return measureRepository.findAllIds();
-    }
-
     public List<String> findAllValidIds() {
         return measureRepository.findAllIdsWithAllowedVersions(allowedVersions);
     }

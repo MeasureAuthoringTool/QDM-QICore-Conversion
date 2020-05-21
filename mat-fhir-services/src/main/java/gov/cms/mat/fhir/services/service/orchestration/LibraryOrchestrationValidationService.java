@@ -49,8 +49,6 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
     }
 
 
-
-
     boolean validate(OrchestrationProperties properties) {
 
         properties.getCqlLibraries()

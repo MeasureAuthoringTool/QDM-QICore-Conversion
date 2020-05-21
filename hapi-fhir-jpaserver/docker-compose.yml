@@ -1,11 +1,15 @@
 version: '3.6'
-  hapi-fhir-jpaserver:
-    image: hapi-fhir-jpaserver
-    container_name: hapi-fhir-jpaserver
+services:
+  hapi-fhir-jpaserver_spring_boot:
+    image: hapi-fhir-jpaserver_spring_boot
+    container_name: hapi-fhir-jpaserver_spring_boot
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       HAPI_DB_URL: ${HAPI_DB_URL}
       HAPI_DB_USER: ${HAPI_DB_USER}
       HAPI_DB_PASS: ${HAPI_DB_PASS}
       HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
     ports:
-      - 6060:6060
+      - 6066:6066

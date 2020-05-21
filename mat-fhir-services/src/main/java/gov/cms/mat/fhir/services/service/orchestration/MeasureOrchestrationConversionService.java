@@ -44,7 +44,7 @@ public class MeasureOrchestrationConversionService {
         }
     }
 
-    boolean convert(OrchestrationProperties properties) {
+    public boolean convert(OrchestrationProperties properties) {
         log.info("Converting measure hapi measureId: {}", properties.getMeasureId());
         return persistToFhir(properties);
     }
@@ -79,12 +79,25 @@ public class MeasureOrchestrationConversionService {
 
         List<CanonicalType> theLibrary = conversionResult.getLibraryConversionResults()
                 .stream()
-                .filter(l -> StringUtils.isNotEmpty(l.getLink()))
-                .map(l -> new CanonicalType(l.getLink()))
+                .filter(result -> StringUtils.isNotEmpty(result.getLink()))
+                .map(result -> makeLibraryLinkRelative(result.getLink()))
+                .map(CanonicalType::new)
                 .collect(Collectors.toList());
 
         log.debug("Lib size = {}", theLibrary.size());
 
         fhirMeasure.setLibrary(theLibrary);
+    }
+
+    private String makeLibraryLinkRelative(String fullLink) {
+        //  "http://localhost:6060/hapi-fhir-jpaserver/fhir/Library/9a2a67acf9fc407eb5bd9c06e2d84fa1"
+
+        int start = fullLink.indexOf("/Library/");
+
+        if (start == -1) {
+            return fullLink;
+        } else {
+            return fullLink.substring(start + 1);
+        }
     }
 }

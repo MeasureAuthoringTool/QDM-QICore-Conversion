@@ -19,7 +19,7 @@ import static gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat.XML;
 
 @RestController
 @RequestMapping(path = "/library/packager")
-@Tag(name = "Packager-Controller", description = "API for packaging libraries")
+@Tag(name = "Library-Controller", description = "API for packaging libraries")
 @Slf4j
 public class LibraryPackagerController {
     private final LibraryPackagerService libraryPackagerService;

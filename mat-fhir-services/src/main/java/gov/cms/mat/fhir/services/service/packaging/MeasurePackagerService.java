@@ -43,7 +43,7 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
     public MeasurePackageFullHapi packageFull(String id) {
         Measure measure = fetchMeasureFromHapi(id);
         Library library = fetchLibraryFromHapi(measure);
-        Bundle includedLibraryBundle = libraryPackagerService.buildIncludeBundle(library);
+        Bundle includedLibraryBundle = libraryPackagerService.buildIncludeBundle(library, id);
 
         return MeasurePackageFullHapi.builder()
                 .measure(measure)
@@ -55,12 +55,14 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
     private Library fetchLibraryFromHapi(Measure measure) {
         String url = getLibraryUrlFromMeasure(measure);
 
-        var optional = hapiFhirLinkProcessor.fetchLibraryByUrl(url);
+        String fullUrl = hapiFhirServer.getBaseURL() + url;
+
+        var optional = hapiFhirLinkProcessor.fetchLibraryByUrl(fullUrl);
 
         if (optional.isPresent()) {
             return optional.get();
         } else {
-            throw new HapiResourceNotFoundException(url, new Exception("Cannot find library"));
+            throw new HapiResourceNotFoundException(fullUrl, new Exception("Cannot find library"));
         }
     }
 
