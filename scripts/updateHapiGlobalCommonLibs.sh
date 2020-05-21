@@ -13,6 +13,7 @@ curl --location --request DELETE $FHIR_SERVICES_URL"/measure/deleteAll"
 echo""
 echo""
 echo "Pushing all FHIR Global Common Libs..."
+# shellcheck disable=SC2068
 for l in ${COMMON_LIBS[@]}; do
   echo ""
   echo "Pushing $l"

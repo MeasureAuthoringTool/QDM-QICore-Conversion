@@ -65,9 +65,9 @@ mvn clean install -DskipTests
 ### Docker Compose
 Use the docker-compose-build.yml when you want to build containers from all the source code you just built.
 ```shell script
-docker-compose -f docker-compose-build.yml pull
-docker-compose -f docker-compose-build.yml build
-docker-compose -f docker-compose-build.yml up
+docker-compose pull
+docker-compose build
+docker-compose up
 ```
 
 If you get an error running hapi-fhir-jpaserver that looks like this just ignore it its a known issue and not user impacting. 
