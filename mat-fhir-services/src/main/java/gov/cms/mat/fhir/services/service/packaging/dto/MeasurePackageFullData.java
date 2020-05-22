@@ -8,5 +8,5 @@ import lombok.Getter;
 public class MeasurePackageFullData {
     String includeBundle;
     String measure;
-    String  library;
+    String library;
 }

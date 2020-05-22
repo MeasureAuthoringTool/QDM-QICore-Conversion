@@ -42,8 +42,12 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
 
     public MeasurePackageFullHapi packageFull(String id) {
         Measure measure = fetchMeasureFromHapi(id);
-        Library library = fetchLibraryFromHapi(measure);
-        Bundle includedLibraryBundle = libraryPackagerService.buildIncludeBundle(library, id);
+
+        //Temp fix while Michael is out.
+        //Library library = fetchLibraryFromHapi(measure);
+        //Bundle includedLibraryBundle = libraryPackagerService.buildIncludeBundle(library, id);
+        Library library = new Library();
+        Bundle includedLibraryBundle = new Bundle();
 
         return MeasurePackageFullHapi.builder()
                 .measure(measure)

@@ -227,7 +227,7 @@ public class HapiFhirServer {
     public Bundle getMeasureBundle(String id) {
         return hapiClient.search()
                 .forResource(Measure.class)
-                .where(Measure.URL.matches().value(baseURL + "Measure/" + id))
+                .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
                 .execute();
     }

@@ -54,7 +54,7 @@ public class StandAloneMeasureController implements FhirValidatorProcessor {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Value set found and json returned"),
                     @ApiResponse(responseCode = "404", description = "CqlLibrary is not found in the mat db using the id")})
-    @PostMapping("/pushStandAloneMeasure")
+    @PostMapping("/pushMeasure")
     public String convertStandAloneFromMatToFhir(
             @RequestParam @Min(10) String id,
             @RequestParam(required = false, defaultValue = "MEASURE-STANDALONE-ORCHESTRATION") String batchId) {
