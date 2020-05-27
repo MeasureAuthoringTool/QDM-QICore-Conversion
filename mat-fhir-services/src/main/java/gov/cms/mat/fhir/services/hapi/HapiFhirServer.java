@@ -221,6 +221,7 @@ public class HapiFhirServer {
                 .forResource(resource)
                 .where(ValueSet.IDENTIFIER.exactly().systemAndIdentifier("urn:ietf:rfc:3986", oid))
                 .returnBundle(Bundle.class)
+                .withAdditionalHeader("Cache-Control","no-cache")
                 .execute();
     }
 
@@ -229,6 +230,7 @@ public class HapiFhirServer {
                 .forResource(Measure.class)
                 .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
+                .withAdditionalHeader("Cache-Control","no-cache")
                 .execute();
     }
 
@@ -237,6 +239,7 @@ public class HapiFhirServer {
                 .forResource(Library.class)
                 .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
+                .withAdditionalHeader("Cache-Control","no-cache")
                 .execute();
     }
 
@@ -246,6 +249,7 @@ public class HapiFhirServer {
                 .where(Library.VERSION.exactly().code(version))
                 .and(Library.NAME.matches().value(name))
                 .returnBundle(Bundle.class)
+                .withAdditionalHeader("Cache-Control","no-cache")
                 .execute();
     }
 
@@ -254,6 +258,7 @@ public class HapiFhirServer {
                 .forResource(resourceClass)
                 .totalMode(SearchTotalModeEnum.ACCURATE)
                 .returnBundle(Bundle.class)
+                .withAdditionalHeader("Cache-Control","no-cache")
                 .execute()
                 .getTotal();
     }
@@ -262,6 +267,7 @@ public class HapiFhirServer {
         return hapiClient.search()
                 .forResource(resourceClass)
                 .returnBundle(Bundle.class)
+                .withAdditionalHeader("Cache-Control","no-cache")
                 .execute();
     }
 
