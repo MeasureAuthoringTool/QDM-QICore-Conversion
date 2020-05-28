@@ -101,7 +101,6 @@ public class PushMeasureService {
             log.debug("Measure {} is valid", id);
         }
 
-        return ConversionReporter.getConversionResult().getMeasureConversionResults().getFhirMeasureJson();
-
+        return orchestrationProperties.getFhirMeasure().getUrl();
     }
 }
