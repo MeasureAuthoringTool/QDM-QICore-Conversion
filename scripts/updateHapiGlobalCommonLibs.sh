@@ -1,5 +1,5 @@
-# FHIR_SERVICES_URL='http://localhost:9080'
-FHIR_SERVICES_URL=https://matdev.semanticbits.com/mat-fhir-services
+FHIR_SERVICES_URL='http://localhost:9080'
+# FHIR_SERVICES_URL=https://matdev.semanticbits.com/mat-fhir-services
 COMMON_LIBS=('FHIRHelpers-4-0-001' 'MATGlobalCommonFunctions-FHIR4-5-0-000' 'SupplementalDataElements-FHIR4-2-0-000' 'AdultOutpatientEncounters-FHIR4-2-0-000' 'AdvancedIllnessandFrailtyExclusion-FHIR4-5-0-000' 'AdvancedIllnessandFrailtyExclusion-FHIR4-5-0-000' 'Hospice-FHIR4-2-0-000' 'TJCOverall-FHIR4-5-0-000' 'VTEICU-FHIR4-4-0-000')
 
 echo "Deleting all libs"

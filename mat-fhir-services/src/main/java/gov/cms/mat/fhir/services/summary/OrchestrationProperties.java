@@ -29,6 +29,7 @@ public class OrchestrationProperties {
 
     ThreadSessionKey threadSessionKey;
 
+    @Setter
     Measure matMeasure;
 
     String vsacGrantingTicket;

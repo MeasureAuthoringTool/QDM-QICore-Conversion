@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.rest;
 
-import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
@@ -12,6 +11,7 @@ import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.service.orchestration.MeasureOrchestrationConversionService;
 import gov.cms.mat.fhir.services.service.orchestration.MeasureOrchestrationValidationService;
 import gov.cms.mat.fhir.services.service.orchestration.OrchestrationService;
+import gov.cms.mat.fhir.services.service.orchestration.PushMeasureService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,59 +29,39 @@ import java.time.Instant;
 @RequestMapping(path = "/measure")
 @Tag(name = "Measure-Controller", description = "API for Measures")
 @Slf4j
-public class StandAloneMeasureController implements FhirValidatorProcessor {
-    private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
-    private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
+public class PushMeasureController implements FhirValidatorProcessor {
+
     private final ConversionResultsService conversionResultsService;
-    private final OrchestrationService orchestrationService;
+    private final PushMeasureService pushMeasureService;
 
-    private final MeasureDataService measureDataService;
+    public PushMeasureController(ConversionResultsService conversionResultsService,
+                                 PushMeasureService pushMeasureService) {
 
-    public StandAloneMeasureController(MeasureOrchestrationValidationService measureOrchestrationValidationService,
-                                       MeasureOrchestrationConversionService measureOrchestrationConversionService,
-                                       ConversionResultsService conversionResultsService, OrchestrationService orchestrationService,
-                                       MeasureDataService measureDataService) {
-        this.measureOrchestrationValidationService = measureOrchestrationValidationService;
-        this.measureOrchestrationConversionService = measureOrchestrationConversionService;
         this.conversionResultsService = conversionResultsService;
-        this.orchestrationService = orchestrationService;
-        this.measureDataService = measureDataService;
+        this.pushMeasureService = pushMeasureService;
     }
-
 
     @Operation(summary = "Orchestrate Stand alone Hapi FHIR Measure with the id",
             description = "Find the HAPI stand alone Measure in Mat convert and persist to FHIR",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Value set found and json returned"),
-                    @ApiResponse(responseCode = "404", description = "CqlLibrary is not found in the mat db using the id")})
+                    @ApiResponse(responseCode = "200", description = "Measure is found in mat and updated in hapi and json returned"),
+                    @ApiResponse(responseCode = "404", description = "Measure is not found in the mat db using the id")})
     @PostMapping("/pushMeasure")
     public String convertStandAloneFromMatToFhir(
             @RequestParam @Min(10) String id,
             @RequestParam(required = false, defaultValue = "MEASURE-STANDALONE-ORCHESTRATION") String batchId) {
 
-        Measure measure = measureDataService.findOneValid(id);
-
         ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, batchId);
+        OrchestrationProperties orchestrationProperties = buildProperties(threadSessionKey);
 
-        OrchestrationProperties orchestrationProperties = buildProperties(threadSessionKey, measure);
-
-        boolean valid = orchestrationService.process(orchestrationProperties);
-
-        if (!valid) {
-            throw new HapiResourceValidationException(id, "Measure");
-        } else {
-            measureOrchestrationConversionService.convert(orchestrationProperties);
-        }
-
-        return ConversionReporter.getConversionResult().getMeasureConversionResults().getFhirMeasureJson();
+        return pushMeasureService.convert(id,  orchestrationProperties);
     }
 
-    public OrchestrationProperties buildProperties(ThreadSessionKey threadSessionKey, Measure measure) {
+    public OrchestrationProperties buildProperties(ThreadSessionKey threadSessionKey) {
         return OrchestrationProperties.builder()
                 .showWarnings(Boolean.FALSE)
                 .conversionType(ConversionType.CONVERSION)
                 .includeStdLibs(false)
-                .matMeasure(measure)
                 .xmlSource(XmlSource.MEASURE)
                 .threadSessionKey(threadSessionKey)
                 .build();

@@ -151,7 +151,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibraryId);
 
         if (list.isEmpty()) {
-            ConversionReporter.setLibraryValidationLink(null, HapiResourcePersistedState.VALIDATION, matCqlLibraryId);
+            ConversionReporter.setLibraryValidationLink(fhirLibrary.getUrl(), HapiResourcePersistedState.VALIDATION, matCqlLibraryId);
         } else {
             list.forEach(validationResult -> processValidation(validationResult, atomicBoolean, matCqlLibraryId));
         }
@@ -169,7 +169,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
             CqlConversionResult cqlConversionResult = results.getCqlConversionResult();
 
             if (!cqlConversionResult.getFhirCqlConversionErrors().isEmpty()) {
-                ConversionReporter.setLibraryValidationError("Fhir Validation failed", matCqlLibraryId);
+                ConversionReporter.setLibraryValidationError(fhirLibrary.getUrl(), "Fhir Validation failed", matCqlLibraryId);
             }
         }
 
@@ -189,7 +189,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         if (valid) {
             ConversionReporter.setLibraryValidationLink(null, HapiResourcePersistedState.VALIDATION, matLibId);
         } else {
-            ConversionReporter.setLibraryValidationError("Validation Failed", matLibId);
+            ConversionReporter.setLibraryValidationError(null, "Validation Failed", matLibId);
         }
 
         return valid;
