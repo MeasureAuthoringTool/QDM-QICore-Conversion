@@ -11,6 +11,7 @@ import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.XmlLibraryTranslator;
+import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @Slf4j
-public class PushMeasureService {
+public class PushMeasureService implements FhirCreator {
 
     private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
     private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
@@ -79,7 +80,9 @@ public class PushMeasureService {
                     xml,
                     hapiFhirServer.getBaseURL(),
                     cqlLibrary.getId());
-            Library library = xmlLibraryTranslator.translateToFhir(cqlLibrary.getVersion().toString());
+
+            String version =createVersion(cqlLibrary.getVersion(), cqlLibrary.getRevisionNumber());
+            Library library = xmlLibraryTranslator.translateToFhir(version);
 
             hapiFhirServer.persist(library);
         }
