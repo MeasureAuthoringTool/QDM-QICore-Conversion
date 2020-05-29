@@ -76,9 +76,8 @@ public interface FhirValidatorProcessor {
             throw new CqlConversionException("Library is not " + type);
         }
 
-        //todo carson
-//        if (cqlLibrary.getMeasureId() != null) {
-//            throw new CqlConversionException("Library is not standalone");
-//        }
+        if (cqlLibrary.getMeasureId() != null) {
+            throw new CqlConversionException("Library is not standalone");
+        }
     }
 }
