@@ -19,39 +19,21 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CqlLibraryDataService {
     private final CqlLibraryRepository cqlLibraryRepository;
-    private final CqlLibraryAssociationRepository cqlLibraryAssociationRepository;
 
-    public CqlLibraryDataService(CqlLibraryRepository cqlLibraryRepository,
-                                 CqlLibraryAssociationRepository cqlLibraryAssociationRepository) {
+    public CqlLibraryDataService(CqlLibraryRepository cqlLibraryRepository) {
         this.cqlLibraryRepository = cqlLibraryRepository;
-        this.cqlLibraryAssociationRepository = cqlLibraryAssociationRepository;
     }
 
     public List<CqlLibrary> getCqlLibrariesByMeasureIdRequired(String measureId) {
         List<CqlLibrary> cqlLibs = cqlLibraryRepository.getCqlLibraryByMeasureId(measureId);
 
         if (cqlLibs.isEmpty()) {
-            return findLibrariesByAssociation(measureId); //todo carson do we need to do this ???
+          throw new NoCqlLibrariesFoundException(measureId);
         } else {
             return cqlLibs;  //todo carson can there be more than one
         }
     }
 
-    private List<CqlLibrary> findLibrariesByAssociation(String measureId) {
-        List<CqlLibraryAssociation> associations = cqlLibraryAssociationRepository.findByAssociationId(measureId);
-
-        List<CqlLibrary> cqlLibraries = associations.stream()
-                .map(CqlLibraryAssociation::getCqlLibraryId)
-                .map(cqlLibraryRepository::getCqlLibraryById)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        if (cqlLibraries.isEmpty()) {
-            throw new NoCqlLibrariesFoundException(measureId);
-        } else {
-            return cqlLibraries;
-        }
-    }
 
     public CqlLibrary findCqlLibrary(CqlLibraryFindData cqlLibraryFindData) {
         List<CqlLibrary> libraries;
