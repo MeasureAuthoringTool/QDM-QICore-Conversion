@@ -18,16 +18,17 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class CqlLibraryDataService {
-    private final CqlLibraryRepository cqlLibraryRepo;
+    private final CqlLibraryRepository cqlLibraryRepository;
     private final CqlLibraryAssociationRepository cqlLibraryAssociationRepository;
 
-    public CqlLibraryDataService(CqlLibraryRepository cqlLibraryRepo, CqlLibraryAssociationRepository cqlLibraryAssociationRepository) {
-        this.cqlLibraryRepo = cqlLibraryRepo;
+    public CqlLibraryDataService(CqlLibraryRepository cqlLibraryRepository,
+                                 CqlLibraryAssociationRepository cqlLibraryAssociationRepository) {
+        this.cqlLibraryRepository = cqlLibraryRepository;
         this.cqlLibraryAssociationRepository = cqlLibraryAssociationRepository;
     }
 
     public List<CqlLibrary> getCqlLibrariesByMeasureIdRequired(String measureId) {
-        List<CqlLibrary> cqlLibs = cqlLibraryRepo.getCqlLibraryByMeasureId(measureId);
+        List<CqlLibrary> cqlLibs = cqlLibraryRepository.getCqlLibraryByMeasureId(measureId);
 
         if (cqlLibs.isEmpty()) {
             return findLibrariesByAssociation(measureId); //todo carson do we need to do this ???
@@ -41,7 +42,7 @@ public class CqlLibraryDataService {
 
         List<CqlLibrary> cqlLibraries = associations.stream()
                 .map(CqlLibraryAssociation::getCqlLibraryId)
-                .map(cqlLibraryRepo::getCqlLibraryById)
+                .map(cqlLibraryRepository::getCqlLibraryById)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
@@ -57,7 +58,7 @@ public class CqlLibraryDataService {
 
         if (cqlLibraryFindData.getType().equals("QDM")) {
             libraries =
-                    cqlLibraryRepo.findByQdmVersionAndCqlNameAndVersionAndLibraryModelAndFinalizedDateIsNotNull(
+                    cqlLibraryRepository.findByQdmVersionAndCqlNameAndVersionAndLibraryModelAndFinalizedDateIsNotNull(
                             cqlLibraryFindData.getQdmVersion(),
                             cqlLibraryFindData.getName(),
                             cqlLibraryFindData.getMatVersion(),
@@ -65,7 +66,7 @@ public class CqlLibraryDataService {
 
         } else if (cqlLibraryFindData.getType().equals("FHIR")) {
             libraries =
-                    cqlLibraryRepo.findByVersionAndCqlNameAndRevisionNumberAndLibraryModel(
+                    cqlLibraryRepository.findByVersionAndCqlNameAndRevisionNumberAndLibraryModel(
                             cqlLibraryFindData.getPair().getLeft(),
                             cqlLibraryFindData.getName(),
                             cqlLibraryFindData.getPair().getRight(),
@@ -91,5 +92,15 @@ public class CqlLibraryDataService {
         return libraries.stream()
                 .max(Comparator.comparing(CqlLibrary::getFinalizedDate))
                 .orElseThrow(() -> new CqlLibraryNotFoundException("Too many cql libraries found"));
+    }
+
+    public CqlLibrary findCqlLibraryRequired(String id) {
+        var optional = cqlLibraryRepository.findById(id);
+
+        if (optional.isEmpty()) {
+            throw new CqlLibraryNotFoundException("Cannot find cqlLibrary with ", id);
+        }
+
+        return optional.get();
     }
 }

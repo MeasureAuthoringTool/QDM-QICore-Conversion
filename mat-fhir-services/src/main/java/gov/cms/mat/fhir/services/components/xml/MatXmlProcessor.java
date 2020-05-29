@@ -45,7 +45,7 @@ public class MatXmlProcessor {
 
     byte[] getSimpleXml(Measure measure) {
         var optionalMeasureExport = measureExportRepo.findByMeasureId(measure.getId());
-        log.debug("SIMPLE_XML row: " + measure);
+        log.trace("SIMPLE_XML row: " + measure);
 
         return optionalMeasureExport
                 .map(MatXmlBytes::getXmlBytes)
@@ -54,7 +54,7 @@ public class MatXmlProcessor {
 
     byte[] getMeasureXml(Measure measure) {
         var optionalMeasureXml = measureXmlRepository.findByMeasureId(measure.getId());
-        log.debug("MEASURE_XML row: {}", optionalMeasureXml);
+        log.trace("MEASURE_XML row: {}", optionalMeasureXml);
         return optionalMeasureXml
                 .map(MatXmlBytes::getXmlBytes)
                 .orElse(null);

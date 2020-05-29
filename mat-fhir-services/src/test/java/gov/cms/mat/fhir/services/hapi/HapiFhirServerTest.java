@@ -110,6 +110,7 @@ class HapiFhirServerTest {
         when(iUntypedQuery.forResource(ValueSet.class)).thenReturn(iQuery);
         when(iQuery.where(any(ICriterion.class))).thenReturn(iQuery);
         when(iQuery.returnBundle(Bundle.class)).thenReturn(iQuery);
+        when(iQuery.withAdditionalHeader("Cache-Control", "no-cache")).thenReturn(iQuery);
         when(iQuery.execute()).thenReturn(toReturn);
 
         Bundle returned = hapiFhirServer.getValueSetBundle("OID");
@@ -131,6 +132,7 @@ class HapiFhirServerTest {
         when(iUntypedQuery.forResource(ValueSet.class)).thenReturn(iQuery);
         when(iQuery.totalMode(SearchTotalModeEnum.ACCURATE)).thenReturn(iQuery);
         when(iQuery.returnBundle(Bundle.class)).thenReturn(iQuery);
+        when(iQuery.withAdditionalHeader("Cache-Control", "no-cache")).thenReturn(iQuery);
         when(iQuery.execute()).thenReturn(toReturn);
 
         assertEquals(Integer.MAX_VALUE, hapiFhirServer.count(ValueSet.class));
@@ -149,6 +151,7 @@ class HapiFhirServerTest {
         when(hapiClient.search()).thenReturn(iUntypedQuery);
         when(iUntypedQuery.forResource(ValueSet.class)).thenReturn(iQuery);
         when(iQuery.returnBundle(Bundle.class)).thenReturn(iQuery);
+        when(iQuery.withAdditionalHeader("Cache-Control", "no-cache")).thenReturn(iQuery);
         when(iQuery.execute()).thenReturn(toReturn);
 
         Bundle returned = hapiFhirServer.getAll(ValueSet.class);

@@ -30,24 +30,11 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
         this.libraryPackagerService = libraryPackagerService;
     }
 
-    public MeasurePackageMinimumHapi packageMinimum(String id) {
-        Measure measure = fetchMeasureFromHapi(id);
-        Library library = fetchLibraryFromHapi(measure);
-
-        return MeasurePackageMinimumHapi.builder()
-                .measure(measure)
-                .library(library)
-                .build();
-    }
-
     public MeasurePackageFullHapi packageFull(String id) {
         Measure measure = fetchMeasureFromHapi(id);
 
-        //Temp fix while Michael is out.
-        //Library library = fetchLibraryFromHapi(measure);
-        //Bundle includedLibraryBundle = libraryPackagerService.buildIncludeBundle(library, id);
-        Library library = new Library();
-        Bundle includedLibraryBundle = new Bundle();
+        Library library = fetchLibraryFromHapi(measure);
+        Bundle includedLibraryBundle = libraryPackagerService.buildIncludeBundle(library, id);
 
         return MeasurePackageFullHapi.builder()
                 .measure(measure)
@@ -76,10 +63,11 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
         }
 
         if (measure.getLibrary().size() > 1) {
-            throw new FhirNotUniqueException("Measure Contains too many libs, id:" + measure.getId(), measure.getLibrary().size());
+            throw new FhirNotUniqueException("Measure Contains too many libs, id:" + measure.getId(),
+                    measure.getLibrary().size());
         }
 
-        return measure.getLibrary().get(0).getValueAsString();
+        return measure.getLibrary().get(0).asStringValue();
     }
 
     private Measure fetchMeasureFromHapi(String id) {

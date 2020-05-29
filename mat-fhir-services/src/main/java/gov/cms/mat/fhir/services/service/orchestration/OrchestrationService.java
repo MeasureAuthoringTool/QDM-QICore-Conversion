@@ -62,6 +62,7 @@ public class OrchestrationService {
             } else {
                 processDraft(properties);
             }
+
             processFhirMeasure(properties);
             return true;
         } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException | NoCqlLibrariesFoundException |
@@ -93,14 +94,17 @@ public class OrchestrationService {
                 .addAll(cqlLibraries);
     }
 
-    private void processCqlLibrary(CqlLibrary cqlLibrary, boolean showWarnings) {
+    public String processCqlLibrary(CqlLibrary cqlLibrary, boolean showWarnings) {
 
         if (StringUtils.isEmpty(cqlLibrary.getCqlXml())) {
             throw new CqlConversionException("Cql Xml is blank for library : " + cqlLibrary.getCqlName());
         }
 
         String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml(), showWarnings);
+
         ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
+
+        return cql;
     }
 
 
