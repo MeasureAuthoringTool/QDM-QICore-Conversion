@@ -28,6 +28,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service
 @Slf4j
 public class PushMeasureService implements FhirCreator {
+    private static final String BODY_START = "<body>";
+    private static final String BODY_END = "</body>";
+    private static final String DIV_START = "<div>";
+    private static final String DIV_END = "</div>";
     private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
     private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
     private final OrchestrationService orchestrationService;
@@ -113,7 +117,8 @@ public class PushMeasureService implements FhirCreator {
             try {
                 Narrative narrative = new Narrative();
                 narrative.setStatusAsString("generated");
-                narrative.setDivAsString(new String(measureExport.getHumanReadable()));
+                String humanReadable = new String(measureExport.getHumanReadable(),"utf-8");
+                narrative.setDivAsString(buildHumanReadableDiv(humanReadable));
                 return narrative;
             } catch (Exception e) {
                 throw new HumanReadableInvalidException(id, new String(measureExport.getHumanReadable()), e);
@@ -151,5 +156,18 @@ public class PushMeasureService implements FhirCreator {
         library.setText(humanReadable);
 
         hapiFhirServer.persist(library);
+    }
+
+    private String buildHumanReadableDiv(String html) {
+        int bodyStartIndex = html.indexOf(BODY_START);
+        int bodyEndIndex = html.indexOf(BODY_END);
+
+        if (bodyStartIndex > -1 && bodyEndIndex > -1) {
+            return DIV_START + "\n" +
+                    html.substring(bodyStartIndex + BODY_START.length(),bodyEndIndex).trim() +
+                    "\n" + DIV_END;
+        } else {
+            return html;
+        }
     }
 }
