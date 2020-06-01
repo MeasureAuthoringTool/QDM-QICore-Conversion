@@ -3,8 +3,11 @@ package gov.cms.mat.fhir.services.service.orchestration;
 import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
+import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
+import gov.cms.mat.fhir.services.exceptions.HumanReadableInvalidException;
+import gov.cms.mat.fhir.services.exceptions.MeasureExportNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
@@ -19,25 +22,20 @@ import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.Narrative;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @Slf4j
 public class PushMeasureService implements FhirCreator {
-
     private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
     private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
     private final OrchestrationService orchestrationService;
-
     private final MeasureDataService measureDataService;
-
     private final CqlLibraryDataService cqlLibraryDataService;
     private final HapiFhirServer hapiFhirServer;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
     private final MeasureExportRepository measureExportRepo;
-
 
     public PushMeasureService(MeasureOrchestrationValidationService measureOrchestrationValidationService,
                               MeasureOrchestrationConversionService measureOrchestrationConversionService,
@@ -67,7 +65,7 @@ public class PushMeasureService implements FhirCreator {
         if (cqlLibraries.isEmpty()) {
             log.debug("No libraries found for measure: {}", id);
         } else {
-            pushLibrary(cqlLibraries);
+            pushLibrary(cqlLibraries, id);
         }
 
         return pushMeasure(id, orchestrationProperties);
@@ -84,7 +82,8 @@ public class PushMeasureService implements FhirCreator {
 
         org.hl7.fhir.r4.model.Measure fhirMeasure = orchestrationProperties.getFhirMeasure();
         fhirMeasure.setId(id);
-        Narrative humanReadable = findHumanReadable(id);
+        Narrative humanReadable = new Narrative();
+        humanReadable.setStatusAsString("generated");
         fhirMeasure.setText(humanReadable);
         boolean persisted = measureOrchestrationConversionService.convert(orchestrationProperties);
 
@@ -101,24 +100,28 @@ public class PushMeasureService implements FhirCreator {
         var optionalMeasureExport = measureExportRepo.findByMeasureId(id);
 
         if (optionalMeasureExport.isPresent()) {
-            byte[] bytes = optionalMeasureExport.get().getHumanReadable();
-
-            if(ArrayUtils.isEmpty(bytes)) {
-                return null;
-            } else {
-                byte[] encodedText = Base64.getEncoder().encode(bytes);
-                Narrative measureText = new Narrative();
-                measureText.setStatusAsString("generated");
-                measureText.setDivAsString(new String(encodedText));
-                return measureText;
-
-            }
+            return createNarrative(id, optionalMeasureExport.get());
         } else {
-            return null;
+            throw new MeasureExportNotFoundException(id);
         }
     }
 
-    private void pushLibrary(List<CqlLibrary> cqlLibraries) {
+    private Narrative createNarrative(String id, MeasureExport measureExport) {
+        if (ArrayUtils.isEmpty(measureExport.getHumanReadable())) {
+            throw new HumanReadableInvalidException(id);
+        } else {
+            try {
+                Narrative narrative = new Narrative();
+                narrative.setStatusAsString("generated");
+                narrative.setDivAsString(new String(measureExport.getHumanReadable()));
+                return narrative;
+            } catch (Exception e) {
+                throw new HumanReadableInvalidException(id, new String(measureExport.getHumanReadable()), e);
+            }
+        }
+    }
+
+    private void pushLibrary(List<CqlLibrary> cqlLibraries, String id) {
         CqlLibrary cqlLibrary = cqlLibraries.get(0);
 
         String cql = orchestrationService.processCqlLibrary(cqlLibrary, Boolean.FALSE);
@@ -143,6 +146,9 @@ public class PushMeasureService implements FhirCreator {
 
         String version = createVersion(cqlLibrary.getVersion(), cqlLibrary.getRevisionNumber());
         Library library = xmlLibraryTranslator.translateToFhir(version);
+
+        Narrative humanReadable = findHumanReadable(id);
+        library.setText(humanReadable);
 
         hapiFhirServer.persist(library);
     }
