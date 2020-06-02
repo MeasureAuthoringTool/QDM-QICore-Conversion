@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/measure/package")
 @Tag(name = "Measure-Controller", description = "API for packaging measures")
 @Slf4j
 public class MeasurePackagerController {
@@ -30,6 +29,7 @@ public class MeasurePackagerController {
 
     @Operation(summary = "Full json Package of FHIR Measure",
             description = "Full Packaging of Measure in json")
+    @RequestMapping(path = "/measure/package")
     @GetMapping
     @ResponseBody
     public MeasurePackageFullData packageFullJson(@RequestParam String id) {

@@ -51,7 +51,6 @@ public class ConversionResultsService {
         return conversionResultRepository.findByBatchId(batchId);
     }
 
-
     public Set<String> findBatchIds() {
         List<ConversionResult> conversionResults = conversionResultRepository.findAllBatchIds();
 
@@ -367,7 +366,6 @@ public class ConversionResultsService {
         return conversionResult.getMeasureConversionResults();
     }
 
-
     public void addMeasureConversionResult(ThreadSessionKey key,
                                            String link,
                                            String reason,
@@ -425,6 +423,4 @@ public class ConversionResultsService {
         conversionResult.setVsacGrantingTicket(vsacGrantingTicket);
         save(conversionResult);
     }
-
-
 }

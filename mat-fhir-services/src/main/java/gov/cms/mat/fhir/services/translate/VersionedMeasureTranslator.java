@@ -77,6 +77,8 @@ public class VersionedMeasureTranslator implements MeasureTranslator {
 
         fhirMeasure.setUseContext(createUsageContext("program", "eligible-provider"));
 
+        fhirMeasure.setEffectivePeriod(buildDefaultPeriod());
+
         // proessMeta(fhirMeasure);  TODO needs fixing
         processHumanReadable(fhirMeasure);
         processIdentifiers(fhirMeasure);

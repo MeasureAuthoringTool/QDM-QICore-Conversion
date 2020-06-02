@@ -5,12 +5,7 @@ import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
-import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
-import gov.cms.mat.fhir.services.service.MeasureDataService;
-import gov.cms.mat.fhir.services.service.orchestration.MeasureOrchestrationConversionService;
-import gov.cms.mat.fhir.services.service.orchestration.MeasureOrchestrationValidationService;
-import gov.cms.mat.fhir.services.service.orchestration.OrchestrationService;
 import gov.cms.mat.fhir.services.service.orchestration.PushMeasureService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +25,6 @@ import java.time.Instant;
 @Tag(name = "Measure-Controller", description = "API for Measures")
 @Slf4j
 public class PushMeasureController implements FhirValidatorProcessor {
-
     private final ConversionResultsService conversionResultsService;
     private final PushMeasureService pushMeasureService;
 
@@ -47,17 +41,17 @@ public class PushMeasureController implements FhirValidatorProcessor {
                     @ApiResponse(responseCode = "200", description = "Measure is found in mat and updated in hapi and json returned"),
                     @ApiResponse(responseCode = "404", description = "Measure is not found in the mat db using the id")})
     @PostMapping("/pushMeasure")
-    public String convertStandAloneFromMatToFhir(
+    public String pushMeasure(
             @RequestParam @Min(10) String id,
-            @RequestParam(required = false, defaultValue = "MEASURE-STANDALONE-ORCHESTRATION") String batchId) {
+            @RequestParam(required = false, defaultValue = "PUSH-MEASURE-ORCHESTRATION") String batchId) {
 
         ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, batchId);
         OrchestrationProperties orchestrationProperties = buildProperties(threadSessionKey);
 
-        return pushMeasureService.convert(id,  orchestrationProperties);
+        return pushMeasureService.convert(id, orchestrationProperties);
     }
 
-    public OrchestrationProperties buildProperties(ThreadSessionKey threadSessionKey) {
+    private OrchestrationProperties buildProperties(ThreadSessionKey threadSessionKey) {
         return OrchestrationProperties.builder()
                 .showWarnings(Boolean.FALSE)
                 .conversionType(ConversionType.CONVERSION)
@@ -67,8 +61,8 @@ public class PushMeasureController implements FhirValidatorProcessor {
                 .build();
     }
 
-    public ThreadSessionKey buildThreadSessionKey(String id,
-                                                  String batchId) {
+    private ThreadSessionKey buildThreadSessionKey(String id,
+                                                   String batchId) {
         return ConversionReporter.setInThreadLocal(id,
                 batchId,
                 conversionResultsService,
