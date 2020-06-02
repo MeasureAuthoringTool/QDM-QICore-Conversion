@@ -26,7 +26,7 @@ public class LibraryOrchestrationBase {
             ConversionReporter.setLibraryValidationLink(link, CREATED, matCqlLibrary.getId());
         } catch (Exception e) {
             log.warn("Error Persisting to Hapi, id is for cqlLib: {}", matCqlLibrary.getId(), e);
-            ConversionReporter.setLibraryValidationError("HAPI Exception: " + e.getMessage(), matCqlLibrary.getId());
+            ConversionReporter.setLibraryValidationError(fhirLibrary.getUrl(), "HAPI Exception: " + e.getMessage(), matCqlLibrary.getId());
             atomicBoolean.set(false);
         }
     }

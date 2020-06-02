@@ -19,6 +19,7 @@ import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.IdGenerator;
 import gov.cms.mat.fhir.services.translate.MatLibraryTranslator;
+import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
@@ -34,7 +35,12 @@ import static gov.cms.mat.fhir.services.service.CQLLibraryTranslationService.Con
 @Component
 @Slf4j
 public class LibraryOrchestrationValidationService extends LibraryOrchestrationBase
-        implements FhirValidatorProcessor, ErrorSeverityChecker, CqlVersionConverter, FhirLibraryHelper, IdGenerator {
+        implements FhirValidatorProcessor,
+        ErrorSeverityChecker,
+        CqlVersionConverter,
+        FhirLibraryHelper,
+        IdGenerator,
+        FhirCreator {
 
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
     private final CqlLibraryConverter cqlLibraryConverter;
@@ -121,7 +127,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
                 hapiFhirServer.getBaseURL(),
                 createId());
 
-        Library fhirLibrary = matLibraryTranslator.translateToFhir(null);
+        Library fhirLibrary = matLibraryTranslator.translateToFhir(createVersion(cqlLibrary.getVersion(), cqlLibrary.getRevisionNumber()));
 
         ConversionReporter.setFhirLibraryId(fhirLibrary.getId(), cqlLibrary.getId());
 
@@ -151,7 +157,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibraryId);
 
         if (list.isEmpty()) {
-            ConversionReporter.setLibraryValidationLink(null, HapiResourcePersistedState.VALIDATION, matCqlLibraryId);
+            ConversionReporter.setLibraryValidationLink(fhirLibrary.getUrl(), HapiResourcePersistedState.VALIDATION, matCqlLibraryId);
         } else {
             list.forEach(validationResult -> processValidation(validationResult, atomicBoolean, matCqlLibraryId));
         }
@@ -169,7 +175,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
             CqlConversionResult cqlConversionResult = results.getCqlConversionResult();
 
             if (!cqlConversionResult.getFhirCqlConversionErrors().isEmpty()) {
-                ConversionReporter.setLibraryValidationError("Fhir Validation failed", matCqlLibraryId);
+                ConversionReporter.setLibraryValidationError(fhirLibrary.getUrl(), "Fhir Validation failed", matCqlLibraryId);
             }
         }
 
@@ -189,7 +195,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         if (valid) {
             ConversionReporter.setLibraryValidationLink(null, HapiResourcePersistedState.VALIDATION, matLibId);
         } else {
-            ConversionReporter.setLibraryValidationError("Validation Failed", matLibId);
+            ConversionReporter.setLibraryValidationError(null, "Validation Failed", matLibId);
         }
 
         return valid;

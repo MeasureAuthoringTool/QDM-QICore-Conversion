@@ -42,7 +42,7 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         this.fhirMeasureCreator = fhirMeasureCreator;
     }
 
-   public boolean validate(OrchestrationProperties properties) {
+    public boolean validate(OrchestrationProperties properties) {
         log.info("Validating measure hapi measureId: {}", properties.getMeasureId());
         return validateMeasure(properties);
     }
@@ -83,15 +83,18 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         byte[] xmlBytes = matXmlProcessor.getXml(properties.getMatMeasure(), properties.getXmlSource());
         String narrative = "";
 
-        if (properties.getXmlSource() == XmlSource.SIMPLE) {
-            var measureExport = measureExportDataService.findById(properties.getMeasureId());
-            //human-readable may exist not an error if it doesn't
-            if (measureExport.isPresent()) {
-                narrative = getNarrative(measureExport.get());
-            }
-        }
+//        if (properties.getXmlSource() == XmlSource.SIMPLE) { // todo carson no longer required
+//            var measureExport = measureExportDataService.findById(properties.getMeasureId());
+//            //human-readable may exist not an error if it doesn't
+//            if (measureExport.isPresent()) {
+//                narrative = getNarrative(measureExport.get());
+//            }
+//        }
 
-        return fhirMeasureCreator.create(properties.getXmlSource(), properties.getMatMeasure(), xmlBytes, narrative);
+        return fhirMeasureCreator.create(properties.getXmlSource(),
+                properties.getMatMeasure(),
+                xmlBytes,
+                narrative);
     }
 
     public String getNarrative(MeasureExport measureExport) {

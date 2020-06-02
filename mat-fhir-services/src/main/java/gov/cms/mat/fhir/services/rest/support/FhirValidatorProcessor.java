@@ -4,9 +4,11 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationOptions;
 import ca.uhn.fhir.validation.ValidationResult;
+import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
+import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 
@@ -67,5 +69,15 @@ public interface FhirValidatorProcessor {
                 .locationField(e.getLocationField())
                 .errorDescription(e.getErrorDescription())
                 .build();
+    }
+
+    default void checkStandAloneLibrary(CqlLibrary cqlLibrary, String type) {
+        if (!type.equals(cqlLibrary.getLibraryModel())) {
+            throw new CqlConversionException("Library is not " + type);
+        }
+
+        if (cqlLibrary.getMeasureId() != null) {
+            throw new CqlConversionException("Library is not standalone");
+        }
     }
 }

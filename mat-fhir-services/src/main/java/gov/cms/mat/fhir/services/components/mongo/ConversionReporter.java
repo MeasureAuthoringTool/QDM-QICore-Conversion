@@ -279,10 +279,11 @@ public class ConversionReporter {
         conversionReporter.addLibraryConversionResult(link, reason.value, Boolean.TRUE, matCqlId);
     }
 
-    public static void setLibraryValidationError(String reason,
+    public static void setLibraryValidationError(String link,
+                                                 String reason,
                                                  String matCqlId) {
         ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addLibraryConversionResult(null, reason, Boolean.FALSE, matCqlId);
+        conversionReporter.addLibraryConversionResult(link, reason, Boolean.FALSE, matCqlId);
     }
 
     public static void setLibraryNotFoundInHapi(String matCqlId) {

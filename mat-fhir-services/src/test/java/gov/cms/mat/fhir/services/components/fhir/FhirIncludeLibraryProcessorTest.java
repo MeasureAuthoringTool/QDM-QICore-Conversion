@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.components.fhir;
 
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
+import gov.cms.mat.fhir.services.BundleHelper;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.exceptions.CqlNotFhirException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -23,8 +24,9 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FhirIncludeLibraryProcessorTest implements ResourceFileUtil {
+class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleHelper {
     private static final String FULL_URL = "http://your.goofy.com/fullStop";
+
     @Mock
     private HapiFhirServer hapiFhirServer;
 
@@ -37,7 +39,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil {
         String version = "4.1.000";
 
         when(hapiFhirServer.fetchLibraryBundleByVersionAndName(version, name))
-                .thenReturn(createBundle(1));
+                .thenReturn(createBundle(FULL_URL, new Library()));
 
         String cql = getStringFromResource("/SepsisLactateClearanceRate_FHIR_1.0.001.cql");
 
@@ -51,7 +53,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil {
         assertTrue(reference.isSearchResult());
         assertEquals(name, reference.getName());
         assertEquals(version, reference.getVersion());
-        assertEquals(FULL_URL, reference.getReferenceEndpoint());
+        assertEquals(FULL_URL + "/Library/1", reference.getReferenceEndpoint());
 
         verify(hapiFhirServer)
                 .fetchLibraryBundleByVersionAndName(version, name);
@@ -61,7 +63,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil {
     @Test
     void findIncludedFhirLibraries_ManyLibraryReferences_Found() {
         when(hapiFhirServer.fetchLibraryBundleByVersionAndName(anyString(), anyString()))
-                .thenReturn(createBundle(1));
+                .thenReturn(createBundle(FULL_URL, new Library()));
 
         String cql = getStringFromResource("/fhir_include_many.cql");
 
@@ -83,7 +85,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil {
     @Test
     void findIncludedFhirLibraries_ManyLibraryReferences_NotFound() {
         when(hapiFhirServer.fetchLibraryBundleByVersionAndName(anyString(), anyString()))
-                .thenReturn(createBundle(0));
+                .thenReturn(new Bundle());
 
         String cql = getStringFromResource("/fhir_include_many.cql");
 
@@ -99,7 +101,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil {
     @Test
     void findIncludedFhirLibraries_ManyLibraryReferences_MoreThanOneFound() {
         when(hapiFhirServer.fetchLibraryBundleByVersionAndName(anyString(), anyString()))
-                .thenReturn(createBundle(4));
+                .thenReturn(createBundle(FULL_URL, new Library(), new Library(), new Library()));
 
         String cql = getStringFromResource("/fhir_include_many.cql");
 
@@ -129,29 +131,4 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil {
                 fhirIncludeLibraryProcessor.findIncludedFhirLibraries(cql));
     }
 
-
-    private Bundle createBundle(int entryCount) {
-        Bundle bundle = new Bundle();
-
-        bundle.setEntry(createEntry(entryCount));
-        return bundle;
-    }
-
-    private List<Bundle.BundleEntryComponent> createEntry(int entryCount) {
-        List<Bundle.BundleEntryComponent> list = new ArrayList<>();
-
-        IntStream.range(0, entryCount)
-                .forEach(i -> list.add(createBundleEntryComponent(i)));
-
-        return list;
-    }
-
-    private Bundle.BundleEntryComponent createBundleEntryComponent(int id) {
-        Library library = new Library();
-        library.setId("" + id);
-
-        return new Bundle.BundleEntryComponent()
-                .setResource(new Library())
-                .setFullUrl(FULL_URL);
-    }
 }

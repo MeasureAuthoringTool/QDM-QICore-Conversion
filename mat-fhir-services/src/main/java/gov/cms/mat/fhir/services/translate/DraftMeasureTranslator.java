@@ -70,9 +70,11 @@ public class DraftMeasureTranslator implements MeasureTranslator {
 
         fhirMeasure.setUseContext(createUsageContext("program", "eligible-provider"));
 
+        fhirMeasure.setEffectivePeriod(buildDefaultPeriod());
+
         //TODO: Needs fixing.
         //proessMeta(fhirMeasure);
-        processHumanReadable(fhirMeasure);
+        //processHumanReadable(fhirMeasure);
         processIdentifiers(fhirMeasure);
         processStatus(fhirMeasure);
         processFinalizeDate(fhirMeasure);
