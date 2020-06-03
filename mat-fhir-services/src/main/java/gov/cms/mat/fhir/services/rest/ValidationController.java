@@ -80,7 +80,7 @@ public class ValidationController {
     }
 
     @GetMapping("/standalone-lib/{id}")
-    public @ResponseBody List<CQLError> validateStandaloneLib(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String ulmsToken,
+    public @ResponseBody List<LibraryErrors> validateStandaloneLib(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String ulmsToken,
                                                 @NotBlank @PathVariable("id") String libId,
                                                 @Valid @RequestParam ValidationRequest validationRequest) {
         try {
@@ -111,7 +111,7 @@ public class ValidationController {
     }
 
     @GetMapping("/measure/{id}")
-    public @ResponseBody List<CQLError> validateMeasureId(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String ulmsToken,
+    public @ResponseBody List<LibraryErrors> validateMeasureId(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String ulmsToken,
                                      @NotBlank @PathVariable("id") String measureId,
                                             @Valid @RequestParam ValidationRequest validationRequest) {
 
@@ -143,10 +143,10 @@ public class ValidationController {
     }
 
     @PostMapping("/cql")
-    public @ResponseBody List<CQLError> validateCql(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String ulmsToken,
+    public @ResponseBody List<LibraryErrors> validateCql(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String ulmsToken,
                                       @NotBlank @RequestParam String cql,
                                       @Valid @RequestParam ValidationRequest validationRequest) {
-        List<CQLError> result = new ArrayList<>();
+        List<LibraryErrors> result = new ArrayList<>();
         // Run in parallel:
         //    1) Validate with cql-to-elm translator
         //    2) Validate with antlr/additional validations.

@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLModel;
 import mat.server.service.impl.XMLMarshalUtil;
 import mat.server.util.XmlProcessor;
-import mat.shared.CQLError;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -40,7 +39,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/cql-xml-gen")
-@Tag(name = "ValidationController", description = "API for validating cql")
+@Tag(name = "MatXmlController", description = "API for validating cql")
 @Slf4j
 @Controller
 public class MatXmlController {
@@ -48,7 +47,7 @@ public class MatXmlController {
     @NoArgsConstructor
     public static class MatXmlResponse {
         @NotNull
-        private List<CQLError> errors = new ArrayList<>();
+        private List<ValidationController.LibraryErrors> errors = new ArrayList<>();
         @NotNull
         private CQLModel cqlModel;
         @NotBlank
