@@ -5,19 +5,25 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public interface IncludeParser {
+public interface IncludeParser extends CommentParser {
     String[] getLines();
 
     default List<IncludeProperties> getIncludes() {
+        AtomicBoolean isInComment = new AtomicBoolean(false);
+
         return Arrays.stream(getLines())
+                .filter(l -> !lineComment(l, isInComment))
                 .filter(l -> l.startsWith("include"))
                 .map(this::buildIncludeProperties)
                 .collect(Collectors.toList());
     }
 
-    default IncludeProperties buildIncludeProperties(String line) {
+
+
+    private IncludeProperties buildIncludeProperties(String line) {
         return IncludeProperties.builder()
                 .line(line)
                 .name(findIncludeName(line))
@@ -27,7 +33,7 @@ public interface IncludeParser {
                 .build();
     }
 
-    default String findCalled(String line) {
+    private String findCalled(String line) {
         String called = StringUtils.substringAfter(line, "called ");
 
         if (StringUtils.isEmpty(called)) {
@@ -37,15 +43,15 @@ public interface IncludeParser {
         }
     }
 
-    default String findIncludeName(String line) {
+    private String findIncludeName(String line) {
         return StringUtils.substringBetween(line, "include ", " version ");
     }
 
-    default String findIncludeVersion(String line) {
+    private String findIncludeVersion(String line) {
         return StringUtils.substringBetween(line, " version '", "' ");
     }
 
-    default String getIncludeUsing(String line) {
+    private String getIncludeUsing(String line) {
         String using = StringUtils.substringAfter(line, "using ");
 
         if (StringUtils.isEmpty(using)) {
