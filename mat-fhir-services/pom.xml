@@ -13,6 +13,7 @@
     <name>mat-fhir-services</name>
     <description>Spring Boot MAT FHIR conversion services</description>
 
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -103,6 +104,32 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>vsac-mat-conversion</artifactId>
+        </dependency>
+
+        <!-- CQFramework. -->
+        <dependency>
+            <groupId>info.cqframework</groupId>
+            <artifactId>cql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.cqframework</groupId>
+            <artifactId>model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.cqframework</groupId>
+            <artifactId>cql-to-elm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.cqframework</groupId>
+            <artifactId>elm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.cqframework</groupId>
+            <artifactId>quick</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.cqframework</groupId>
+            <artifactId>qdm</artifactId>
         </dependency>
 
         <dependency>
