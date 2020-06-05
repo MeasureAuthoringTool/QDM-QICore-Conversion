@@ -230,7 +230,7 @@ public class MatXmlController {
         }
 
         if (!cqlToMatXml.getErrors().isEmpty()) {
-            ValidationController.LibraryErrors libraryErrors = new ValidationController.LibraryErrors();
+            LibraryErrors libraryErrors = new LibraryErrors();
             libraryErrors.setErrors(cqlToMatXml.getErrors());
             libraryErrors.setName(newModel.getLibraryName());
             libraryErrors.setVersion(newModel.getVersionUsed());
