@@ -17,6 +17,9 @@ vsac-client:
   use-cache: on
   cache-directory: /opt/vsac/cache
 
+mat.codesystem.valueset.simultaneous.validations: 5
+mat.qdm.default.expansion.id: Most Recent Code System Versions in VSAC
+
 conversion-lib-lookup-4-1:
   map:
     FHIRHelpers: 4.0.001
@@ -27,6 +30,7 @@ conversion-lib-lookup-4-1:
     SupplementalDataElements: 2.0.000
     TJCOverall: 5.0.000
     VTEICU: 4.0.000
+
 
 measures:
   allowed:
@@ -44,5 +48,3 @@ management:
 info:
   app:
     name: Mat Fhir Services
-
-
