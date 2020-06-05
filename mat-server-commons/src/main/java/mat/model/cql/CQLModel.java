@@ -17,6 +17,9 @@ public class CQLModel implements IsSerializable{
 	private String qdmVersion;
 	private String usingName;
 	private String context;
+	private String usingModelVersion;
+	private String usingModel;
+
 
 	private List<CQLQualityDataSetDTO> valueSetList = new ArrayList<CQLQualityDataSetDTO>();
 	private List<CQLQualityDataSetDTO> allValueSetAndCodeList = new ArrayList<CQLQualityDataSetDTO>();
@@ -340,5 +343,21 @@ public class CQLModel implements IsSerializable{
 	
 	public String getFormattedName() {
 		return this.libraryName + "-" + this.versionUsed;
+	}
+
+	public void setUsingModel(String usingModel) {
+		this.usingModel = usingModel;
+	}
+
+	public String getUsingModel() {
+		return usingModel;
+	}
+
+	public void setUsingModelVersion(String usingModelVersion) {
+		this.usingModelVersion = usingModelVersion;
+	}
+
+	public String getUsingModelVersion() {
+		return usingModelVersion;
 	}
 }

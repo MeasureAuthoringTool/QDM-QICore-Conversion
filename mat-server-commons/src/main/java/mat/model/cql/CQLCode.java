@@ -20,6 +20,9 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	
 	/** The code system version. */
 	private String codeSystemVersion;
+
+	/** The code system version uri. */
+	private String codeSystemVersionUri;
 	
 	private String codeSystemOID;
 	
@@ -39,6 +42,8 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	private String suffix;
 
 	private boolean isCodeSystemVersionIncluded;
+
+	private boolean isValidatedWithVsac = true;
 
 	public boolean isIsCodeSystemVersionIncluded() {
 		return isCodeSystemVersionIncluded;
@@ -194,6 +199,26 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	}
 
 
+	public boolean isValidatedWithVsac() {
+		return isValidatedWithVsac;
+	}
+
+	public void setValidatedWithVsac(boolean validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac;
+	}
+
+	public String getCodeSystemVersionUri() {
+		return codeSystemVersionUri;
+	}
+
+	public void setCodeSystemVersionUri(String codeSystemVersionUri) {
+		this.codeSystemVersionUri = codeSystemVersionUri;
+	}
+
+	public void setCodeSystemVersionIncluded(boolean codeSystemVersionIncluded) {
+		isCodeSystemVersionIncluded = codeSystemVersionIncluded;
+	}
+
 	@Override
 	public String getLogic() {
 		// TODO Auto-generated method stub
@@ -205,6 +230,6 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	@Override
 	public void setLogic(String logic) {
 		// TODO Auto-generated method stub
-		
 	}
+
 }

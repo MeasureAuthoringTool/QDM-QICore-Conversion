@@ -99,6 +99,10 @@ public class VsacClient {
         return vsacResponseResult;
     }
 
+    public VSACResponseResult getDirectReferenceCode(String codeURLString, String serviceTicket) {
+        return vsacConfig.getVsacRestClient().getDirectReferenceCode(codeURLString, serviceTicket);
+    }
+
     private void writeFileToCache(Path cacheFilePath, String xmlPayLoad) {
         try {
             byte[] bytes = xmlPayLoad.getBytes();
@@ -138,5 +142,10 @@ public class VsacClient {
         VSACResponseResult vsacResponseResult = new VSACResponseResult();
         vsacResponseResult.setIsFailResponse(false);
         return vsacResponseResult;
+    }
+
+
+    public VSACResponseResult getMultipleValueSetsResponseByOID(String oid, String serviceTicket, String expansionId) {
+        return vsacConfig.getVsacRestClient().getMultipleValueSetsResponseByOID(oid, serviceTicket, expansionId);
     }
 }

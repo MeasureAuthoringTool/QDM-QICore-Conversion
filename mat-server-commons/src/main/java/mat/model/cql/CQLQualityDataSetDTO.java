@@ -13,9 +13,6 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 	 */
 	public static class Comparator implements java.util.Comparator<CQLQualityDataSetDTO>, IsSerializable {
 		
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(CQLQualityDataSetDTO o1, CQLQualityDataSetDTO o2) {
 			return o1.getQDMElement().compareTo(o2.getQDMElement());
@@ -47,10 +44,8 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 	private String program; 
 	private boolean dataTypeHasRemoved;
 	private String valueSetType;
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	private boolean isValidatedWithVsac = true;
+
 	@Override
 	public boolean equals (Object o) {
 		CQLQualityDataSetDTO temp = (CQLQualityDataSetDTO) o;
@@ -176,9 +171,6 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 		this.dataTypeHasRemoved = dataTypeHasRemoved;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return codeListName + ": " + dataType + "-" + getOid();
@@ -283,5 +275,12 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 		this.valueSetType = valueSetType;
 	}
 
+	public void setValidatedWithVsac(boolean validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac;
+	}
+
+	public boolean isValidatedWithVsac() {
+		return isValidatedWithVsac;
+	}
 
 }
