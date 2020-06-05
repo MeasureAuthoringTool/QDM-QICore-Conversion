@@ -14,7 +14,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class CQLError implements IsSerializable, Comparable<CQLError> {
 	private int errorInLine;
-	private int errorAtOffeset;
+	private int errorAtOffset;
 	private int startErrorInLine;
 	private int startErrorAtOffset;
 	private int endErrorInLine;
@@ -22,6 +22,9 @@ public class CQLError implements IsSerializable, Comparable<CQLError> {
 
 	private String errorMessage;
 	private String severity;
+
+
+	//todo when merging results merging Errors based on the line #
 
 	@Override
     public int compareTo(CQLError o) {

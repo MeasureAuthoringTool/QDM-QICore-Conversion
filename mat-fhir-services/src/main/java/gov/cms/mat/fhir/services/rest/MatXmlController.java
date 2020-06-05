@@ -8,6 +8,7 @@ import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureXmlRepository;
+import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,7 +48,7 @@ public class MatXmlController {
     @NoArgsConstructor
     public static class MatXmlResponse {
         @NotNull
-        private List<ValidationController.LibraryErrors> errors = new ArrayList<>();
+        private List<LibraryErrors> errors = new ArrayList<>();
         @NotNull
         private CQLModel cqlModel;
         @NotBlank

@@ -193,7 +193,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         }
     }
 
-    private CqlConversionPayload convertCqlToJson(String cql, boolean showWarnings) {
+    public CqlConversionPayload convertCqlToJson(String cql, boolean showWarnings) {
         try {
             ResponseEntity<CqlConversionPayload> entity = cqlConversionClient.getJson(cql, showWarnings);
             return entity.getBody();
@@ -210,6 +210,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
     }
 
     public boolean validate(OrchestrationProperties properties) {
+
         return processLibs(properties.getCqlLibraries(), properties.isShowWarnings());
     }
 
