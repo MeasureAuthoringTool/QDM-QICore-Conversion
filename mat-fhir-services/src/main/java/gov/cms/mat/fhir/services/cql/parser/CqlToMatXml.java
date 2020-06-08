@@ -43,11 +43,11 @@ import mat.shared.CQLModelValidator;
 
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.chomp1;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.getGlobalLibId;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.isOid;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.isQuoted;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.newGuid;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseCodeSystemName;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseOid;
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.isOid;
 
 /**
  * A CqlVisitor for converting FHIR to MatXml format without a source model.
@@ -189,7 +189,8 @@ public class CqlToMatXml implements CqlVisitor {
 
         log.info("Start ValueSetsResponseDAO.");
 
-        String fiveMinServiceTicket = vsacService.getServiceTicket(umlsToken);;
+        String fiveMinServiceTicket = vsacService.getServiceTicket(umlsToken);
+        ;
         if (StringUtils.isBlank(fiveMinServiceTicket)) {
             log.warn("VSAC ticket has expired");
             return false;
@@ -197,7 +198,7 @@ public class CqlToMatXml implements CqlVisitor {
 
         String expansionId = getDefaultExpId();
 
-        VSACResponseResult vsacResponseResult =  vsacService.getMultipleValueSetsResponseByOID(oid.trim(), fiveMinServiceTicket, expansionId);
+        VSACResponseResult vsacResponseResult = vsacService.getMultipleValueSetsResponseByOID(oid.trim(), fiveMinServiceTicket, expansionId);
 
 
         boolean valid;
@@ -245,7 +246,7 @@ public class CqlToMatXml implements CqlVisitor {
     @Override
     public void validateAfterParse() {
         if (sourceModel == null) {
-            //Validate valuesets and codesystems.
+            // Validate valuesets and codesystems.
             if (isValidatingCodesystems) {
                 List<CodeValidator> codeTasks = destinationModel.getCodeList().stream()
                         .filter(c -> !c.isValidatedWithVsac() &&
@@ -300,9 +301,9 @@ public class CqlToMatXml implements CqlVisitor {
     }
 
     @Override
-    public void fhirVersion(String fhirVersion) {
-        destinationModel.setUsingModelVersion(fhirVersion);
-        destinationModel.setUsingModel("FHIR");
+    public void usingModelVersionTag(String model, String modelVersion) {
+        destinationModel.setUsingModelVersion(modelVersion);
+        destinationModel.setUsingModel(model);
     }
 
     @Override
@@ -405,6 +406,7 @@ public class CqlToMatXml implements CqlVisitor {
 
     @Override
     public void function(String name, List<FunctionArgument> args, String logic, String comment) {
+        // Functions can be overloaded in FHIR
         var f = new CQLFunctions();
         f.setId(newGuid());
         f.setName(name);

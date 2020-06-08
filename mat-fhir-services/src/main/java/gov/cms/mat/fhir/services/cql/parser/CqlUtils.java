@@ -471,6 +471,14 @@ public class CqlUtils {
         return StringUtils.isNotBlank(s) && s.startsWith("\"") && s.endsWith("\"");
     }
 
+    public static boolean isSingleQuoted(String s) {
+        return StringUtils.isNotBlank(s) && s.startsWith("\'") && s.endsWith("\'");
+    }
+
+    public static String unquote(String fullText) {
+        return (isQuoted(fullText) || isSingleQuoted(fullText)) ? chomp1(fullText) : fullText;
+    }
+
     public static String parsePrecedingComment(String cql) {
         return parsePrecedingComment(cql, 0, cql.length());
     }
@@ -549,4 +557,6 @@ public class CqlUtils {
         }
         comment.insert(0, line);
     }
+
+
 }

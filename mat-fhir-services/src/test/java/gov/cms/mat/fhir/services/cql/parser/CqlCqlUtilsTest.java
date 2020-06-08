@@ -10,7 +10,7 @@ import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.nextTickedString;
 import static org.junit.Assert.assertEquals;
 
 @Slf4j
-public class TestCqlCqlUtils {
+public class CqlCqlUtilsTest {
 
     @Test
     public void testNextQuotedStringErrors() {

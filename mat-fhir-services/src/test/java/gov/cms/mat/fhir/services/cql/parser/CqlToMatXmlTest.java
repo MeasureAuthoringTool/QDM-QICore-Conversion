@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class TestCqlToMatXml {
+public class CqlToMatXmlTest {
     private static final String CQL_TEST_RESOURCES_DIR = "/test-cql/";
 
     @Mock
@@ -33,7 +33,7 @@ public class TestCqlToMatXml {
     private CodeListService codeListService;
 
     @InjectMocks
-    private CqlParser parser;
+    private DefaultCqlParser parser;
 
     @InjectMocks
     private CqlToMatXml cqlToMatXml;
@@ -70,7 +70,7 @@ public class TestCqlToMatXml {
 
 
     public String loadCqlResource(String cqlResource) throws IOException {
-        try (InputStream i = TestCqlToMatXml.class.getResourceAsStream(CQL_TEST_RESOURCES_DIR + cqlResource)) {
+        try (InputStream i = CqlToMatXmlTest.class.getResourceAsStream(CQL_TEST_RESOURCES_DIR + cqlResource)) {
             return IOUtils.toString(i);
         }
     }

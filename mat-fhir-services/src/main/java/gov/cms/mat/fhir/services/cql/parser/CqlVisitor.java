@@ -10,14 +10,15 @@ import mat.shared.CQLError;
  */
 public interface CqlVisitor {
     default void validateBeforeParse() {
-        //by default do nothing unless its implemented.
+        // by default do nothing unless its implemented.
     }
 
     default void validateAfterParse() {
-        //by default do nothing unless its implemented.
+        // by default do nothing unless its implemented.
     }
 
     default void handleError(CQLError error) {
+        // by default do nothing unless its implemented.
     }
 
     default boolean isRemovingBlockComments() {
@@ -30,11 +31,11 @@ public interface CqlVisitor {
 
     default void libraryTag(String libraryName,
                             String version) {
-        //by default do nothing unless its implemented.
+        // by default do nothing unless its implemented.
     }
 
-    default void fhirVersion(String fhirVersion) {
-        //by default do nothing unless its implemented.
+    default void usingModelVersionTag(String model, String fhirVersion) {
+        // by default do nothing unless its implemented.
     }
 
     default void includeLib(String libName,
@@ -42,7 +43,7 @@ public interface CqlVisitor {
                             String alias,
                             String model,
                             String modelVersion) {
-//by default do nothing unless its implemented.
+        // by default do nothing unless its implemented.
     }
 
     default void codeSystem(String name,

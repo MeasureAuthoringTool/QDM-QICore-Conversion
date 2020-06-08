@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,7 +86,7 @@ public class MatXmlController {
                             CqlLibraryRepository cqlLibRepo,
                             CqlLibraryExportRepository cqlLibExportRepo,
                             CqlVisitorFactory visitorFactory,
-                            CqlParser cqlParser) {
+                            @Qualifier("antlCqlParser") CqlParser cqlParser) {
         this.validationController = validationController;
         this.measureXmlRepo = measureXmlRepo;
         this.cqlLibRepo = cqlLibRepo;
@@ -188,12 +189,12 @@ public class MatXmlController {
 
     @PutMapping("/cql")
     public @ResponseBody
-    MatXmlResponse fromCql(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String ulmsToken,
+    MatXmlResponse fromCql(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String umlsToken,
                            @NotBlank @RequestParam String cql/*,
             , @Valid @RequestParam MatXmlReq matXmlReq */) {
         MatXmlReq matXmlReq = new MatXmlReq();
         try {
-            return run(ulmsToken,
+            return run(umlsToken,
                     cql,
                     null,
                     matXmlReq);
@@ -201,12 +202,12 @@ public class MatXmlController {
             log.error("fromCql", e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Unexpected error in fromMeasure(" + ulmsToken + "," + cql + "," + matXmlReq,
+                    "Unexpected error in fromMeasure(" + umlsToken + "," + cql + "," + matXmlReq,
                     e);
         }
     }
 
-    private MatXmlResponse run(String ulmsToken,
+    private MatXmlResponse run(String umlsToken,
                                String existingCql,
                                @Null CQLModel existingModel,
                                MatXmlReq req) {
@@ -214,7 +215,7 @@ public class MatXmlController {
 
         CqlToMatXml cqlToMatXml = visitorFactory.getCqlToMatXmlVisitor();
         cqlToMatXml.setSourceModel(existingModel);
-        cqlToMatXml.setUmlsToken(ulmsToken);
+        cqlToMatXml.setUmlsToken(umlsToken);
         cqlParser.parse(existingCql, cqlToMatXml);
 
         matXmlResponse.setCql(existingCql);

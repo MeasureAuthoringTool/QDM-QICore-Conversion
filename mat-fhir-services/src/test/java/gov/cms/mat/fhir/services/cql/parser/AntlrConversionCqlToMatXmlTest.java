@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class TestConversionCqlToMatXml {
+public class AntlrConversionCqlToMatXmlTest {
     private static final String CQL_TEST_RESOURCES_DIR = "/test-cql/";
     private XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
 
@@ -29,14 +29,14 @@ public class TestConversionCqlToMatXml {
     private MappingSpreadsheetService mappingService;
 
     @InjectMocks
-    private CqlParser parser;
+    private AntlCqlParser parser;
 
     @InjectMocks
     private CqlToMatXml conversionCqlToMatXml;
 
     public String loadCqlResource(String cqlResource) throws IOException {
         log.info("This is to used a mock var so codacy will be happy. " + mappingService);
-        try (InputStream i = TestConversionCqlToMatXml.class.getResourceAsStream(CQL_TEST_RESOURCES_DIR + cqlResource)) {
+        try (InputStream i = AntlrConversionCqlToMatXmlTest.class.getResourceAsStream(CQL_TEST_RESOURCES_DIR + cqlResource)) {
             return IOUtils.toString(i);
         }
     }

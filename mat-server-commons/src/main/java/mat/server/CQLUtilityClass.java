@@ -1,6 +1,19 @@
 package mat.server;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
 import lombok.extern.slf4j.Slf4j;
 import mat.client.shared.CQLWorkSpaceConstants;
 import mat.model.cql.CQLCode;
@@ -13,18 +26,6 @@ import mat.model.cql.CQLParameter;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.server.service.impl.XMLMarshalUtil;
 import mat.server.util.XmlProcessor;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public final class CQLUtilityClass {
