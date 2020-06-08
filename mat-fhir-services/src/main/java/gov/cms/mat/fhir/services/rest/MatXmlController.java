@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,6 +46,7 @@ import mat.model.cql.CQLModel;
 import mat.server.service.impl.XMLMarshalUtil;
 import mat.server.util.XmlProcessor;
 
+//@Validated
 @RestController
 @RequestMapping(path = "/cql-xml-gen")
 @Tag(name = "MatXmlController", description = "API for validating cql")
@@ -64,11 +66,19 @@ public class MatXmlController {
 
     @Data
     @NoArgsConstructor
-    @NotNull
     public static class MatXmlReq {
         private boolean isLinting = true;
         @Valid
         private ValidationController.ValidationRequest validationRequest;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class MatCqlXmlReq {
+        @NotBlank
+        private String cql;
+        @Valid
+        private MatXmlReq xmlReq;
     }
 
     private MeasureXmlRepository measureXmlRepo;
@@ -190,14 +200,14 @@ public class MatXmlController {
     @PutMapping("/cql")
     public @ResponseBody
     MatXmlResponse fromCql(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String umlsToken,
-                           @NotBlank @RequestParam String cql/*,
-            , @Valid @RequestParam MatXmlReq matXmlReq */) {
-        MatXmlReq matXmlReq = new MatXmlReq();
+                           @Valid @RequestBody MatCqlXmlReq matCqlXmlReq) {
+        String cql = matCqlXmlReq.getCql();
+        MatXmlReq matXmlReq = matCqlXmlReq.getXmlReq();
         try {
             return run(umlsToken,
                     cql,
                     null,
-                    matXmlReq);
+                    matCqlXmlReq.getXmlReq());
         } catch (RuntimeException e) {
             log.error("fromCql", e);
             throw new ResponseStatusException(
@@ -235,7 +245,6 @@ public class MatXmlController {
             libraryErrors.setErrors(cqlToMatXml.getErrors());
             libraryErrors.setName(newModel.getLibraryName());
             libraryErrors.setVersion(newModel.getVersionUsed());
-            // TODO what id should be used?
             libraryErrors.setName(newModel.getLibraryName());
             matXmlResponse.setErrors(Arrays.asList(libraryErrors));
         }
