@@ -46,7 +46,6 @@ import mat.model.cql.CQLModel;
 import mat.server.service.impl.XMLMarshalUtil;
 import mat.server.util.XmlProcessor;
 
-//@Validated
 @RestController
 @RequestMapping(path = "/cql-xml-gen")
 @Tag(name = "MatXmlController", description = "API for validating cql")
