@@ -1,6 +1,9 @@
 package mat.server;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +16,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.exolab.castor.mapping.Mapping;
+import org.exolab.castor.mapping.MappingException;
+import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.Marshaller;
+import org.exolab.castor.xml.ValidationException;
 
 import lombok.extern.slf4j.Slf4j;
 import mat.client.shared.CQLWorkSpaceConstants;
@@ -23,8 +31,10 @@ import mat.model.cql.CQLFunctions;
 import mat.model.cql.CQLIncludeLibrary;
 import mat.model.cql.CQLModel;
 import mat.model.cql.CQLParameter;
+import mat.model.cql.CQLQualityDataModelWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.server.service.impl.XMLMarshalUtil;
+import mat.server.util.ResourceLoader;
 import mat.server.util.XmlProcessor;
 
 @Slf4j
@@ -268,6 +278,8 @@ public final class CQLUtilityClass {
                                 argumentType = argumentType.append(".").append(argument.getAttributeName());
                             }
                             argumentType = argumentType.append("\"");
+                        } else if (argument.getArgumentType().equalsIgnoreCase("FHIR Datatype")) {
+                            argumentType = argumentType.append(argument.getQdmDataType());
                         } else if (argument.getArgumentType().equalsIgnoreCase(
                                 CQLWorkSpaceConstants.CQL_OTHER_DATA_TYPE)) {
                             argumentType = argumentType.append(argument.getOtherType());
@@ -304,13 +316,13 @@ public final class CQLUtilityClass {
                 XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
                 cqlModel = (CQLModel) xmlMarshalUtil.convertXMLToObject("CQLModelMapping.xml", cqlLookUpXMLString, CQLModel.class);
             } catch (Exception e) {
-                log.warn("Error while getting codesystems", e);
+                log.warn("Error parsing CQL model from XML: " + e.getMessage(), e);
             }
         }
 
         if (!cqlModel.getValueSetList().isEmpty()) {
             cqlModel.setValueSetList(filterValuesets(cqlModel.getValueSetList()));
-            ArrayList<CQLQualityDataSetDTO> valueSetsList = new ArrayList<CQLQualityDataSetDTO>();
+            ArrayList<CQLQualityDataSetDTO> valueSetsList = new ArrayList<>();
             valueSetsList.addAll(cqlModel.getValueSetList());
             cqlModel.setAllValueSetAndCodeList(valueSetsList);
         }
@@ -326,9 +338,40 @@ public final class CQLUtilityClass {
         return cqlModel;
     }
 
+    public static String getXMLFromCQLModel(CQLModel cqlModel) {
+        String xml = "";
+
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
+            Mapping mapping = new Mapping();
+            mapping.loadMapping(new ResourceLoader().getResourceAsURL("CQLModelMapping.xml"));
+            Marshaller marshaller = new Marshaller(new OutputStreamWriter(stream));
+            marshaller.setMapping(mapping);
+            marshaller.marshal(cqlModel);
+            xml = stream.toString();
+        } catch (MarshalException | ValidationException | IOException | MappingException e) {
+            log.error("Error in  getXMLFromCQLModel: " + e.getMessage(), e);
+        }
+
+        return xml;
+    }
+
+    public static void getValueSet(CQLModel cqlModel, String cqlLookUpXMLString) {
+        CQLQualityDataModelWrapper valuesetWrapper;
+        try {
+            XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
+            valuesetWrapper = (CQLQualityDataModelWrapper) xmlMarshalUtil.convertXMLToObject("ValueSetsMapping.xml", cqlLookUpXMLString, CQLQualityDataModelWrapper.class);
+            if (!valuesetWrapper.getQualityDataDTO().isEmpty()) {
+                cqlModel.setValueSetList(filterValuesets(valuesetWrapper.getQualityDataDTO()));
+            }
+        } catch (Exception e) {
+            log.error("Error while getting valueset :" + e.getMessage(), e);
+        }
+
+    }
+
 
     private static List<CQLQualityDataSetDTO> convertCodesToQualityDataSetDTO(List<CQLCode> codeList) {
-        List<CQLQualityDataSetDTO> convertedCQLDataSetList = new ArrayList<CQLQualityDataSetDTO>();
+        List<CQLQualityDataSetDTO> convertedCQLDataSetList = new ArrayList<>();
         for (CQLCode tempDataSet : codeList) {
             CQLQualityDataSetDTO convertedCQLDataSet = new CQLQualityDataSetDTO();
             convertedCQLDataSet.setName(tempDataSet.getName());
@@ -497,7 +540,7 @@ public final class CQLUtilityClass {
 
         StringBuilder sb = new StringBuilder();
 
-        List<String> codeAlreadyUsed = new ArrayList<String>();
+        List<String> codeAlreadyUsed = new ArrayList<>();
 
         if (!CollectionUtils.isEmpty(codeList)) {
 

@@ -1,7 +1,9 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,6 +12,7 @@ import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.nextTickedString;
 import static org.junit.Assert.assertEquals;
 
 @Slf4j
+@ExtendWith(MockitoExtension.class)
 public class CqlCqlUtilsTest {
 
     @Test
