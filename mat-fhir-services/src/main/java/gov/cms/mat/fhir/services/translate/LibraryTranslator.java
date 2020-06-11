@@ -15,11 +15,19 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.gen.cqlBaseVisitor;
 import org.cqframework.cql.gen.cqlParser;
 import org.hl7.fhir.r4.model.Attachment;
+import org.hl7.fhir.r4.model.CanonicalType;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DataRequirement;
+import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Library;
+import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Narrative;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.RelatedArtifact;
+import org.hl7.fhir.r4.model.Resource;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -75,10 +83,40 @@ public class LibraryTranslator extends TranslatorBase {
         result.setDataRequirement(distinctDataRequirements(visitor.getDataRequirements()));
         result.setRelatedArtifact(distinctArtifacts(visitor.getRelatedArtifacts()));
         result.setText(findHumanReadable(libId));
+        result.setContained(processContained());
+        result.setExtension(processExtension());
 
         //TO DO: figure out how to handle this with logging.
         //ConversionReporter.setLibraryValidationLink(result.getUrl(), CREATED, uuid);
         return result;
+    }
+
+    private List<Resource> processContained() {
+        Device device = new Device();
+        Meta meta = new Meta();
+        meta.setProfile(Collections.singletonList(new CanonicalType("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/device-softwaresystem-cqfm")));
+        device.setMeta(meta);
+        device.setId("cqf-tooling");
+
+        Device.DeviceVersionComponent deviceVersionComponent = new Device.DeviceVersionComponent();
+        deviceVersionComponent.setValue("1.1.0-SNAPSHOT");
+        device.setVersion(Collections.singletonList(deviceVersionComponent));
+
+        CodeableConcept codeableConcept = new CodeableConcept();
+        Coding coding = new Coding();
+        coding.setSystem("http://hl7.org/fhir/us/cqfmeasures/CodeSystem/software-system-type");
+        coding.setCode("tooling");
+        codeableConcept.setCoding(Collections.singletonList(coding));
+
+        device.setType(codeableConcept);
+
+        return Collections.singletonList(device);
+    }
+
+    private ArrayList<Extension> processExtension() {
+        ArrayList extensionList = new ArrayList<Extension>();
+        extensionList.add(new Extension(MeasureTranslator.EXTENSION_SOFTWARE_SYSTEM, new Reference("#cqf-tooling")));
+        return extensionList;
     }
 
     /**
