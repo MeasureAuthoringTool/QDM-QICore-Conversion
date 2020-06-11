@@ -47,19 +47,19 @@ class VsacValueSetValidatorTest implements CqlHelper {
 
     @Test
     void validateBlankToken() {
-        cqlModel.getValueSetList().forEach(c -> c.setValidatedWithVsac(VsacStatus.IN_VALID));
+        cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.IN_VALID));
         List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), "");
 
         assertEquals(cqlModel.getValueSetList().size(), dtoList.size());
 
         dtoList.forEach(d -> assertEquals("UMLS token is blank", d.getErrorMessage()));
-        dtoList.forEach(d -> assertEquals(VsacStatus.IN_VALID, d.isValidatedWithVsac()));
+        dtoList.forEach(d -> assertEquals(VsacStatus.IN_VALID, d.obtainValidatedWithVsac()));
         verifyNoInteractions(vsacService);
     }
 
     @Test
     void validateAllValidatedWithVsac() {
-        cqlModel.getValueSetList().forEach(c -> c.setValidatedWithVsac(VsacStatus.VALID));
+        cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.VALID));
 
         List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN);
 
@@ -70,7 +70,7 @@ class VsacValueSetValidatorTest implements CqlHelper {
 
     @Test
     void validateCompletableFutureProcessing() {
-        cqlModel.getValueSetList().forEach(c -> c.setValidatedWithVsac(VsacStatus.IN_VALID));
+        cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.IN_VALID));
         when(valueSetVsacAsync.validateWithVsac(any(), anyString())).thenReturn(CompletableFuture.completedFuture(null));
 
         List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN);

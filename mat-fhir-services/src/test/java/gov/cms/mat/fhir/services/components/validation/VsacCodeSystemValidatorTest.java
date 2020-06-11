@@ -47,19 +47,19 @@ class VsacCodeSystemValidatorTest implements CqlHelper {
 
     @Test
     void validateBlankToken() {
-        cqlModel.getCodeList().forEach(c -> c.setValidatedWithVsac(VsacStatus.IN_VALID));
+        cqlModel.getCodeList().forEach(c -> c.addValidatedWithVsac(VsacStatus.IN_VALID));
         List<CQLCode> dtoList = vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), "");
 
         assertEquals(cqlModel.getCodeList().size(), dtoList.size());
 
         dtoList.forEach(d -> assertEquals("UMLS token is blank", d.getErrorMessage()));
-        dtoList.forEach(d -> assertEquals(VsacStatus.IN_VALID, d.isValidatedWithVsac()));
+        dtoList.forEach(d -> assertEquals(VsacStatus.IN_VALID, d.obtainValidatedWithVsac()));
         verifyNoInteractions(vsacService, codeSystemVsacAsync);
     }
 
     @Test
     void validateAllValidatedWithVsac() {
-        cqlModel.getCodeList().forEach(c -> c.setValidatedWithVsac(VsacStatus.VALID));
+        cqlModel.getCodeList().forEach(c -> c.addValidatedWithVsac(VsacStatus.VALID));
 
         List<CQLCode> dtoList = vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN);
 
@@ -70,7 +70,7 @@ class VsacCodeSystemValidatorTest implements CqlHelper {
 
     @Test
     void validateCompletableFutureProcessing() {
-        cqlModel.getCodeList().forEach(c -> c.setValidatedWithVsac(VsacStatus.IN_VALID));
+        cqlModel.getCodeList().forEach(c -> c.addValidatedWithVsac(VsacStatus.IN_VALID));
         when(codeSystemVsacAsync.validateCode(any(), anyString())).thenReturn(CompletableFuture.completedFuture(null));
 
         List<CQLCode> dtoList = vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN);

@@ -33,9 +33,9 @@ class ValueSetVsacAsync extends VsacValidator {
             boolean isValid = verifyWithVsac(oid, fiveMinServiceTicket);
 
             code.setErrorMessage(isValid ? null : NOT_IN_VSAC);
-            code.setValidatedWithVsac(isValid ? VsacStatus.VALID : VsacStatus.IN_VALID);
+            code.addValidatedWithVsac(isValid ? VsacStatus.VALID : VsacStatus.IN_VALID);
         } catch (Exception e) {
-            code.setValidatedWithVsac(VsacStatus.IN_VALID);
+            code.addValidatedWithVsac(VsacStatus.IN_VALID);
             code.setErrorMessage(e.getMessage());
         }
 

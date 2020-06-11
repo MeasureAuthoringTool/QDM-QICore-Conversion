@@ -97,9 +97,9 @@ public class CqlToMatXml implements CqlVisitor {
             log.info("Validating code {} with vsac.", code.getCodeIdentifier());
             if (StringUtils.isBlank(umlsToken)) {
                 log.info("No UMLS session, code validation is false for {}.", code.getCodeIdentifier());
-                code.setValidatedWithVsac(VsacStatus.IN_VALID);
+                code.addValidatedWithVsac(VsacStatus.IN_VALID);
             } else {
-                code.setValidatedWithVsac(isDirectReferenceCodeValid(code.getCodeIdentifier(), umlsToken) ? VsacStatus.VALID : VsacStatus.IN_VALID);
+                code.addValidatedWithVsac(isDirectReferenceCodeValid(code.getCodeIdentifier(), umlsToken) ? VsacStatus.VALID : VsacStatus.IN_VALID);
             }
             log.info("Validated code {} with vsac. {}", code.getCodeIdentifier(), code.isValidatedWithVsac());
             return new CodeValidation(code, code.obtainValidatedWithVsac() == VsacStatus.VALID);
@@ -161,10 +161,10 @@ public class CqlToMatXml implements CqlVisitor {
             String oid = parseOid(valueSet.getOid());
             if (StringUtils.isBlank(umlsToken)) {
                 log.info("No UMLS session, valueset validation is false for {}.", oid);
-                valueSet.setValidatedWithVsac(VsacStatus.IN_VALID);
+                valueSet.addValidatedWithVsac(VsacStatus.IN_VALID);
             } else {
                 log.info("Validating valueset {} with vsac.", oid);
-                valueSet.setValidatedWithVsac(isMostRecentValueSetByOidValid(oid, umlsToken) ? VsacStatus.VALID : VsacStatus.IN_VALID);
+                valueSet.addValidatedWithVsac(isMostRecentValueSetByOidValid(oid, umlsToken) ? VsacStatus.VALID : VsacStatus.IN_VALID);
             }
             log.info("Validated valueset {} with vsac. {}", oid, valueSet.isValidatedWithVsac());
             return new ValueSetValidation(valueSet, valueSet.obtainValidatedWithVsac() == VsacStatus.VALID );
@@ -492,7 +492,7 @@ public class CqlToMatXml implements CqlVisitor {
                 ec -> StringUtils.equals(ec.getCodeName(), c.getCodeName()) &&
                         StringUtils.equals(ec.getCodeSystemName(), c.getCodeSystemName()));
 
-        c.setValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).orElse(VsacStatus.IN_VALID));
+        c.addValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).orElse(VsacStatus.IN_VALID));
         c.setCodeIdentifier(existingCode.isPresent() ?
                 existingCode.get().getCodeIdentifier() :
                 buildCodeIdentifier(c));

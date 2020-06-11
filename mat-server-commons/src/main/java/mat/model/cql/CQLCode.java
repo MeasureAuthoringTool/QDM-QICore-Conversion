@@ -212,8 +212,16 @@ public class CQLCode implements CQLExpression, IsSerializable {
 		return VsacStatus.valueOf(isValidatedWithVsac);
 	}
 
-	public void setValidatedWithVsac(VsacStatus validatedWithVsac) {
+	public String getValidatedWithVsac() {
+		return isValidatedWithVsac;
+	}
+
+	public void addValidatedWithVsac(VsacStatus validatedWithVsac) {
 		isValidatedWithVsac = validatedWithVsac.toString();
+	}
+
+	public void setValidatedWithVsac(String validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac;
 	}
 
 	public String getCodeSystemVersionUri() {

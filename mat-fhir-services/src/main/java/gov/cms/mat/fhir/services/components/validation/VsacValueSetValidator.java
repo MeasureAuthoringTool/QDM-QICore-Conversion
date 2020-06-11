@@ -58,7 +58,7 @@ class VsacValueSetValidator extends VsacValidator {
         valueSetList.stream()
                 .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                 .forEach(c -> {
-                    c.setValidatedWithVsac(status);
+                    c.addValidatedWithVsac(status);
                     c.setErrorMessage(message);
                 });
     }

@@ -45,7 +45,7 @@ class CodeSystemVsacAsyncTest {
         completableFuture.get();
 
         assertEquals("VSAC ticket has expired", cqlCode.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlCode.isValidatedWithVsac());
+        assertEquals(VsacStatus.IN_VALID, cqlCode.obtainValidatedWithVsac());
 
         verifyNoMoreInteractions(vsacService);
     }
@@ -59,7 +59,7 @@ class CodeSystemVsacAsyncTest {
         completableFuture.get();
 
         assertEquals("URL is required", cqlCode.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlCode.isValidatedWithVsac());
+        assertEquals(VsacStatus.IN_VALID, cqlCode.obtainValidatedWithVsac());
 
         verifyNoInteractions(vsacService);
     }
@@ -77,7 +77,7 @@ class CodeSystemVsacAsyncTest {
         completableFuture.get();
 
         assertEquals("Not In Vsac", cqlCode.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlCode.isValidatedWithVsac());
+        assertEquals(VsacStatus.IN_VALID, cqlCode.obtainValidatedWithVsac());
     }
 
     @Test
@@ -94,6 +94,6 @@ class CodeSystemVsacAsyncTest {
         completableFuture.get();
 
         assertNull(cqlCode.getErrorMessage());
-        assertEquals(VsacStatus.VALID, cqlCode.isValidatedWithVsac());
+        assertEquals(VsacStatus.VALID, cqlCode.obtainValidatedWithVsac());
     }
 }

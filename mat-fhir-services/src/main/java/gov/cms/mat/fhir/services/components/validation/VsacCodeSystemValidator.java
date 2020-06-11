@@ -59,7 +59,7 @@ public class VsacCodeSystemValidator extends VsacValidator {
         codeList.stream()
                 .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                 .forEach(c -> {
-                    c.setValidatedWithVsac(status);
+                    c.addValidatedWithVsac(status);
                     c.setErrorMessage(message);
                 });
     }

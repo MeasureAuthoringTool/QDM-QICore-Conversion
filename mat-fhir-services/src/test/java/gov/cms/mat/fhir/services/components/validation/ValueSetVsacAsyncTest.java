@@ -48,7 +48,7 @@ class ValueSetVsacAsyncTest {
         completableFuture.get();
 
         assertEquals("VSAC ticket has expired", cqlQualityDataSetDTO.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.isValidatedWithVsac());
+        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
 
         verifyNoMoreInteractions(vsacService);
     }
@@ -61,7 +61,7 @@ class ValueSetVsacAsyncTest {
         completableFuture.get();
 
         assertEquals("Golly Gee", cqlQualityDataSetDTO.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.isValidatedWithVsac());
+        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
 
         verifyNoMoreInteractions(vsacService);
     }
@@ -79,7 +79,7 @@ class ValueSetVsacAsyncTest {
         completableFuture.get();
 
         assertEquals("Not In Vsac", cqlQualityDataSetDTO.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.isValidatedWithVsac());
+        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
     }
 
     @Test
@@ -96,6 +96,6 @@ class ValueSetVsacAsyncTest {
         completableFuture.get();
 
         assertNull(cqlQualityDataSetDTO.getErrorMessage());
-        assertEquals(VsacStatus.VALID, cqlQualityDataSetDTO.isValidatedWithVsac());
+        assertEquals(VsacStatus.VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
     }
 }

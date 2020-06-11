@@ -286,7 +286,15 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 		return VsacStatus.valueOf(isValidatedWithVsac);
 	}
 
-	public void setValidatedWithVsac(VsacStatus validatedWithVsac) {
+	public String getValidatedWithVsac() {
+		return isValidatedWithVsac;
+	}
+
+	public void setValidatedWithVsac(String validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac;
+	}
+
+	public void addValidatedWithVsac(VsacStatus validatedWithVsac) {
 		isValidatedWithVsac = validatedWithVsac.toString();
 	}
 
