@@ -4,7 +4,6 @@ import gov.cms.mat.fhir.services.CqlHelper;
 import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.cql.CQLCode;
 import mat.model.cql.CQLModel;
-import mat.model.cql.CQLQualityDataSetDTO;
 import mat.model.cql.VsacStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,8 +18,10 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -47,7 +48,7 @@ class VsacCodeSystemValidatorTest implements CqlHelper {
     @Test
     void validateBlankToken() {
         cqlModel.getCodeList().forEach(c -> c.setValidatedWithVsac(VsacStatus.IN_VALID));
-        List<CQLCode> dtoList = vsacCodeSystemValidator.validate(cqlModel.getCodeList(), "");
+        List<CQLCode> dtoList = vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), "");
 
         assertEquals(cqlModel.getCodeList().size(), dtoList.size());
 
@@ -60,7 +61,7 @@ class VsacCodeSystemValidatorTest implements CqlHelper {
     void validateAllValidatedWithVsac() {
         cqlModel.getCodeList().forEach(c -> c.setValidatedWithVsac(VsacStatus.VALID));
 
-        List<CQLCode> dtoList = vsacCodeSystemValidator.validate(cqlModel.getCodeList(), TOKEN);
+        List<CQLCode> dtoList = vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN);
 
         assertTrue(dtoList.isEmpty()); // since all we valid nothing to do to create errors
 
@@ -72,7 +73,7 @@ class VsacCodeSystemValidatorTest implements CqlHelper {
         cqlModel.getCodeList().forEach(c -> c.setValidatedWithVsac(VsacStatus.IN_VALID));
         when(codeSystemVsacAsync.validateCode(any(), anyString())).thenReturn(CompletableFuture.completedFuture(null));
 
-        List<CQLCode> dtoList = vsacCodeSystemValidator.validate(cqlModel.getCodeList(), TOKEN);
+        List<CQLCode> dtoList = vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN);
 
         assertEquals(cqlModel.getCodeList().size(), dtoList.size());
 

@@ -23,10 +23,11 @@ public class ValueSetValidator extends CqlValidatorHelper {
     }
 
     @Async("threadPoolValidation")
-    public CompletableFuture<List<LibraryErrors>> validate(List<CQLQualityDataSetDTO> valueSetList,
+    public CompletableFuture<List<LibraryErrors>> validate(long timeout,
+                                                           List<CQLQualityDataSetDTO> valueSetList,
                                                            String cql,
                                                            String umlsToken) {
-        List<CQLQualityDataSetDTO> failingValueSets = vsacValueSetValidator.validate(valueSetList, umlsToken);
+        List<CQLQualityDataSetDTO> failingValueSets = vsacValueSetValidator.validate(timeout, valueSetList, umlsToken);
 
         if (failingValueSets.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());

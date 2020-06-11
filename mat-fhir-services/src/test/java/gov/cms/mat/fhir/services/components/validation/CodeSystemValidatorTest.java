@@ -40,10 +40,10 @@ class CodeSystemValidatorTest implements CqlHelper {
 
     @Test
     void validateNofFailingCodes() throws ExecutionException, InterruptedException {
-        when(vsacCodeSystemValidator.validate(cqlModel.getCodeList(), TOKEN)).thenReturn(Collections.emptyList());
+        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN)).thenReturn(Collections.emptyList());
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                codeSystemValidator.validate(cqlModel.getCodeList(), cql, TOKEN);
+                codeSystemValidator.validate(0, cqlModel.getCodeList(), cql, TOKEN);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 
@@ -54,10 +54,10 @@ class CodeSystemValidatorTest implements CqlHelper {
     void validateFailingCodes() throws ExecutionException, InterruptedException {
         List<CQLCode> failingCodes = List.of(cqlModel.getCodeList().get(0), cqlModel.getCodeList().get(1));
 
-        when(vsacCodeSystemValidator.validate(cqlModel.getCodeList(), TOKEN)).thenReturn(failingCodes);
+        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN)).thenReturn(failingCodes);
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                codeSystemValidator.validate(cqlModel.getCodeList(), cql, TOKEN);
+                codeSystemValidator.validate(0, cqlModel.getCodeList(), cql, TOKEN);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 

@@ -23,10 +23,11 @@ public class CodeSystemValidator extends CqlValidatorHelper {
     }
 
     @Async("threadPoolValidation")
-    public CompletableFuture<List<LibraryErrors>> validate(List<CQLCode> valueSetList,
+    public CompletableFuture<List<LibraryErrors>> validate(long timeout,
+                                                           List<CQLCode> valueSetList,
                                                            String cql,
                                                            String umlsToken) {
-        List<CQLCode> failingCodes = vsacCodeSystemValidator.validate(valueSetList, umlsToken);
+        List<CQLCode> failingCodes = vsacCodeSystemValidator.validate(timeout, valueSetList, umlsToken);
 
         if (failingCodes.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());

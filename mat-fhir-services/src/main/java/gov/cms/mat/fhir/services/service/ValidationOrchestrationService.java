@@ -40,10 +40,12 @@ public class ValidationOrchestrationService {
                                            String ulmsToken,
                                            ValidationRequest validationRequest) {
         List<CompletableFuture<List<LibraryErrors>>> futures = new ArrayList<>();
+        long validationTimeout = Math.max(validationRequest.getTimeoutSeconds(),validationPoolTimeOut);
+
 
         if (validationRequest.isValidateCqlToElm()) {
             CompletableFuture<List<LibraryErrors>> f = validationService.validateCql(cql);
-            f.orTimeout(validationPoolTimeOut, TimeUnit.SECONDS); //todo add this as config yaml parameter
+            f.orTimeout(validationTimeout, TimeUnit.SECONDS); //todo add this as config yaml parameter
             futures.add(f);
         }
 
@@ -53,8 +55,11 @@ public class ValidationOrchestrationService {
                         cqlModel.getLibraryName(), cqlModel.getVersionUsed());
             } else {
                 CompletableFuture<List<LibraryErrors>> f =
-                        valueSetValidator.validate(cqlModel.getValueSetList(), cql, ulmsToken);
-                f.orTimeout(validationPoolTimeOut, TimeUnit.SECONDS); //todo add this as config yaml parameter
+                        valueSetValidator.validate(validationRequest.getTimeoutSeconds(),
+                                cqlModel.getValueSetList(),
+                                cql,
+                                ulmsToken);
+                f.orTimeout(validationTimeout, TimeUnit.SECONDS); //todo add this as config yaml parameter
                 futures.add(f);
             }
         }
@@ -64,8 +69,11 @@ public class ValidationOrchestrationService {
                 log.debug("No code systems to validate for library: {}-{}", cqlModel.getLibraryName(), cqlModel.getVersionUsed());
             } else {
                 CompletableFuture<List<LibraryErrors>> f =
-                       codeSystemValidator.validate(cqlModel.getCodeList(), cql, ulmsToken);
-                f.orTimeout(validationPoolTimeOut, TimeUnit.SECONDS); //todo add this as config yaml parameter
+                       codeSystemValidator.validate(validationRequest.getTimeoutSeconds(),
+                               cqlModel.getCodeList(),
+                               cql,
+                               ulmsToken);
+                f.orTimeout(validationTimeout, TimeUnit.SECONDS); //todo add this as config yaml parameter
                 futures.add(f);
             }
         }

@@ -73,8 +73,7 @@ public class MatXmlController {
     private final ValidationOrchestrationService validationOrchestrationService;
     private XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
 
-    public MatXmlController(
-                            MeasureXmlRepository measureXmlRepo,
+    public MatXmlController(MeasureXmlRepository measureXmlRepo,
                             MeasureExportRepository measureExportRepo,
                             CqlLibraryRepository cqlLibRepo,
                             CqlLibraryExportRepository cqlLibExportRepo,

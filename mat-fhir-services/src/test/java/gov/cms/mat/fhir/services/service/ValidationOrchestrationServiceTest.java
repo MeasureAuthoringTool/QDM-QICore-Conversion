@@ -116,7 +116,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
 
     @Test
     void validateValueSets() {
-        when(valueSetValidator.validate(cqlModel.getValueSetList(), cql, TOKEN))
+        when(valueSetValidator.validate(0, cqlModel.getValueSetList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors)));
 
         ValidationRequest validationRequest = getValidationRequest(true, false, false);
@@ -131,7 +131,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
 
     @Test
     void validateCodeSystems() {
-        when(codeSystemValidator.validate(cqlModel.getCodeList(), cql, TOKEN))
+        when(codeSystemValidator.validate(0, cqlModel.getCodeList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors)));
 
         ValidationRequest validationRequest = getValidationRequest(false, true, false);
@@ -156,14 +156,14 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         when(validationService.validateCql(cql)).thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors, externalLibError)));
 
         LibraryErrors valueSetErrors = new LibraryErrors(LIB_NAME, LIB_VERSION); // no errors
-        when(valueSetValidator.validate(cqlModel.getValueSetList(), cql, TOKEN))
+        when(valueSetValidator.validate(0, cqlModel.getValueSetList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(valueSetErrors)));
 
         LibraryErrors codeSystemErrors = new LibraryErrors(LIB_NAME, LIB_VERSION);
         CQLError start = buildError(1);
         codeSystemErrors.getErrors().add(start);
 
-        when(codeSystemValidator.validate(cqlModel.getCodeList(), cql, TOKEN))
+        when(codeSystemValidator.validate(0, cqlModel.getCodeList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(codeSystemErrors)));
 
 

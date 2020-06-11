@@ -16,7 +16,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -43,7 +48,7 @@ class VsacValueSetValidatorTest implements CqlHelper {
     @Test
     void validateBlankToken() {
         cqlModel.getValueSetList().forEach(c -> c.setValidatedWithVsac(VsacStatus.IN_VALID));
-        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(cqlModel.getValueSetList(), "");
+        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), "");
 
         assertEquals(cqlModel.getValueSetList().size(), dtoList.size());
 
@@ -56,7 +61,7 @@ class VsacValueSetValidatorTest implements CqlHelper {
     void validateAllValidatedWithVsac() {
         cqlModel.getValueSetList().forEach(c -> c.setValidatedWithVsac(VsacStatus.VALID));
 
-        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(cqlModel.getValueSetList(), TOKEN);
+        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN);
 
         assertTrue(dtoList.isEmpty()); // since all we valid nothing to do to create errors
 
@@ -68,7 +73,7 @@ class VsacValueSetValidatorTest implements CqlHelper {
         cqlModel.getValueSetList().forEach(c -> c.setValidatedWithVsac(VsacStatus.IN_VALID));
         when(valueSetVsacAsync.validateWithVsac(any(), anyString())).thenReturn(CompletableFuture.completedFuture(null));
 
-        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(cqlModel.getValueSetList(), TOKEN);
+        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN);
 
         assertEquals(cqlModel.getValueSetList().size(), dtoList.size());
 

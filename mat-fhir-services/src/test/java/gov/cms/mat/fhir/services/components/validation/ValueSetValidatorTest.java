@@ -40,10 +40,10 @@ class ValueSetValidatorTest implements CqlHelper {
 
     @Test
     void validateNoFailingValueSets() throws ExecutionException, InterruptedException {
-        when(vsacValueSetValidator.validate(cqlModel.getValueSetList(), TOKEN)).thenReturn(Collections.emptyList());
+        when(vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN)).thenReturn(Collections.emptyList());
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                valueSetValidator.validate(cqlModel.getValueSetList(), cql, TOKEN);
+                valueSetValidator.validate(0, cqlModel.getValueSetList(), cql, TOKEN);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 
@@ -52,11 +52,11 @@ class ValueSetValidatorTest implements CqlHelper {
 
     @Test
     void validateFailingValueSets() throws ExecutionException, InterruptedException {
-        when(vsacValueSetValidator.validate(cqlModel.getValueSetList(), TOKEN))
+        when(vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN))
                 .thenReturn(List.of(cqlModel.getValueSetList().get(0), cqlModel.getValueSetList().get(1)));
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                valueSetValidator.validate(cqlModel.getValueSetList(), cql, TOKEN);
+                valueSetValidator.validate(0, cqlModel.getValueSetList(), cql, TOKEN);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 

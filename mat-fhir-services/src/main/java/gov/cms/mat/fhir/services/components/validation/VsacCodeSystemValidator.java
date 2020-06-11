@@ -28,7 +28,8 @@ public class VsacCodeSystemValidator extends VsacValidator {
         this.codeSystemVsacAsync = codeSystemVsacAsync;
     }
 
-    public List<CQLCode> validate(List<CQLCode> codeList, String umlsToken) {
+    public List<CQLCode> validate(long timeout, List<CQLCode> codeList, String umlsToken) {
+        long codeSystemTimeout = Math.max(timeout,codeSystemValidationPoolTimeout);
         if (StringUtils.isBlank(umlsToken)) {
             setAllNotValid(codeList, VsacStatus.IN_VALID, BLANK_UMLS_TOKEN);
         } else {
@@ -42,7 +43,7 @@ public class VsacCodeSystemValidator extends VsacValidator {
 
             validationList.forEach(cqlCode -> {
                 CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, umlsToken);
-                completableFuture.orTimeout(codeSystemValidationPoolTimeout, TimeUnit.SECONDS);
+                completableFuture.orTimeout(codeSystemTimeout, TimeUnit.SECONDS);
                 futures.add(completableFuture);
             });
 
