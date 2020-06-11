@@ -204,9 +204,9 @@ public class CqlCqlUtilsTest {
     @Disabled
     @Test
     public void testParseValidOidUrl() {
-        String url = "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.17.4077.3.2055";
-        String result = CqlUtils.parseOid(url);
-        assertEquals(result, "2.16.840.1.113883.17.4077.3.2055");
+//        String url = "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.17.4077.3.2055";
+//        String result = CqlUtils.parseOid(url);
+//        assertEquals(result, "2.16.840.1.113883.17.4077.3.2055");
     }
 
     @Test

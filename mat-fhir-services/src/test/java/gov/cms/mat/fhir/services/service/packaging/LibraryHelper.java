@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.service.packaging;
 
-import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.CqlTextParser;
 import gov.cms.mat.cql.elements.LibraryProperties;
 import org.hl7.fhir.r4.model.Library;
 
@@ -11,9 +11,9 @@ import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.CQL_CONT
 
 public interface LibraryHelper {
     default Library createLib(String cql) {
-        CqlParser cqlParser = new CqlParser(cql);
+        CqlTextParser cqlTextParser = new CqlTextParser(cql);
 
-        LibraryProperties libraryProperties = cqlParser.getLibrary();
+        LibraryProperties libraryProperties = cqlTextParser.getLibrary();
 
         Library library = new Library();
         library.setId(UUID.randomUUID().toString());

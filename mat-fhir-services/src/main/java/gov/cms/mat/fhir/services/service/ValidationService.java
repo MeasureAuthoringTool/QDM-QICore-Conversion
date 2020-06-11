@@ -24,7 +24,7 @@ public class ValidationService {
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
     }
 
-    @Async("threadPoolTaskExecutor")
+    @Async("threadPoolValidation")
     public CompletableFuture<List<LibraryErrors>> validateCql(String cql) {
         log.info("Running async validateCql");
 
@@ -61,8 +61,6 @@ public class ValidationService {
         cqlError.setErrorAtOffset(cqlConversionError.getEndChar());
 
         return cqlError;
-
-
     }
 
     private LibraryErrors findOrCreate(CqlConversionError cqlError, List<LibraryErrors> libraryErrors) {

@@ -8,13 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
-public class CqlParser implements
+public class CqlTextParser implements
         IncludeParser, UsingParser, LibraryParser, DefineParser, UnionParser, ValueSetParser, CodeSystemParser {
 
     final String[] lines;
     String cql;
 
-    public CqlParser(String cql) {
+    public CqlTextParser(String cql) {
         this.cql = cql;
         lines = cql.split("\\r?\\n");
     }

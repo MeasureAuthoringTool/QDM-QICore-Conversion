@@ -48,3 +48,13 @@ management:
 info:
   app:
     name: Mat Fhir Services
+
+validation-core-pool-size: 20
+validation-pool-timeout: 31
+
+valueset-vsac-validation-core-pool-size: 5
+valueset-validation-pool-timeout: 30
+
+code-system-vsac-validation-core-pool-size: 5
+code-system-validation-pool-timeout: 30
+

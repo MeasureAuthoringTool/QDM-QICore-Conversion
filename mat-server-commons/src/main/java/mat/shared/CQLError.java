@@ -23,9 +23,6 @@ public class CQLError implements IsSerializable, Comparable<CQLError> {
 	private String errorMessage;
 	private String severity;
 
-
-	//todo when merging results merging Errors based on the line #
-
 	@Override
     public int compareTo(CQLError o) {
            if(this.errorInLine > o.errorInLine) {

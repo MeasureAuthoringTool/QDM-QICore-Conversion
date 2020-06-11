@@ -2,6 +2,7 @@ package mat.model.cql;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import java.beans.Transient;
 import java.util.Objects;
 
 /**
@@ -43,13 +44,14 @@ public class CQLCode implements CQLExpression, IsSerializable {
 
 	private boolean isCodeSystemVersionIncluded;
 
-	private boolean isValidatedWithVsac = true;
+	private VsacStatus isValidatedWithVsac = VsacStatus.VALID;
+
+	//This for micro service side only
+	private String errorMessage;
 
 	public boolean isIsCodeSystemVersionIncluded() {
 		return isCodeSystemVersionIncluded;
 	}
-
-
 
 	public void setIsCodeSystemVersionIncluded(boolean isCodeSystemVersionIncluded) {
 		this.isCodeSystemVersionIncluded = isCodeSystemVersionIncluded;
@@ -199,11 +201,11 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	}
 
 
-	public boolean isValidatedWithVsac() {
+	public VsacStatus isValidatedWithVsac() {
 		return isValidatedWithVsac;
 	}
 
-	public void setValidatedWithVsac(boolean validatedWithVsac) {
+	public void setValidatedWithVsac(VsacStatus validatedWithVsac) {
 		isValidatedWithVsac = validatedWithVsac;
 	}
 
@@ -217,6 +219,14 @@ public class CQLCode implements CQLExpression, IsSerializable {
 
 	public void setCodeSystemVersionIncluded(boolean codeSystemVersionIncluded) {
 		isCodeSystemVersionIncluded = codeSystemVersionIncluded;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 
 	@Override
