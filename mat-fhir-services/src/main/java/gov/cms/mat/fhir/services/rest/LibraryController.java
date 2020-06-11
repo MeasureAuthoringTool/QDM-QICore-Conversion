@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "/library")
 @Tag(name = "Library-Controller", description = "API for converting MAT Libraries to FHIR")
@@ -22,7 +24,7 @@ public class LibraryController implements FhirValidatorProcessor {
     private final HapiFhirServer hapiFhirServer;
     private final LibraryMapper libraryMapper;
 
-    public LibraryController(HapiFhirServer hapiFhirServer,
+    public LibraryController(@Valid HapiFhirServer hapiFhirServer,
                              LibraryMapper libraryMapper) {
 
         this.hapiFhirServer = hapiFhirServer;

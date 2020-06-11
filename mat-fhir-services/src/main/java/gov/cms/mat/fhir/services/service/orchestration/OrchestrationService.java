@@ -13,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @Slf4j
 public class OrchestrationService {
@@ -58,7 +56,7 @@ public class OrchestrationService {
         try {
 
             if (properties.getXmlSource() == XmlSource.SIMPLE) {
-                processAndGetCqlLibraries(properties);
+                processAndGetMeasureLib(properties);
             } else {
                 processDraft(properties);
             }
@@ -84,14 +82,13 @@ public class OrchestrationService {
         draftMeasureXmlProcessor.processMeasure(properties.getMatMeasure(), properties.isShowWarnings());
     }
 
-    public void processAndGetCqlLibraries(OrchestrationProperties properties) {
+    public void processAndGetMeasureLib(OrchestrationProperties properties) {
 
-        List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesRequired(properties);
+        CqlLibrary cqlLib = libraryOrchestrationConversionService.getCqlLibRequired(properties);
 
-        cqlLibraries.forEach(c -> processCqlLibrary(c, properties.isShowWarnings()));
+        processCqlLibrary(cqlLib, properties.isShowWarnings());
 
-        properties.getCqlLibraries()
-                .addAll(cqlLibraries);
+        properties.setMeasureLib(cqlLib);
     }
 
     public String processCqlLibrary(CqlLibrary cqlLibrary, boolean showWarnings) {

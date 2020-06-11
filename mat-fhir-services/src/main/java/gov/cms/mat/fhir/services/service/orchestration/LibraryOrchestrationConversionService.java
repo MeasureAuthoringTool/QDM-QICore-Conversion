@@ -12,7 +12,6 @@ import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.LIBRARY_CONVERSION_FAILED;
@@ -31,16 +30,12 @@ public class LibraryOrchestrationConversionService extends LibraryOrchestrationB
         this.cqlLibraryDataService = cqlLibraryDataService;
     }
 
-    boolean convert(OrchestrationProperties properties) {
+    public boolean convert(OrchestrationProperties properties) {
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
-
-        properties.getCqlLibraries()
-                .forEach(matLib -> persist(properties, atomicBoolean, matLib));
-
+        persist(properties, atomicBoolean, properties.getMeasureLib());
         if (!atomicBoolean.get()) {
             ConversionReporter.setTerminalMessage(FAILURE_MESSAGE_PERSIST, LIBRARY_CONVERSION_FAILED);
         }
-
         return atomicBoolean.get();
     }
 
@@ -54,7 +49,7 @@ public class LibraryOrchestrationConversionService extends LibraryOrchestrationB
         }
     }
 
-    public List<CqlLibrary> getCqlLibrariesRequired(OrchestrationProperties properties) {
-        return cqlLibraryDataService.getCqlLibrariesByMeasureIdRequired(properties.getMeasureId());
+    public CqlLibrary getCqlLibRequired(OrchestrationProperties properties) {
+        return cqlLibraryDataService.getMeasureLib(properties.getMeasureId());
     }
 }

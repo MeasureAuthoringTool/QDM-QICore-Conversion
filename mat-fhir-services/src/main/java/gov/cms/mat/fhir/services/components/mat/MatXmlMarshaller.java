@@ -18,7 +18,7 @@ import java.io.UncheckedIOException;
 
 @Component
 @Slf4j
-class MatXmlMarshaller {
+public class MatXmlMarshaller {
     private final XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
 
     ManageCompositeMeasureDetailModel toCompositeMeasureDetail(String xml) {

@@ -4,8 +4,8 @@ spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/MAT_APP_BLANK?serverTimezone=UTC&max_allowed_packet=16777216
-    username: ${MAT_DB_USER:mat}
-    password: ${MAT_DB_PASS:mat}
+    username: mat
+    password: mat
   jpa:
     hibernate.ddl-auto: none
     hibernate:
@@ -46,6 +46,7 @@ logging:
 fhir:
   r4:
     baseurl: ${HAPI_FHIR_URL:http://localhost:6060/hapi-fhir-jpaserver/fhir/}
+    public-url: ${HAPI_FHIR_URL_PUBLIC:http://localhost:6060/hapi-fhir-jpaserver/fhir/}
 
 qdmqicore:
   conversion:

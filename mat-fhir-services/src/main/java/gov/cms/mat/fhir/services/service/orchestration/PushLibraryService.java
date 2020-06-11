@@ -33,7 +33,7 @@ public class PushLibraryService implements FhirValidatorProcessor {
 
         checkStandAloneLibrary(cqlLibrary, "QDM");
 
-        orchestrationProperties.getCqlLibraries().add(cqlLibrary);
+        orchestrationProperties.setMeasureLib(cqlLibrary);
 
         libraryOrchestrationService.process(orchestrationProperties);
 
@@ -45,7 +45,7 @@ public class PushLibraryService implements FhirValidatorProcessor {
 
         checkStandAloneLibrary(cqlLibrary, "FHIR");
 
-        orchestrationProperties.getCqlLibraries().add(cqlLibrary);
+        orchestrationProperties.setMeasureLib(cqlLibrary);
 
         return draftMeasureXmlProcessor.pushStandAlone(id, cqlLibrary.getCqlXml());
     }

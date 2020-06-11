@@ -22,8 +22,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
-import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.CQL_CONTENT_TYPE;
-
 @Service
 @Slf4j
 public class LibraryFinderService implements CqlVersionConverter, FhirLibraryHelper {
@@ -99,7 +97,7 @@ public class LibraryFinderService implements CqlVersionConverter, FhirLibraryHel
             throw new CqlLibraryNotFoundException("Cannot find attachments for library name: " + name + ", version: " + version);
         }
 
-        Attachment cql = findCqlAttachment(library, CQL_CONTENT_TYPE);
+        Attachment cql = findCqlAttachment(library, "text/cql");
 
         return new String(cql.getData());
     }
