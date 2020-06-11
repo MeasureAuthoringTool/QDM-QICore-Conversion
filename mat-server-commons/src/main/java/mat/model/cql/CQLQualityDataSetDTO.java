@@ -44,7 +44,7 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 	private String program; 
 	private boolean dataTypeHasRemoved;
 	private String valueSetType;
-	private VsacStatus isValidatedWithVsac = VsacStatus.VALID;
+	private String isValidatedWithVsac = VsacStatus.VALID.toString();
 	//This for micro service side only
 	private String errorMessage;
 
@@ -277,11 +277,20 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 		this.valueSetType = valueSetType;
 	}
 
-	public void setValidatedWithVsac(VsacStatus validatedWithVsac) {
-		isValidatedWithVsac = validatedWithVsac;
+
+	public VsacStatus obtainValidatedWithVsac() {
+		if (isValidatedWithVsac == null) {
+			return null;
+		}
+
+		return VsacStatus.valueOf(isValidatedWithVsac);
 	}
 
-	public VsacStatus isValidatedWithVsac() {
+	public void setValidatedWithVsac(VsacStatus validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac.toString();
+	}
+
+	public String isValidatedWithVsac() {
 		return isValidatedWithVsac;
 	}
 

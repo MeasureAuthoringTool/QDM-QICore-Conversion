@@ -35,7 +35,7 @@ class VsacValueSetValidator extends VsacValidator {
             setAllNotValid(valueSetList, VsacStatus.PENDING, null);
 
             List<CQLQualityDataSetDTO> validationList = valueSetList.stream()
-                    .filter(c -> c.isValidatedWithVsac() != VsacStatus.VALID)
+                    .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                     .collect(Collectors.toList());
 
             List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -50,13 +50,13 @@ class VsacValueSetValidator extends VsacValidator {
         }
 
         return valueSetList.stream()
-                .filter(c -> c.isValidatedWithVsac() != VsacStatus.VALID)
+                .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                 .collect(Collectors.toList());
     }
 
     private void setAllNotValid(List<CQLQualityDataSetDTO> valueSetList, VsacStatus status, String message) {
         valueSetList.stream()
-                .filter(c -> c.isValidatedWithVsac() != VsacStatus.VALID)
+                .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                 .forEach(c -> {
                     c.setValidatedWithVsac(status);
                     c.setErrorMessage(message);

@@ -2,7 +2,6 @@ package mat.model.cql;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import java.beans.Transient;
 import java.util.Objects;
 
 /**
@@ -32,19 +31,19 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	
 	/** The Display Name. */
 	private String displayName;
-	
-	
+
+
 	private String codeIdentifier;
 
 	private boolean isUsed;
-	
-	private boolean readOnly; 
-	
+
+	private boolean readOnly;
+
 	private String suffix;
 
 	private boolean isCodeSystemVersionIncluded;
 
-	private VsacStatus isValidatedWithVsac = VsacStatus.VALID;
+	private String isValidatedWithVsac = VsacStatus.VALID.toString();
 
 	//This for micro service side only
 	private String errorMessage;
@@ -201,12 +200,20 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	}
 
 
-	public VsacStatus isValidatedWithVsac() {
+	public String isValidatedWithVsac() {
 		return isValidatedWithVsac;
 	}
 
+	public VsacStatus obtainValidatedWithVsac() {
+		if (isValidatedWithVsac == null) {
+			return null;
+		}
+
+		return VsacStatus.valueOf(isValidatedWithVsac);
+	}
+
 	public void setValidatedWithVsac(VsacStatus validatedWithVsac) {
-		isValidatedWithVsac = validatedWithVsac;
+		isValidatedWithVsac = validatedWithVsac.toString();
 	}
 
 	public String getCodeSystemVersionUri() {
