@@ -49,7 +49,7 @@ info:
   app:
     name: Mat Fhir Services
 
-validation-core-pool-size: 20
+validation-core-pool-size: 5
 validation-pool-timeout: 31
 
 valueset-vsac-validation-core-pool-size: 5

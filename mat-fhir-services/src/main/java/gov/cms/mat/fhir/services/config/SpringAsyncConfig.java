@@ -22,7 +22,7 @@ public class SpringAsyncConfig {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(validationPoolCoreSize);
         executor.setMaxPoolSize(validationPoolCoreSize * 5);
-        executor.setQueueCapacity(validationPoolCoreSize * 50);
+        executor.setQueueCapacity(validationPoolCoreSize * 10);
         executor.setThreadNamePrefix("FHIR-ASYNC-");
 
         executor.initialize();
@@ -35,7 +35,7 @@ public class SpringAsyncConfig {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(valuesetVsacValidationCorePoolSize);
         executor.setMaxPoolSize(valuesetVsacValidationCorePoolSize);
-        executor.setQueueCapacity(valuesetVsacValidationCorePoolSize * 50);
+        executor.setQueueCapacity(valuesetVsacValidationCorePoolSize * 10);
         executor.setThreadNamePrefix("V-SET-ASYNC-");
 
         executor.initialize();
@@ -48,7 +48,7 @@ public class SpringAsyncConfig {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(codesSystemVsacValidationCorePoolSize);
         executor.setMaxPoolSize(codesSystemVsacValidationCorePoolSize);
-        executor.setQueueCapacity(codesSystemVsacValidationCorePoolSize * 50);
+        executor.setQueueCapacity(codesSystemVsacValidationCorePoolSize * 10);
         executor.setThreadNamePrefix("CODE-SYSTEM-ASYNC-");
 
         executor.initialize();
