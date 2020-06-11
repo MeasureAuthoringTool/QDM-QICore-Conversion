@@ -31,6 +31,8 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
     private static final String LIB_NAME = "Covid-22";
     private static final String LIB_VERSION = "1.0.000";
 
+    private static final int VALIDATION_POOL_TIME_OUT = 30;
+
     @Mock
     private ValidationService validationService;
     @Mock
@@ -55,7 +57,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         cqlError = buildError(Integer.MAX_VALUE);
         libraryErrors.getErrors().add(cqlError);
 
-        ReflectionTestUtils.setField(validationOrchestrationService, "validationPoolTimeOut", 30);
+        ReflectionTestUtils.setField(validationOrchestrationService, "validationPoolTimeOut", VALIDATION_POOL_TIME_OUT);
     }
 
     @Test
@@ -116,7 +118,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
 
     @Test
     void validateValueSets() {
-        when(valueSetValidator.validate(0, cqlModel.getValueSetList(), cql, TOKEN))
+        when(valueSetValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getValueSetList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors)));
 
         ValidationRequest validationRequest = getValidationRequest(true, false, false);
@@ -131,7 +133,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
 
     @Test
     void validateCodeSystems() {
-        when(codeSystemValidator.validate(0, cqlModel.getCodeList(), cql, TOKEN))
+        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors)));
 
         ValidationRequest validationRequest = getValidationRequest(false, true, false);
@@ -156,14 +158,14 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         when(validationService.validateCql(cql)).thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors, externalLibError)));
 
         LibraryErrors valueSetErrors = new LibraryErrors(LIB_NAME, LIB_VERSION); // no errors
-        when(valueSetValidator.validate(0, cqlModel.getValueSetList(), cql, TOKEN))
+        when(valueSetValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getValueSetList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(valueSetErrors)));
 
         LibraryErrors codeSystemErrors = new LibraryErrors(LIB_NAME, LIB_VERSION);
         CQLError start = buildError(1);
         codeSystemErrors.getErrors().add(start);
 
-        when(codeSystemValidator.validate(0, cqlModel.getCodeList(), cql, TOKEN))
+        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(codeSystemErrors)));
 
 
@@ -208,6 +210,8 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         validationRequest.setValidateCqlToElm(validateCqlToElm);
 
         validationRequest.setValidateSyntax(false); // todo add test for this when added
+
+        validationRequest.setTimeoutSeconds(VALIDATION_POOL_TIME_OUT);
         return validationRequest;
     }
 
