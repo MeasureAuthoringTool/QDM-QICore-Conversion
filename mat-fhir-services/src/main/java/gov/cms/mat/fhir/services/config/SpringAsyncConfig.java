@@ -14,25 +14,17 @@ public class SpringAsyncConfig {
 
     @Bean(name = "threadPoolValidation")
     public ThreadPoolTaskExecutor threadPoolValidation() {
-        MatFhirConfiguration.ThreadPoolConfigurations configuration = findConfiguration("threadPoolValidation");
-
-        return createThreadPool(configuration, "FHIR-ASYNC-");
+        return createThreadPool("threadPoolValidation", "VALIDATION-ASYNC-");
     }
 
     @Bean(name = "valueSetTheadPoolValidation")
     public ThreadPoolTaskExecutor valueSetThreadPoolValidation() {
-        MatFhirConfiguration.ThreadPoolConfigurations configuration =
-                findConfiguration("valueSetTheadPoolValidation");
-
-        return createThreadPool(configuration, "V-SET-ASYNC-");
+        return createThreadPool("valueSetTheadPoolValidation", "VAL-SET-ASYNC-");
     }
 
     @Bean(name = "codeSystemTheadPoolValidation")
     public ThreadPoolTaskExecutor codeSystemThreadPoolValidation() {
-        MatFhirConfiguration.ThreadPoolConfigurations configuration =
-                findConfiguration("codeSystemTheadPoolValidation");
-
-        return createThreadPool(configuration, "V-SET-ASYNC-");
+        return createThreadPool("codeSystemTheadPoolValidation", "CODE-SYS-ASYNC-");
     }
 
     private MatFhirConfiguration.ThreadPoolConfigurations findConfiguration(String name) {
@@ -42,9 +34,9 @@ public class SpringAsyncConfig {
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find ThreadPoolConfiguration with name: " + name));
     }
 
+    private ThreadPoolTaskExecutor createThreadPool(String name, String prefix) {
+        MatFhirConfiguration.ThreadPoolConfigurations configuration = findConfiguration(name);
 
-    private ThreadPoolTaskExecutor createThreadPool(MatFhirConfiguration.ThreadPoolConfigurations configuration,
-                                                    String prefix) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(configuration.getCorePoolSize());
         executor.setMaxPoolSize(configuration.getMaxPoolSize());
