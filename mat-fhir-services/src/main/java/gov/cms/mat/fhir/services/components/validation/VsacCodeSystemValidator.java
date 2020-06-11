@@ -36,7 +36,7 @@ public class VsacCodeSystemValidator extends VsacValidator {
             setAllNotValid(codeList, VsacStatus.PENDING, null);
 
             List<CQLCode> validationList = codeList.stream()
-                    .filter(c -> c.isValidatedWithVsac() != VsacStatus.VALID)
+                    .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                     .collect(Collectors.toList());
 
             List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -51,13 +51,13 @@ public class VsacCodeSystemValidator extends VsacValidator {
         }
 
         return codeList.stream()
-                .filter(c -> c.isValidatedWithVsac() != VsacStatus.VALID)
+                .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                 .collect(Collectors.toList());
     }
 
     private void setAllNotValid(List<CQLCode> codeList, VsacStatus status, String message) {
         codeList.stream()
-                .filter(c -> c.isValidatedWithVsac() != VsacStatus.VALID)
+                .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                 .forEach(c -> {
                     c.setValidatedWithVsac(status);
                     c.setErrorMessage(message);

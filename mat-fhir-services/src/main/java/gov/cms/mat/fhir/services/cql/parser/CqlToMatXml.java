@@ -102,7 +102,7 @@ public class CqlToMatXml implements CqlVisitor {
                 code.setValidatedWithVsac(isDirectReferenceCodeValid(code.getCodeIdentifier(), umlsToken) ? VsacStatus.VALID : VsacStatus.IN_VALID);
             }
             log.info("Validated code {} with vsac. {}", code.getCodeIdentifier(), code.isValidatedWithVsac());
-            return new CodeValidation(code, code.isValidatedWithVsac() == VsacStatus.VALID);
+            return new CodeValidation(code, code.obtainValidatedWithVsac() == VsacStatus.VALID);
         }
     }
 
@@ -167,7 +167,7 @@ public class CqlToMatXml implements CqlVisitor {
                 valueSet.setValidatedWithVsac(isMostRecentValueSetByOidValid(oid, umlsToken) ? VsacStatus.VALID : VsacStatus.IN_VALID);
             }
             log.info("Validated valueset {} with vsac. {}", oid, valueSet.isValidatedWithVsac());
-            return new ValueSetValidation(valueSet, valueSet.isValidatedWithVsac() == VsacStatus.VALID );
+            return new ValueSetValidation(valueSet, valueSet.obtainValidatedWithVsac() == VsacStatus.VALID );
         }
     }
 
@@ -492,7 +492,7 @@ public class CqlToMatXml implements CqlVisitor {
                 ec -> StringUtils.equals(ec.getCodeName(), c.getCodeName()) &&
                         StringUtils.equals(ec.getCodeSystemName(), c.getCodeSystemName()));
 
-        c.setValidatedWithVsac(existingCode.map(CQLCode::isValidatedWithVsac).orElse(VsacStatus.IN_VALID));
+        c.setValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).orElse(VsacStatus.IN_VALID));
         c.setCodeIdentifier(existingCode.isPresent() ?
                 existingCode.get().getCodeIdentifier() :
                 buildCodeIdentifier(c));

@@ -55,6 +55,4 @@ public class SpringAsyncConfig {
 
         return executor;
     }
-
-
 }
