@@ -49,20 +49,20 @@ class CodeSystemVsacAsync extends VsacValidator {
             throw new VsacCodeSystemValidatorException(URL_IS_REQUIRED);
         }
 
-//        CQLModelValidator validator = new CQLModelValidator();
-//
-//        if (validator.validateForCodeIdentifier(url)) {
-//            throw new VsacCodeSystemValidatorException(INVALID_CODE_URL);
-//        }
+        CQLModelValidator validator = new CQLModelValidator();
+
+        if (validator.validateForCodeIdentifier(url)) {
+            throw new VsacCodeSystemValidatorException(INVALID_CODE_URL);
+        }
 
         String fiveMinServiceTicket = fetchFiveMinuteTicket(umlsToken);
 
-//        if (url.contains(":")) {
-//            String[] arg = url.split(":");
-//            if (arg.length > 0 && arg[1] != null) {
-//                url = arg[1];
-//            }
-//        }
+        if (url.contains(":")) {
+            String[] arg = url.split(":");
+            if (arg.length > 0 && arg[1] != null) {
+                url = arg[1];
+            }
+        }
 
         VSACResponseResult vsacResponseResult = vsacService.getDirectReferenceCode(url, fiveMinServiceTicket);
 

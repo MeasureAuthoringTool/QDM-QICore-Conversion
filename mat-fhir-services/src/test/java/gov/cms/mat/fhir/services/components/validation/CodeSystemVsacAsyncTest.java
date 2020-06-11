@@ -34,7 +34,7 @@ class CodeSystemVsacAsyncTest {
     @BeforeEach
     void setUp() {
         cqlCode = new CQLCode();
-        cqlCode.setCodeIdentifier("http://terminology.hl7.org/CodeSystem/request-intent");
+        cqlCode.setCodeIdentifier("CODE:/CodeSystem/LOINC/Version/2.66/Code/21112-8/Info");
     }
 
     @Test
