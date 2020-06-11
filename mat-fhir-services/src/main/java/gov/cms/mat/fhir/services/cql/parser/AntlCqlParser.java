@@ -132,7 +132,7 @@ public class AntlCqlParser implements CqlParser {
 
         @Override
         public void enterUsingDefinition(cqlParser.UsingDefinitionContext ctx) {
-            visitor.usingModelVersionTag(getUnquotedFullText(ctx.modelIdentifier()), getUnquotedFullText(ctx.versionSpecifier()));
+            visitor.usingModelVersionTag(getUnquotedFullText(ctx.modelIdentifier()), getUnquotedFullText(ctx.versionSpecifier()), getExpressionComment(ctx));
         }
 
         @Override
@@ -300,7 +300,7 @@ public class AntlCqlParser implements CqlParser {
         public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
                                 String msg, RecognitionException e) {
             CQLError error = new CQLError();
-            error.setSeverity("Error");
+            error.setSeverity("Severe");
             error.setErrorMessage(msg);
             error.setErrorInLine(line - 1);
             error.setErrorAtOffset(charPositionInLine);

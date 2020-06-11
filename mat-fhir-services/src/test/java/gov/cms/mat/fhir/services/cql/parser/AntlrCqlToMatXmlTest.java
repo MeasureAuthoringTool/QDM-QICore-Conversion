@@ -319,6 +319,19 @@ public class AntlrCqlToMatXmlTest {
         assertEquals("testpopulationfunction comment", destination.getCqlFunctions().get(1).getCommentString());
     }
 
+
+    @Test
+    public void testLibrary() throws Exception {
+        var destination = parseModel("testlibrary_fhir.cql");
+
+        assertThat("a library comment", Matchers.equalToCompressingWhiteSpace(destination.getLibraryComment()));
+
+        assertEquals("test", destination.getLibraryName());
+        assertEquals("0.0.1", destination.getVersionUsed());
+        assertEquals("FHIR", destination.getUsingModel());
+        assertEquals("4.0.1", destination.getUsingModelVersion());
+    }
+
     @Test
     public void tesParameterComment() throws Exception {
 
