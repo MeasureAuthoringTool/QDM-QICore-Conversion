@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
@@ -59,8 +57,6 @@ public class MatXmlController {
     public static class MatXmlResponse {
         @NotNull
         private List<LibraryErrors> errors = new ArrayList<>();
-        @JsonSerialize(using = CqlModelSerializer.class)
-        @JsonDeserialize(using = CqlModelDeserializer.class)
         @NotNull
         private CQLModel cqlModel;
         @NotBlank
@@ -80,9 +76,7 @@ public class MatXmlController {
     public static class MatCqlXmlReq extends MatXmlReq {
         @NotBlank
         private String cql;
-        @JsonSerialize(using = CqlModelSerializer.class)
-        @JsonDeserialize(using = CqlModelDeserializer.class)
-        private CQLModel previousModel;
+        private CQLModel sourceModel;
     }
 
     private MeasureXmlRepository measureXmlRepo;
@@ -210,7 +204,7 @@ public class MatXmlController {
         try {
             MatXmlResponse resp = run(umlsToken,
                     matCqlXmlReq.getCql(),
-                    matCqlXmlReq.getPreviousModel(),
+                    matCqlXmlReq.getSourceModel(),
                     matCqlXmlReq);
             log.debug("MatXmlController::fromCql -> exit {}", resp);
             return resp;
@@ -241,6 +235,7 @@ public class MatXmlController {
             newModel.setUsingModelVersion(existingModel.getUsingModelVersion());
             newModel.setUsingModel(existingModel.getUsingModel());
             newModel.setVersionUsed(existingModel.getVersionUsed());
+            newModel.setLibraryComment(existingModel.getLibraryComment());
         }
 
         if (!cqlToMatXml.getErrors().isEmpty()) {

@@ -26,6 +26,7 @@ public class CqlModelSerializationTest {
         origPreviousModel.setVersionUsed("1.1");
         origPreviousModel.setUsingModel("FHIR");
         origPreviousModel.setUsingModelVersion("4.0.1");
+        origPreviousModel.setLibraryComment("Library comment");
 
         CQLIncludeLibrary incLib1 = new CQLIncludeLibrary();
         incLib1.setCqlLibraryId("lib1Id");
@@ -37,24 +38,25 @@ public class CqlModelSerializationTest {
         inclLibModel.setLibraryName("libCqmModel");
 
         origPreviousModel.getIncludedLibrarys().put(incLib1, inclLibModel);
-        origReq.setPreviousModel(origPreviousModel);
+        origReq.setSourceModel(origPreviousModel);
 
         String serializedToXml = mapper.writeValueAsString(origReq);
 
         MatXmlController.MatCqlXmlReq deserializeReq = mapper.readValue(serializedToXml, MatXmlController.MatCqlXmlReq.class);
         assertNotNull(deserializeReq);
-        assertNotNull(deserializeReq.getPreviousModel());
-        assertEquals("measure1", deserializeReq.getPreviousModel().getLibraryName());
-        assertEquals("1.1", deserializeReq.getPreviousModel().getVersionUsed());
-        assertEquals("FHIR", deserializeReq.getPreviousModel().getUsingModel());
-        assertEquals("4.0.1", deserializeReq.getPreviousModel().getUsingModelVersion());
+        assertNotNull(deserializeReq.getSourceModel());
+        assertEquals("measure1", deserializeReq.getSourceModel().getLibraryName());
+        assertEquals("1.1", deserializeReq.getSourceModel().getVersionUsed());
+        assertEquals("FHIR", deserializeReq.getSourceModel().getUsingModel());
+        assertEquals("4.0.1", deserializeReq.getSourceModel().getUsingModelVersion());
+        assertEquals("Library comment", deserializeReq.getSourceModel().getLibraryComment());
         // Include libraries are not serialized
-        assertEquals(0, deserializeReq.getPreviousModel().getIncludedLibrarys().size());
+        assertEquals(0, deserializeReq.getSourceModel().getIncludedLibrarys().size());
         // Include libraries are not serialized
-        assertEquals(0, deserializeReq.getPreviousModel().getIncludedCQLLibXMLMap().size());
+        assertEquals(0, deserializeReq.getSourceModel().getIncludedCQLLibXMLMap().size());
 
-        assertEquals(1, deserializeReq.getPreviousModel().getCqlIncludeLibrarys().size());
-        CQLIncludeLibrary actualIncLib = deserializeReq.getPreviousModel().getCqlIncludeLibrarys().get(0);
+        assertEquals(1, deserializeReq.getSourceModel().getCqlIncludeLibrarys().size());
+        CQLIncludeLibrary actualIncLib = deserializeReq.getSourceModel().getCqlIncludeLibrarys().get(0);
         assertEquals("lib1Name", actualIncLib.getCqlLibraryName());
         assertEquals("lib1Id", actualIncLib.getCqlLibraryId());
     }
