@@ -12,8 +12,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Library;
 
-import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.CQL_CONTENT_TYPE;
-
 public interface FhirLibraryHelper {
     default Attachment findCqlAttachment(Library library, String type) {
         return library.getContent().stream()
@@ -44,7 +42,7 @@ public interface FhirLibraryHelper {
         if (CollectionUtils.isEmpty(library.getContent())) {
             throw new LibraryAttachmentNotFoundException(library);
         } else {
-            Attachment cqlAttachment = findCqlAttachment(library, CQL_CONTENT_TYPE);
+            Attachment cqlAttachment = findCqlAttachment(library, "text/cql");
             byte[] cqlBytes = Base64.decodeBase64(cqlAttachment.getData());
             return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(new String(cqlBytes));
         }

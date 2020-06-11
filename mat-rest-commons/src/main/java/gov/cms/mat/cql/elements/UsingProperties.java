@@ -15,6 +15,7 @@ public class UsingProperties extends BaseProperties {
     String libraryType;
     String version;
     String line;
+    String comment;
 
     @Override
     public void setToFhir() {
@@ -29,6 +30,12 @@ public class UsingProperties extends BaseProperties {
 
     @Override
     public String createCql() {
-        return String.format(TEMPLATE, libraryType, version);
+        String cql = String.format(TEMPLATE, libraryType, version);
+
+        if (StringUtils.isEmpty(comment)) {
+            return cql;
+        } else {
+            return cql + comment;
+        }
     }
 }

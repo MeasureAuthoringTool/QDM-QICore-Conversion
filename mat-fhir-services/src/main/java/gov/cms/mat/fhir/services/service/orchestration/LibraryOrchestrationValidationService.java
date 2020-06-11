@@ -18,7 +18,7 @@ import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
 import gov.cms.mat.fhir.services.summary.FhirLibraryResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.IdGenerator;
-import gov.cms.mat.fhir.services.translate.MatLibraryTranslator;
+import gov.cms.mat.fhir.services.translate.LibraryTranslator;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -44,24 +44,23 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
     private final CqlLibraryConverter cqlLibraryConverter;
+    private final LibraryTranslator libTranslator;
 
     public LibraryOrchestrationValidationService(HapiFhirServer hapiFhirServer,
                                                  CQLLibraryTranslationService cqlLibraryTranslationService,
-                                                 CqlLibraryConverter cqlLibraryConverter) {
+                                                 CqlLibraryConverter cqlLibraryConverter,
+                                                 LibraryTranslator libTranslator) {
 
         super(hapiFhirServer);
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
         this.cqlLibraryConverter = cqlLibraryConverter;
+        this.libTranslator = libTranslator;
     }
 
 
     boolean validate(OrchestrationProperties properties) {
-
-        properties.getCqlLibraries()
-                .forEach(cqlLibrary -> convertQdmToFhir(cqlLibrary, properties.isShowWarnings(), properties.getIncludeStdLibs()));
-
+        convertQdmToFhir(properties.getMeasureLib(), properties.isShowWarnings(), properties.getIncludeStdLibs());
         translateCqlMatLibsToFhir(properties);
-
         return validateLibs(properties);
     }
 
@@ -69,8 +68,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
 
         // When no errors we would then convert to fhir and validate - for initial testing do for ALL
-        properties.getCqlLibraries()
-                .forEach(matLib -> findFhirLibraryAndValidate(properties, atomicBoolean, matLib));
+        findFhirLibraryAndValidate(properties, atomicBoolean, properties.getMeasureLib());
 
         return atomicBoolean.get();
     }
@@ -104,11 +102,8 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
 
     private void translateCqlMatLibsToFhir(OrchestrationProperties properties) {
-        List<Library> libraryList = properties.getCqlLibraries().stream()
-                .map(this::translateCqlLib)
-                .collect(Collectors.toList());
-
-        properties.getFhirLibraries().addAll(libraryList);
+        Library library = translateCqlLib(properties.getMeasureLib());
+        properties.getFhirLibraries().add(library);
     }
 
     private Library translateCqlLib(CqlLibrary cqlLibrary) {
@@ -117,24 +112,17 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
         String fhirCql = ConversionReporter.getFhirCql(cqlLibrary.getId());
         String fhirElm = ConversionReporter.getFhirElmJson(cqlLibrary.getId());
-
         String fhirXml = ConversionReporter.getFhirElmXml(cqlLibrary.getId());
 
-        MatLibraryTranslator matLibraryTranslator = new MatLibraryTranslator(cqlLibrary,
-                fhirCql.getBytes(),
-                fhirElm.getBytes(),
-                fhirXml.getBytes(),
-                hapiFhirServer.getBaseURL(),
-                createId());
+        Library lib = libTranslator.translateToFhir(cqlLibrary.getId(),
+                fhirCql,
+                fhirElm,
+                fhirXml);
 
-        Library fhirLibrary = matLibraryTranslator.translateToFhir(createVersion(cqlLibrary.getVersion(), cqlLibrary.getRevisionNumber()));
+        ConversionReporter.setFhirLibraryId(lib.getId(), cqlLibrary.getId());
+        results.setFhirLibraryJson(hapiFhirServer.toJson(lib));
 
-        ConversionReporter.setFhirLibraryId(fhirLibrary.getId(), cqlLibrary.getId());
-
-        results.setFhirLibraryJson(hapiFhirServer.toJson(fhirLibrary));
-
-
-        return fhirLibrary;
+        return lib;
     }
 
 

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<measure>
+    <supplementalDataElements>
+        <cqldefinition displayName="SDE Ethnicity" uuid="10DA8CDA-2407-4154-8AFC-25DFD72E2A1C"/>
+        <cqldefinition displayName="SDE Payer" uuid="317312C1-6E80-4A98-B782-593D9F8FF500"/>
+        <cqldefinition displayName="SDE Race" uuid="33166F4E-95A6-4E44-A26C-42BEBC2D0153"/>
+        <cqldefinition displayName="SDE Sex" uuid="2241150C-5CA0-4442-AD98-4F1927350950"/>
+    </supplementalDataElements>
+    <riskAdjustmentVariables/>
+    <measureGrouping>
+        <group sequence="1">
+            <clause displayName="Initial Population 1" isInGrouping="true" type="initialPopulation"
+                    uuid="5E063323-E2E6-491F-B3A2-06C3172E7A52">
+                <cqldefinition displayName="Initial Population" uuid="9ed40ae0-21b1-4bce-9321-550bb8e0eba4"/>
+            </clause>
+            <clause displayName="Denominator 1" isInGrouping="true" type="denominator"
+                    uuid="B47FB916-763D-4AA8-9432-8EBD4B17D72E">
+                <cqldefinition displayName="Denominator" uuid="1b2ab546-e4be-4667-b908-1c6ec7e8c4fb"/>
+            </clause>
+            <clause displayName="Numerator 1" isInGrouping="true" type="numerator"
+                    uuid="EDA8A23C-DAD8-43D7-92BE-6EBFF8E48375">
+                <cqldefinition displayName="Numerator" uuid="4986bfcd-a634-4744-b08b-cb559c1f1e07"/>
+            </clause>
+            <clause displayName="denominatorExclusions" isInGrouping="false" type="denominatorExclusions"
+                    uuid="28336c51-46e5-46fb-84c3-e6c3651ddd08"/>
+            <clause displayName="numeratorExclusions" isInGrouping="false" type="numeratorExclusions"
+                    uuid="b334fb7c-0b43-4d3e-984a-31d484401c2b"/>
+            <clause displayName="denominatorExceptions" isInGrouping="false" type="denominatorExceptions"
+                    uuid="a2ea06c4-fab6-41ef-86f1-56241b89b1e4"/>
+            <clause displayName="stratum" isInGrouping="false" type="stratum"
+                    uuid="3d1d541e-14b4-40ab-9688-8447a2fecc28"/>
+        </group>
+    </measureGrouping>
+    <cqlLookUp>
+        <library>CDAYTest</library>
+        <version>1.0.000</version>
+        <usingModel>QDM</usingModel>
+        <usingModelVersion>5.5</usingModelVersion>
+        <cqlContext>Patient</cqlContext>
+        <codeSystems>
+            <codeSystem codeSystem="2.16.840.1.113883.6.12" codeSystemName="CPT" codeSystemVersion="2019"
+                        id="164b199fff8a412fa33b33d859982cf9"/>
+            <codeSystem codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.66"
+                        id="5eb1b1b988154824bc9f84223f8f7888"/>
+        </codeSystems>
+        <valuesets>
+            <valueset id="89e38b42bddb4ab98f380e1a1b3ffb61" name="Acute Hypotension"
+                      oid="2.16.840.1.113883.17.4077.3.2011" originalName="Acute Hypotension" program="" release=""
+                      suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="036788d8-cad9-4efb-b3f7-b15c930b2de9" version=""/>
+            <valueset id="b766070371124970b6432c36f839b4de" name="Emergency Department Visit"
+                      oid="2.16.840.1.113883.3.526.3.1520" originalName="Emergency Department Visit" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" version=""/>
+            <valueset datatype="Patient Characteristic Ethnicity" id="084cf7d0-38d4-4f35-b1b7-a4937a456fa3"
+                      name="Ethnicity" oid="2.16.840.1.114222.4.11.837" originalName="Ethnicity" program="" release=""
+                      suffix="" suppDataElement="true" taxonomy="CDCREC" type="Extensional"
+                      uuid="af1ea5aa-376a-435e-8327-7a4272e246c2" version=""/>
+            <valueset id="315bacf207d04d0291cd447b754ab0df" name="Hospital Admission or Observation"
+                      oid="2.16.840.1.113883.17.4077.3.2001" originalName="Hospital Admission or Observation" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="8bdc10b1-c378-4c42-b65d-7af881e410ff" version=""/>
+            <valueset id="af0aee34040a4c5694c44ce22d5df397" name="Infection" oid="2.16.840.1.113883.17.4077.3.2054"
+                      originalName="Infection" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                      type="Grouping" uuid="1c09a559-51aa-4d9b-a7cf-8cc0ca7b270c" version=""/>
+            <valueset id="e44affae181145c096f57ac1a487d80c" name="IV Antibiotics for Sepsis"
+                      oid="2.16.840.1.113883.17.4077.3.2045" originalName="IV Antibiotics for Sepsis" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="b2ee0641-780f-4018-9e6e-43413dd98b30" version=""/>
+            <valueset datatype="Patient Characteristic Sex" id="9bf98c70-5086-48a1-8709-c1107799f9d1"
+                      name="ONC Administrative Sex" oid="2.16.840.1.113762.1.4.1" originalName="ONC Administrative Sex"
+                      program="" release="" suffix="" suppDataElement="true" taxonomy="AdministrativeGender"
+                      type="Extensional" uuid="32abdbb2-332d-4f1f-a32c-61763413c6a1" version=""/>
+            <valueset datatype="Patient Characteristic Payer" id="4e560568-5393-4587-985b-895dacd24585" name="Payer"
+                      oid="2.16.840.1.114222.4.11.3591" originalName="Payer" program="" release="" suffix=""
+                      suppDataElement="true" taxonomy="SOP" type="Extensional"
+                      uuid="b9679785-0250-4b1b-b80f-21967178abe2" version=""/>
+            <valueset datatype="Patient Characteristic Race" id="d86a7acf-6853-460f-beba-46ef8daa1571" name="Race"
+                      oid="2.16.840.1.114222.4.11.836" originalName="Race" program="" release="" suffix=""
+                      suppDataElement="true" taxonomy="CDCREC" type="Extensional"
+                      uuid="46098af7-78bf-451a-9e24-1f39627607cc" version=""/>
+            <valueset id="9662dffcab374e7a8d9b946f30cd4da1" name="Sepsis" oid="2.16.840.1.113883.17.4077.3.2033"
+                      originalName="Sepsis" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                      type="Grouping" uuid="31442a1d-c536-4dc6-b3df-825a367c5d77" version=""/>
+            <valueset id="2a69708ad4454808a3bb823071ef818a" name="Septic Shock" oid="2.16.840.1.113883.17.4077.3.2046"
+                      originalName="Septic Shock" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                      type="Grouping" uuid="e5b7780a-c853-4e6d-937d-2c1d1c1c7df4" version=""/>
+        </valuesets>
+        <codes>
+            <code codeIdentifier="CODE:/CodeSystem/LOINC/Version/2.66/Code/21112-8/Info" codeName="Birth date"
+                  codeOID="21112-8" codeSystemName="LOINC" codeSystemOID="2.16.840.1.113883.6.1"
+                  codeSystemVersion="2.66" displayName="Birth date" id="ba4e69d1d56d4323af34faa42af3a3c8"
+                  isCodeSystemVersionIncluded="false" readOnly="false"/>
+            <code codeIdentifier="CODE:/CodeSystem/CPT/Version/2019/Code/99291/Info"
+                  codeName="Critical care, evaluation and management of the critically ill or critically injured patient; first 30-74 minutes"
+                  codeOID="99291" codeSystemName="CPT" codeSystemOID="2.16.840.1.113883.6.12" codeSystemVersion="2019"
+                  displayName="Critical care, evaluation and management of the critically ill or critically injured patient; first 30-74 minutes"
+                  id="7ccb067320c24c3a8fe0e10ccc8938d2" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        </codes>
+        <parameters>
+            <parameter id="c7876c2e-0e35-4154-92c7-21c0adf11cfe" name="Measurement Period" readOnly="true">
+                <comment/>
+                <logic>Interval&lt;DateTime&gt;</logic>
+            </parameter>
+        </parameters>
+        <definitions>
+            <definition context="Patient" id="10DA8CDA-2407-4154-8AFC-25DFD72E2A1C" name="SDE Ethnicity"
+                        popDefinition="false" supplDataElement="true">
+                <logic>["Patient Characteristic Ethnicity": "Ethnicity"]</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="317312C1-6E80-4A98-B782-593D9F8FF500" name="SDE Payer"
+                        popDefinition="false" supplDataElement="true">
+                <logic>["Patient Characteristic Payer": "Payer"]</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="33166F4E-95A6-4E44-A26C-42BEBC2D0153" name="SDE Race"
+                        popDefinition="false" supplDataElement="true">
+                <logic>["Patient Characteristic Race": "Race"]</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="2241150C-5CA0-4442-AD98-4F1927350950" name="SDE Sex" popDefinition="false"
+                        supplDataElement="true">
+                <logic>["Patient Characteristic Sex": "ONC Administrative Sex"]</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="846d538f-4693-4a4b-af51-38b4dc8b98d5"
+                        name="Emergency Department Visit During Measurement Period With Order for Admission"
+                        popDefinition="false" supplDataElement="false">
+                <logic>( ["Encounter, Performed": "Emergency Department Visit"]
+                    union ["Encounter, Performed": "Critical care, evaluation and management of the critically ill or
+                    critically injured patient; first 30-74 minutes"] ) EDVisit
+                    with ["Encounter, Order": "Hospital Admission or Observation"] OrderForAdmission
+                    such that EDVisit.relevantPeriod during "Measurement Period"
+                    and OrderForAdmission.authorDatetime during EDVisit.relevantPeriod
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="d83908e8-96ce-4274-a3b7-783638f94345"
+                        name="Emergency Department Visit for Septic Shock" popDefinition="false"
+                        supplDataElement="false">
+                <logic>"Emergency Department Visit with Septic Shock Diagnosis"
+                    union "Emergency Department Visit with Acute Hypotension and Sepsis or Infection Diagnoses"
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="1b2ab546-e4be-4667-b908-1c6ec7e8c4fb" name="Denominator"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Initial Population"</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="9ed40ae0-21b1-4bce-9321-550bb8e0eba4" name="Initial Population"
+                        popDefinition="false" supplDataElement="false">
+                <logic>( "Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    with ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                    such that Global."CalendarAgeInYearsAt" ( BirthDate.birthDatetime, start of
+                    SepticShockEDVisit.relevantPeriod ) &gt;= 18
+                    )
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="0a2de8f0-2713-420f-8331-54bac7e0109b"
+                        name="Emergency Department Visit with Acute Hypotension and Sepsis or Infection Diagnoses"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Emergency Department Visit During Measurement Period With Order for Admission" EDEncounter
+                    where exists ( EDEncounter.diagnoses EDEncounterDiagnosis
+                    where EDEncounterDiagnosis.code in "Acute Hypotension"
+                    and ( EDEncounterDiagnosis.code in "Infection"
+                    or EDEncounterDiagnosis.code in "Sepsis"
+                    )
+                    )
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="4932674c-b900-4750-b56d-a20ba16acdd7"
+                        name="Emergency Department Visit with Septic Shock Diagnosis" popDefinition="false"
+                        supplDataElement="false">
+                <logic>"Emergency Department Visit During Measurement Period With Order for Admission" EDEncounter
+                    where exists ( EDEncounter.diagnoses EDEncounterDiagnosis
+                    where EDEncounterDiagnosis.code in "Septic Shock"
+                    )
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="4986bfcd-a634-4744-b08b-cb559c1f1e07" name="Numerator"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    with ["Medication, Order": "IV Antibiotics for Sepsis"] SepsisAntibioticsOrder
+                    such that SepsisAntibioticsOrder.authorDatetime during SepticShockEDVisit.relevantPeriod
+                </logic>
+                <comment/>
+            </definition>
+        </definitions>
+        <includeLibrarys>
+            <includeLibrary cqlLibRefId="402803826c7bec34016c96675130052a" cqlLibRefName="MATGlobalCommonFunctions"
+                            cqlVersion="4.1.000" id="72e952ee-2b09-4163-bdfe-a59310d96174" name="Global"
+                            qdmVersion="5.5"/>
+        </includeLibrarys>
+    </cqlLookUp>
+    <elementLookUp>
+        <qdm code="false" datatype="Patient Characteristic Payer" id="b9679785-0250-4b1b-b80f-21967178abe2" name="Payer"
+             oid="2.16.840.1.114222.4.11.3591" originalName="Payer" program="" release="" suffix=""
+             suppDataElement="true" taxonomy="SOP" type="Extensional" uuid="b9679785-0250-4b1b-b80f-21967178abe2"
+             version=""/>
+        <qdm code="false" datatype="Patient Characteristic Sex" id="32abdbb2-332d-4f1f-a32c-61763413c6a1"
+             name="ONC Administrative Sex" oid="2.16.840.1.113762.1.4.1" originalName="ONC Administrative Sex"
+             program="" release="" suffix="" suppDataElement="true" taxonomy="AdministrativeGender" type="Extensional"
+             uuid="32abdbb2-332d-4f1f-a32c-61763413c6a1" version=""/>
+        <qdm code="false" datatype="Patient Characteristic Ethnicity" id="af1ea5aa-376a-435e-8327-7a4272e246c2"
+             name="Ethnicity" oid="2.16.840.1.114222.4.11.837" originalName="Ethnicity" program="" release="" suffix=""
+             suppDataElement="true" taxonomy="CDCREC" type="Extensional" uuid="af1ea5aa-376a-435e-8327-7a4272e246c2"
+             version=""/>
+        <qdm code="false" datatype="Medication, Order" id="b2ee0641-780f-4018-9e6e-43413dd98b30"
+             name="IV Antibiotics for Sepsis" oid="2.16.840.1.113883.17.4077.3.2045"
+             originalName="IV Antibiotics for Sepsis" program="" release="" suppDataElement="false" taxonomy="Grouping"
+             type="Grouping" uuid="b2ee0641-780f-4018-9e6e-43413dd98b30" version=""/>
+        <qdm code="false" datatype="Patient Characteristic Race" id="46098af7-78bf-451a-9e24-1f39627607cc" name="Race"
+             oid="2.16.840.1.114222.4.11.836" originalName="Race" program="" release="" suffix="" suppDataElement="true"
+             taxonomy="CDCREC" type="Extensional" uuid="46098af7-78bf-451a-9e24-1f39627607cc" version=""/>
+        <qdm code="false" datatype="Encounter, Order" id="8bdc10b1-c378-4c42-b65d-7af881e410ff"
+             name="Hospital Admission or Observation" oid="2.16.840.1.113883.17.4077.3.2001"
+             originalName="Hospital Admission or Observation" program="" release="" suppDataElement="false"
+             taxonomy="Grouping" type="Grouping" uuid="8bdc10b1-c378-4c42-b65d-7af881e410ff" version=""/>
+        <qdm code="false" datatype="Encounter, Performed" id="07b1cfe3-fccb-46bf-aa77-078e0213fb4c"
+             name="Emergency Department Visit" oid="2.16.840.1.113883.3.526.3.1520"
+             originalName="Emergency Department Visit" program="" release="" suppDataElement="false" taxonomy="Grouping"
+             type="Grouping" uuid="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" version=""/>
+        <qdm code="false" id="1c09a559-51aa-4d9b-a7cf-8cc0ca7b270c" name="Infection"
+             oid="2.16.840.1.113883.17.4077.3.2054" originalName="Infection" program="" release=""
+             suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="1c09a559-51aa-4d9b-a7cf-8cc0ca7b270c"
+             version=""/>
+        <qdm code="false" id="036788d8-cad9-4efb-b3f7-b15c930b2de9" name="Acute Hypotension"
+             oid="2.16.840.1.113883.17.4077.3.2011" originalName="Acute Hypotension" program="" release=""
+             suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="036788d8-cad9-4efb-b3f7-b15c930b2de9"
+             version=""/>
+        <qdm code="false" id="31442a1d-c536-4dc6-b3df-825a367c5d77" name="Sepsis" oid="2.16.840.1.113883.17.4077.3.2033"
+             originalName="Sepsis" program="" release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+             uuid="31442a1d-c536-4dc6-b3df-825a367c5d77" version=""/>
+        <qdm code="false" id="e5b7780a-c853-4e6d-937d-2c1d1c1c7df4" name="Septic Shock"
+             oid="2.16.840.1.113883.17.4077.3.2046" originalName="Septic Shock" program="" release=""
+             suppDataElement="false" taxonomy="Grouping" type="Grouping" uuid="e5b7780a-c853-4e6d-937d-2c1d1c1c7df4"
+             version=""/>
+        <qdm code="true" codeIdentifier="CODE:/CodeSystem/CPT/Version/2019/Code/99291/Info"
+             codeName="Critical care, evaluation and management of the critically ill or critically injured patient; first 30-74 minutes"
+             codeSystemOID="2.16.840.1.113883.6.12" codeSystemVersion="2019" datatype="Encounter, Performed"
+             displayName="Critical care, evaluation and management of the critically ill or critically injured patient; first 30-74 minutes"
+             id="CB578DF3-0AA8-4EDC-A232-F1BEE082A7A9" isCodeSystemVersionIncluded="false"
+             name="Critical care, evaluation and management of the critically ill or critically injured patient; first 30-74 minutes"
+             oid="99291" readOnly="false" taxonomy="CPT" uuid="CB578DF3-0AA8-4EDC-A232-F1BEE082A7A9"/>
+        <qdm code="true" codeIdentifier="CODE:/CodeSystem/LOINC/Version/2.66/Code/21112-8/Info" codeName="Birth date"
+             codeSystemOID="2.16.840.1.113883.6.1" codeSystemVersion="2.66" datatype="Patient Characteristic Birthdate"
+             displayName="Birth date" id="F291B1A9-FFC4-4DC3-955D-623D245979E1" isCodeSystemVersionIncluded="false"
+             name="Birth date" oid="21112-8" readOnly="false" taxonomy="LOINC"
+             uuid="F291B1A9-FFC4-4DC3-955D-623D245979E1"/>
+    </elementLookUp>
+    <allUsedCQLLibs>
+        <lib alias="Global" id="402803826c7bec34016c96675130052a" isComponent="" isUnUsedGrandChild="false"
+             name="MATGlobalCommonFunctions" setId="8bdc0a19-b210-4a58-8a07-f5d95a34eca9" version="4.1.000"/>
+    </allUsedCQLLibs>
+    <measureDetails>
+        <uuid>2ca880a1-71ef-2860-0171-efbd83cc004b</uuid>
+        <cqlUUID>3C56B33F-8222-4653-B3E4-3404EDBACC59</cqlUUID>
+        <title>CDAYTest</title>
+        <measureModel>QDM</measureModel>
+        <shortTitle>CDAYTest</shortTitle>
+        <guid>9c236f37-6ebe-417c-9f11-22e3b6db1b09</guid>
+        <version>1.0.000</version>
+        <nqfid root="2.16.840.1.113883.3.560.1"/>
+        <period calenderYear="true" uuid="93baa2f5-a940-4d4b-b032-b4dfaf783276">
+            <startDate>00000101</startDate>
+            <stopDate>00001231</stopDate>
+        </period>
+        <scoring id="PROPOR">Proportion</scoring>
+        <patientBasedIndicator>false</patientBasedIndicator>
+        <finalizedDate value="202005071527-0000"/>
+    </measureDetails>
+</measure>

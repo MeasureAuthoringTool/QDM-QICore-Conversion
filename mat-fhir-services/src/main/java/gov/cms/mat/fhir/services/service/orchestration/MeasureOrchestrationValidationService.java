@@ -1,17 +1,15 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
 
-import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
-import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
-import gov.cms.mat.fhir.services.service.MeasureExportDataService;
 import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
 import gov.cms.mat.fhir.services.summary.FhirMeasureResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
+import gov.cms.mat.fhir.services.translate.MeasureTranslator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -26,20 +24,13 @@ import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedSt
 public class MeasureOrchestrationValidationService implements FhirValidatorProcessor, ErrorSeverityChecker {
     private static final String FAILURE_MESSAGE = "Measure validation failed";
 
-    private final MeasureExportDataService measureExportDataService;
-    private final MatXmlProcessor matXmlProcessor;
     private final HapiFhirServer hapiFhirServer;
+    private final MeasureTranslator measureTranslator;
 
-    private final FhirMeasureCreator fhirMeasureCreator;
-
-    public MeasureOrchestrationValidationService(MeasureExportDataService measureExportDataService,
-                                                 MatXmlProcessor matXmlProcessor,
-                                                 HapiFhirServer hapiFhirServer, FhirMeasureCreator fhirMeasureCreator) {
-        this.measureExportDataService = measureExportDataService;
-        this.matXmlProcessor = matXmlProcessor;
+    public MeasureOrchestrationValidationService(HapiFhirServer hapiFhirServer,
+                                                 MeasureTranslator measureTranslator) {
         this.hapiFhirServer = hapiFhirServer;
-
-        this.fhirMeasureCreator = fhirMeasureCreator;
+        this.measureTranslator = measureTranslator;
     }
 
     public boolean validate(OrchestrationProperties properties) {
@@ -80,29 +71,6 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
     }
 
     private org.hl7.fhir.r4.model.Measure buildFhirMeasure(OrchestrationProperties properties) {
-        byte[] xmlBytes = matXmlProcessor.getXml(properties.getMatMeasure(), properties.getXmlSource());
-        String narrative = "";
-
-//        if (properties.getXmlSource() == XmlSource.SIMPLE) { // todo carson no longer required
-//            var measureExport = measureExportDataService.findById(properties.getMeasureId());
-//            //human-readable may exist not an error if it doesn't
-//            if (measureExport.isPresent()) {
-//                narrative = getNarrative(measureExport.get());
-//            }
-//        }
-
-        return fhirMeasureCreator.create(properties.getXmlSource(),
-                properties.getMatMeasure(),
-                xmlBytes,
-                narrative);
-    }
-
-    public String getNarrative(MeasureExport measureExport) {
-        try {
-            return new String(measureExport.getHumanReadable());
-        } catch (Exception ex) {
-            log.warn("Narrative not found: {}", ex.getMessage());
-            return "";
-        }
+        return measureTranslator.translateToFhir(properties.getMeasureId());
     }
 }

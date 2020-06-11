@@ -7,8 +7,6 @@ import org.hl7.fhir.r4.model.Library;
 import java.util.Base64;
 import java.util.UUID;
 
-import static gov.cms.mat.fhir.services.translate.LibraryTranslatorBase.CQL_CONTENT_TYPE;
-
 public interface LibraryHelper {
     default Library createLib(String cql) {
         CqlTextParser cqlTextParser = new CqlTextParser(cql);
@@ -21,7 +19,7 @@ public interface LibraryHelper {
 
         library.setName(libraryProperties.getName());
         library.setVersion(libraryProperties.getVersion());
-        library.addContent().setContentType(CQL_CONTENT_TYPE).setData(Base64.getEncoder().encode(cql.getBytes()));
+        library.addContent().setContentType("text/cql").setData(Base64.getEncoder().encode(cql.getBytes()));
         return library;
     }
 

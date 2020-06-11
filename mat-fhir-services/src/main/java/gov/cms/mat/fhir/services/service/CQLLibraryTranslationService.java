@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,18 +43,18 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
 
     private boolean process(String id, boolean showWarnings) {
         log.info("CQLLibraryTranslationService processing measure id: {}", id);
-        List<CqlLibrary> cqlLibraries = cqlLibraryRepository.getCqlLibraryByMeasureId(id);
+        CqlLibrary cqlLib = cqlLibraryRepository.getCqlLibraryByMeasureId(id);
 
-        if (cqlLibraries.isEmpty()) {
+        if (cqlLib == null) {
             return true;
         } else {
-            return processLibs(cqlLibraries, showWarnings);
+            return processMeasureLib(cqlLib, showWarnings);
         }
     }
 
-    private boolean processLibs(List<CqlLibrary> cqlLibraries, boolean showWarnings) {
+    private boolean processMeasureLib(CqlLibrary measureLib, boolean showWarnings) {
         AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
-        cqlLibraries.forEach(cqlLibrary -> processCqlLibrary(cqlLibrary, atomicBoolean, showWarnings));
+        processCqlLibrary(measureLib, atomicBoolean, showWarnings);
 
         if (!atomicBoolean.get()) {
             ConversionReporter.setTerminalMessage("CQLLibraryTranslationService failed",
@@ -193,7 +194,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         }
     }
 
-    public CqlConversionPayload convertCqlToJson(String cql, boolean showWarnings) {
+    private CqlConversionPayload convertCqlToJson(String cql, boolean showWarnings) {
         try {
             ResponseEntity<CqlConversionPayload> entity = cqlConversionClient.getJson(cql, showWarnings);
             return entity.getBody();
@@ -210,8 +211,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
     }
 
     public boolean validate(OrchestrationProperties properties) {
-
-        return processLibs(properties.getCqlLibraries(), properties.isShowWarnings());
+        return processMeasureLib(properties.getMeasureLib(), properties.isShowWarnings());
     }
 
     public enum ConversionType {QDM, FHIR}

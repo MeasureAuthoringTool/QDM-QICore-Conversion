@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.components.fhir;
+package gov.cms.mat.fhir.services.translate.processor;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import lombok.extern.slf4j.Slf4j;

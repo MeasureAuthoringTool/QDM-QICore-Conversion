@@ -23,7 +23,8 @@ import java.util.List;
 @ToString
 public class OrchestrationProperties {
     final List<ValueSet> valueSets = new ArrayList<>();
-    final List<CqlLibrary> cqlLibraries = new ArrayList<>();
+    @Setter
+    CqlLibrary measureLib;
 
     final List<Library> fhirLibraries = new ArrayList<>();
 
