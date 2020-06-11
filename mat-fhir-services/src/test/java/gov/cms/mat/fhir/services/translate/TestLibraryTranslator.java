@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,8 +94,11 @@ public class TestLibraryTranslator {
                 thenReturn(Optional.of(suppData));
         when(hapiFhirServer.fetchHapiLibrary(eq("TJCOverall_FHIR4"),eq("5.0.000"))).
                 thenReturn(Optional.of(tjc));
-        when(libRepo.findById(eq("uuid"))).thenReturn(Optional.of(cqlLib));
+        when(libRepo.getCqlLibraryById(eq("uuid"))).thenReturn(cqlLib);
         when(measureExportRepo.findByMeasureId(eq("m12345"))).thenReturn(Optional.of(mExport));
+
+        ReflectionTestUtils.setField(libTranslator,"internalHapiFhirUrl",HAPI_BASE);
+        ReflectionTestUtils.setField(libTranslator,"publicHapiFhirUrl",HAPI_BASE);
 
         Library lib = libTranslator.translateToFhir("uuid",retrieveJson,
                 "<elm></elm>","{elm:\"json\"}");

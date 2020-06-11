@@ -1,19 +1,25 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
-import mat.model.cql.*;
+import gov.cms.mat.fhir.services.service.VsacService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import mat.model.cql.CQLCode;
+import mat.model.cql.CQLCodeSystem;
+import mat.model.cql.CQLDefinition;
+import mat.model.cql.CQLFunctionArgument;
+import mat.model.cql.CQLFunctions;
+import mat.model.cql.CQLIncludeLibrary;
+import mat.model.cql.CQLModel;
+import mat.model.cql.CQLParameter;
+import mat.model.cql.CQLQualityDataSetDTO;
+import mat.model.cql.VsacStatus;
+import mat.server.CQLKeywordsUtil;
+import mat.shared.CQLError;
+import mat.shared.CQLModelValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,16 +28,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.vsac.VSACResponseResult;
 
-import gov.cms.mat.fhir.services.service.VsacService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import mat.server.CQLKeywordsUtil;
-import mat.shared.CQLError;
-import mat.shared.CQLModelValidator;
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.chomp1;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.getGlobalLibId;
@@ -167,7 +172,7 @@ public class CqlToMatXml implements CqlVisitor {
                 valueSet.addValidatedWithVsac(isMostRecentValueSetByOidValid(oid, umlsToken) ? VsacStatus.VALID : VsacStatus.IN_VALID);
             }
             log.info("Validated valueset {} with vsac. {}", oid, valueSet.isValidatedWithVsac());
-            return new ValueSetValidation(valueSet, valueSet.obtainValidatedWithVsac() == VsacStatus.VALID );
+            return new ValueSetValidation(valueSet, valueSet.obtainValidatedWithVsac() == VsacStatus.VALID);
         }
     }
 
@@ -218,12 +223,11 @@ public class CqlToMatXml implements CqlVisitor {
         codeSystemValueSetExecutor = Executors.newFixedThreadPool(simultaneousValidations);
     }
 
-    @Override
     public void handleError(CQLError e) {
-        if (StringUtils.equalsIgnoreCase("Error", e.getSeverity())) {
-            errors.add(e);
-        } else if (StringUtils.equalsIgnoreCase("Warning", e.getSeverity())) {
+        if (StringUtils.equalsIgnoreCase("Warning", e.getSeverity())) {
             warnings.add(e);
+        } else { //Severe and Error
+            errors.add(e);
         }
     }
 
