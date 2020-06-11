@@ -1,55 +1,55 @@
 package gov.cms.mat.fhir.services.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 public class SpringAsyncConfig {
+    private final MatFhirConfiguration matFhirConfiguration;
 
-    @Value("${validation-core-pool-size}")
-    int validationPoolCoreSize;
-
-    @Value("${valueset-vsac-validation-core-pool-size}")
-    int valuesetVsacValidationCorePoolSize;
-
-    @Value("${code-system-vsac-validation-core-pool-size}")
-    int codesSystemVsacValidationCorePoolSize;
+    public SpringAsyncConfig(MatFhirConfiguration matFhirConfiguration) {
+        this.matFhirConfiguration = matFhirConfiguration;
+    }
 
     @Bean(name = "threadPoolValidation")
     public ThreadPoolTaskExecutor threadPoolValidation() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(validationPoolCoreSize);
-        executor.setMaxPoolSize(validationPoolCoreSize * 5);
-        executor.setQueueCapacity(validationPoolCoreSize * 10);
-        executor.setThreadNamePrefix("FHIR-ASYNC-");
+        MatFhirConfiguration.ThreadPoolConfigurations configuration = findConfiguration("threadPoolValidation");
 
-        executor.initialize();
-
-        return executor;
+        return createThreadPool(configuration, "FHIR-ASYNC-");
     }
 
     @Bean(name = "valueSetTheadPoolValidation")
     public ThreadPoolTaskExecutor valueSetThreadPoolValidation() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(valuesetVsacValidationCorePoolSize);
-        executor.setMaxPoolSize(valuesetVsacValidationCorePoolSize);
-        executor.setQueueCapacity(valuesetVsacValidationCorePoolSize * 10);
-        executor.setThreadNamePrefix("V-SET-ASYNC-");
+        MatFhirConfiguration.ThreadPoolConfigurations configuration =
+                findConfiguration("valueSetTheadPoolValidation");
 
-        executor.initialize();
-
-        return executor;
+        return createThreadPool(configuration, "V-SET-ASYNC-");
     }
 
     @Bean(name = "codeSystemTheadPoolValidation")
     public ThreadPoolTaskExecutor codeSystemThreadPoolValidation() {
+        MatFhirConfiguration.ThreadPoolConfigurations configuration =
+                findConfiguration("codeSystemTheadPoolValidation");
+
+        return createThreadPool(configuration, "V-SET-ASYNC-");
+    }
+
+    private MatFhirConfiguration.ThreadPoolConfigurations findConfiguration(String name) {
+        return matFhirConfiguration.getThreadPoolConfigurations().stream()
+                .filter(c -> c.getName().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find ThreadPoolConfiguration with name: " + name));
+    }
+
+
+    private ThreadPoolTaskExecutor createThreadPool(MatFhirConfiguration.ThreadPoolConfigurations configuration,
+                                                    String prefix) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(codesSystemVsacValidationCorePoolSize);
-        executor.setMaxPoolSize(codesSystemVsacValidationCorePoolSize);
-        executor.setQueueCapacity(codesSystemVsacValidationCorePoolSize * 10);
-        executor.setThreadNamePrefix("CODE-SYSTEM-ASYNC-");
+        executor.setCorePoolSize(configuration.getCorePoolSize());
+        executor.setMaxPoolSize(configuration.getMaxPoolSize());
+        executor.setQueueCapacity(configuration.getQueueCapacity());
+        executor.setThreadNamePrefix(prefix);
 
         executor.initialize();
 

@@ -49,12 +49,23 @@ info:
   app:
     name: Mat Fhir Services
 
-validation-core-pool-size: 5
 validation-pool-timeout: 31
-
-valueset-vsac-validation-core-pool-size: 5
 valueset-validation-pool-timeout: 30
-
-code-system-vsac-validation-core-pool-size: 5
 code-system-validation-pool-timeout: 30
+
+mat-fhir:
+  thread-pool-configurations:
+    - name: threadPoolValidation
+      core-pool-size: 5
+      max-pool-size: 25
+      queue-capacity: 100
+    - name: valueSetTheadPoolValidation
+      core-pool-size: 5
+      max-pool-size: 5
+      queue-capacity: 100
+    - name: codeSystemTheadPoolValidation
+      core-pool-size: 5
+      max-pool-size: 5
+      queue-capacity: 100
+
 
