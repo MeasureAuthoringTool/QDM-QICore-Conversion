@@ -113,8 +113,8 @@ public class LibraryTranslator extends TranslatorBase {
         return Collections.singletonList(device);
     }
 
-    private ArrayList<Extension> processExtension() {
-        ArrayList extensionList = new ArrayList<Extension>();
+    private List<Extension> processExtension() {
+        List extensionList = new ArrayList<Extension>();
         extensionList.add(new Extension(MeasureTranslator.EXTENSION_SOFTWARE_SYSTEM, new Reference("#cqf-tooling")));
         return extensionList;
     }
