@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.fhir;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import gov.cms.mat.fhir.services.translate.processor.RiskAdjustmentsDataProcessor;
 import mat.model.RiskAdjustmentDTO;
 import mat.model.cql.CQLDefinitionsWrapper;
 import org.junit.jupiter.api.Test;

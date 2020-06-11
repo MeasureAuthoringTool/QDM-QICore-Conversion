@@ -51,7 +51,6 @@ public class MeasureOrchestrationConversionService {
 
     private boolean persistToFhir(OrchestrationProperties properties) {
         try {
-            addLibrariesLinkToMeasures(properties.getFhirMeasure());
             String link = hapiFhirServer.persist(properties.getFhirMeasure());
 
             ConversionReporter.setMeasureValidationLink(link, CREATED);

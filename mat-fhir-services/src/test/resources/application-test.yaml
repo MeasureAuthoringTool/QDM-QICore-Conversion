@@ -36,6 +36,7 @@ vsac-client:
 fhir:
   r4:
     baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+    public-url: http://localhost:8080/hapi-fhir-jpaserver/fhir/
 
 qdmqicore:
   conversion:

@@ -8,6 +8,7 @@ import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
 import gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
@@ -53,6 +54,10 @@ public class HapiFhirServer {
 
     public Optional<Library> fetchHapiLibrary(String id) {
         return findResourceInBundle(getLibraryBundle(id), Library.class);
+    }
+
+    public Optional<Library> fetchHapiLibrary(String name,String version) {
+        return findResourceInBundle(fetchLibraryBundleByVersionAndName(version,name), Library.class);
     }
 
     public Optional<Measure> fetchHapiMeasure(String id) {

@@ -24,14 +24,8 @@ public class CqlLibraryDataService {
         this.cqlLibraryRepository = cqlLibraryRepository;
     }
 
-    public List<CqlLibrary> getCqlLibrariesByMeasureIdRequired(String measureId) {
-        List<CqlLibrary> cqlLibs = cqlLibraryRepository.getCqlLibraryByMeasureId(measureId);
-
-        if (cqlLibs.isEmpty()) {
-          throw new NoCqlLibrariesFoundException(measureId);
-        } else {
-            return cqlLibs;  //todo carson can there be more than one
-        }
+    public CqlLibrary getMeasureLib(String measureId) {
+        return cqlLibraryRepository.getCqlLibraryByMeasureId(measureId);
     }
 
 

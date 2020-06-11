@@ -15,7 +15,7 @@ public interface CqlLibraryRepository extends JpaRepository<CqlLibrary, String> 
     Optional<CqlLibrary> findById(String id);
 
     @Query("select a from CqlLibrary a where a.measureId = :measureId")
-    List<CqlLibrary> getCqlLibraryByMeasureId(String measureId);
+    CqlLibrary getCqlLibraryByMeasureId(String measureId);
 
     @Query("select a from CqlLibrary a where a.cqlName = :cqlName and a.version = :version")
     CqlLibrary getCqlLibraryByNameAndVersion(String cqlName, BigDecimal version);

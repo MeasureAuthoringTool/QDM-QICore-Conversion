@@ -34,6 +34,7 @@ logging:
 fhir:
   r4:
     baseurl: ${HAPI_FHIR_URL}
+    public-url: ${HAPI_FHIR_URL_PUBLIC}
 
 qdmqicore:
   conversion:
