@@ -59,11 +59,10 @@ public class MatXmlController {
 
     @Data
     @NoArgsConstructor
-    public static class MatCqlXmlReq {
+    public static class MatCqlXmlReq extends MatXmlReq {
         @NotBlank
         private String cql;
-        @Valid
-        private MatXmlReq xmlReq;
+        private CQLModel sourceModel;
     }
 
     private final MeasureExportRepository measureExportRepo;
@@ -135,7 +134,7 @@ public class MatXmlController {
 
     @GetMapping("/standalone-lib/{id}")
     public @ResponseBody
-    MatXmlResponse fromStandaloneLib(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String ulmsToken,
+    MatXmlResponse fromStandaloneLib(@NotBlank @RequestHeader(value = "UMLS-TOKEN") String ulmsToken,
                                      @NotBlank @PathVariable("id") String libId,
                                      @RequestParam(defaultValue = "true") MatXmlReq matXmlReq) {
         try {
@@ -180,7 +179,7 @@ public class MatXmlController {
 
     @GetMapping("/measure/{id}")
     public @ResponseBody
-    MatXmlResponse fromMeasure(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String ulmsToken,
+    MatXmlResponse fromMeasure(@NotBlank @RequestHeader(value = "UMLS-TOKEN") String ulmsToken,
                                @NotBlank @PathVariable("id") String measureId,
                                @RequestParam(defaultValue = "true") MatXmlReq matXmlReq) {
         try {
@@ -226,20 +225,22 @@ public class MatXmlController {
 
     @PutMapping("/cql")
     public @ResponseBody
-    MatXmlResponse fromCql(@NotBlank @RequestHeader(value = "ULMS-TOKEN") String umlsToken,
+    MatXmlResponse fromCql(@NotBlank @RequestHeader(value = "UMLS-TOKEN") String umlsToken,
                            @Valid @RequestBody MatCqlXmlReq matCqlXmlReq) {
+        log.debug("MatXmlController::fromCql -> enter {}", matCqlXmlReq);
         String cql = matCqlXmlReq.getCql();
-        MatXmlReq matXmlReq = matCqlXmlReq.getXmlReq();
         try {
-            return run(umlsToken,
-                    cql,
-                    null,
-                    matCqlXmlReq.getXmlReq());
+            MatXmlResponse resp = run(umlsToken,
+                    matCqlXmlReq.getCql(),
+                    matCqlXmlReq.getSourceModel(),
+                    matCqlXmlReq);
+            log.debug("MatXmlController::fromCql -> exit {}", resp);
+            return resp;
         } catch (RuntimeException e) {
             log.error("fromCql", e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Unexpected error in fromMeasure(" + umlsToken + "," + cql + "," + matXmlReq,
+                    "Unexpected error in fromMeasure(" + umlsToken + "," + cql + "," + matCqlXmlReq,
                     e);
         }
     }
@@ -250,6 +251,14 @@ public class MatXmlController {
         private boolean isLinting = true;
         @Valid
         private ValidationRequest validationRequest;
+    }
+
+    private CqlToMatXml parseCqlToMatXml(String umlsToken, String existingCql, CQLModel existingModel) {
+        CqlToMatXml cqlToMatXml = visitorFactory.getCqlToMatXmlVisitor();
+        cqlToMatXml.setSourceModel(existingModel);
+        cqlToMatXml.setUmlsToken(umlsToken);
+        cqlParser.parse(existingCql, cqlToMatXml);
+        return cqlToMatXml;
     }
 
     private String decode(byte[] bytes) {
@@ -265,4 +274,5 @@ public class MatXmlController {
             throw new RuntimeException("Error converting measure XML to CQLModel", t);
         }
     }
+
 }
