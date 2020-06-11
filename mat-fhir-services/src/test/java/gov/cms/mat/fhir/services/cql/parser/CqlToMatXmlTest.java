@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import mat.model.cql.CQLDefinition;
 import mat.model.cql.CQLModel;
 import mat.model.cql.CQLParameter;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -316,6 +318,18 @@ public class CqlToMatXmlTest {
         assertEquals("testfunction comment", destination.getCqlFunctions().get(0).getCommentString());
         assertEquals("testpopulationfunction", destination.getCqlFunctions().get(1).getName());
         assertEquals("testpopulationfunction comment", destination.getCqlFunctions().get(1).getCommentString());
+    }
+
+    @Test
+    public void testLibrary() throws Exception {
+        var destination = parseModel("testlibrary_fhir.cql");
+
+        assertThat("a library comment", Matchers.equalToCompressingWhiteSpace(destination.getLibraryComment()));
+
+        assertEquals("test", destination.getLibraryName());
+        assertEquals("0.0.1", destination.getVersionUsed());
+        assertEquals("FHIR", destination.getUsingModel());
+        assertEquals("4.0.1", destination.getUsingModelVersion());
     }
 
     @Test

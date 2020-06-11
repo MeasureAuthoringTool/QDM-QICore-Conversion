@@ -34,7 +34,7 @@ public interface CqlVisitor {
         // by default do nothing unless its implemented.
     }
 
-    default void usingModelVersionTag(String model, String fhirVersion) {
+    default void usingModelVersionTag(String model, String fhirVersion, String libraryComment) {
         // by default do nothing unless its implemented.
     }
 

@@ -297,9 +297,10 @@ public class CqlToMatXml implements CqlVisitor {
     }
 
     @Override
-    public void usingModelVersionTag(String model, String modelVersion) {
+    public void usingModelVersionTag(String model, String modelVersion, String libraryComment) {
         destinationModel.setUsingModelVersion(modelVersion);
         destinationModel.setUsingModel(model);
+        destinationModel.setLibraryComment(libraryComment);
     }
 
     @Override

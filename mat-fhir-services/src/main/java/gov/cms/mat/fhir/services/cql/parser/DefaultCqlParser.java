@@ -141,7 +141,8 @@ public class DefaultCqlParser implements CqlParser {
         ParseResult version = nextTickedString(fhir, 0);
 
         if (areValidAscendingIndexes(version)) {
-            v.usingModelVersionTag(UsingProperties.LIBRARY_FHIR_TYPE, version.getString());
+            String comment = parsePrecedingComment(cql, cql.indexOf(FHIR_VERSION_TOKEN));
+            v.usingModelVersionTag(UsingProperties.LIBRARY_FHIR_TYPE, version.getString(), comment);
         } else {
             throw new CqlParseException("Invalid " + FHIR_VERSION_TOKEN + " encounter: " + fhir);
         }
