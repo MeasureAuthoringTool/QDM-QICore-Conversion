@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.components.fhir;
 
-import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.CqlTextParser;
 import gov.cms.mat.cql.elements.IncludeProperties;
 import gov.cms.mat.cql.elements.LibraryProperties;
 import gov.cms.mat.cql.elements.UsingProperties;
@@ -36,15 +36,15 @@ public class FhirIncludeLibraryProcessor {
     }
 
     private FhirIncludeLibraryResult processContent(String cqlContent) {
-        CqlParser cqlParser = new CqlParser(cqlContent);
+        CqlTextParser cqlTextParser = new CqlTextParser(cqlContent);
 
-        checkIsFhir(cqlParser);
+        checkIsFhir(cqlTextParser);
 
-        return processParser(cqlParser);
+        return processParser(cqlTextParser);
     }
 
-    private void checkIsFhir(CqlParser cqlParser) {
-        UsingProperties usingProperties = cqlParser.getUsing();
+    private void checkIsFhir(CqlTextParser cqlTextParser) {
+        UsingProperties usingProperties = cqlTextParser.getUsing();
 
         if (!usingProperties.isFhir()) {
             throw new CqlNotFhirException(usingProperties);
@@ -52,17 +52,17 @@ public class FhirIncludeLibraryProcessor {
     }
 
 
-    private FhirIncludeLibraryResult processParser(CqlParser cqlParser) {
+    private FhirIncludeLibraryResult processParser(CqlTextParser cqlTextParser) {
         FhirIncludeLibraryResult res = new FhirIncludeLibraryResult();
 
         boolean result = true;
 
-        LibraryProperties libraryProperties = cqlParser.getLibrary();
+        LibraryProperties libraryProperties = cqlTextParser.getLibrary();
 
         res.setLibraryName(libraryProperties.getName());
         res.setLibraryVersion(libraryProperties.getVersion());
 
-        for (IncludeProperties include : cqlParser.getIncludes()) {
+        for (IncludeProperties include : cqlTextParser.getIncludes()) {
             FhirIncludeLibraryReferences libraryReferences = new FhirIncludeLibraryReferences();
 
             libraryReferences.setName(include.getName());

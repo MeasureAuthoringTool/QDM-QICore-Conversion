@@ -1,6 +1,6 @@
 package gov.cms.mat.cql_elm_translation.service;
 
-import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.CqlTextParser;
 import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.cql_elm_translation.cql_translator.MatLibrarySourceProvider;
@@ -32,9 +32,9 @@ public class CqlConversionService {
 
     /* MatLibrarySourceProvider places version and service in thread local */
     public void setUpMatLibrarySourceProvider(String cql) {
-        CqlParser cqlParser = new CqlParser(cql);
+        CqlTextParser cqlTextParser = new CqlTextParser(cql);
 
-        MatLibrarySourceProvider.setQdmVersion(cqlParser.getUsing());
+        MatLibrarySourceProvider.setQdmVersion(cqlTextParser.getUsing());
         MatLibrarySourceProvider.setFhirServicesService(matFhirServices);
     }
 
@@ -67,8 +67,8 @@ public class CqlConversionService {
 
     @SneakyThrows
     public CqlTranslator processCqlData(RequestData requestData) {
-        CqlParser cqlParser = new CqlParser(new String(requestData.getCqlDataInputStream().readAllBytes()));
-        UsingProperties usingProperties = cqlParser.getUsing();
+        CqlTextParser cqlTextParser = new CqlTextParser(new String(requestData.getCqlDataInputStream().readAllBytes()));
+        UsingProperties usingProperties = cqlTextParser.getUsing();
 
         return new TranslationResource(usingProperties.isFhir())
                 .buildTranslator(requestData.getCqlDataInputStream(), requestData.createMap());

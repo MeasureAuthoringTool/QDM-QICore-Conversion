@@ -2,6 +2,7 @@ package mat.model.cql;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import java.beans.Transient;
 import java.util.Objects;
 
 /**
@@ -20,6 +21,9 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	
 	/** The code system version. */
 	private String codeSystemVersion;
+
+	/** The code system version uri. */
+	private String codeSystemVersionUri;
 	
 	private String codeSystemOID;
 	
@@ -40,11 +44,14 @@ public class CQLCode implements CQLExpression, IsSerializable {
 
 	private boolean isCodeSystemVersionIncluded;
 
+	private VsacStatus isValidatedWithVsac = VsacStatus.VALID;
+
+	//This for micro service side only
+	private String errorMessage;
+
 	public boolean isIsCodeSystemVersionIncluded() {
 		return isCodeSystemVersionIncluded;
 	}
-
-
 
 	public void setIsCodeSystemVersionIncluded(boolean isCodeSystemVersionIncluded) {
 		this.isCodeSystemVersionIncluded = isCodeSystemVersionIncluded;
@@ -194,6 +201,34 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	}
 
 
+	public VsacStatus isValidatedWithVsac() {
+		return isValidatedWithVsac;
+	}
+
+	public void setValidatedWithVsac(VsacStatus validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac;
+	}
+
+	public String getCodeSystemVersionUri() {
+		return codeSystemVersionUri;
+	}
+
+	public void setCodeSystemVersionUri(String codeSystemVersionUri) {
+		this.codeSystemVersionUri = codeSystemVersionUri;
+	}
+
+	public void setCodeSystemVersionIncluded(boolean codeSystemVersionIncluded) {
+		isCodeSystemVersionIncluded = codeSystemVersionIncluded;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
 	@Override
 	public String getLogic() {
 		// TODO Auto-generated method stub
@@ -205,6 +240,6 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	@Override
 	public void setLogic(String logic) {
 		// TODO Auto-generated method stub
-		
 	}
+
 }

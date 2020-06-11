@@ -37,6 +37,10 @@ public class VsacService {
         }
     }
 
+    public VSACResponseResult getDirectReferenceCode(String codeURLString, String serviceTicket) {
+        return vsacClient.getDirectReferenceCode(codeURLString, serviceTicket);
+    }
+
     private VSACValueSetWrapper processResponse(VSACResponseResult vsacResponseResult) {
         return vsacConverter.toWrapper(vsacResponseResult.getXmlPayLoad());
     }
@@ -48,7 +52,7 @@ public class VsacService {
     }
 
 
-    private String getServiceTicket(String vsacGrantingTicket) {
+    public String getServiceTicket(String vsacGrantingTicket) {
         String serviceTicket = vsacClient.getServiceTicket(vsacGrantingTicket);
         log.debug("serviceTicket: {}", serviceTicket);
         return serviceTicket;
@@ -58,5 +62,9 @@ public class VsacService {
         String grantingTicket = vsacClient.getGrantingTicket(username, passwd);
         log.debug("grantingTicket: {}", grantingTicket);
         return grantingTicket;
+    }
+
+    public VSACResponseResult getMultipleValueSetsResponseByOID(String oid, String fiveMinServiceTicket, String expansionId) {
+        return vsacClient.getMultipleValueSetsResponseByOID(oid, fiveMinServiceTicket, expansionId);
     }
 }

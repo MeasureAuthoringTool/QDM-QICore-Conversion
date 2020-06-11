@@ -14,7 +14,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class CQLError implements IsSerializable, Comparable<CQLError> {
 	private int errorInLine;
-	private int errorAtOffeset;
+	private int errorAtOffset;
 	private int startErrorInLine;
 	private int startErrorAtOffset;
 	private int endErrorInLine;

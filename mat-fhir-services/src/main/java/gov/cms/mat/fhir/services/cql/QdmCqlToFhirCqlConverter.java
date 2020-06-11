@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.cql;
 
-import gov.cms.mat.cql.CqlParser;
+import gov.cms.mat.cql.CqlTextParser;
 import gov.cms.mat.cql.elements.BaseProperties;
 import gov.cms.mat.cql.elements.CodeSystemProperties;
 import gov.cms.mat.cql.elements.DefineProperties;
@@ -9,7 +9,6 @@ import gov.cms.mat.cql.elements.SymbolicProperty;
 import gov.cms.mat.cql.elements.UnionProperties;
 import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.cql.elements.ValueSetProperties;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CodeSystemOidNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -43,7 +42,7 @@ public class QdmCqlToFhirCqlConverter {
     private static final String ERROR_MESSAGE =
             "DEFINE crosses dissimilar FHIR Resources within UNION statements, this will fail processing, " +
                     "consider creating define statements limited to single FHIR Resource.";
-    private final CqlParser cqlParser;
+    private final CqlTextParser cqlTextParser;
     private final QdmQiCoreDataService qdmQiCoreDataService;
     private final Map<String, String> conversionLibLookupMap;
     private final List<CodeSystemEntry> codeSystemMappings;
@@ -61,7 +60,7 @@ public class QdmCqlToFhirCqlConverter {
                                     Map<String, String> conversionLibLookupMap,
                                     List<CodeSystemEntry> codeSystemMappings,
                                     HapiFhirServer hapiFhirServer) {
-        cqlParser = new CqlParser(cqlText);
+        cqlTextParser = new CqlTextParser(cqlText);
         this.qdmQiCoreDataService = qdmQiCoreDataService;
         this.conversionLibLookupMap = conversionLibLookupMap;
         this.codeSystemMappings = codeSystemMappings;
@@ -94,7 +93,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     public String convert(String matLibId) {
-        includeProperties = cqlParser.getIncludes();
+        includeProperties = cqlTextParser.getIncludes();
 
         convertLibrary();
         convertUsing();
@@ -118,12 +117,12 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void convertValueSets() {
-        List<ValueSetProperties> properties = cqlParser.getValueSets();
+        List<ValueSetProperties> properties = cqlTextParser.getValueSets();
         properties.forEach(this::setToFhir);
     }
 
     private void convertCodeSystems() {
-        List<CodeSystemProperties> properties = cqlParser.getCodeSystems();
+        List<CodeSystemProperties> properties = cqlTextParser.getCodeSystems();
 
         properties.forEach(this::processCodeSystem);
 
@@ -236,11 +235,11 @@ public class QdmCqlToFhirCqlConverter {
         if( includeStdLibraries) {
             String cqlReplacement = cqlUsingLine + createStandardIncludesCql();
 
-            String cql = cqlParser.getCql()
+            String cql = cqlTextParser.getCql()
                     .replace(cqlUsingLine, cqlReplacement);
             return cleanLines(cql);
         } else {
-            return cleanLines(cqlParser.getCql());
+            return cleanLines(cqlTextParser.getCql());
         }
     }
 
@@ -267,7 +266,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void checkUnion(String matLibId) {
-        List<UnionProperties> unions = cqlParser.getUnions();
+        List<UnionProperties> unions = cqlTextParser.getUnions();
         var optional = unions.stream().filter(u -> !checkUnion(u)).findFirst();
 
         if (optional.isPresent()) {
@@ -280,7 +279,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private boolean checkUnion(UnionProperties unionProperties) {
-        List<SymbolicProperty> symbolicProperties = cqlParser.getSymbolicProperties(unionProperties.getLines());
+        List<SymbolicProperty> symbolicProperties = cqlTextParser.getSymbolicProperties(unionProperties.getLines());
 
         var optionalSymbolic = symbolicProperties.stream().filter(s -> s.getSymbolic() != null).findFirst();
 
@@ -303,7 +302,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void convertDefines() {
-        List<DefineProperties> properties = cqlParser.getDefines();
+        List<DefineProperties> properties = cqlTextParser.getDefines();
         properties.forEach(this::processSymbolics);
         properties.forEach(this::setToFhir);
     }
@@ -359,17 +358,17 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void convertUsing() {
-        usingProperties = cqlParser.getUsing();
+        usingProperties = cqlTextParser.getUsing();
         setToFhir(usingProperties);
     }
 
     public void convertLibrary() {
-        setToFhir(cqlParser.getLibrary());
+        setToFhir(cqlTextParser.getLibrary());
     }
 
     public void setToFhir(BaseProperties properties) {
         properties.setToFhir();
-        cqlParser.setToFhir(properties);
+        cqlTextParser.setToFhir(properties);
     }
 
     @Data
