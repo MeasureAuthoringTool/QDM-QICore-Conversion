@@ -123,6 +123,7 @@ public class MeasureTranslator extends TranslatorBase {
         String id = matMeasure.getId();
 
         result.setId(id);
+        result.setLanguage("en");
         result.setUrl(publicHapiFhirUrl + "Measure/" + id);
         result.setRationale(simpleXmlModel.getRationale());
         result.setClinicalRecommendationStatement(simpleXmlModel.getClinicalRecomms());

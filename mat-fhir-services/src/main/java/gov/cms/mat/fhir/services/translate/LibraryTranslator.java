@@ -64,6 +64,7 @@ public class LibraryTranslator extends TranslatorBase {
 
         Library result = new Library();
         result.setId(libId);
+        result.setLanguage("en");
         result.setName(visitor.getName());
         result.setVersion(visitor.getVersion());
         result.setDate(new Date());
