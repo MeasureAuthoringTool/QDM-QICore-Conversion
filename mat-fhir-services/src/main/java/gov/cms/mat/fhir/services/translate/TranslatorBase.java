@@ -2,10 +2,13 @@ package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.services.exceptions.HumanReadableInvalidException;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
+import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Narrative;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class TranslatorBase implements FhirCreator {
     @Value("${fhir.r4.public-url}")
@@ -42,5 +45,10 @@ public abstract class TranslatorBase implements FhirCreator {
         } catch (Exception e) {
             throw new HumanReadableInvalidException(id, new String(humanReadableBytes, StandardCharsets.UTF_8), e);
         }
+    }
+
+    protected List<CodeableConcept> createTopic() {
+        return Collections.singletonList(createType("http://terminology.hl7.org/CodeSystem/definition-topic",
+                "assessment"));
     }
 }
