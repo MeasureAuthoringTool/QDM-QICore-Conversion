@@ -1,5 +1,31 @@
 package gov.cms.mat.fhir.services.rest;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
 import gov.cms.mat.fhir.commons.model.MeasureExport;
@@ -21,22 +47,6 @@ import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLModel;
 import mat.server.service.impl.XMLMarshalUtil;
 import mat.server.util.XmlProcessor;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/cql-xml-gen")
@@ -100,6 +110,7 @@ public class MatXmlController {
         cqlToMatXml.setUmlsToken(umlsToken);
         cqlParser.parse(existingCql, cqlToMatXml);
 
+
         matXmlResponse.setCql(existingCql);
         CQLModel newModel = cqlToMatXml.getDestinationModel();
         matXmlResponse.setCqlModel(newModel);
@@ -117,8 +128,7 @@ public class MatXmlController {
             libraryErrors.setErrors(cqlToMatXml.getErrors());
             libraryErrors.setName(newModel.getLibraryName());
             libraryErrors.setVersion(newModel.getVersionUsed());
-            libraryErrors.setName(newModel.getLibraryName());
-            matXmlResponse.setErrors(Arrays.asList(libraryErrors));
+            matXmlResponse.setErrors(Collections.singletonList(libraryErrors));
         } else {
             List<LibraryErrors> libraryErrors =
                     validationOrchestrationService.validateCql(existingCql,
