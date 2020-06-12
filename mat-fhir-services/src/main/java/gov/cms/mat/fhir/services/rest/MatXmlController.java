@@ -252,14 +252,6 @@ public class MatXmlController {
         private ValidationRequest validationRequest;
     }
 
-    private CqlToMatXml parseCqlToMatXml(String umlsToken, String existingCql, CQLModel existingModel) {
-        CqlToMatXml cqlToMatXml = visitorFactory.getCqlToMatXmlVisitor();
-        cqlToMatXml.setSourceModel(existingModel);
-        cqlToMatXml.setUmlsToken(umlsToken);
-        cqlParser.parse(existingCql, cqlToMatXml);
-        return cqlToMatXml;
-    }
-
     private String decode(byte[] bytes) {
         return new String(bytes, StandardCharsets.UTF_8);
     }

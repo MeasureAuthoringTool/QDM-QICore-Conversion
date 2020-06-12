@@ -4,8 +4,6 @@ import gov.cms.mat.fhir.services.service.VsacService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.concurrent.ForkJoinPool;
-
 @Slf4j
 public class VsacValidator {
     static final String BLANK_UMLS_TOKEN = "UMLS token is blank";

@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import mat.shared.CQLError;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;

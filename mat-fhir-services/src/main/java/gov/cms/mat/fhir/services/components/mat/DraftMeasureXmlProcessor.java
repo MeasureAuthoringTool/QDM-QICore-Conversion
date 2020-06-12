@@ -22,7 +22,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component

@@ -14,11 +14,6 @@ public class MatFhirConfiguration {
 
     private List<ThreadPoolConfigurations> threadPoolConfigurations = new ArrayList<>();
 
-    @PostConstruct
-    public void showMe() {
-        System.out.println("here");
-    }
-
     public List<ThreadPoolConfigurations> getThreadPoolConfigurations() {
         return threadPoolConfigurations;
     }

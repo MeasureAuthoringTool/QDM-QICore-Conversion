@@ -218,7 +218,7 @@ public class CqlCqlUtilsTest {
         try {
             CqlUtils.parseOid(url);
             // This assert to get past codacy nonsense.
-            assertEquals(url, "fail");
+            assertEquals( url,"fail");
         } catch (IllegalArgumentException iae) {
             log.warn("IAE", iae);
         }

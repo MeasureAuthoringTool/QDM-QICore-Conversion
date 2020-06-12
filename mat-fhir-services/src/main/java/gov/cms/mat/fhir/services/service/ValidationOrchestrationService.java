@@ -45,7 +45,7 @@ public class ValidationOrchestrationService {
 
         if (validationRequest.isValidateCqlToElm()) {
             CompletableFuture<List<LibraryErrors>> f = validationService.validateCql(cql);
-            f.orTimeout(validationTimeout, TimeUnit.SECONDS); //todo add this as config yaml parameter
+            f.orTimeout(validationTimeout, TimeUnit.SECONDS);
             futures.add(f);
         }
 
@@ -59,7 +59,7 @@ public class ValidationOrchestrationService {
                                 cqlModel.getValueSetList(),
                                 cql,
                                 ulmsToken);
-                f.orTimeout(validationTimeout, TimeUnit.SECONDS); //todo add this as config yaml parameter
+                f.orTimeout(validationTimeout, TimeUnit.SECONDS);
                 futures.add(f);
             }
         }
@@ -73,7 +73,7 @@ public class ValidationOrchestrationService {
                                cqlModel.getCodeList(),
                                cql,
                                ulmsToken);
-                f.orTimeout(validationTimeout, TimeUnit.SECONDS); //todo add this as config yaml parameter
+                f.orTimeout(validationTimeout, TimeUnit.SECONDS);
                 futures.add(f);
             }
         }
@@ -121,7 +121,7 @@ public class ValidationOrchestrationService {
     private List<LibraryErrors> getFromFuture(CompletableFuture<List<LibraryErrors>> l) {
         try {
             return l.get();
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (Exception e) {
             log.warn("Future DId not complete", e);
             return Collections.emptyList();
         }

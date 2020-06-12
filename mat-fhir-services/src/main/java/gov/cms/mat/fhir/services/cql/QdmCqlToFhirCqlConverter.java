@@ -1,14 +1,7 @@
 package gov.cms.mat.fhir.services.cql;
 
 import gov.cms.mat.cql.CqlTextParser;
-import gov.cms.mat.cql.elements.BaseProperties;
-import gov.cms.mat.cql.elements.CodeSystemProperties;
-import gov.cms.mat.cql.elements.DefineProperties;
-import gov.cms.mat.cql.elements.IncludeProperties;
-import gov.cms.mat.cql.elements.SymbolicProperty;
-import gov.cms.mat.cql.elements.UnionProperties;
-import gov.cms.mat.cql.elements.UsingProperties;
-import gov.cms.mat.cql.elements.ValueSetProperties;
+import gov.cms.mat.cql.elements.*;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CodeSystemOidNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -135,17 +128,6 @@ public class QdmCqlToFhirCqlConverter {
             log.debug("CodeSystem has version : {}, so not processing", codeSystemProperties.getVersion());
         } else {
             processCodeSystemInGlobalMap(codeSystemProperties);
-        }
-    }
-
-    private void processCodeSystemFhir(CodeSystemProperties codeSystemProperties) {
-        String oid = codeSystemProperties.getUrnOid();
-        Bundle bundle = hapiFhirServer.getCodeSystemBundle(oid);
-
-        if (bundle.hasEntry()) {
-            processBundleWithEntry(codeSystemProperties, bundle);
-        } else {
-            log.info("CodeSystem NOT found with oid: {}", oid);
         }
     }
 
@@ -308,9 +290,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void processSymbolics(DefineProperties properties) {
-        properties.getSymbolicProperties().forEach(p -> {
-            p.setHelper(qdmQiCoreDataService.getQdmToFhirMappingHelper());
-        });
+        properties.getSymbolicProperties().forEach(p -> p.setHelper(qdmQiCoreDataService.getQdmToFhirMappingHelper()));
     }
 
     private void convertIncludes() {

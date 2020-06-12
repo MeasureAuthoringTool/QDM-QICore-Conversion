@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.services.service.CQLLibraryTranslationService.ConversionType.FHIR;
 

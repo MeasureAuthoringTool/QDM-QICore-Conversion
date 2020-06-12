@@ -8,7 +8,6 @@ import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
 import gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
@@ -24,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class HapiFhirServer {
+    private static final String CACHE_HEADER_NAME = "Cache-Control";
+    private static final String CACHE_HEADER_VALUE = "no-cache";
     @Getter
     FhirContext ctx;
 
@@ -44,9 +45,6 @@ public class HapiFhirServer {
         log.info("Created hapi client for server: {} ", baseURL);
     }
 
-    public Optional<String> fetchHapiLinkValueSet(String oid) {
-        return processBundleLink(getValueSetBundle(oid));
-    }
 
     public Optional<ValueSet> fetchHapiValueSet(String oid) {
         return findResourceInBundle(getValueSetBundle(oid), ValueSet.class);
@@ -95,13 +93,6 @@ public class HapiFhirServer {
         }
     }
 
-    public Optional<String> fetchHapiLinkLibrary(String id) {
-        return processBundleLink(getLibraryBundle(id));
-    }
-
-    public Optional<String> fetchHapiLinkMeasure(String id) {
-        return processBundleLink(getMeasureBundle(id));
-    }
 
     public Optional<String> processBundleLink(Bundle bundle) {
         if (bundle.hasEntry()) {
@@ -226,7 +217,7 @@ public class HapiFhirServer {
                 .forResource(resource)
                 .where(ValueSet.IDENTIFIER.exactly().systemAndIdentifier("urn:ietf:rfc:3986", oid))
                 .returnBundle(Bundle.class)
-                .withAdditionalHeader("Cache-Control","no-cache")
+                .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
                 .execute();
     }
 
@@ -235,7 +226,7 @@ public class HapiFhirServer {
                 .forResource(Measure.class)
                 .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
-                .withAdditionalHeader("Cache-Control","no-cache")
+                .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
                 .execute();
     }
 
@@ -244,7 +235,7 @@ public class HapiFhirServer {
                 .forResource(Library.class)
                 .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
-                .withAdditionalHeader("Cache-Control","no-cache")
+                .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
                 .execute();
     }
 
@@ -254,7 +245,7 @@ public class HapiFhirServer {
                 .where(Library.VERSION.exactly().code(version))
                 .and(Library.NAME.matches().value(name))
                 .returnBundle(Bundle.class)
-                .withAdditionalHeader("Cache-Control","no-cache")
+                .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
                 .execute();
     }
 
@@ -263,7 +254,7 @@ public class HapiFhirServer {
                 .forResource(resourceClass)
                 .totalMode(SearchTotalModeEnum.ACCURATE)
                 .returnBundle(Bundle.class)
-                .withAdditionalHeader("Cache-Control","no-cache")
+                .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
                 .execute()
                 .getTotal();
     }
@@ -272,7 +263,7 @@ public class HapiFhirServer {
         return hapiClient.search()
                 .forResource(resourceClass)
                 .returnBundle(Bundle.class)
-                .withAdditionalHeader("Cache-Control","no-cache")
+                .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
                 .execute();
     }
 
