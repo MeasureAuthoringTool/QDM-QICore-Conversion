@@ -28,7 +28,7 @@ public class MappingSpreadsheetService {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     @NoArgsConstructor
-    public class ResourceDefinition {
+    public static class ResourceDefinition {
         private String elementId;
         private String definition;
         private String cardinality;

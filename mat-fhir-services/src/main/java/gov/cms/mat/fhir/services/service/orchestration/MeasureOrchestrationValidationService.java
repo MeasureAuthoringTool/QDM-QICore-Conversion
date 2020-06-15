@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
@@ -38,15 +39,15 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
     }
 
     private boolean validateMeasure(OrchestrationProperties properties) {
-        org.hl7.fhir.r4.model.Measure fhirMeasure = processFhirMeasure(properties);
-
         FhirMeasureResourceValidationResult response =
                 new FhirMeasureResourceValidationResult(properties.getMeasureId(), "Measure");
 
-        validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
+        if (properties.getXmlSource() == XmlSource.SIMPLE) {
+            org.hl7.fhir.r4.model.Measure fhirMeasure = processFhirMeasure(properties);
+            validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
+        }
 
         List<FhirValidationResult> list = buildResults(response);
-
         ConversionReporter.setFhirMeasureValidationResults(list);
 
         AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);

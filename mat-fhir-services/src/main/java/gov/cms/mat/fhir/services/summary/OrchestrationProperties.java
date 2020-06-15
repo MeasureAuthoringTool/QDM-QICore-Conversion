@@ -40,6 +40,9 @@ public class OrchestrationProperties {
     Boolean includeStdLibs ;
 
     @Setter
+    Boolean isPush;
+
+    @Setter
     org.hl7.fhir.r4.model.Measure fhirMeasure;
 
     ConversionType conversionType;
