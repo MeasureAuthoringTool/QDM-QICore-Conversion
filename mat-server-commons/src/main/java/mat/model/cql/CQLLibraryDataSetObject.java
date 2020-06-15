@@ -37,10 +37,16 @@ public class CQLLibraryDataSetObject implements BaseModel, IsSerializable{
 	private boolean isDraftable;
 	private boolean isVersionable;
 	private boolean isDeletable;
-	
-	/** The cql errors. */
-	private List<CQLError> cqlErrors = new ArrayList<CQLError>();
-	
+	private String libraryModelType;
+	private boolean isFhirEditorViewable;
+	private boolean fhirConvertible;
+
+	private List<CQLError> cqlErrors = new ArrayList<>();
+
+	public boolean isFhir() {
+		return "FHIR".equalsIgnoreCase(libraryModelType);
+	}
+
 	public boolean isLocked() {
 		return isLocked;
 	}
@@ -241,4 +247,29 @@ public class CQLLibraryDataSetObject implements BaseModel, IsSerializable{
 	public void setDeletable(boolean isDeletable) {
 		this.isDeletable = isDeletable;
 	}
+
+	public String getLibraryModelType() {
+		return libraryModelType;
+	}
+
+	public void setLibraryModelType(String libraryModelType) {
+		this.libraryModelType = libraryModelType;
+	}
+
+	public void setFhirEditOrViewable(boolean isFhirEditorViewable) {
+		this.isFhirEditorViewable = isFhirEditorViewable;
+	}
+
+	public boolean isFhirEditOrViewable() {
+		return this.isFhirEditorViewable;
+	}
+
+	public boolean isFhirConvertible() {
+		return fhirConvertible;
+	}
+
+	public void setFhirConvertible(boolean fhirConvertible) {
+		this.fhirConvertible = fhirConvertible;
+	}
+
 }

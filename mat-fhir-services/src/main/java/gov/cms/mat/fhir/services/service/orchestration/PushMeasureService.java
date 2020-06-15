@@ -6,7 +6,6 @@ import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
@@ -18,7 +17,6 @@ import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.Narrative;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -40,7 +38,6 @@ public class PushMeasureService implements FhirCreator {
                               CqlLibraryDataService cqlLibraryDataService,
                               HapiFhirServer hapiFhirServer,
                               CQLLibraryTranslationService cqlLibraryTranslationService,
-                              MeasureExportRepository measureExportRepo,
                               LibraryTranslator libTranslator) {
         this.measureOrchestrationValidationService = measureOrchestrationValidationService;
         this.measureOrchestrationConversionService = measureOrchestrationConversionService;

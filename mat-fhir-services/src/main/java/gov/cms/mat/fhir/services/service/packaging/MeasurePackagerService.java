@@ -7,7 +7,6 @@ import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.packaging.dto.MeasurePackageFullHapi;
-import gov.cms.mat.fhir.services.service.packaging.dto.MeasurePackageMinimumHapi;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.Bundle;

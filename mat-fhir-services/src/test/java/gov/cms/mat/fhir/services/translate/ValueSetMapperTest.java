@@ -174,8 +174,9 @@ class ValueSetMapperTest {
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
-        valueSetMapper.translateToFhir(XML, VSAC_GRANTING_TICKET);
+        List<ValueSet> valueSets = valueSetMapper.translateToFhir(XML, VSAC_GRANTING_TICKET);
 
+        assertTrue( valueSets.isEmpty());
     }
 
     /* Need all this data set to get past bundle.isEmpty() */

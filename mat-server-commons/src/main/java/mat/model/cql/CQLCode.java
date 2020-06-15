@@ -20,6 +20,9 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	
 	/** The code system version. */
 	private String codeSystemVersion;
+
+	/** The code system version uri. */
+	private String codeSystemVersionUri;
 	
 	private String codeSystemOID;
 	
@@ -28,23 +31,26 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	
 	/** The Display Name. */
 	private String displayName;
-	
-	
+
+
 	private String codeIdentifier;
 
 	private boolean isUsed;
-	
-	private boolean readOnly; 
-	
+
+	private boolean readOnly;
+
 	private String suffix;
 
 	private boolean isCodeSystemVersionIncluded;
 
+	private String isValidatedWithVsac = VsacStatus.VALID.toString();
+
+	//This for micro service side only
+	private String errorMessage;
+
 	public boolean isIsCodeSystemVersionIncluded() {
 		return isCodeSystemVersionIncluded;
 	}
-
-
 
 	public void setIsCodeSystemVersionIncluded(boolean isCodeSystemVersionIncluded) {
 		this.isCodeSystemVersionIncluded = isCodeSystemVersionIncluded;
@@ -194,6 +200,50 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	}
 
 
+	public String isValidatedWithVsac() {
+		return isValidatedWithVsac;
+	}
+
+	public VsacStatus obtainValidatedWithVsac() {
+		if (isValidatedWithVsac == null) {
+			return null;
+		}
+
+		return VsacStatus.valueOf(isValidatedWithVsac);
+	}
+
+	public String getValidatedWithVsac() {
+		return isValidatedWithVsac;
+	}
+
+	public void addValidatedWithVsac(VsacStatus validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac.toString();
+	}
+
+	public void setValidatedWithVsac(String validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac;
+	}
+
+	public String getCodeSystemVersionUri() {
+		return codeSystemVersionUri;
+	}
+
+	public void setCodeSystemVersionUri(String codeSystemVersionUri) {
+		this.codeSystemVersionUri = codeSystemVersionUri;
+	}
+
+	public void setCodeSystemVersionIncluded(boolean codeSystemVersionIncluded) {
+		isCodeSystemVersionIncluded = codeSystemVersionIncluded;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
 	@Override
 	public String getLogic() {
 		// TODO Auto-generated method stub
@@ -205,6 +255,6 @@ public class CQLCode implements CQLExpression, IsSerializable {
 	@Override
 	public void setLogic(String logic) {
 		// TODO Auto-generated method stub
-		
 	}
+
 }

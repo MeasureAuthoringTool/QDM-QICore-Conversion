@@ -99,7 +99,4 @@ class ValueSetServiceTest {
         verify(matXmlProcessor).getXmlById(MEASURE_ID, XmlSource.SIMPLE);
     }
 
-    @Test
-    void translateAll() {
-    }
 }
