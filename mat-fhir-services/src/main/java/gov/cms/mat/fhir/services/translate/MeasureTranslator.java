@@ -139,18 +139,22 @@ public class MeasureTranslator extends TranslatorBase {
         result.setDisclaimer(simpleXmlModel.getDisclaimer());
         result.setPurpose("Unknown");
         result.setLibrary(Collections.singletonList(new CanonicalType("Library/" + cqlLib.getId())));
-        result.setTopic(createTopic());
-        //set Extensions if any known, QICore Extension below
-        //QICore Not Done Extension
-        //EncounterProcedureExtension
-        //Military Service Extension
-        //RAND Appropriateness Score Extension
-        result.setExtension(new ArrayList<>());
-        result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
-//        result.setJurisdiction();//TODO.
-//        result.setCompositeScoring(); // TODO.
-//        result.setImprovementNotation(); // TODO.
 
+        //Note:
+        // These are contextual and we might need to add them in later on.
+        //result.setJurisdiction();
+        //result.setCompositeScoring();
+        //result.setImprovementNotation(); //Needs to be a new MAT feature for fhir.
+        //result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
+        //result.setTopic(createTopic());
+
+        //Note:
+        // result.setExtension(new ArrayList<>());
+        //  set Extensions if any known, QICore Extension below
+        //  QICore Not Done Extension
+        //  EncounterProcedureExtension
+        //  Military Service Extension
+        //  RAND Appropriateness Score Extension
 
         result.setContact(createContactDetailUrl());
 
