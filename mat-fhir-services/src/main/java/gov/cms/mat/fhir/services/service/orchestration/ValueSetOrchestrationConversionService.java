@@ -36,7 +36,6 @@ public class ValueSetOrchestrationConversionService {
 
         if (errorCount > 0) {
             log.info("{} count: {}", FAILURE_ERROR_MESSAGE, errorCount);
-            // ConversionReporter.setTerminalMessage(FAILURE_ERROR_MESSAGE, VALUESET_CONVERSION_FAILED);
         } else {
             log.debug("ValueSet error processing PASSED");
         }

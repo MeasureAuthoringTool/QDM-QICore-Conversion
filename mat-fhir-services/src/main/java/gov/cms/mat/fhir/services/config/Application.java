@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
@@ -19,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableMongoRepositories(basePackageClasses = ConversionResultRepository.class)
 @EnableMongoAuditing
 @EnableCaching
+@EnableAsync
 @ComponentScan(basePackages = "gov.cms.mat")
 @EntityScan("gov.cms.mat.fhir.commons.model")
 public class Application extends SpringBootServletInitializer {

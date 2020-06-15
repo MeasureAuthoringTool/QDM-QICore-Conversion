@@ -390,15 +390,6 @@ public class ConversionReporter {
         conversionResultsService.addMeasureResult(key, result);
     }
 
-//    private void addLibraryFieldConversionResult(String field, String destination, String reason, String matCqlId) {
-//        FieldConversionResult result = FieldConversionResult.builder()
-//                .field(field)
-//                .destination(destination)
-//                .reason(reason)
-//                .build();
-//
-//        conversionResultsService.addLibraryFieldConversionResult(key, result, matCqlId);
-//    }
 
 
     private void addCqlConversionResultSuccess(String matLibraryId) {
@@ -521,9 +512,6 @@ public class ConversionReporter {
         return conversionResultsService.findConversionResult(key);
     }
 
-    private void saveConversionResultToMongo(ConversionResult conversionResult) {
-        conversionResultsService.save(conversionResult);
-    }
 
     private void complete() {
         conversionResultsService.complete(key);

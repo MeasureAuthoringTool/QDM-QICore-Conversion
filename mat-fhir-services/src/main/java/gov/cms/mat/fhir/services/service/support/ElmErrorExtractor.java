@@ -17,6 +17,8 @@ import java.util.Map;
 
 @Slf4j
 public class ElmErrorExtractor {
+    private static final String PARSE_ERROR_MESSAGE = "Error in parse";
+
     private static final ObjectMapper mapper = new ObjectMapper();
     private final String json;
 
@@ -30,7 +32,7 @@ public class ElmErrorExtractor {
 
             return processCqlConversionErrorNode(annotationNode);
         } catch (JsonProcessingException e) {
-            log.warn("Error in parse", e);
+            log.warn(PARSE_ERROR_MESSAGE, e);
             log.trace(json);
             throw new CqlConversionException("Error processing json: " + e.getMessage(), e);
         }
@@ -42,7 +44,7 @@ public class ElmErrorExtractor {
             List<CqlConversionError> list = processCqlConversionErrorNode(annotationNode);
             return createMap(list);
         } catch (JsonProcessingException e) {
-            log.warn("Error in parse", e);
+            log.warn(PARSE_ERROR_MESSAGE, e);
             log.trace(json);
             throw new CqlConversionException("Error processing json: " + e.getMessage(), e);
         }
@@ -87,7 +89,7 @@ public class ElmErrorExtractor {
 
             return processErrorExceptionNode(errorExceptionsNode);
         } catch (JsonProcessingException e) {
-            log.warn("Error in parse", e);
+            log.warn(PARSE_ERROR_MESSAGE, e);
             log.trace(json);
             throw new CqlConversionException("Error processing json", e);
         }

@@ -13,9 +13,6 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 	 */
 	public static class Comparator implements java.util.Comparator<CQLQualityDataSetDTO>, IsSerializable {
 		
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(CQLQualityDataSetDTO o1, CQLQualityDataSetDTO o2) {
 			return o1.getQDMElement().compareTo(o2.getQDMElement());
@@ -47,10 +44,10 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 	private String program; 
 	private boolean dataTypeHasRemoved;
 	private String valueSetType;
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	private String isValidatedWithVsac = VsacStatus.VALID.toString();
+	//This for micro service side only
+	private String errorMessage;
+
 	@Override
 	public boolean equals (Object o) {
 		CQLQualityDataSetDTO temp = (CQLQualityDataSetDTO) o;
@@ -176,9 +173,6 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 		this.dataTypeHasRemoved = dataTypeHasRemoved;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return codeListName + ": " + dataType + "-" + getOid();
@@ -284,4 +278,35 @@ public class CQLQualityDataSetDTO implements CQLExpression, IsSerializable {
 	}
 
 
+	public VsacStatus obtainValidatedWithVsac() {
+		if (isValidatedWithVsac == null) {
+			return null;
+		}
+
+		return VsacStatus.valueOf(isValidatedWithVsac);
+	}
+
+	public String getValidatedWithVsac() {
+		return isValidatedWithVsac;
+	}
+
+	public void setValidatedWithVsac(String validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac;
+	}
+
+	public void addValidatedWithVsac(VsacStatus validatedWithVsac) {
+		isValidatedWithVsac = validatedWithVsac.toString();
+	}
+
+	public String isValidatedWithVsac() {
+		return isValidatedWithVsac;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 }

@@ -178,6 +178,7 @@ public class LibraryTranslator extends TranslatorBase {
          * @param ctx The context.
          * @return Always null.
          */
+        @Override
         public String visitLibraryDefinition(cqlParser.LibraryDefinitionContext ctx) {
             name = ctx.qualifiedIdentifier().getText();
             version = trim1(ctx.versionSpecifier().getText());
@@ -260,6 +261,7 @@ public class LibraryTranslator extends TranslatorBase {
         /**
          * @return Has to be something so always null.
          */
+        @Override
         protected String defaultResult() {
             return null;
         }
@@ -395,7 +397,7 @@ public class LibraryTranslator extends TranslatorBase {
          */
         private String getValueSetUrl(String name, Library lib) {
             Optional<Attachment> a = lib.getContent().stream().filter(
-                    c -> c.getContentType().equals("text/cql")).findFirst();
+                    c -> c.getContentType().equals(CQL_CONTENT_TYPE)).findFirst();
             if (a.isPresent()) {
                 String cql = new String(Base64.getDecoder().decode(a.get().getData()), StandardCharsets.UTF_8);
                 cqlParser.LibraryContext library = cqlAntlrUtils.getLibraryContext(cql);

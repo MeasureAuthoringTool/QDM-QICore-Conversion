@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
-                         "http://castor.org/mapping.dtd">
+		"http://castor.org/mapping.dtd">
 
 <mapping>
 	<class name="mat.model.cql.CQLModel">
@@ -13,11 +13,11 @@
 		</field>
 		<field name="libraryComment" type="java.lang.String">
 			<bind-xml name="libraryComment" node="element" />
-		</field>		
-		<field name="usingName" type="java.lang.String">
+		</field>
+		<field name="usingModel" type="java.lang.String">
 			<bind-xml name="usingModel" node="element" />
 		</field>
-		<field name="qdmVersion" type="java.lang.String">
+		<field name="usingModelVersion" type="java.lang.String">
 			<bind-xml name="usingModelVersion" node="element" />
 		</field>
 
@@ -26,8 +26,8 @@
 		</field>
 
 		<field name="codeSystemList" type="mat.model.cql.CQLCodeSystem"
-			get-method="getCodeSystemList" set-method="setCodeSystemList"
-			collection="arraylist">
+			   get-method="getCodeSystemList" set-method="setCodeSystemList"
+			   collection="arraylist">
 			<bind-xml name="codeSystem" location="codeSystems">
 				<class name="mat.model.cql.CQLCodeSystem">
 					<field name="id" type="java.lang.String">
@@ -42,6 +42,9 @@
 					<field name="codeSystemVersion" type="java.lang.String">
 						<bind-xml name="codeSystemVersion" node="attribute" />
 					</field>
+					<field name="versionUri" type="java.lang.String">
+						<bind-xml name="versionUri" node="attribute" />
+					</field>
 					<field name="valueSetOID" type="java.lang.String">
 						<bind-xml name="valueSetOID" node="attribute" />
 					</field>
@@ -50,7 +53,7 @@
 		</field>
 
 		<field name="valueSetList" type="mat.model.cql.CQLQualityDataSetDTO"
-			get-method="getValueSetList" set-method="setValueSetList" collection="arraylist">
+			   get-method="getValueSetList" set-method="setValueSetList" collection="arraylist">
 			<bind-xml name="valueset" location="valuesets">
 				<class name="mat.model.cql.CQLQualityDataSetDTO">
 					<field name="id" type="java.lang.String">
@@ -95,13 +98,16 @@
 					<field name="valueSetType" type="java.lang.String">
 						<bind-xml name="type" node="attribute" />
 					</field>
+					<field name="validatedWithVsac" type="java.lang.String">
+						<bind-xml name="isValidatedWithVsac" node="attribute" />
+					</field>
 				</class>
 			</bind-xml>
 		</field>
 
 
 		<field name="codeList" type="mat.model.cql.CQLCode" get-method="getCodeList"
-			set-method="setCodeList" collection="arraylist">
+			   set-method="setCodeList" collection="arraylist">
 			<bind-xml name="code" location="codes">
 				<class name="mat.model.cql.CQLCode">
 					<field name="id" type="java.lang.String">
@@ -137,13 +143,19 @@
 					<field name="isCodeSystemVersionIncluded" type="java.lang.Boolean">
 						<bind-xml name="isCodeSystemVersionIncluded" node="attribute" />
 					</field>
+					<field name="codeSystemVersionUri" type="java.lang.String">
+						<bind-xml name="codeSystemVersionUri" node="attribute" />
+					</field>
+					<field name="validatedWithVsac" type="java.lang.String">
+						<bind-xml name="isValidatedWithVsac" node="attribute" />
+					</field>
 				</class>
 			</bind-xml>
 		</field>
 
 		<field name="cqlParameterList" type="mat.model.cql.CQLParameter"
-			get-method="getCqlParameters" set-method="setCqlParameters"
-			collection="arraylist">
+			   get-method="getCqlParameters" set-method="setCqlParameters"
+			   collection="arraylist">
 			<bind-xml name="parameter" location="parameters">
 				<class name="mat.model.cql.CQLParameter">
 
@@ -159,11 +171,11 @@
 					<field name="readOnly" type="java.lang.Boolean">
 						<bind-xml name="readOnly" node="attribute" />
 					</field>
-					
+
 					<field name="commentString" type="java.lang.String">
 						<bind-xml name="comment" node="element" />
 					</field>
-					
+
 					<field name="parameterLogic" type="java.lang.String">
 						<bind-xml name="logic" node="element" />
 					</field>
@@ -173,8 +185,8 @@
 
 
 		<field name="cqlDefinitions" type="mat.model.cql.CQLDefinition"
-			get-method="getDefinitionList" set-method="setDefinitionList"
-			collection="arraylist">
+			   get-method="getDefinitionList" set-method="setDefinitionList"
+			   collection="arraylist">
 			<bind-xml name="definition" location="definitions">
 				<class name="mat.model.cql.CQLDefinition">
 
@@ -202,7 +214,7 @@
 					<field name="popDefinition" type="java.lang.Boolean">
 						<bind-xml name="popDefinition" node="attribute" />
 					</field>
-					
+
 					<field name="commentString" type="java.lang.String">
 						<bind-xml name="comment" node="element" />
 					</field>
@@ -213,8 +225,8 @@
 
 
 		<field name="cqlFunctions" type="mat.model.cql.CQLFunctions"
-			get-method="getCqlFunctions" set-method="setCqlFunctions"
-			collection="arraylist">
+			   get-method="getCqlFunctions" set-method="setCqlFunctions"
+			   collection="arraylist">
 			<bind-xml name="function" location="functions">
 				<class name="mat.model.cql.CQLFunctions">
 					<field name="id" type="java.lang.String">
@@ -233,8 +245,8 @@
 						<bind-xml name="context" node="attribute" />
 					</field>
 					<field name="argument" type="mat.model.cql.CQLFunctionArgument"
-						get-method="getArgumentList" set-method="setArgumentList"
-						collection="arraylist">
+						   get-method="getArgumentList" set-method="setArgumentList"
+						   collection="arraylist">
 						<bind-xml name="argument" location="arguments">
 							<class name="mat.model.cql.CQLFunctionArgument">
 								<field name="id" type="java.lang.String">
@@ -263,8 +275,8 @@
 		</field>
 
 		<field name="cqlIncludeLibrarys" type="mat.model.cql.CQLIncludeLibrary"
-			get-method="getCqlIncludeLibrarys" set-method="setCqlIncludeLibrarys"
-			collection="arraylist">
+			   get-method="getCqlIncludeLibrarys" set-method="setCqlIncludeLibrarys"
+			   collection="arraylist">
 			<bind-xml name="includeLibrary" location="includeLibrarys">
 				<class name="mat.model.cql.CQLIncludeLibrary">
 
@@ -287,18 +299,18 @@
 					<field name="version" type="java.lang.String">
 						<bind-xml name="cqlVersion" node="attribute" />
 					</field>
-					
+
 					<field name="qdmVersion" type="java.lang.String">
 						<bind-xml name="qdmVersion" node="attribute" />
 					</field>
-					
+
 					<field name="isComponent" type="java.lang.String">
 						<bind-xml name="isComponent" node="attribute" />
 					</field>
-					
+
 					<field name="measureId" type="java.lang.String">
 						<bind-xml name="measureId" node="attribute" />
-					</field>			
+					</field>
 				</class>
 			</bind-xml>
 		</field>

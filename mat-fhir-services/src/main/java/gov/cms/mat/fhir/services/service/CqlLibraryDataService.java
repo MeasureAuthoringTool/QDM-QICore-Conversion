@@ -1,10 +1,7 @@
 package gov.cms.mat.fhir.services.service;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
-import gov.cms.mat.fhir.commons.model.CqlLibraryAssociation;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
-import gov.cms.mat.fhir.services.exceptions.NoCqlLibrariesFoundException;
-import gov.cms.mat.fhir.services.repository.CqlLibraryAssociationRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -194,7 +193,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         }
     }
 
-    private CqlConversionPayload convertCqlToJson(String cql, boolean showWarnings) {
+    public CqlConversionPayload convertCqlToJson(String cql, boolean showWarnings) {
         try {
             ResponseEntity<CqlConversionPayload> entity = cqlConversionClient.getJson(cql, showWarnings);
             return entity.getBody();
