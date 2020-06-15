@@ -99,48 +99,6 @@ public class MatXmlController {
         this.validationOrchestrationService = validationOrchestrationService;
     }
 
-    private MatXmlResponse run(String umlsToken,
-                               String existingCql,
-                               @Null CQLModel existingModel,
-                               MatXmlReq req) {
-        MatXmlResponse matXmlResponse = new MatXmlResponse();
-
-        CqlToMatXml cqlToMatXml = visitorFactory.getCqlToMatXmlVisitor();
-        cqlToMatXml.setSourceModel(existingModel);
-        cqlToMatXml.setUmlsToken(umlsToken);
-        cqlParser.parse(existingCql, cqlToMatXml);
-
-
-        matXmlResponse.setCql(existingCql);
-        CQLModel newModel = cqlToMatXml.getDestinationModel();
-        matXmlResponse.setCqlModel(newModel);
-
-        if (existingModel != null) {
-            // Overwrite fields the user is not allowed to change for FHIR.
-            newModel.setLibraryName(existingModel.getLibraryName());
-            newModel.setUsingModelVersion(existingModel.getUsingModelVersion());
-            newModel.setUsingModel(existingModel.getUsingModel());
-            newModel.setVersionUsed(existingModel.getVersionUsed());
-        }
-
-        if (!cqlToMatXml.getErrors().isEmpty()) {
-            LibraryErrors libraryErrors = new LibraryErrors();
-            libraryErrors.setErrors(cqlToMatXml.getErrors());
-            libraryErrors.setName(newModel.getLibraryName());
-            libraryErrors.setVersion(newModel.getVersionUsed());
-            matXmlResponse.setErrors(Collections.singletonList(libraryErrors));
-        } else {
-            List<LibraryErrors> libraryErrors =
-                    validationOrchestrationService.validateCql(existingCql,
-                            existingModel,
-                            umlsToken,
-                            req.getValidationRequest());
-            matXmlResponse.setErrors(libraryErrors);
-        }
-
-        return matXmlResponse;
-    }
-
     @GetMapping("/standalone-lib/{id}")
     public @ResponseBody
     MatXmlResponse fromStandaloneLib(@NotBlank @RequestHeader(value = "UMLS-TOKEN") String ulmsToken,
@@ -260,6 +218,48 @@ public class MatXmlController {
         private boolean isLinting = true;
         @Valid
         private ValidationRequest validationRequest;
+    }
+
+    private MatXmlResponse run(String umlsToken,
+                               String existingCql,
+                               @Null CQLModel existingModel,
+                               MatXmlReq req) {
+        MatXmlResponse matXmlResponse = new MatXmlResponse();
+
+        CqlToMatXml cqlToMatXml = visitorFactory.getCqlToMatXmlVisitor();
+        cqlToMatXml.setSourceModel(existingModel);
+        cqlToMatXml.setUmlsToken(umlsToken);
+        cqlParser.parse(existingCql, cqlToMatXml);
+
+
+        matXmlResponse.setCql(existingCql);
+        CQLModel newModel = cqlToMatXml.getDestinationModel();
+        matXmlResponse.setCqlModel(newModel);
+
+        if (existingModel != null) {
+            // Overwrite fields the user is not allowed to change for FHIR.
+            newModel.setLibraryName(existingModel.getLibraryName());
+            newModel.setUsingModelVersion(existingModel.getUsingModelVersion());
+            newModel.setUsingModel(existingModel.getUsingModel());
+            newModel.setVersionUsed(existingModel.getVersionUsed());
+        }
+
+        if (!cqlToMatXml.getErrors().isEmpty()) {
+            LibraryErrors libraryErrors = new LibraryErrors();
+            libraryErrors.setErrors(cqlToMatXml.getErrors());
+            libraryErrors.setName(newModel.getLibraryName());
+            libraryErrors.setVersion(newModel.getVersionUsed());
+            matXmlResponse.setErrors(Collections.singletonList(libraryErrors));
+        } else {
+            List<LibraryErrors> libraryErrors =
+                    validationOrchestrationService.validateCql(existingCql,
+                            existingModel,
+                            umlsToken,
+                            req.getValidationRequest());
+            matXmlResponse.setErrors(libraryErrors);
+        }
+
+        return matXmlResponse;
     }
 
     private String decode(byte[] bytes) {

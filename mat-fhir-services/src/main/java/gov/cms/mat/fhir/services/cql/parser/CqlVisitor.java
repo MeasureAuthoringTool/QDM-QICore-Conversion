@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import java.util.List;
-
 import mat.shared.CQLError;
+
+import java.util.List;
 
 /**
  * Visitor pattern for parsing cql. The parsing uses a callback pattern where corresponding
@@ -48,16 +48,17 @@ public interface CqlVisitor {
 
     default void codeSystem(String name,
                             String uri,
-                            String versionUri) {
+                            String versionUri,
+                            int lineNumber) {
         //by default do nothing unless its implemented.
 
     }
 
-    default void valueSet(String type, String uri) {
+    default void valueSet(String type, String uri, int lineNumber) {
         //by default do nothing unless its implemented.
     }
 
-    default void code(String name, String code, String codeSystemName, String displayName) {
+    default void code(String name, String code, String codeSystemName, String displayName, int lineNumber) {
         //by default do nothing unless its implemented.
     }
 

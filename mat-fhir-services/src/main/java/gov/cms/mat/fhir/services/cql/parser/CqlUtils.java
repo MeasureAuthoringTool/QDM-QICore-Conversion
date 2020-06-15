@@ -415,19 +415,28 @@ public class CqlUtils {
         }
     }
 
-    public static boolean isOid(String uri) {
-        return uri.startsWith(OID_URL_TOKEN);
-    }
+
 
     public static String parseOid(String uri) {
         //urn:oid:2.16.840.1.113883.3.464.1004.1548
         //Should return 2.16.840.1.113883.3.464.1004.1548
-        if (isOid(uri)) {
+        if (uri.startsWith(OID_URL_TOKEN)) {
             return uri.substring(OID_URL_TOKEN.length());
 
+        } else if (uri.startsWith("http")){
+            //It is everything after last /.
+            int lastSlash = uri.lastIndexOf("/");
+            if (lastSlash >= 0) {
+                return uri.substring(lastSlash + 1);
+            } else {
+                throw new IllegalArgumentException("Invalid uri: " + uri +
+                        ". Should be in this format: urn:oid:2.16.840.1.113883.3.464.1004.1548 or this format " +
+                        "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.17.4077.3.2011");
+            }
         } else {
-            throw new IllegalArgumentException("Invalid oid url: " + uri +
-                    ". Should be in this format: urn:oid:2.16.840.1.113883.3.464.1004.1548");
+            throw new IllegalArgumentException("Invalid uri: " + uri +
+                    ". Should be in this format: urn:oid:2.16.840.1.113883.3.464.1004.1548 or this format " +
+                    "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.17.4077.3.2011");
         }
     }
 

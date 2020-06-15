@@ -53,8 +53,9 @@ import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.JUSTIFIC
 @Service
 public class MeasureTranslator extends TranslatorBase {
     //this should be something that MAT provides but doesn't there are many possibilities
-    public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/proportion-measure-cqfm";
-    public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
+    // TODO: close this issue.
+    //public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/proportion-measure-cqfm";
+    //public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
     public static final RelatedArtifact.RelatedArtifactType DEFAULT_ARTIFACT_TYPE = DOCUMENTATION;
     public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
 
@@ -122,6 +123,7 @@ public class MeasureTranslator extends TranslatorBase {
         String id = matMeasure.getId();
 
         result.setId(id);
+        result.setLanguage("en");
         result.setUrl(publicHapiFhirUrl + "Measure/" + id);
         result.setRationale(simpleXmlModel.getRationale());
         result.setClinicalRecommendationStatement(simpleXmlModel.getClinicalRecomms());
@@ -137,13 +139,18 @@ public class MeasureTranslator extends TranslatorBase {
         result.setDisclaimer(simpleXmlModel.getDisclaimer());
         result.setPurpose("Unknown");
         result.setLibrary(Collections.singletonList(new CanonicalType("Library/" + cqlLib.getId())));
-
+        result.setTopic(createTopic());
         //set Extensions if any known, QICore Extension below
         //QICore Not Done Extension
         //EncounterProcedureExtension
         //Military Service Extension
         //RAND Appropriateness Score Extension
         result.setExtension(new ArrayList<>());
+        result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
+//        result.setJurisdiction();//TODO.
+//        result.setCompositeScoring(); // TODO.
+//        result.setImprovementNotation(); // TODO.
+
 
         result.setContact(createContactDetailUrl());
 
@@ -159,7 +166,6 @@ public class MeasureTranslator extends TranslatorBase {
         processTypes(result, simpleXmlModel);
         processJurisdiction(result);
         processPeriod(result, simpleXmlModel);
-        processTopic(result);
         processRelatedArtifacts(result, matMeasure, simpleXmlModel);
         processScoring(result, simpleXmlModel);
         processXml(simpleXml, result);
@@ -174,15 +180,10 @@ public class MeasureTranslator extends TranslatorBase {
 
         fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
 
+        //Test for all types.
         fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
     }
 
-    public void processTopic(Measure fhirMeasure) {
-        fhirMeasure.setTopic(new ArrayList<>());
-        fhirMeasure.getTopic().add(buildCodeableConcept("57024-2",
-                "http://loinc.org",
-                "Health Quality Measure Document"));
-    }
 
     public void processPeriod(Measure fhirMeasure,
                               ManageCompositeMeasureDetailModel matModel) {
@@ -241,6 +242,7 @@ public class MeasureTranslator extends TranslatorBase {
 
     public void processScoring(Measure fhirMeasure,
                                ManageCompositeMeasureDetailModel matModel) {
+        //TO DO: Test scoring.
         CodeableConcept scoringConcept = buildCodeableConcept(matModel.getMeasScoring(),
                 "http://hl7.org/fhir/measure-scoring", "");
         fhirMeasure.setScoring(scoringConcept);
@@ -279,6 +281,7 @@ public class MeasureTranslator extends TranslatorBase {
     }
 
     public CodeableConcept buildTypeFromAbbreviation(String abbrName) {
+        //TO DO: Test Type.
         var optional = MatMeasureType.findByMatAbbreviation(abbrName);
 
         if (optional.isPresent()) {

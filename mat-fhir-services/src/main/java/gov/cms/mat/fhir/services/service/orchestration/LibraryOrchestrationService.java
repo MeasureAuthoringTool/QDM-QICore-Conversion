@@ -42,15 +42,17 @@ public class LibraryOrchestrationService {
             log.debug("Conversion has started for measureId: {}, xmlSource: {} and conversionType: {}",
                     properties.getMeasureId(), properties.getXmlSource(), properties.getConversionType());
 
-            boolean converted = convert(properties);
-
-            if (!converted) {
-                log.debug("Conversion has failed for measureId: {}", properties.getMeasureId());
+            if (properties.getIsPush()) {
+                boolean converted = convert(properties);
+                if (!converted) {
+                    log.debug("Conversion has failed for measureId: {}", properties.getMeasureId());
+                } else {
+                    log.debug("Conversion has passed for measureId: {}", properties.getMeasureId());
+                }
+                return converted;
             } else {
-                log.debug("Conversion has passed for measureId: {}", properties.getMeasureId());
+                return true;
             }
-
-            return converted;
         }
     }
 

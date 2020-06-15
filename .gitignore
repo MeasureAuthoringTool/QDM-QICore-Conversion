@@ -16,6 +16,7 @@ temp
 #Intellij files.
 *.iml
 .idea
+.github
 **/.mvn
 
 #OSX

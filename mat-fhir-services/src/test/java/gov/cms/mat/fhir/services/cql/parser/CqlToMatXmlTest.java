@@ -35,7 +35,7 @@ public class CqlToMatXmlTest {
     private CodeListService codeListService;
 
     @InjectMocks
-    private DefaultCqlParser parser;
+    private AntlCqlParser parser;
 
     @InjectMocks
     private CqlToMatXml cqlToMatXml;

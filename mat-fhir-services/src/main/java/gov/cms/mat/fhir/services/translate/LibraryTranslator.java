@@ -64,6 +64,7 @@ public class LibraryTranslator extends TranslatorBase {
 
         Library result = new Library();
         result.setId(libId);
+        result.setLanguage("en");
         result.setName(visitor.getName());
         result.setVersion(visitor.getVersion());
         result.setDate(new Date());
@@ -75,6 +76,9 @@ public class LibraryTranslator extends TranslatorBase {
         result.setDataRequirement(distinctDataRequirements(visitor.getDataRequirements()));
         result.setRelatedArtifact(distinctArtifacts(visitor.getRelatedArtifacts()));
         result.setText(findHumanReadable(libId));
+        result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
+        //result.setJurisdiction(); // TODO: Figure this out.
+        result.setTopic(createTopic());
 
         //TO DO: figure out how to handle this with logging.
         //ConversionReporter.setLibraryValidationLink(result.getUrl(), CREATED, uuid);
