@@ -29,7 +29,7 @@ public class ConversionCqlToMatXmlTest {
     private MappingSpreadsheetService mappingService;
 
     @InjectMocks
-    private DefaultCqlParser parser;
+    private AntlCqlParser parser;
 
     @InjectMocks
     private CqlToMatXml conversionCqlToMatXml;

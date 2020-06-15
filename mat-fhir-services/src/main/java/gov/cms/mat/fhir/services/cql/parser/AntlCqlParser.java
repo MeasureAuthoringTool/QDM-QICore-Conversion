@@ -1,11 +1,12 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
+import gov.cms.mat.cql.elements.BaseProperties;
+import gov.cms.mat.fhir.services.exceptions.CqlParseException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import mat.server.CQLUtilityClass;
+import mat.shared.CQLError;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -21,13 +22,11 @@ import org.cqframework.cql.gen.cqlLexer;
 import org.cqframework.cql.gen.cqlParser;
 import org.springframework.stereotype.Service;
 
-import gov.cms.mat.cql.elements.BaseProperties;
-import gov.cms.mat.fhir.services.exceptions.CqlParseException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import mat.server.CQLUtilityClass;
-import mat.shared.CQLError;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -95,7 +94,11 @@ public class AntlCqlParser implements CqlParser {
             String code = getUnquotedFullText(ctx.codeId());
             String codeSystemName = getUnquotedFullText(ctx.codesystemIdentifier());
             String displayName = getCodeDefinitionDisplayName(ctx);
-            visitor.code(name, code, codeSystemName, displayName);
+            visitor.code(name,
+                    code,
+                    codeSystemName,
+                    displayName,
+                    tokens.get(ctx.getSourceInterval().a).getLine());
         }
 
         private String getCodeDefinitionDisplayName(cqlParser.CodeDefinitionContext ctx) {
@@ -112,7 +115,10 @@ public class AntlCqlParser implements CqlParser {
             String name = getUnquotedFullText(ctx.identifier());
             String uri = getUnquotedFullText(ctx.codesystemId());
             String versionUri = getUnquotedFullText(ctx.versionSpecifier());
-            visitor.codeSystem(name, uri, versionUri);
+            visitor.codeSystem(name,
+                    uri,
+                    versionUri,
+                    tokens.get(ctx.getSourceInterval().a).getLine());
         }
 
         @Override
@@ -132,14 +138,18 @@ public class AntlCqlParser implements CqlParser {
 
         @Override
         public void enterUsingDefinition(cqlParser.UsingDefinitionContext ctx) {
-            visitor.usingModelVersionTag(getUnquotedFullText(ctx.modelIdentifier()), getUnquotedFullText(ctx.versionSpecifier()), getExpressionComment(ctx));
+            visitor.usingModelVersionTag(getUnquotedFullText(ctx.modelIdentifier()),
+                    getUnquotedFullText(ctx.versionSpecifier()),
+                    getExpressionComment(ctx));
         }
 
         @Override
         public void enterValuesetDefinition(cqlParser.ValuesetDefinitionContext ctx) {
             String type = getUnquotedFullText(ctx.identifier());
             String uri = getUnquotedFullText(ctx.valuesetId());
-            visitor.valueSet(type, uri);
+            visitor.valueSet(type,
+                    uri,
+                    tokens.get(ctx.getSourceInterval().a).getLine());
         }
 
         @Override

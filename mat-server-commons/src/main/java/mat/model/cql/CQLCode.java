@@ -9,252 +9,273 @@ import java.util.Objects;
  */
 public class CQLCode implements CQLExpression, IsSerializable {
 
-	/** The id. */
-	private String id;
-	
-	/** The code system. */
-	private String codeName;
-	
-	/** The code system name. */
-	private String codeSystemName;
-	
-	/** The code system version. */
-	private String codeSystemVersion;
+    /**
+     * The id.
+     */
+    private String id;
 
-	/** The code system version uri. */
-	private String codeSystemVersionUri;
-	
-	private String codeSystemOID;
-	
-	/** The OID. */
-	private String codeOID;
-	
-	/** The Display Name. */
-	private String displayName;
+    /**
+     * The code system.
+     */
+    private String codeName;
 
+    /**
+     * The code system name.
+     */
+    private String codeSystemName;
 
-	private String codeIdentifier;
+    /**
+     * The code system version.
+     */
+    private String codeSystemVersion;
 
-	private boolean isUsed;
+    /**
+     * The code system version uri.
+     */
+    private String codeSystemVersionUri;
 
-	private boolean readOnly;
+    private String codeSystemOID;
 
-	private String suffix;
+    /**
+     * The OID.
+     */
+    private String codeOID;
 
-	private boolean isCodeSystemVersionIncluded;
-
-	private String isValidatedWithVsac = VsacStatus.VALID.toString();
-
-	//This for micro service side only
-	private String errorMessage;
-
-	public boolean isIsCodeSystemVersionIncluded() {
-		return isCodeSystemVersionIncluded;
-	}
-
-	public void setIsCodeSystemVersionIncluded(boolean isCodeSystemVersionIncluded) {
-		this.isCodeSystemVersionIncluded = isCodeSystemVersionIncluded;
-	}
-
-	/**
-	 * Gets the code system name.
-	 *
-	 * @return the code system name
-	 */
-	public String getCodeSystemName() {
-		return codeSystemName;
-	}
-
-	/**
-	 * Sets the code system name.
-	 *
-	 * @param codeSystemName the new code system name
-	 */
-	public void setCodeSystemName(String codeSystemName) {
-		this.codeSystemName = codeSystemName;
-	}
-
-	/**
-	 * Gets the code system version.
-	 *
-	 * @return the code system version
-	 */
-	public String getCodeSystemVersion() {
-		return codeSystemVersion;
-	}
-
-	/**
-	 * Sets the code system version.
-	 *
-	 * @param codeSystemVersion the new code system version
-	 */
-	public void setCodeSystemVersion(String codeSystemVersion) {
-		this.codeSystemVersion = codeSystemVersion;
-	}
-
-	public String getCodeOID() {
-		return codeOID;
-	}
-
-	public void setCodeOID(String codeOID) {
-		this.codeOID = codeOID;
-	}
-
-	/**
-	 * @return the displayName
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	/**
-	 * @param displayName the displayName to set
-	 */
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
-	public boolean isUsed() {
-		return isUsed;
-	}
-
-	public void setUsed(boolean isUsed) {
-		this.isUsed = isUsed;
-	}
-
-	public String getCodeIdentifier() {
-		return codeIdentifier;
-	}
-
-	public void setCodeIdentifier(String codeIdentifier) {
-		this.codeIdentifier = codeIdentifier;
-	}
-
-	public String getCodeSystemOID() {
-		return codeSystemOID;
-	}
-
-	public void setCodeSystemOID(String codeSystemOID) {
-		this.codeSystemOID = codeSystemOID;
-	}
-
-	public boolean isReadOnly() {
-		return readOnly;
-	}
-
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
-
-	public String getSuffix() {
-		return suffix;
-	}
-
-	public void setSuffix(String suffix) {
-		this.suffix = suffix;
-	}
-
-	@Override
-	public boolean equals(final Object other) {
-		if ( !(other instanceof CQLCode) ){
-			return false;
-		}
-		CQLCode castOther = (CQLCode) other;
-		return Objects.equals(codeName, castOther.codeName) && Objects.equals(codeSystemName, castOther.codeSystemName) 
-				&& Objects.equals(codeSystemVersion, castOther.codeSystemVersion) && Objects.equals(codeSystemOID, castOther.codeSystemOID) 
-				&& Objects.equals(codeOID, castOther.codeOID) && Objects.equals(codeIdentifier, castOther.codeIdentifier);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(codeName, codeSystemName, codeSystemVersion, codeSystemOID, codeOID, codeIdentifier);
-	}
-	
-	public String getCodeName() {
-		return this.codeName;
-	}
-	
-	public void setCodeName(String name) {
-		this.codeName = name;
-	}
-
-	
-	@Override
-	public String getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	@Override
-	public String getName() {
-		return getCodeName();
-	}
-
-	@Override
-	public void setName(String name) {
-		setCodeName(name);
-	}
+    /**
+     * The Display Name.
+     */
+    private String displayName;
 
 
-	public String isValidatedWithVsac() {
-		return isValidatedWithVsac;
-	}
+    private String codeIdentifier;
 
-	public VsacStatus obtainValidatedWithVsac() {
-		if (isValidatedWithVsac == null) {
-			return null;
-		}
+    private boolean isUsed;
 
-		return VsacStatus.valueOf(isValidatedWithVsac);
-	}
+    private boolean readOnly;
 
-	public String getValidatedWithVsac() {
-		return isValidatedWithVsac;
-	}
+    private String suffix;
 
-	public void addValidatedWithVsac(VsacStatus validatedWithVsac) {
-		isValidatedWithVsac = validatedWithVsac.toString();
-	}
+    private boolean isCodeSystemVersionIncluded;
 
-	public void setValidatedWithVsac(String validatedWithVsac) {
-		isValidatedWithVsac = validatedWithVsac;
-	}
+    private String isValidatedWithVsac = VsacStatus.VALID.toString();
 
-	public String getCodeSystemVersionUri() {
-		return codeSystemVersionUri;
-	}
+    //This for micro service side only
+    private String errorMessage;
 
-	public void setCodeSystemVersionUri(String codeSystemVersionUri) {
-		this.codeSystemVersionUri = codeSystemVersionUri;
-	}
+    private transient int lineNumber;
 
-	public void setCodeSystemVersionIncluded(boolean codeSystemVersionIncluded) {
-		isCodeSystemVersionIncluded = codeSystemVersionIncluded;
-	}
+    public boolean isIsCodeSystemVersionIncluded() {
+        return isCodeSystemVersionIncluded;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public void setIsCodeSystemVersionIncluded(boolean isCodeSystemVersionIncluded) {
+        this.isCodeSystemVersionIncluded = isCodeSystemVersionIncluded;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    /**
+     * Gets the code system name.
+     *
+     * @return the code system name
+     */
+    public String getCodeSystemName() {
+        return codeSystemName;
+    }
 
-	@Override
-	public String getLogic() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * Sets the code system name.
+     *
+     * @param codeSystemName the new code system name
+     */
+    public void setCodeSystemName(String codeSystemName) {
+        this.codeSystemName = codeSystemName;
+    }
+
+    /**
+     * Gets the code system version.
+     *
+     * @return the code system version
+     */
+    public String getCodeSystemVersion() {
+        return codeSystemVersion;
+    }
+
+    /**
+     * Sets the code system version.
+     *
+     * @param codeSystemVersion the new code system version
+     */
+    public void setCodeSystemVersion(String codeSystemVersion) {
+        this.codeSystemVersion = codeSystemVersion;
+    }
+
+    public String getCodeOID() {
+        return codeOID;
+    }
+
+    public void setCodeOID(String codeOID) {
+        this.codeOID = codeOID;
+    }
+
+    /**
+     * @return the displayName
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * @param displayName the displayName to set
+     */
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public boolean isUsed() {
+        return isUsed;
+    }
+
+    public void setUsed(boolean isUsed) {
+        this.isUsed = isUsed;
+    }
+
+    public String getCodeIdentifier() {
+        return codeIdentifier;
+    }
+
+    public void setCodeIdentifier(String codeIdentifier) {
+        this.codeIdentifier = codeIdentifier;
+    }
+
+    public String getCodeSystemOID() {
+        return codeSystemOID;
+    }
+
+    public void setCodeSystemOID(String codeSystemOID) {
+        this.codeSystemOID = codeSystemOID;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof CQLCode)) {
+            return false;
+        }
+        CQLCode castOther = (CQLCode) other;
+        return Objects.equals(codeName, castOther.codeName) && Objects.equals(codeSystemName, castOther.codeSystemName)
+                && Objects.equals(codeSystemVersion, castOther.codeSystemVersion) && Objects.equals(codeSystemOID, castOther.codeSystemOID)
+                && Objects.equals(codeOID, castOther.codeOID) && Objects.equals(codeIdentifier, castOther.codeIdentifier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(codeName, codeSystemName, codeSystemVersion, codeSystemOID, codeOID, codeIdentifier);
+    }
+
+    public String getCodeName() {
+        return this.codeName;
+    }
+
+    public void setCodeName(String name) {
+        this.codeName = name;
+    }
 
 
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	@Override
-	public void setLogic(String logic) {
-		// TODO Auto-generated method stub
-	}
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
+    @Override
+    public String getName() {
+        return getCodeName();
+    }
+
+    @Override
+    public void setName(String name) {
+        setCodeName(name);
+    }
+
+
+    public String isValidatedWithVsac() {
+        return isValidatedWithVsac;
+    }
+
+    public VsacStatus obtainValidatedWithVsac() {
+        if (isValidatedWithVsac == null) {
+            return null;
+        }
+
+        return VsacStatus.valueOf(isValidatedWithVsac);
+    }
+
+    public String getValidatedWithVsac() {
+        return isValidatedWithVsac;
+    }
+
+    public void addValidatedWithVsac(VsacStatus validatedWithVsac) {
+        isValidatedWithVsac = validatedWithVsac.toString();
+    }
+
+    public void setValidatedWithVsac(String validatedWithVsac) {
+        isValidatedWithVsac = validatedWithVsac;
+    }
+
+    public String getCodeSystemVersionUri() {
+        return codeSystemVersionUri;
+    }
+
+    public void setCodeSystemVersionUri(String codeSystemVersionUri) {
+        this.codeSystemVersionUri = codeSystemVersionUri;
+    }
+
+    public void setCodeSystemVersionIncluded(boolean codeSystemVersionIncluded) {
+        isCodeSystemVersionIncluded = codeSystemVersionIncluded;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    @Override
+    public String getLogic() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setLogic(String logic) {
+        // TODO Auto-generated method stub
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
 }
