@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.cql.parser;
 
 import mat.shared.CQLError;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -30,11 +31,12 @@ public interface CqlVisitor {
     }
 
     default void libraryTag(String libraryName,
-                            String version) {
+                            String version,
+                            @Nullable String libraryComment) {
         // by default do nothing unless its implemented.
     }
 
-    default void usingModelVersionTag(String model, String fhirVersion, String libraryComment) {
+    default void usingModelVersionTag(String model, String fhirVersion) {
         // by default do nothing unless its implemented.
     }
 
@@ -78,3 +80,5 @@ public interface CqlVisitor {
         //by default do nothing unless its implemented.
     }
 }
+
+

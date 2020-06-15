@@ -7,13 +7,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import mat.server.CQLUtilityClass;
 import mat.shared.CQLError;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -123,7 +117,22 @@ public class AntlCqlParser implements CqlParser {
 
         @Override
         public void enterLibraryDefinition(cqlParser.LibraryDefinitionContext ctx) {
-            visitor.libraryTag(getFullText(ctx.qualifiedIdentifier()), getUnquotedFullText(ctx.versionSpecifier()));
+            String comments = findLibraryComments(ctx.stop.getTokenIndex());
+
+            visitor.libraryTag(getFullText(ctx.qualifiedIdentifier()),
+                    getUnquotedFullText(ctx.versionSpecifier()),
+                    comments);
+        }
+
+        private String findLibraryComments(int start) {
+            List<Token> comments = tokens.getTokens(start, tokens.size() - 1);
+
+            var optional = comments.stream()
+                    .takeWhile(t -> t.getType() != 3) // type: 3, text: using
+                    .filter(t -> t.getType() == cqlParser.COMMENT)
+                    .findFirst();
+
+            return optional.map(token -> trimComment(token.getText())).orElse(null);
         }
 
         @Override
@@ -139,8 +148,7 @@ public class AntlCqlParser implements CqlParser {
         @Override
         public void enterUsingDefinition(cqlParser.UsingDefinitionContext ctx) {
             visitor.usingModelVersionTag(getUnquotedFullText(ctx.modelIdentifier()),
-                    getUnquotedFullText(ctx.versionSpecifier()),
-                    getExpressionComment(ctx));
+                    getUnquotedFullText(ctx.versionSpecifier()));
         }
 
         @Override
