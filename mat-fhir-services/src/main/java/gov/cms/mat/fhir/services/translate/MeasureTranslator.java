@@ -158,10 +158,11 @@ public class MeasureTranslator extends TranslatorBase {
 
         result.setEffectivePeriod(buildDefaultPeriod());
 
-        // proessMeta(result);  TODO needs fixing
+        processMeta(result, simpleXmlModel);
         processExtension(result);
         processContained(result);
-        processImprovementNotation(result);
+        //TODO need to fix Improvment Notation on MAT side
+//        processImprovementNotation(result);
         processHumanReadable(id, result);
         processIdentifiers(result, simpleXmlModel);
         processStatus(result, simpleXmlModel);
@@ -205,12 +206,11 @@ public class MeasureTranslator extends TranslatorBase {
         fhirMeasure.setContained(Collections.singletonList(device));
     }
 
-    private void processImprovementNotation(Measure fhirMeasure) {
-        //Todo missing Improvement Notation from matMeasure db
-        CodeableConcept improvementNotation = buildCodeableConcept("FIX ME",
+/*    private void processImprovementNotation(Measure fhirMeasure) {
+        CodeableConcept improvementNotation = buildCodeableConcept("increase",
                 "http://terminology.hl7.org/CodeSystem/measure-improvement-notation", "");
         fhirMeasure.setImprovementNotation(improvementNotation);
-    }
+    }*/
 
     private void processXml(byte[] xmlBytes, org.hl7.fhir.r4.model.Measure fhirMeasure) {
         String xml = new String(xmlBytes);
@@ -333,13 +333,13 @@ public class MeasureTranslator extends TranslatorBase {
         }
     }
 
-//    public void proecssMeta(Measure fhirMeasure, ManageCompositeMeasureDetailModel matModel) {
-//        Meta measureMeta = new Meta();
-//        measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
-//        measureMeta.setVersionId(matModel.getVersionNumber());
-//        measureMeta.setLastUpdated(new Date());
-//        fhirMeasure.setMeta(measureMeta);
-//    }
+    public void processMeta(Measure fhirMeasure, ManageCompositeMeasureDetailModel matModel) {
+        Meta measureMeta = new Meta();
+        measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
+        measureMeta.setVersionId(matModel.getVersionNumber());
+        measureMeta.setLastUpdated(new Date());
+        fhirMeasure.setMeta(measureMeta);
+    }
 
     public void processHumanReadable(String measureId, Measure measure) {
         var measureExpOpt = matMeasureExportRepo.findById(measureId);
