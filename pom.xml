@@ -19,7 +19,6 @@
         <mat.microservices.version>0.0.1-SNAPSHOT</mat.microservices.version>
         <hapi.fhir.version>4.1.0</hapi.fhir.version>
         <cqframework.version>1.4.9-SNAPSHOT</cqframework.version>
-        <antlr4.version>4.5</antlr4.version>
     </properties>
 
     <dependencies>
@@ -86,12 +85,6 @@
                 <groupId>gov.cms.mat</groupId>
                 <artifactId>vsac-mat-conversion</artifactId>
                 <version>${mat.microservices.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr4-runtime</artifactId>
-                <version>${antlr4.version}</version>
             </dependency>
 
             <dependency>

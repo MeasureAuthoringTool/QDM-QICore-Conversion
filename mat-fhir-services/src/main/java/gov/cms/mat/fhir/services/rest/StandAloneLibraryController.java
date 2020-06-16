@@ -1,17 +1,12 @@
 package gov.cms.mat.fhir.services.rest;
 
-import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mat.DraftMeasureXmlProcessor;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
 import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
-import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
-import gov.cms.mat.fhir.services.service.orchestration.LibraryOrchestrationService;
 import gov.cms.mat.fhir.services.service.orchestration.PushLibraryService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,7 +50,7 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
         ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, conversionType, showWarnings, batchId);
 
         OrchestrationProperties orchestrationProperties =
-                buildProperties(conversionType, showWarnings, threadSessionKey);
+                buildProperties(conversionType, false, showWarnings, threadSessionKey);
 
         return pushLibraryService.convertQdmToFhir(id, orchestrationProperties);
     }
@@ -72,7 +67,7 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
         ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, ConversionType.CONVERSION, Boolean.FALSE, batchId);
 
         OrchestrationProperties orchestrationProperties =
-                buildProperties(ConversionType.CONVERSION, Boolean.FALSE, threadSessionKey);
+                buildProperties(ConversionType.CONVERSION, true, Boolean.FALSE, threadSessionKey);
 
 
         return pushLibraryService.convertStandAloneFromMatToFhir(id, orchestrationProperties);
@@ -80,11 +75,13 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
 
 
     public OrchestrationProperties buildProperties(ConversionType conversionType,
+                                                   boolean isPush,
                                                    boolean showWarnings,
                                                    ThreadSessionKey threadSessionKey) {
         return OrchestrationProperties.builder()
                 .showWarnings(showWarnings)
                 .conversionType(conversionType)
+                .isPush(isPush)
                 .includeStdLibs(false)
                 .xmlSource(XmlSource.MEASURE)
                 .threadSessionKey(threadSessionKey)

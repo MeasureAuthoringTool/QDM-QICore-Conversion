@@ -51,18 +51,6 @@ class TranslationReportControllerTest {
 
     }
 
-    @Test
-    void findSearchData() {
-//        ConversionReporter.setInThreadLocal(MEASURE_ID, null, Instant.now());
-//
-//        ConversionResultDto conversionResultToReturn = ConversionResultDto.builder().build();
-//        when(conversionResultProcessorService.process(conversionKey)).thenReturn(conversionResultToReturn);
-//
-//        ConversionResultDto conversionResultReturned = translationReportController.findSearchData(MEASURE_ID);
-//        assertEquals(conversionResultToReturn, conversionResultReturned);
-//
-//        verify(conversionResultProcessorService).process(measureId);
-    }
 
     @Test
     void findAll() {

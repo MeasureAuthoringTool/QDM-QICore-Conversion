@@ -2,8 +2,6 @@ package gov.cms.mat.fhir.services.service;
 
 
 import gov.cms.mat.fhir.commons.model.Measure;
-import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
-import gov.cms.mat.fhir.commons.model.MeasureTypeAssociation;
 import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.MeasureReleaseVersionInvalidException;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

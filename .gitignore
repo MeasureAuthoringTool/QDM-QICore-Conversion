@@ -12,9 +12,11 @@
 docker-env.sh
 temp
 
+
 #Intellij files.
 *.iml
 .idea
+.github
 **/.mvn
 
 #OSX
@@ -22,6 +24,7 @@ temp
 
 #Maven target dris.
 **/target
+**/overlays
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*

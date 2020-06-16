@@ -72,6 +72,7 @@ public class LibraryTranslator extends TranslatorBase {
 
         Library result = new Library();
         result.setId(libId);
+        result.setLanguage("en");
         result.setName(visitor.getName());
         result.setVersion(visitor.getVersion());
         result.setDate(new Date());
@@ -85,6 +86,11 @@ public class LibraryTranslator extends TranslatorBase {
         result.setText(findHumanReadable(libId));
         result.setContained(processContained());
         result.setExtension(processExtension());
+
+        //Note: the following are contextual. Might need to be added in later:
+        //result.setJurisdiction();
+        //result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
+        //result.setTopic(createTopic());
 
         //TO DO: figure out how to handle this with logging.
         //ConversionReporter.setLibraryValidationLink(result.getUrl(), CREATED, uuid);
@@ -122,7 +128,7 @@ public class LibraryTranslator extends TranslatorBase {
     /**
      * Creates a CqlVisitor and visits the cql.
      *
-     * @param cql     The cql.
+     * @param cql The cql.
      * @return The visitor.
      */
     private LibCqlVisitor buildVisitor(String cql) {
@@ -216,6 +222,7 @@ public class LibraryTranslator extends TranslatorBase {
          * @param ctx The context.
          * @return Always null.
          */
+        @Override
         public String visitLibraryDefinition(cqlParser.LibraryDefinitionContext ctx) {
             name = ctx.qualifiedIdentifier().getText();
             version = trim1(ctx.versionSpecifier().getText());
@@ -267,7 +274,7 @@ public class LibraryTranslator extends TranslatorBase {
             String id = lib.getId();
             int endIndex = id.indexOf("/_history");
             if (endIndex >= 0) {
-                id = id.substring(0,endIndex);
+                id = id.substring(0, endIndex);
             }
             int startIndex = id.lastIndexOf('/') + 1;
             return id.substring(startIndex);
@@ -285,12 +292,16 @@ public class LibraryTranslator extends TranslatorBase {
          */
         @Override
         public String visitRetrieve(cqlParser.RetrieveContext ctx) {
+            DataRequirement dr = null;
             if (matchesValuesetPathRetrieve(ctx)) {
-                dataRequirements.add(fromValueSetPathRetrieve(ctx));
+                dr = fromValueSetPathRetrieve(ctx);
             } else if (matchesValuesetRetrieve(ctx)) {
-                dataRequirements.add(fromValueSetRetrieve(ctx));
-            }else if (matchesSimpleRetrieve(ctx)) {
-                dataRequirements.add(fromSimpleRetrieve(ctx));
+                dr = fromValueSetRetrieve(ctx);
+            } else if (matchesSimpleRetrieve(ctx)) {
+                dr = fromSimpleRetrieve(ctx);
+            }
+            if (dr != null) {
+                dataRequirements.add(dr);
             }
             return null;
         }
@@ -298,6 +309,7 @@ public class LibraryTranslator extends TranslatorBase {
         /**
          * @return Has to be something so always null.
          */
+        @Override
         protected String defaultResult() {
             return null;
         }
@@ -350,14 +362,20 @@ public class LibraryTranslator extends TranslatorBase {
          * @return Builds a DataRequirement from a valueset retrieve.
          */
         private DataRequirement fromValueSetPathRetrieve(cqlParser.RetrieveContext ctx) {
-            var result = new DataRequirement();
-            result.setType(trim1(ctx.getChild(1).getText()));
-            var filter = new DataRequirement.DataRequirementCodeFilterComponent();
-            filter.setPath(ctx.getChild(3).getText());
             String vsId = ctx.getChild(5).getText();
-            filter.setValueSet(getValueSetUrl(vsId));
-            result.setCodeFilter(Collections.singletonList(filter));
-            return result;
+            String valueSet = getValueSetUrl(vsId);
+
+            if (StringUtils.isNotBlank(valueSet)) {
+                var result = new DataRequirement();
+                result.setType(trim1(ctx.getChild(1).getText()));
+                var filter = new DataRequirement.DataRequirementCodeFilterComponent();
+                filter.setPath(ctx.getChild(3).getText());
+                filter.setValueSet(valueSet);
+                result.setCodeFilter(Collections.singletonList(filter));
+                return result;
+            } else {
+                return null;
+            }
         }
 
         /**
@@ -392,13 +410,14 @@ public class LibraryTranslator extends TranslatorBase {
          * @return The value set url.
          */
         private String getValueSetUrl(String vsId) {
+            String result = null;
             if (isInIncludeLib(vsId)) {
                 var optionalVs = valueSets.stream().filter(
                         vs -> StringUtils.equals(vs.identifier().getText(), vsId)).findFirst();
                 if (optionalVs.isPresent()) {
-                    return optionalVs.get().valuesetId().getText();
+                    result = optionalVs.get().valuesetId().getText();
                 } else {
-                    throw new IllegalStateException("Could not find vs for local id " + vsId);
+                    log.info("Could not find vs for local id " + vsId);
                 }
             } else {
                 String[] vsIdSplit = vsId.split("\\.");
@@ -410,14 +429,15 @@ public class LibraryTranslator extends TranslatorBase {
                 if (foundInclude.isPresent()) {
                     var foundLib = libs.stream().filter(l -> matches(foundInclude.get(), l)).findFirst();
                     if (foundLib.isPresent()) {
-                        return getValueSetUrl(splitVs, foundLib.get());
+                        result = getValueSetUrl(splitVs, foundLib.get());
                     } else {
-                        throw new IllegalStateException("Could not find value set for " + vsId);
+                        log.info("Could not find value set for " + vsId);
                     }
                 } else {
-                    throw new IllegalStateException("Could not find lib for " + vsId);
+                    log.info("Could not find lib for " + vsId);
                 }
             }
+            return result;
         }
 
         private boolean matches(cqlParser.IncludeDefinitionContext ctx, Library lib) {
@@ -433,7 +453,7 @@ public class LibraryTranslator extends TranslatorBase {
          */
         private String getValueSetUrl(String name, Library lib) {
             Optional<Attachment> a = lib.getContent().stream().filter(
-                    c -> c.getContentType().equals("text/cql")).findFirst();
+                    c -> c.getContentType().equals(CQL_CONTENT_TYPE)).findFirst();
             if (a.isPresent()) {
                 String cql = new String(Base64.getDecoder().decode(a.get().getData()), StandardCharsets.UTF_8);
                 cqlParser.LibraryContext library = cqlAntlrUtils.getLibraryContext(cql);

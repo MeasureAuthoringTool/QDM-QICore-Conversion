@@ -17,6 +17,9 @@ vsac-client:
   use-cache: on
   cache-directory: /opt/vsac/cache
 
+mat.codesystem.valueset.simultaneous.validations: 5
+mat.qdm.default.expansion.id: Most Recent Code System Versions in VSAC
+
 conversion-lib-lookup-4-1:
   map:
     FHIRHelpers: 4.0.001
@@ -27,6 +30,7 @@ conversion-lib-lookup-4-1:
     SupplementalDataElements: 2.0.000
     TJCOverall: 5.0.000
     VTEICU: 4.0.000
+
 
 measures:
   allowed:
@@ -44,5 +48,24 @@ management:
 info:
   app:
     name: Mat Fhir Services
+
+validation-pool-timeout: 31
+valueset-validation-pool-timeout: 30
+code-system-validation-pool-timeout: 30
+
+mat-fhir:
+  thread-pool-configurations:
+    - name: threadPoolValidation
+      core-pool-size: 5
+      max-pool-size: 25
+      queue-capacity: 100
+    - name: valueSetTheadPoolValidation
+      core-pool-size: 5
+      max-pool-size: 5
+      queue-capacity: 100
+    - name: codeSystemTheadPoolValidation
+      core-pool-size: 5
+      max-pool-size: 5
+      queue-capacity: 100
 
 

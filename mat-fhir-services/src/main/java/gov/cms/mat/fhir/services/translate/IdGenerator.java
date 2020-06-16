@@ -5,6 +5,6 @@ import java.util.UUID;
 public interface IdGenerator {
 
     default String createId() {
-        return UUID.randomUUID().toString().replaceAll("-", "");
+        return UUID.randomUUID().toString().replace("-", "");
     }
 }
