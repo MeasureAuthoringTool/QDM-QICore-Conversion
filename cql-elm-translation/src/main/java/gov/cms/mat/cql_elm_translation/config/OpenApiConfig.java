@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Slf4j
 public class OpenApiConfig {
-    @Value("${swagger-server}")
+    @Value("${swagger-server:#{null}}}")
     private String swaggerServer;
 
     @Bean

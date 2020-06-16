@@ -73,4 +73,4 @@ springdoc:
   swagger-ui:
     path: /swagger
 
-swagger-server:  ${MAT_FHIR_SWAGGER_URL:""}
+swagger-server: ${MAT_FHIR_SWAGGER_URL:null}

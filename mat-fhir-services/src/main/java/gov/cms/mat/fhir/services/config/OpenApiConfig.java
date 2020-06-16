@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.config;
 
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
@@ -13,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Slf4j
 public class OpenApiConfig {
-    @Value("${swagger-server}")
+    @Value("${swagger-server:#{null}}")
     private String swaggerServer;
 
     @Bean
@@ -21,9 +20,9 @@ public class OpenApiConfig {
         OpenAPI openAPI = new OpenAPI()
                 .info(buildInfo());
 
-        if(StringUtils.isNotEmpty(swaggerServer)) {
+        if (StringUtils.isNotEmpty(swaggerServer) && !swaggerServer.equals("null")) {
             log.info("Setting swagger server to: {}", swaggerServer);
-            openAPI.addServersItem( new Server().url(swaggerServer));
+            openAPI.addServersItem(new Server().url(swaggerServer));
         }
 
         return openAPI;

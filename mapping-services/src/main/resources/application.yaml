@@ -21,7 +21,7 @@ springdoc:
     path: /swagger
 
 
-swagger-server:  ${MAPPING_SWAGGER_URL:""}
+swagger-server:  ${MAPPING_SWAGGER_URL}
 
 
 
