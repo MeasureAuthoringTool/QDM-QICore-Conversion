@@ -60,10 +60,6 @@ public class VsacClient {
     }
 
     public String getServiceTicket(String grantingTicket) {
-        if (vsacConfig.isUseCacheOnly()) {
-            return "isUseCacheOnly==true";
-        }
-
         return vsacConfig.getVsacRestClient().getServiceTicket(grantingTicket);
     }
 
