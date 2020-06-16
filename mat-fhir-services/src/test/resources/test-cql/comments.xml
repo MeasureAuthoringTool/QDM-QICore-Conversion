@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<measure>
+    <measureDetails>
+        <uuid>40280382-68d3-a5fe-0169-16acb5161b81</uuid>
+        <cqlUUID>328CD5D5-4E52-4E3B-B5AD-1C67C6F963DA</cqlUUID>
+        <title>BonnieTestDRCBirthdate</title>
+        <shortTitle>BTDRCbirthdate</shortTitle>
+        <emeasureid>936</emeasureid>
+        <guid>364f8a4a-53f5-4cf3-89c3-a17e3307a176</guid>
+        <version>0.0.005</version>
+        <nqfid root="2.16.840.1.113883.3.560.1"/>
+        <period calenderYear="true" uuid="0a1c2400-adf4-4f6d-bd75-61a858e5ec7d">
+            <startDate>00000101</startDate>
+            <stopDate>00001231</stopDate>
+        </period>
+        <description>Testing Bonnie use of DRC for Birthdate and Dead</description>
+        <scoring id="PROPOR">Proportion</scoring>
+        <componentMeasures/>
+        <patientBasedIndicator>true</patientBasedIndicator>
+    </measureDetails>
+    <supplementalDataElements>
+        <cqldefinition displayName="SDE Ethnicity" uuid="0b1e0a9e-fd00-43a1-bba8-afc6a3b2bd2b"/>
+        <cqldefinition displayName="SDE Payer" uuid="d0adf416-2e03-4be4-a6e1-3e34122dce9e"/>
+        <cqldefinition displayName="SDE Race" uuid="4707e771-ddc0-4435-a707-104dce13cd34"/>
+        <cqldefinition displayName="SDE Sex" uuid="7e4a3180-e454-4626-a197-52a16c873187"/>
+    </supplementalDataElements>
+    <riskAdjustmentVariables/>
+    <measureGrouping>
+        <group sequence="1">
+            <clause displayName="Initial Population 1" isInGrouping="true" type="initialPopulation"
+                    uuid="631C4155-EA39-4434-B156-14A90DC76B71">
+                <cqldefinition displayName="Initial Population" uuid="706be640-f787-4c45-87fe-62b09a13efc0"/>
+            </clause>
+            <clause displayName="Denominator 1" isInGrouping="true" type="denominator"
+                    uuid="63255E78-698B-40D9-9FEC-8EF2A384A18D">
+                <cqldefinition displayName="Denominator" uuid="7871637d-a131-4791-b345-5ef19e15983d"/>
+            </clause>
+            <clause displayName="Denominator Exclusions 1" isInGrouping="true" type="denominatorExclusions"
+                    uuid="A3872AD6-D98F-4BB3-A17E-B98275D97449">
+                <cqldefinition displayName="Denominator Exclusions" uuid="45e1b784-75e1-45a3-9658-231f4322539b"/>
+            </clause>
+            <clause displayName="Numerator 1" isInGrouping="true" type="numerator"
+                    uuid="1D786819-6BFE-4A09-A60F-796F38D857F2">
+                <cqldefinition displayName="Numerator" uuid="c9b2c66a-2ffc-4d55-a953-2ceb5817d4e7"/>
+            </clause>
+            <clause displayName="numeratorExclusions" isInGrouping="false" type="numeratorExclusions"
+                    uuid="4efe8ada-88d3-4d17-9750-00e16b2ee53d"/>
+            <clause displayName="denominatorExceptions" isInGrouping="false" type="denominatorExceptions"
+                    uuid="123e8da7-3fba-4b21-bd24-f568be61c780"/>
+            <clause displayName="stratum" isInGrouping="false" type="stratum"
+                    uuid="1c575c2d-eee2-46cd-b4ae-34eab683b67e"/>
+        </group>
+    </measureGrouping>
+    <cqlLookUp>
+        <library>BonnieTestDRCBirthdate</library>
+        <version>0.0.005</version>
+        <libraryComment>CMS936
+            Patient-based
+            (EH or EP?)
+            Proportion scoring
+        </libraryComment>
+        <usingModel>QDM</usingModel>
+        <usingModelVersion>5.4</usingModelVersion>
+        <cqlContext>Patient</cqlContext>
+        <codeSystems>
+            <codeSystem codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMEDCT" codeSystemVersion="2016-03"
+                        id="72e8601807fb4e36beac2b72141bd08e"/>
+        </codeSystems>
+        <valuesets>
+            <valueset datatype="Patient Characteristic Sex" id="fbe92c8a-da02-486c-a5dd-dbdcd6cf4753"
+                      name="ONC Administrative Sex" oid="2.16.840.1.113762.1.4.1" originalName="ONC Administrative Sex"
+                      program="" release="" suffix="" suppDataElement="true" taxonomy="Administrative Sex"
+                      type="Extensional" uuid="5b9e9d6d-a760-415e-8b4e-d19e3ace8da0" version=""/>
+            <valueset datatype="Patient Characteristic Race" id="b8b6768d-57bd-4658-9c89-b8dff6f31b4b" name="Race"
+                      oid="2.16.840.1.114222.4.11.836" originalName="Race" program="" release="" suffix=""
+                      suppDataElement="true" taxonomy="CDC" type="Extensional"
+                      uuid="6cf754cd-522d-4ad9-8f04-f1e5b88a84a0" version=""/>
+            <valueset datatype="Patient Characteristic Ethnicity" id="6a30fd55-8ffa-4723-af5f-669ee174e23e"
+                      name="Ethnicity" oid="2.16.840.1.114222.4.11.837" originalName="Ethnicity" program="" release=""
+                      suffix="" suppDataElement="true" taxonomy="CDC" type="Extensional"
+                      uuid="7dafdc9c-1dd4-4091-9472-3c6eb00332a4" version=""/>
+            <valueset datatype="Patient Characteristic Payer" id="78112b11-de66-4235-9ece-1d8dddff311b" name="Payer"
+                      oid="2.16.840.1.114222.4.11.3591" originalName="Payer" program="" release="" suffix=""
+                      suppDataElement="true" taxonomy="Source of Payment Typology" type="Extensional"
+                      uuid="dd8a3b5f-0522-4a06-8627-0b0620e9d658" version=""/>
+        </valuesets>
+        <codes>
+            <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2016-03/Code/49325007/Info"
+                  codeName="Ugly scar (disorder)" codeOID="49325007" codeSystemName="SNOMEDCT"
+                  codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2016-03" displayName="Ugly scar (disorder)"
+                  id="162dced0be05445a9a03b2766a9e6a59" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        </codes>
+        <parameters>
+            <parameter id="a94d4e14-8da5-4636-97bf-92ae3929fc14" name="Measurement Period" readOnly="true">
+                <logic>Interval&lt;DateTime&gt;</logic>
+            </parameter>
+        </parameters>
+        <definitions>
+            <definition context="Patient" id="0b1e0a9e-fd00-43a1-bba8-afc6a3b2bd2b" name="SDE Ethnicity"
+                        popDefinition="false" supplDataElement="true">
+                <logic>["Patient Characteristic Ethnicity": "Ethnicity"]</logic>
+            </definition>
+            <definition context="Patient" id="d0adf416-2e03-4be4-a6e1-3e34122dce9e" name="SDE Payer"
+                        popDefinition="false" supplDataElement="true">
+                <logic>["Patient Characteristic Payer": "Payer"]</logic>
+            </definition>
+            <definition context="Patient" id="4707e771-ddc0-4435-a707-104dce13cd34" name="SDE Race"
+                        popDefinition="false" supplDataElement="true">
+                <logic>["Patient Characteristic Race": "Race"]</logic>
+            </definition>
+            <definition context="Patient" id="7e4a3180-e454-4626-a197-52a16c873187" name="SDE Sex" popDefinition="false"
+                        supplDataElement="true">
+                <logic>["Patient Characteristic Sex": "ONC Administrative Sex"]</logic>
+            </definition>
+            <definition context="Patient" id="5e1a9269-9b31-47bc-929a-403c8c175186" name="IPOP Encounters"
+                        popDefinition="false" supplDataElement="false">
+                <logic>["Encounter, Performed"] E
+                    where E.relevantPeriod overlaps "Measurement Period"
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="706be640-f787-4c45-87fe-62b09a13efc0" name="Initial Population"
+                        popDefinition="false" supplDataElement="false">
+                <logic>exists "IPOP Encounters"</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="45e1b784-75e1-45a3-9658-231f4322539b" name="Denominator Exclusions"
+                        popDefinition="false" supplDataElement="false">
+                <logic>exists "IPOP Encounters" E
+                    with ["Diagnostic Study, Performed": result in "MyCodes"] S
+                    such that S.authorDatetime during E.relevantPeriod
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="9eef3f0d-11ab-49af-b9ff-139a0e17e654" name="MyCodes" popDefinition="false"
+                        supplDataElement="false">
+                <logic>{ BD."Birth date", "Ugly scar (disorder)", BD."Dead (finding)" }</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="c9b2c66a-2ffc-4d55-a953-2ceb5817d4e7" name="Numerator"
+                        popDefinition="false" supplDataElement="false">
+                <logic>exists "IPOP Encounters" E
+                    with ["Diagnostic Study, Performed": result in BD."Dead (finding)"] S
+                    such that S.authorDatetime during E.relevantPeriod
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="7871637d-a131-4791-b345-5ef19e15983d" name="Denominator"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Initial Population"
+                    and "Foo"
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="b7423c48-21ca-46e3-aa00-6ee21b4bd8d4" name="Foo" popDefinition="false"
+                        supplDataElement="false">
+                <logic>exists ["Patient Characteristic Birthdate": BD."Birth date"]</logic>
+                <comment/>
+            </definition>
+        </definitions>
+        <functions/>
+        <includeLibrarys>
+            <includeLibrary cqlLibRefId="4028038268d3a5fe01695910054a3651" cqlLibRefName="BirthdateDead"
+                            cqlVersion="1.0.000" id="6bb07d38-47fb-4e3f-a70f-30575df4a60a" name="BD" qdmVersion="5.4"/>
+        </includeLibrarys>
+    </cqlLookUp>
+    <elementLookUp>
+        <qdm code="false" datatype="Patient Characteristic Payer" id="dd8a3b5f-0522-4a06-8627-0b0620e9d658" name="Payer"
+             oid="2.16.840.1.114222.4.11.3591" originalName="Payer" program="" release="" suffix=""
+             suppDataElement="true" taxonomy="Source of Payment Typology" type="Extensional"
+             uuid="dd8a3b5f-0522-4a06-8627-0b0620e9d658" version=""/>
+        <qdm code="false" datatype="Patient Characteristic Sex" id="5b9e9d6d-a760-415e-8b4e-d19e3ace8da0"
+             name="ONC Administrative Sex" oid="2.16.840.1.113762.1.4.1" originalName="ONC Administrative Sex"
+             program="" release="" suffix="" suppDataElement="true" taxonomy="Administrative Sex" type="Extensional"
+             uuid="5b9e9d6d-a760-415e-8b4e-d19e3ace8da0" version=""/>
+        <qdm code="false" datatype="Patient Characteristic Ethnicity" id="7dafdc9c-1dd4-4091-9472-3c6eb00332a4"
+             name="Ethnicity" oid="2.16.840.1.114222.4.11.837" originalName="Ethnicity" program="" release="" suffix=""
+             suppDataElement="true" taxonomy="CDC" type="Extensional" uuid="7dafdc9c-1dd4-4091-9472-3c6eb00332a4"
+             version=""/>
+        <qdm code="false" datatype="Patient Characteristic Race" id="6cf754cd-522d-4ad9-8f04-f1e5b88a84a0" name="Race"
+             oid="2.16.840.1.114222.4.11.836" originalName="Race" program="" release="" suffix="" suppDataElement="true"
+             taxonomy="CDC" type="Extensional" uuid="6cf754cd-522d-4ad9-8f04-f1e5b88a84a0" version=""/>
+        <qdm code="true" codeIdentifier="CODE:/CodeSystem/LOINC/Version/2.65/Code/21112-8/Info" codeName="Birth date"
+             codeSystemOID="2.16.840.1.113883.6.1" codeSystemVersion="2.65" datatype="Patient Characteristic Birthdate"
+             displayName="Birth date" id="B04BCE06-2E3C-4CA3-A759-262B06F7D353" isCodeSystemVersionIncluded="false"
+             name="Birth date" oid="21112-8" readOnly="false" taxonomy="LOINC"
+             uuid="B04BCE06-2E3C-4CA3-A759-262B06F7D353"/>
+        <qdm code="true" codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2016-03/Code/49325007/Info"
+             codeName="Ugly scar (disorder)" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2016-03"
+             displayName="Ugly scar (disorder)" id="33DFC1C3-659C-41EB-8FEE-5FE4AB04CCAD"
+             isCodeSystemVersionIncluded="false" name="Ugly scar (disorder)" oid="49325007" readOnly="false"
+             taxonomy="SNOMEDCT" uuid="33DFC1C3-659C-41EB-8FEE-5FE4AB04CCAD"/>
+        <qdm code="true" codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2018-09/Code/419099009/Info"
+             codeName="Dead (finding)" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2018-09"
+             displayName="Dead (finding)" id="46CD061F-7B54-41AE-ABB6-7346EB9238F8" isCodeSystemVersionIncluded="false"
+             name="Dead (finding)" oid="419099009" readOnly="false" taxonomy="SNOMEDCT"
+             uuid="46CD061F-7B54-41AE-ABB6-7346EB9238F8"/>
+    </elementLookUp>
+    <allUsedCQLLibs>
+        <lib alias="BD" id="4028038268d3a5fe01695910054a3651" isComponent="" isUnUsedGrandChild="false"
+             name="BirthdateDead" setId="224d31e7-a0c8-4462-b4da-d7f8cdf00bf1" version="1.0.000"/>
+    </allUsedCQLLibs>
+</measure>

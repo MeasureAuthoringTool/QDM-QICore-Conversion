@@ -1,9 +1,10 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
+import mat.model.cql.CQLFunctions;
+import mat.model.cql.CQLModel;
+import mat.server.service.impl.XMLMarshalUtil;
+import mat.server.util.XmlProcessor;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,13 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import lombok.extern.slf4j.Slf4j;
-import mat.model.cql.CQLFunctions;
-import mat.model.cql.CQLModel;
-import mat.server.service.impl.XMLMarshalUtil;
-import mat.server.util.XmlProcessor;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +46,27 @@ public class AntlrConversionCqlToMatXmlTest {
         XmlProcessor measureXMLProcessor = new XmlProcessor(xml);
         String cqlXmlFrag = measureXMLProcessor.getXmlByTagName("cqlLookUp");
         return (CQLModel) xmlMarshalUtil.convertXMLToObject("CQLModelMapping.xml", cqlXmlFrag, CQLModel.class);
+    }
+
+    @Test
+    public void testCommentsFound() throws Exception {
+        conversionCqlToMatXml.setSourceModel(loadMatXml("comments.xml"));
+        parser.parse(loadCqlResource("comments.cql"), conversionCqlToMatXml);
+        var destination = conversionCqlToMatXml.getDestinationModel();
+
+        assertEquals("CMS936\n" +
+                "Patient-based\n" +
+                "(EH or EP?)\n" +
+                "Proportion scoring", destination.getLibraryComment());
+    }
+
+    @Test
+    public void testCommentsNotFound() throws Exception {
+        conversionCqlToMatXml.setSourceModel(loadMatXml("convert-1-mat.xml"));
+        parser.parse(loadCqlResource("convert-1.cql"), conversionCqlToMatXml);
+        var destination = conversionCqlToMatXml.getDestinationModel();
+
+        assertNull(destination.getLibraryComment());
     }
 
     @Test
