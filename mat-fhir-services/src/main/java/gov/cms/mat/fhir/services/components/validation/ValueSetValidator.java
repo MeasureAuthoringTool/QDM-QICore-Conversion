@@ -36,7 +36,7 @@ public class ValueSetValidator extends CqlValidatorHelper {
             LibraryErrors libraryErrors = buildLibraryErrors(cqlTextParser);
 
             List<CQLError> cqlErrors = failingValueSets.stream()
-                    .map(c -> findLine(c.getOid(), cqlTextParser.getLines()))
+                    .map(c -> findLine(c.getOid(), c.getErrorMessage(), cqlTextParser.getLines()))
                     .collect(Collectors.toList());
 
             libraryErrors.setErrors(cqlErrors);

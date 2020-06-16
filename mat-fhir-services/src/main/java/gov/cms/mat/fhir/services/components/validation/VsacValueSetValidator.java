@@ -30,10 +30,14 @@ class VsacValueSetValidator extends VsacValidator {
     List<CQLQualityDataSetDTO> validate(long timeout, List<CQLQualityDataSetDTO> valueSetList, String umlsToken) {
         long valueSetTimeout = Math.max(valueSetValidationPoolTimeout,timeout);
         if (StringUtils.isBlank(umlsToken)) {
-            setAllNotValid(valueSetList, VsacStatus.IN_VALID, BLANK_UMLS_TOKEN);
+            valueSetList.stream()
+                    .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
+                    .forEach(c -> {
+                        c.setErrorMessage(c.obtainValidatedWithVsac() == VsacStatus.PENDING ?
+                                ValueSetVsacAsync.REQURIES_VALIDATION:
+                                ValueSetVsacAsync.NOT_FOUND);
+                    });
         } else {
-            setAllNotValid(valueSetList, VsacStatus.PENDING, null);
-
             List<CQLQualityDataSetDTO> validationList = valueSetList.stream()
                     .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                     .collect(Collectors.toList());

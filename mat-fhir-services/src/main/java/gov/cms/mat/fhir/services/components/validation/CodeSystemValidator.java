@@ -36,7 +36,7 @@ public class CodeSystemValidator extends CqlValidatorHelper {
             LibraryErrors libraryErrors = buildLibraryErrors(cqlTextParser);
 
             List<CQLError> cqlErrors = failingCodes.stream()
-                    .map(c -> findLine(c.getCodeSystemOID(), cqlTextParser.getLines()))
+                    .map(c -> findLine(c.getCodeSystemOID(), c.getErrorMessage(), cqlTextParser.getLines()))
                     .collect(Collectors.toList());
 
             libraryErrors.setErrors(cqlErrors);
