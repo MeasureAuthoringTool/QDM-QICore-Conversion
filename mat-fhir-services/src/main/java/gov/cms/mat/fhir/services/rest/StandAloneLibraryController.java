@@ -44,14 +44,13 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
     public ConversionResultDto convertQdmToFhir(
             @RequestParam @Min(10) String id,
             @RequestParam ConversionType conversionType,
-            @RequestParam(required = false, defaultValue = "false") boolean isPush,
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
             @RequestParam(required = false, defaultValue = "LIBRARY-QDM-ORCHESTRATION") String batchId) {
 
         ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, conversionType, showWarnings, batchId);
 
         OrchestrationProperties orchestrationProperties =
-                buildProperties(conversionType, isPush, showWarnings, threadSessionKey);
+                buildProperties(conversionType, false, showWarnings, threadSessionKey);
 
         return pushLibraryService.convertQdmToFhir(id, orchestrationProperties);
     }
