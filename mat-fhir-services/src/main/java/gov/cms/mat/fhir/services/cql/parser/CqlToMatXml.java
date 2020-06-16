@@ -4,16 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import mat.model.cql.CQLCode;
-import mat.model.cql.CQLCodeSystem;
-import mat.model.cql.CQLDefinition;
-import mat.model.cql.CQLFunctionArgument;
-import mat.model.cql.CQLFunctions;
-import mat.model.cql.CQLIncludeLibrary;
-import mat.model.cql.CQLModel;
-import mat.model.cql.CQLParameter;
-import mat.model.cql.CQLQualityDataSetDTO;
-import mat.model.cql.VsacStatus;
+import mat.model.cql.*;
 import mat.server.CQLKeywordsUtil;
 import mat.shared.CQLError;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +13,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.chomp1;
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.getGlobalLibId;
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.isQuoted;
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.newGuid;
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseCodeSystemName;
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseOid;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.*;
 
 /**
  * A CqlVisitor for converting FHIR to MatXml format without a source model.
@@ -99,16 +86,16 @@ public class CqlToMatXml implements CqlVisitor {
     }
 
     @Override
-    public void libraryTag(String libraryName, String version) {
+    public void libraryTag(String libraryName, String version, @Nullable String libraryComment) {
         destinationModel.setLibraryName(libraryName);
         destinationModel.setVersionUsed(version);
+        destinationModel.setLibraryComment(libraryComment);
     }
 
     @Override
-    public void usingModelVersionTag(String model, String modelVersion, String libraryComment) {
+    public void usingModelVersionTag(String model, String modelVersion) {
         destinationModel.setUsingModelVersion(modelVersion);
         destinationModel.setUsingModel(model);
-        destinationModel.setLibraryComment(libraryComment);
     }
 
     @Override
