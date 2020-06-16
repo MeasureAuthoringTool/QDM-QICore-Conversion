@@ -320,10 +320,10 @@ public class AntlCqlParser implements CqlParser {
             CQLError error = new CQLError();
             error.setSeverity("Severe");
             error.setErrorMessage(msg);
-            error.setErrorInLine(line - 1);
+            error.setErrorInLine(line);
             error.setErrorAtOffset(charPositionInLine);
-            error.setStartErrorInLine(line - 1);
-            error.setEndErrorInLine(line - 1);
+            error.setStartErrorInLine(line);
+            error.setEndErrorInLine(line);
             visitor.handleError(error);
         }
     }
