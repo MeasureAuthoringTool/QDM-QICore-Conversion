@@ -54,11 +54,7 @@ public class OrchestrationService {
 
     public boolean processPrerequisites(OrchestrationProperties properties) {
         try {
-            if (properties.getIsPush()) {
-                processAndGetMeasureLib(properties);
-            } else {
-                processDraft(properties);
-            }
+            processAndGetMeasureLib(properties);
             processFhirMeasure(properties);
             return true;
         } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException | NoCqlLibrariesFoundException |
@@ -71,13 +67,8 @@ public class OrchestrationService {
         }
     }
 
-
     private void processFhirMeasure(OrchestrationProperties properties) {
         measureOrchestrationConversionService.processExistingFhirMeasure(properties);
-    }
-
-    private void processDraft(OrchestrationProperties properties) {
-        draftMeasureXmlProcessor.processMeasure(properties.getMatMeasure(), properties.isShowWarnings());
     }
 
     public void processAndGetMeasureLib(OrchestrationProperties properties) {
