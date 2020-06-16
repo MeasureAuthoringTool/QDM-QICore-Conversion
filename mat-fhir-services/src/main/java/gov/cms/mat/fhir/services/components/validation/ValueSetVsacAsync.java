@@ -17,6 +17,9 @@ import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseOid;
 @Component
 @Slf4j
 class ValueSetVsacAsync extends VsacValidator {
+    public static final String REQURIES_VALIDATION = "Value set requires validation. Please login to UMLS to validate it.";
+    public static final String NOT_FOUND = "Value set not found in VSAC.";
+
     @Value("${mat.qdm.default.expansion.id}")
     private String defaultExpId;
 
@@ -32,13 +35,12 @@ class ValueSetVsacAsync extends VsacValidator {
 
             boolean isValid = verifyWithVsac(oid, fiveMinServiceTicket);
 
-            code.setErrorMessage(isValid ? null : NOT_IN_VSAC);
+            code.setErrorMessage(isValid ? null : NOT_FOUND);
             code.addValidatedWithVsac(isValid ? VsacStatus.VALID : VsacStatus.IN_VALID);
         } catch (Exception e) {
-            code.addValidatedWithVsac(VsacStatus.IN_VALID);
-            code.setErrorMessage(e.getMessage());
+            code.setErrorMessage(code.obtainValidatedWithVsac() == VsacStatus.PENDING ?
+                    REQURIES_VALIDATION : NOT_FOUND);
         }
-
         return CompletableFuture.completedFuture(null);
     }
 

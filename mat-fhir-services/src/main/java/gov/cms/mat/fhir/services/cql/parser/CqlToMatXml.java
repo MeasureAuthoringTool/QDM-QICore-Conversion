@@ -130,15 +130,18 @@ public class CqlToMatXml implements CqlVisitor {
 
     @Override
     public void valueSet(String name, String uri, int lineNumber) {
+
+        try {
+            validateValuesetUri(uri);
+        } catch (IllegalArgumentException e) {
+            handleError(severErrorAtLine("Invalid valueset URI: " + uri,lineNumber));
+        }
+
         var vs = new CQLQualityDataSetDTO();
         vs.setId(newGuid());
         vs.setName(name);
         vs.setUuid(newGuid());
-        try {
-            vs.setOid(parseOid(uri));
-        } catch (IllegalArgumentException e) {
-            handleError(severErrorAtLine("Invalid valueset URI: " + uri,lineNumber));
-        }
+        vs.setOid(uri);
 
         // Nonsensical legacy stuff that has to be here for the gwt part to function at the moment.
         vs.setOriginalCodeListName(name);
@@ -147,7 +150,7 @@ public class CqlToMatXml implements CqlVisitor {
         vs.setType("Grouping");
 
         var existingValueSet = findExisting(sourceModel.getValueSetList(),
-                evs -> StringUtils.equals(evs.getOid(), vs.getOid()));
+                evs -> StringUtils.equals(parseOid(evs.getOid()), parseOid(vs.getOid())));
         existingValueSet.ifPresentOrElse(v -> vs.setValidatedWithVsac(v.isValidatedWithVsac()),
                 () -> vs.setValidatedWithVsac(VsacStatus.PENDING.name()));
 

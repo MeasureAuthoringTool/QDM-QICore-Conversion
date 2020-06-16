@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -40,7 +39,7 @@ public class ValidationOrchestrationService {
                                            String ulmsToken,
                                            ValidationRequest validationRequest) {
         List<CompletableFuture<List<LibraryErrors>>> futures = new ArrayList<>();
-        long validationTimeout = Math.max(validationRequest.getTimeoutSeconds(),validationPoolTimeOut);
+        long validationTimeout = Math.max(validationRequest.getTimeoutSeconds(), validationPoolTimeOut);
 
 
         if (validationRequest.isValidateCqlToElm()) {
@@ -69,10 +68,10 @@ public class ValidationOrchestrationService {
                 log.debug("No code systems to validate for library: {}-{}", cqlModel.getLibraryName(), cqlModel.getVersionUsed());
             } else {
                 CompletableFuture<List<LibraryErrors>> f =
-                       codeSystemValidator.validate(validationRequest.getTimeoutSeconds(),
-                               cqlModel.getCodeList(),
-                               cql,
-                               ulmsToken);
+                        codeSystemValidator.validate(validationRequest.getTimeoutSeconds(),
+                                cqlModel.getCodeList(),
+                                cql,
+                                ulmsToken);
                 f.orTimeout(validationTimeout, TimeUnit.SECONDS);
                 futures.add(f);
             }

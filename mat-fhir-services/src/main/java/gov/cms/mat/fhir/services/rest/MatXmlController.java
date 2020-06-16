@@ -221,39 +221,37 @@ public class MatXmlController {
     }
 
     private MatXmlResponse run(String umlsToken,
-                               String existingCql,
-                               @Null CQLModel existingModel,
+                               String cql,
+                               @Null CQLModel sourceModel,
                                MatXmlReq req) {
         MatXmlResponse matXmlResponse = new MatXmlResponse();
 
         CqlToMatXml cqlToMatXml = visitorFactory.getCqlToMatXmlVisitor();
-        cqlToMatXml.setSourceModel(existingModel);
+        cqlToMatXml.setSourceModel(sourceModel);
         cqlToMatXml.setUmlsToken(umlsToken);
-        cqlParser.parse(existingCql, cqlToMatXml);
+        cqlParser.parse(cql, cqlToMatXml);
 
+        matXmlResponse.setCql(cql);
+        matXmlResponse.setCqlModel(cqlToMatXml.getDestinationModel());
 
-        matXmlResponse.setCql(existingCql);
-        CQLModel newModel = cqlToMatXml.getDestinationModel();
-        matXmlResponse.setCqlModel(newModel);
-
-        if (existingModel != null) {
+        if (sourceModel != null) {
             // Overwrite fields the user is not allowed to change for FHIR.
-            newModel.setLibraryName(existingModel.getLibraryName());
-            newModel.setUsingModelVersion(existingModel.getUsingModelVersion());
-            newModel.setUsingModel(existingModel.getUsingModel());
-            newModel.setVersionUsed(existingModel.getVersionUsed());
+            matXmlResponse.getCqlModel().setLibraryName(sourceModel.getLibraryName());
+            matXmlResponse.getCqlModel().setUsingModelVersion(sourceModel.getUsingModelVersion());
+            matXmlResponse.getCqlModel().setUsingModel(sourceModel.getUsingModel());
+            matXmlResponse.getCqlModel().setVersionUsed(sourceModel.getVersionUsed());
         }
 
         if (!cqlToMatXml.getErrors().isEmpty()) {
             LibraryErrors libraryErrors = new LibraryErrors();
             libraryErrors.setErrors(cqlToMatXml.getErrors());
-            libraryErrors.setName(newModel.getLibraryName());
-            libraryErrors.setVersion(newModel.getVersionUsed());
+            libraryErrors.setName(matXmlResponse.getCqlModel().getLibraryName());
+            libraryErrors.setVersion(matXmlResponse.getCqlModel().getVersionUsed());
             matXmlResponse.setErrors(Collections.singletonList(libraryErrors));
         } else {
             List<LibraryErrors> libraryErrors =
-                    validationOrchestrationService.validateCql(existingCql,
-                            existingModel,
+                    validationOrchestrationService.validateCql(cql,
+                            matXmlResponse.getCqlModel(),
                             umlsToken,
                             req.getValidationRequest());
             matXmlResponse.setErrors(libraryErrors);

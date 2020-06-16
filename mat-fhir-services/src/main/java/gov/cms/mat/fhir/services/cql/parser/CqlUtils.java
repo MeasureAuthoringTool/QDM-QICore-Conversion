@@ -415,29 +415,33 @@ public class CqlUtils {
         }
     }
 
-
-
-    public static String parseOid(String uri) {
+    public static void validateValuesetUri(String uri) {
         //urn:oid:2.16.840.1.113883.3.464.1004.1548
         //Should return 2.16.840.1.113883.3.464.1004.1548
-        if (uri.startsWith(OID_URL_TOKEN)) {
-            return uri.substring(OID_URL_TOKEN.length());
-
-        } else if (uri.startsWith("http")){
-            //It is everything after last /.
-            int lastSlash = uri.lastIndexOf("/");
-            if (lastSlash >= 0) {
-                return uri.substring(lastSlash + 1);
-            } else {
-                throw new IllegalArgumentException("Invalid uri: " + uri +
-                        ". Should be in this format: urn:oid:2.16.840.1.113883.3.464.1004.1548 or this format " +
-                        "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.17.4077.3.2011");
-            }
-        } else {
+        if (!uri.startsWith(OID_URL_TOKEN) &&
+                !uri.startsWith("http")){
             throw new IllegalArgumentException("Invalid uri: " + uri +
                     ". Should be in this format: urn:oid:2.16.840.1.113883.3.464.1004.1548 or this format " +
                     "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.17.4077.3.2011");
         }
+    }
+
+
+
+    public static String parseOid(String uri) {
+        String result = uri;
+        //urn:oid:2.16.840.1.113883.3.464.1004.1548
+        //Should return 2.16.840.1.113883.3.464.1004.1548
+        if (uri.startsWith(OID_URL_TOKEN)) {
+            result = uri.substring(OID_URL_TOKEN.length());
+        } else if (uri.startsWith("http")){
+            //It is everything after last /.
+            int lastSlash = uri.lastIndexOf("/");
+            if (lastSlash >= 0) {
+                result = uri.substring(lastSlash + 1);
+            }
+        }
+        return result;
     }
 
     /**
