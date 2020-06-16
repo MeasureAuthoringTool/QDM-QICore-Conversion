@@ -19,16 +19,21 @@ import mat.model.MeasureType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.hl7.fhir.r4.model.CanonicalType;
+import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ContactDetail;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
+import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Measure;
+import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Period;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.hl7.fhir.r4.model.UsageContext;
 import org.springframework.stereotype.Service;
@@ -58,6 +63,9 @@ public class MeasureTranslator extends TranslatorBase {
     //public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
     public static final RelatedArtifact.RelatedArtifactType DEFAULT_ARTIFACT_TYPE = DOCUMENTATION;
     public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
+
+    public static final String EXTENSION_POPULATION_BASIS = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-populationBasis";
+    public static final String EXTENSION_SOFTWARE_SYSTEM = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-softwaresystem";
 
     private final MeasureRepository matMeasureRepo;
     private final MeasureDetailsRepository matMeasureDetailsRepo;
@@ -162,7 +170,11 @@ public class MeasureTranslator extends TranslatorBase {
 
         result.setEffectivePeriod(buildDefaultPeriod());
 
-        // proessMeta(result);  TODO needs fixing
+//        processMeta(result, simpleXmlModel);
+        processExtension(result);
+        processContained(result);
+        //TODO need to fix Improvment Notation on MAT side
+//        processImprovementNotation(result);
         processHumanReadable(id, result);
         processIdentifiers(result, simpleXmlModel);
         processStatus(result, simpleXmlModel);
@@ -176,6 +188,40 @@ public class MeasureTranslator extends TranslatorBase {
 
         return result;
     }
+
+    private void processExtension(Measure fhirMeasure) {
+        fhirMeasure.setExtension(new ArrayList<>());
+        fhirMeasure.getExtension().add(new Extension(EXTENSION_POPULATION_BASIS, new CodeType("boolean")));
+        fhirMeasure.getExtension().add(new Extension(EXTENSION_SOFTWARE_SYSTEM, new Reference("#cqf-tooling")));
+    }
+
+    private void processContained(Measure fhirMeasure) {
+        Device device = new Device();
+        Meta meta = new Meta();
+        meta.setProfile(Collections.singletonList(new CanonicalType("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/device-softwaresystem-cqfm")));
+        device.setMeta(meta);
+        device.setId("cqf-tooling");
+
+        Device.DeviceVersionComponent deviceVersionComponent = new Device.DeviceVersionComponent();
+        deviceVersionComponent.setValue("1.1.0-SNAPSHOT");
+        device.setVersion(Collections.singletonList(deviceVersionComponent));
+
+        CodeableConcept codeableConcept = new CodeableConcept();
+        Coding coding = new Coding();
+        coding.setSystem("http://hl7.org/fhir/us/cqfmeasures/CodeSystem/software-system-type");
+        coding.setCode("tooling");
+        codeableConcept.setCoding(Collections.singletonList(coding));
+
+        device.setType(codeableConcept);
+
+        fhirMeasure.setContained(Collections.singletonList(device));
+    }
+
+/*    private void processImprovementNotation(Measure fhirMeasure) {
+        CodeableConcept improvementNotation = buildCodeableConcept("increase",
+                "http://terminology.hl7.org/CodeSystem/measure-improvement-notation", "");
+        fhirMeasure.setImprovementNotation(improvementNotation);
+    }*/
 
     private void processXml(byte[] xmlBytes, org.hl7.fhir.r4.model.Measure fhirMeasure) {
         String xml = new String(xmlBytes);
@@ -246,7 +292,6 @@ public class MeasureTranslator extends TranslatorBase {
 
     public void processScoring(Measure fhirMeasure,
                                ManageCompositeMeasureDetailModel matModel) {
-        //TO DO: Test scoring.
         CodeableConcept scoringConcept = buildCodeableConcept(matModel.getMeasScoring(),
                 "http://hl7.org/fhir/measure-scoring", "");
         fhirMeasure.setScoring(scoringConcept);
@@ -295,13 +340,13 @@ public class MeasureTranslator extends TranslatorBase {
         }
     }
 
-//    public void proecssMeta(Measure fhirMeasure, ManageCompositeMeasureDetailModel matModel) {
-//        Meta measureMeta = new Meta();
-//        measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
-//        measureMeta.setVersionId(matModel.getVersionNumber());
-//        measureMeta.setLastUpdated(new Date());
-//        fhirMeasure.setMeta(measureMeta);
-//    }
+    /*public void processMeta(Measure fhirMeasure, ManageCompositeMeasureDetailModel matModel) {
+        Meta measureMeta = new Meta();
+        measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
+        measureMeta.setVersionId(matModel.getVersionNumber());
+        measureMeta.setLastUpdated(new Date());
+        fhirMeasure.setMeta(measureMeta);
+    }*/
 
     public void processHumanReadable(String measureId, Measure measure) {
         var measureExpOpt = matMeasureExportRepo.findById(measureId);
