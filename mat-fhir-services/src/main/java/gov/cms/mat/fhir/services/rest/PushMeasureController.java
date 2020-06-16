@@ -57,6 +57,7 @@ public class PushMeasureController implements FhirValidatorProcessor {
                 .conversionType(ConversionType.CONVERSION)
                 .includeStdLibs(false)
                 .xmlSource(XmlSource.MEASURE)
+                .isPush(true)
                 .threadSessionKey(threadSessionKey)
                 .build();
     }

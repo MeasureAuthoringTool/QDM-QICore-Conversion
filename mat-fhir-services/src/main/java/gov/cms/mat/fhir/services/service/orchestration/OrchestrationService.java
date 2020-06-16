@@ -54,13 +54,11 @@ public class OrchestrationService {
 
     public boolean processPrerequisites(OrchestrationProperties properties) {
         try {
-
-            if (properties.getXmlSource() == XmlSource.SIMPLE) {
+            if (properties.getIsPush()) {
                 processAndGetMeasureLib(properties);
             } else {
                 processDraft(properties);
             }
-
             processFhirMeasure(properties);
             return true;
         } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException | NoCqlLibrariesFoundException |
