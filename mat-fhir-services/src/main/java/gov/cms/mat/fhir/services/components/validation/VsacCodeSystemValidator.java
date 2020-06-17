@@ -31,7 +31,13 @@ public class VsacCodeSystemValidator extends VsacValidator {
     public List<CQLCode> validate(long timeout, List<CQLCode> codeList, String umlsToken) {
         long codeSystemTimeout = Math.max(timeout,codeSystemValidationPoolTimeout);
         if (StringUtils.isBlank(umlsToken)) {
-            setAllNotValid(codeList, VsacStatus.IN_VALID, BLANK_UMLS_TOKEN);
+            codeList.stream()
+                    .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
+                    .forEach(c -> {
+                        c.setErrorMessage(c.obtainValidatedWithVsac() == VsacStatus.PENDING ?
+                                CodeSystemVsacAsync.REQUIRES_VALIDATION:
+                                CodeSystemVsacAsync.NOT_FOUND);
+                    });
         } else {
             setAllNotValid(codeList, VsacStatus.PENDING, null);
 
@@ -47,7 +53,11 @@ public class VsacCodeSystemValidator extends VsacValidator {
                 futures.add(completableFuture);
             });
 
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+            try {
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
+            } catch (Exception e) {
+                log.debug("Error waiting for work to complete.",e);
+            }
         }
 
         return codeList.stream()

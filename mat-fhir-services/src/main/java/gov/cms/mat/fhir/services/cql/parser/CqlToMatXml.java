@@ -4,7 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import mat.model.cql.*;
+import mat.model.cql.CQLCode;
+import mat.model.cql.CQLCodeSystem;
+import mat.model.cql.CQLDefinition;
+import mat.model.cql.CQLFunctionArgument;
+import mat.model.cql.CQLFunctions;
+import mat.model.cql.CQLIncludeLibrary;
+import mat.model.cql.CQLModel;
+import mat.model.cql.CQLParameter;
+import mat.model.cql.CQLQualityDataSetDTO;
+import mat.model.cql.VsacStatus;
 import mat.server.CQLKeywordsUtil;
 import mat.shared.CQLError;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +32,13 @@ import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.*;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.chomp1;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.getGlobalLibId;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.isQuoted;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.newGuid;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseCodeSystemName;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseOid;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.validateValuesetUri;
 
 /**
  * A CqlVisitor for converting FHIR to MatXml format without a source model.
@@ -134,7 +149,7 @@ public class CqlToMatXml implements CqlVisitor {
         try {
             validateValuesetUri(uri);
         } catch (IllegalArgumentException e) {
-            handleError(severErrorAtLine("Invalid valueset URI: " + uri,lineNumber));
+            handleError(severErrorAtLine("Invalid valueset URI: " + uri, lineNumber));
         }
 
         var vs = new CQLQualityDataSetDTO();
@@ -167,7 +182,7 @@ public class CqlToMatXml implements CqlVisitor {
         c.setId(newGuid());
         c.setLineNumber(lineNumber);
         updateCodeSystemInfo(c);
-        updateCodeIdentifierAndVsacValidationFlag(c);
+        updateCodeIdentifierAndVsacValidationFlag(c, lineNumber);
         destinationModel.getCodeList().add(c);
     }
 
@@ -278,32 +293,44 @@ public class CqlToMatXml implements CqlVisitor {
                         v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).findFirst();
                 if (vsacCodeSystem.isEmpty()) {
                     //Hard error since we can't find the an entry in the spreadsheet.
-                    handleError(severErrorAtLine("Illegal code system url: " +
-                            c.getCodeSystemOID() + ". If you think this should be permitted you can request " +
-                            "that it be added to the MAT.", currentCS.get().getLineNumber()));
+                    handleError(severErrorAtLine("This code system uri is not permitted. " +
+                            "Please contact the MAT team if you feel this is in error.",
+                            currentCS.get().getLineNumber()));
                 } else {
                     c.setCodeSystemVersion(vsacCodeSystem.get().getDefaultVsacVersion());
                 }
             }
         } else {
             //Hard error since we can't find the existing code system in the cql.
-            handleError(severErrorAtLine("Could not find code system named ," +
-                            c.getCodeSystemName() + ", for code " + c.getCodeName() + " " + c.getCodeOID() + ".",
+            handleError(severErrorAtLine("Could not find code system named " +
+                            c.getCodeSystemName() + ".",
                     c.getLineNumber()));
         }
     }
 
-    private void updateCodeIdentifierAndVsacValidationFlag(CQLCode c) {
+    private void updateCodeIdentifierAndVsacValidationFlag(CQLCode c, int lineNumber) {
         var existingCode = findExisting(sourceModel.getCodeList(),
                 ec -> StringUtils.equals(ec.getCodeName(), c.getCodeName()) &&
                         StringUtils.equals(ec.getCodeSystemName(), c.getCodeSystemName()));
 
         c.addValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).
-                orElse(VsacStatus.IN_VALID));
+                orElse(VsacStatus.PENDING));
 
-        c.setCodeIdentifier(existingCode.isPresent() ?
-                existingCode.get().getCodeIdentifier() :
-                buildCodeIdentifier(c));
+        if (c.obtainValidatedWithVsac() == VsacStatus.VALID) {
+            var existingCodeSystem = findExisting(sourceModel.getCodeSystemList(),
+                    ecs-> StringUtils.equals(ecs.getCodeSystem(),c.getCodeSystemOID()));
+            if (existingCodeSystem.isEmpty()) {
+                c.addValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).
+                        orElse(VsacStatus.PENDING));
+            }
+        }
+
+        String codeIdentifier = buildCodeIdentifier(c, lineNumber);
+        if (codeIdentifier != null) {
+            c.setCodeIdentifier(existingCode.isPresent() ?
+                    existingCode.get().getCodeIdentifier() :
+                    buildCodeIdentifier(c, lineNumber));
+        }
     }
 
     /**
@@ -312,19 +339,17 @@ public class CqlToMatXml implements CqlVisitor {
      * @param c The CQLCode to build the Identifier for.
      * @return The VSAC code url, e.g. .
      */
-    private String buildCodeIdentifier(CQLCode c) {
+    private String buildCodeIdentifier(CQLCode c, int lineNumber) {
         var vsacCodeSystem = codeListService.getOidToVsacCodeSystemMap().values().stream().filter(
                 v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).findFirst();
-        if (vsacCodeSystem.isEmpty()) {
-            //Hard error since we can't find the an entry in the spreadsheet.
-            throw new IllegalArgumentException("Can't find vsacCodeSystem with codeSystemUrl: " +
-                    c.getCodeSystemOID() + ". Check to see if the spreadsheet needs to be updated.");
-        } else {
+        if (vsacCodeSystem.isPresent()) {
             String defaultVersion = vsacCodeSystem.get().getDefaultVsacVersion();
             return String.format(CODE_IDENTIFIER_FORMAT,
                     parseCodeSystemName(c.getCodeSystemName()).getLeft(),
                     StringUtils.isBlank(c.getCodeSystemVersionUri()) ? defaultVersion : c.getCodeSystemVersion(),
                     c.getCodeOID());
+        } else {
+            return null;
         }
     }
 
