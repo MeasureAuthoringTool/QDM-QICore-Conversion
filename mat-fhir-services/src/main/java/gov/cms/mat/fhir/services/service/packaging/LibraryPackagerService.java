@@ -64,11 +64,16 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
 
         FhirResourceValidationResult result = fhirValidatorService.validate(library);
 
-        if (CollectionUtils.isEmpty(result.getValidationErrorList())) {
-            return library;
-        } else {
-            throw new HapiResourceValidationException(id, "Library");
+        if (CollectionUtils.isNotEmpty(result.getValidationErrorList())) {
+            boolean hasErrors = result.getValidationErrorList().stream().
+                    anyMatch(ve -> !StringUtils.equals("WARNING",ve.getSeverity()) &&
+                            !StringUtils.equals("INFORMATION",ve.getSeverity()));
+            if (hasErrors) {
+                log.error("Validation errors encountered: " , result.getValidationErrorList());
+                throw new HapiResourceValidationException(id, "Library");
+            }
         }
+        return library;
     }
 
     public Library fetchLibraryFromHapi(String id) {
