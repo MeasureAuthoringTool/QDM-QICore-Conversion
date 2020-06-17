@@ -43,7 +43,7 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
     @PostMapping("/convertStandAlone")
     public ConversionResultDto convertQdmToFhir(
             @RequestParam @Min(10) String id,
-            @RequestParam ConversionType conversionType,
+            @RequestParam(required = false) ConversionType conversionType,
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
             @RequestParam(required = false, defaultValue = "LIBRARY-QDM-ORCHESTRATION") String batchId) {
 

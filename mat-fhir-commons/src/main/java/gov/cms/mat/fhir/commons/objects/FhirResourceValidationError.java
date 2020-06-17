@@ -1,9 +1,12 @@
 package gov.cms.mat.fhir.commons.objects;
 
+import lombok.ToString;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
+@ToString
 public class FhirResourceValidationError {
     private String severity;
     private String locationField;
