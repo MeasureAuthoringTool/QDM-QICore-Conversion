@@ -87,8 +87,8 @@ curl -X GET "http://localhost:9080/library/find/load" -H "accept: */*"
    -  (local) http://localhost:9080/actuator
    -  (dev) https://matdev.semanticbits.com/mat-fhir-services/actuator
 -  Swagger:  
-   -  (local) http://localhost:9080/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
-   -  (dev) https://matdev.semanticbits.com/mat-fhir-services/swagger-ui/index.html?url=/mat-fhir-services/v3/api-docs&validatorUrl=#/
+   -  (local) http://localhost:9080/swagger
+   -  (dev) https://matdev.semanticbits.com/mat-fhir-services/swagger
 
 #### hapi-fhir-server:
 -  Test Overlay: 
@@ -100,13 +100,13 @@ curl -X GET "http://localhost:9080/library/find/load" -H "accept: */*"
    -  (local) http://localhost:9090/actuator
    -  (dev) https://matdev.semanticbits.com/qdm-qicore-mapping-services/actuator   
 -  Swagger:   
-   - (local) http://localhost:9090/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
-   - (dev) http://matdev.semanticbits.com/qdm-qicore-mapping-services/swagger-ui/index.html?url=/qdm-qicore-mapping-services/v3/api-docs&validatorUrl=#/   
+   - (local) http://localhost:9090/swagger
+   - (dev) http://matdev.semanticbits.com/qdm-qicore-mapping-services/swagger
 
 #### cql-elm-translation:
 -  Actuator: 
    - (local) http://localhost:7070/actuator
    -  (dev) https://matdev.semanticbits.com/cql-elm-translation/actuator   
 -  Swagger:  
-   - (local) http://localhost:7070/swagger-ui/index.html?url=/v3/api-docs&validatorUrl=#/
-   - (dev) http://matdev.semanticbits.com/cql-elm-translation/swagger-ui/index.html?url=/cql-elm-translation/v3/api-docs&validatorUrl=#/ 
+   - (local) http://localhost:7070/swagger
+   - (dev) http://matdev.semanticbits.com/cql-elm-translation/swagger

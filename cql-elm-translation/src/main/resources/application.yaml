@@ -21,3 +21,8 @@ info:
 fhir:
   conversion:
     baseurl: ${FHIR_SERVICES_URL}
+
+springdoc:
+  swagger-ui:
+    path: /swagger
+

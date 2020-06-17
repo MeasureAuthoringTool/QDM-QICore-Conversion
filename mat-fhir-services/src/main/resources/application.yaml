@@ -69,3 +69,8 @@ mat-fhir:
       queue-capacity: 100
 
 
+springdoc:
+  swagger-ui:
+    path: /swagger
+
+swagger-server: ${MAT_FHIR_SWAGGER_URL}

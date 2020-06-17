@@ -16,7 +16,12 @@ json:
     resource-definition-url: ${GOOGLE_RESOURCE_DEFINITION_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json}
 
 
+springdoc:
+  swagger-ui:
+    path: /swagger
 
+
+swagger-server: ${MAPPING_SWAGGER_URL}
 
 
 

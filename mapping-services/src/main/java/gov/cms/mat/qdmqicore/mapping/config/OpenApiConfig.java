@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.config;
+package gov.cms.mat.qdmqicore.mapping.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -36,7 +36,7 @@ public class OpenApiConfig {
 
     private Info buildInfo() {
         return new Info()
-                .title("MAT Fhir API")
-                .description("This is a SpringBoot v2.3.x restful service for converting MAT objects to FHIR.");
+                .title("Mapping services API")
+                .description("This is a SpringBoot v2.3.x restful service for obtaining data from google spreadsheets.");
     }
 }
