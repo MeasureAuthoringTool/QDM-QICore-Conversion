@@ -9,5 +9,6 @@ services:
       dockerfile: Dockerfile
     environment:
       FHIR_SERVICES_URL: ${FHIR_SERVICES_URL}
+      CQL_ELM_SWAGGER_URL: ${CQL_ELM_SWAGGER_URL}
     ports:
       - 9090:9090
