@@ -1,3 +1,5 @@
 fhir:
   conversion:
     baseurl: ${FHIR_SERVICES_URL}
+
+swagger-server: ${CQL_ELM_SWAGGER_URL}

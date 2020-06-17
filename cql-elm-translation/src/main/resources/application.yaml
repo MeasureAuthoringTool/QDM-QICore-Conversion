@@ -26,4 +26,3 @@ springdoc:
   swagger-ui:
     path: /swagger
 
-swagger-server:  ${CQL_ELM_SWAGGER_URL:""}

@@ -7,3 +7,4 @@ json:
     resource-definition-url: ${GOOGLE_RESOURCE_DEFINITION_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o1h1xy0/public/values?alt=json}
 
 
+swagger-server:

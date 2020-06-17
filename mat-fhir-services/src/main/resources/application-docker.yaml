@@ -52,3 +52,4 @@ json:
   data:
     url: ${CODESYSTEM_SHEET_URL}
 
+swagger-server: ${MAT_FHIR_SWAGGER_URL}

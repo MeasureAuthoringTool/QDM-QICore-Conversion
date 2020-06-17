@@ -15,20 +15,24 @@ public class OpenApiConfig {
     @Value("${swagger-server}")
     private String swaggerServer;
 
-
     @Bean
     public OpenAPI customOpenAPI() {
         OpenAPI openAPI = new OpenAPI()
                 .info(buildInfo());
 
-        if(StringUtils.isNotEmpty(swaggerServer)) {
-            log.info("Setting swagger server to: {}", swaggerServer);
-            openAPI.addServersItem( new Server().url(swaggerServer));
-        }
+        configureServerUrl(openAPI);
 
         return openAPI;
     }
 
+    private void configureServerUrl(OpenAPI openAPI) {
+        if (StringUtils.isNotEmpty(swaggerServer)) {
+            log.info("Setting swagger server to: {}", swaggerServer);
+            openAPI.addServersItem(new Server().url(swaggerServer));
+        } else {
+            log.info("Swagger server not set using 'Generated Server url'");
+        }
+    }
 
     private Info buildInfo() {
         return new Info()
