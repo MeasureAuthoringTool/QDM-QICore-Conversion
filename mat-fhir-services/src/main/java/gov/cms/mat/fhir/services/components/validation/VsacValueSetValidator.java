@@ -50,7 +50,11 @@ class VsacValueSetValidator extends VsacValidator {
                 futures.add(completableFuture);
             });
 
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+            try {
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
+            } catch (Exception e) {
+                log.debug("Error waiting for work to complete.",e);
+            }
         }
 
         return valueSetList.stream()

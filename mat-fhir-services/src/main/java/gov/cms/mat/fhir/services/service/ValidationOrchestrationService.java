@@ -77,7 +77,11 @@ public class ValidationOrchestrationService {
             }
         }
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        try {
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
+        } catch (Exception e) {
+            log.debug("Error waiting for work to complete.",e);
+        }
 
         List<LibraryErrors> libraryErrors =
                 futures.stream()

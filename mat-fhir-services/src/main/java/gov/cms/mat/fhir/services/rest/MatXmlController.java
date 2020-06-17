@@ -1,52 +1,45 @@
 package gov.cms.mat.fhir.services.rest;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
-import gov.cms.mat.fhir.commons.model.CqlLibraryExport;
-import gov.cms.mat.fhir.commons.model.MeasureExport;
 import gov.cms.mat.fhir.commons.model.MeasureXml;
 import gov.cms.mat.fhir.services.cql.parser.CqlParser;
 import gov.cms.mat.fhir.services.cql.parser.CqlToMatXml;
 import gov.cms.mat.fhir.services.cql.parser.CqlVisitorFactory;
-import gov.cms.mat.fhir.services.repository.CqlLibraryExportRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureXmlRepository;
 import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
 import gov.cms.mat.fhir.services.rest.dto.ValidationRequest;
 import gov.cms.mat.fhir.services.service.ValidationOrchestrationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLModel;
-import mat.server.service.impl.XMLMarshalUtil;
-import mat.server.util.XmlProcessor;
+import mat.server.CQLUtilityClass;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/cql-xml-gen")
@@ -54,7 +47,8 @@ import mat.server.util.XmlProcessor;
 @Slf4j
 @Controller
 public class MatXmlController {
-    @Data
+    @Getter
+    @Setter
     @NoArgsConstructor
     public static class MatXmlResponse {
         @NotNull
@@ -67,7 +61,8 @@ public class MatXmlController {
 
     private final MeasureXmlRepository measureXmlRepo;
 
-    @Data
+    @Getter
+    @Setter
     @NoArgsConstructor
     public static class MatCqlXmlReq extends MatXmlReq {
         @NotBlank
@@ -75,35 +70,28 @@ public class MatXmlController {
         private CQLModel sourceModel;
     }
 
-    private final MeasureExportRepository measureExportRepo;
     private final CqlLibraryRepository cqlLibRepo;
-    private final CqlLibraryExportRepository cqlLibExportRepo;
     private final CqlVisitorFactory visitorFactory;
     private final CqlParser cqlParser;
     private final ValidationOrchestrationService validationOrchestrationService;
-    private XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
 
     public MatXmlController(MeasureXmlRepository measureXmlRepo,
-                            MeasureExportRepository measureExportRepo,
                             CqlLibraryRepository cqlLibRepo,
-                            CqlLibraryExportRepository cqlLibExportRepo,
                             CqlVisitorFactory visitorFactory,
-                            @Qualifier("antlCqlParser") CqlParser cqlParser,
+                            CqlParser cqlParser,
                             ValidationOrchestrationService validationOrchestrationService) {
         this.measureXmlRepo = measureXmlRepo;
         this.cqlLibRepo = cqlLibRepo;
-        this.cqlLibExportRepo = cqlLibExportRepo;
-        this.measureExportRepo = measureExportRepo;
         this.visitorFactory = visitorFactory;
         this.cqlParser = cqlParser;
         this.validationOrchestrationService = validationOrchestrationService;
     }
 
-    @GetMapping("/standalone-lib/{id}")
+    @PutMapping("/standalone-lib/{id}")
     public @ResponseBody
-    MatXmlResponse fromStandaloneLib(@NotBlank @RequestHeader(value = "UMLS-TOKEN") String ulmsToken,
+    MatXmlResponse fromStandaloneLib(@RequestHeader(value = "UMLS-TOKEN", required=false) String ulmsToken,
                                      @NotBlank @PathVariable("id") String libId,
-                                     @RequestParam(defaultValue = "true") MatXmlReq matXmlReq) {
+                                     @Valid @RequestBody MatXmlReq matXmlReq) {
         try {
             Optional<CqlLibrary> optionalLib = cqlLibRepo.findById(libId);
 
@@ -114,21 +102,13 @@ public class MatXmlController {
                             HttpStatus.BAD_REQUEST, "CQL_LIBRARY.CQL_XML does not exist for CQL_LIBRARY.id " + libId + "."
                     );
                 }
-                CqlLibraryExport export = cqlLibExportRepo.getCqlLibraryExportByCqlLibraryId(libId);
-                if (export == null) {
-                    throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "CQL_LIBRARY_EXPORT does not exist for CQL_LIBRARY.id " + libId + "."
-                    );
-                }
-                byte[] cqlXml = export.getCql();
-                if (cqlXml == null) {
-                    throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "CQL_LIBRARY_EXPORT.CQL does not exist for CQL_LIBRARY.id " + libId + "."
-                    );
-                }
+
+                CQLModel model = CQLUtilityClass.getCQLModelFromXML(lib.getCqlXml());
+                String cql = CQLUtilityClass.getCqlString(model,"").getLeft();
+
                 return run(ulmsToken,
-                        decode(cqlXml),
-                        convert(lib.getCqlXml()),
+                        cql,
+                        model,
                         matXmlReq);
             } else {
                 throw new ResponseStatusException(
@@ -144,11 +124,11 @@ public class MatXmlController {
         }
     }
 
-    @GetMapping("/measure/{id}")
+    @PutMapping("/measure/{id}")
     public @ResponseBody
-    MatXmlResponse fromMeasure(@NotBlank @RequestHeader(value = "UMLS-TOKEN") String ulmsToken,
+    MatXmlResponse fromMeasure(@RequestHeader(value = "UMLS-TOKEN", required=false) String ulmsToken,
                                @NotBlank @PathVariable("id") String measureId,
-                               @RequestParam(defaultValue = "true") MatXmlReq matXmlReq) {
+                               @Valid @RequestBody MatXmlReq matXmlReq) {
         try {
             Optional<MeasureXml> optMeasureXml = measureXmlRepo.findByMeasureId(measureId);
 
@@ -159,22 +139,13 @@ public class MatXmlController {
                             HttpStatus.BAD_REQUEST, "MEASURE_XML.XML does not exist for MEASURE.ID " + measureId + "."
                     );
                 }
-                MeasureExport export = measureExportRepo.getMeasureExportById(measureId);
-                if (export == null) {
-                    throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "MEASURE_EXPORT does not exist for MEASURE.id " + measureId + "."
-                    );
-                }
-                byte[] cqlXml = export.getCql();
-                if (cqlXml == null) {
-                    throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "MEASURE_EXPORT.CQL does not exist for MEASURE.id " + measureId + "."
-                    );
-                }
+                String matXml = new String(measureXmlBytes, StandardCharsets.UTF_8);
+                CQLModel model = CQLUtilityClass.getCQLModelFromXML(matXml);
+                String cql = CQLUtilityClass.getCqlString(model,"").getLeft();
 
                 return run(ulmsToken,
-                        decode(export.getCql()),
-                        convert(decode(measureXmlBytes)),
+                        cql,
+                        model,
                         matXmlReq);
             } else {
                 throw new ResponseStatusException(
@@ -192,7 +163,7 @@ public class MatXmlController {
 
     @PutMapping("/cql")
     public @ResponseBody
-    MatXmlResponse fromCql(@NotBlank @RequestHeader(value = "UMLS-TOKEN") String umlsToken,
+    MatXmlResponse fromCql(@RequestHeader(value = "UMLS-TOKEN", required=false) String umlsToken,
                            @Valid @RequestBody MatCqlXmlReq matCqlXmlReq) {
         log.debug("MatXmlController::fromCql -> enter {}", matCqlXmlReq);
         String cql = matCqlXmlReq.getCql();
@@ -259,19 +230,4 @@ public class MatXmlController {
 
         return matXmlResponse;
     }
-
-    private String decode(byte[] bytes) {
-        return new String(bytes, StandardCharsets.UTF_8);
-    }
-
-    private CQLModel convert(String measureXml) {
-        try {
-            XmlProcessor measureXMLProcessor = new XmlProcessor(measureXml);
-            String cqlXmlFrag = measureXMLProcessor.getXmlByTagName("cqlLookUp");
-            return (CQLModel) xmlMarshalUtil.convertXMLToObject("CQLModelMapping.xml", cqlXmlFrag, CQLModel.class);
-        } catch (Throwable t) {
-            throw new RuntimeException("Error converting measure XML to CQLModel", t);
-        }
-    }
-
 }

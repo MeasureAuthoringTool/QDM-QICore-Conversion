@@ -15,8 +15,11 @@ import java.util.concurrent.CompletableFuture;
 @Component
 @Slf4j
 class CodeSystemVsacAsync extends VsacValidator {
-    private static final String INVALID_CODE_URL = "Invalid CODE URL";
-    private static final String URL_IS_REQUIRED = "URL is required";
+    private static final String INVALID_CODE_URL = "Invalid code system uri";
+    private static final String URL_IS_REQUIRED = "Code system uri is required";
+
+    public static final String REQUIRES_VALIDATION = "Code system requires validation. Please login to UMLS to validate it.";
+    public static final String NOT_FOUND = "Code system not found in VSAC.";
 
     CodeSystemVsacAsync(VsacService vsacService) {
         super(vsacService);
@@ -32,11 +35,13 @@ class CodeSystemVsacAsync extends VsacValidator {
                 boolean isValid = isDirectReferenceCodeValid(cqlCode.getCodeIdentifier(), umlsToken);
                 log.info("Validated code {} with vsac. {}", cqlCode.getCodeIdentifier(), isValid);
 
-                cqlCode.setErrorMessage(isValid ? null : NOT_IN_VSAC);
+                cqlCode.setErrorMessage(isValid ? null : NOT_FOUND);
                 cqlCode.addValidatedWithVsac(isValid ? VsacStatus.VALID : VsacStatus.IN_VALID);
-            } catch (Exception e) {
-                cqlCode.addValidatedWithVsac(VsacStatus.IN_VALID);
-                cqlCode.setErrorMessage(e.getMessage());
+            } catch (VsacCodeSystemValidatorException vc) {
+                cqlCode.setErrorMessage(vc.getMessage());
+            }catch (Exception e) {
+                cqlCode.setErrorMessage(cqlCode.obtainValidatedWithVsac() == VsacStatus.PENDING ?
+                        REQUIRES_VALIDATION : NOT_FOUND);
             }
         }
 

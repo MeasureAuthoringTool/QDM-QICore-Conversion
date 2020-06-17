@@ -6,9 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 public class VsacValidator {
-    static final String BLANK_UMLS_TOKEN = "UMLS token is blank";
     static final String EXPIRED_TICKET = "VSAC ticket has expired";
-    static final String NOT_IN_VSAC = "Not In Vsac";
 
     final VsacService vsacService;
 
@@ -20,11 +18,18 @@ public class VsacValidator {
         String fiveMinServiceTicket = vsacService.getServiceTicket(umlsToken);
 
         if (StringUtils.isBlank(fiveMinServiceTicket)) {
-            throw new VsacCodeSystemValidatorException(EXPIRED_TICKET);
+            throw new ExpiredTicketException(EXPIRED_TICKET);
         } else {
             return fiveMinServiceTicket;
         }
 
+    }
+
+    static class ExpiredTicketException extends RuntimeException {
+        public ExpiredTicketException(String message) {
+            super(message);
+            log.debug("ExpiredTicketException: {} ", message);
+        }
     }
 
     static class VsacCodeSystemValidatorException extends RuntimeException {
