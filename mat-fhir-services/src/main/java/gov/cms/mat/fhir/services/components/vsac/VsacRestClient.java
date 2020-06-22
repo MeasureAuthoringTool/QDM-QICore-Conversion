@@ -21,7 +21,7 @@ import java.net.URI;
 @Component
 @Slf4j
 public class VsacRestClient {
-    static final String CANNOT_OBTAIN_A_SINGLE_USE_SERVICE_TICKET = "Cannot obtain a single-use service ticket.";
+    private static final String CANNOT_OBTAIN_A_SINGLE_USE_SERVICE_TICKET = "Cannot obtain a single-use service ticket.";
     private static final String GRANTING_TICKET_REQUEST_TEMPLATE = "username=%s&password=%s";
     private static final String SINGLE_USE_TICKET_REQUEST = "service=http://umlsks.nlm.nih.gov";
     private static final String TICKET_PATH = "/vsac/ws/Ticket";

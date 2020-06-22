@@ -9,44 +9,44 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VsacResponse {
-    String message;
-    String status;
+    private String message;
+    private String status;
 
-    VsacData data;
-    VsacError errors;
+    private VsacData data;
+    private VsacError errors;
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VsacData {
-        int resultCount;
-        List<VsacDataResultSet> resultSet = new ArrayList<>();
+        private int resultCount;
+        private List<VsacDataResultSet> resultSet = new ArrayList<>();
     }
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VsacError {
-        int errorCount;
-        List<VsacErrorResultSet> resultSet = new ArrayList<>();
+        private  int errorCount;
+        private  List<VsacErrorResultSet> resultSet = new ArrayList<>();
     }
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VsacErrorResultSet {
-        String errDesc;
-        String errCode;
+        private  String errDesc;
+        private  String errCode;
     }
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VsacDataResultSet {
-        String csName;
-        String csOID;
-        String csVersion;
-        String code;
-        String contentMode;
-        String codeName;
-        String termType;
-        String active;
-        Long revision;
+        private String csName;
+        private String csOID;
+        private String csVersion;
+        private String code;
+        private String contentMode;
+        private String codeName;
+        private  String termType;
+        private  String active;
+        private  Long revision;
     }
 }

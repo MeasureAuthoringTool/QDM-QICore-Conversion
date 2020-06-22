@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.vsac;
 
+
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.config.VsacConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,10 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import static gov.cms.mat.fhir.services.components.vsac.VsacRestClient.CANNOT_OBTAIN_A_SINGLE_USE_SERVICE_TICKET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -121,7 +120,7 @@ class VsacRestClientUnitTest implements ResourceFileUtil {
         VsacResponse vsacResponse = vsacRestClient.fetchCodeSystem(CODE, GRANT_TICKET);
 
         assertEquals("error", vsacResponse.getStatus());
-        assertEquals(CANNOT_OBTAIN_A_SINGLE_USE_SERVICE_TICKET, vsacResponse.getMessage());
+        assertEquals("Cannot obtain a single-use service ticket.", vsacResponse.getMessage());
 
         verifyNoMoreInteractions(vsacConfig, restTemplate);
     }

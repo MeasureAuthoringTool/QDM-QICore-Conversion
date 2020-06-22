@@ -5,17 +5,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Disabled // integration test
-class VsacRestClientIntegrationTest
-{
+class VsacRestClientIntegrationTest {
     private final RestTemplate restTemplate = new RestTemplate();
-    VsacRestClient vsacRestClient;
-    String grantingTicket = "";
+    private VsacRestClient vsacRestClient;
+    private String grantingTicket = "";
 
     @BeforeEach
     void setUp() {
@@ -24,7 +24,7 @@ class VsacRestClientIntegrationTest
 
         vsacRestClient = new VsacRestClient(restTemplate, vsacConfig);
 
-       String userName = System.getenv("VSAC_USER");
+        String userName = System.getenv("VSAC_USER");
         String userPass = System.getenv("VSAC_PASS");
 
         if (StringUtils.isEmpty(grantingTicket)) {

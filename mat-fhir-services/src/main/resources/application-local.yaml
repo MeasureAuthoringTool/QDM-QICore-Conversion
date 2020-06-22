@@ -24,7 +24,7 @@ spring:
 
 vsac-client:
   server: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac/ws/Ticket
-  service: ${VSAC_SERVICE_URL:http://umlsks.nlm.nih.gov}
+  service: ${VSAC_VASE_URL}
   retrieve-multi-oids-service: ${VSAC_VASE_UR:https://vsac.nlm.nih.gov}/vsac/svs/RetrieveMultipleValueSets?
   profile-service: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac/profiles
   version-service: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac/oid/

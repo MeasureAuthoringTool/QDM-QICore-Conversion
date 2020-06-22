@@ -11,13 +11,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.vsac.VSACResponseResult;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,8 +68,6 @@ class CodeSystemVsacAsyncTest {
         completableFuture.get();
 
         assertEquals("Invalid code system uri", cqlCode.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlCode.obtainValidatedWithVsac());
-
         verifyNoInteractions(vsacRestClient);
     }
 
@@ -80,7 +78,7 @@ class CodeSystemVsacAsyncTest {
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
         completableFuture.get();
 
-        assertEquals("URL is required", cqlCode.getErrorMessage());
+        assertEquals("Code system uri is required", cqlCode.getErrorMessage());
         assertEquals(VsacStatus.IN_VALID, cqlCode.obtainValidatedWithVsac());
 
         verifyNoInteractions(vsacRestClient);

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 class CodeSystemVsacAsync extends VsacValidator {
+
     private static final String INVALID_CODE_URL = "Invalid code system uri";
     private static final String URL_IS_REQUIRED = "Code system uri is required";
 
@@ -80,19 +81,23 @@ class CodeSystemVsacAsync extends VsacValidator {
 
         if (vsacResponse.getStatus().equals("ok")) {
             cqlCode.setErrorMessage(null);
+            cqlCode.setErrorCode(null);
             cqlCode.addValidatedWithVsac(VsacStatus.VALID);
         } else {
             cqlCode.addValidatedWithVsac(VsacStatus.IN_VALID);
 
             if (vsacResponse.getErrors() == null || CollectionUtils.isEmpty(vsacResponse.getErrors().getResultSet())) {
                 cqlCode.setErrorMessage(vsacResponse.getMessage());
+                cqlCode.setErrorCode(null);
             } else {
+
                 List<String> strList = vsacResponse.getErrors().getResultSet()
                         .stream()
                         .map(VsacResponse.VsacErrorResultSet::getErrDesc)
                         .collect(Collectors.toList());
 
                 cqlCode.setErrorMessage(String.join(", ", strList));
+                cqlCode.setErrorCode(vsacResponse.getErrors().getResultSet().get(0).getErrCode());
             }
         }
     }

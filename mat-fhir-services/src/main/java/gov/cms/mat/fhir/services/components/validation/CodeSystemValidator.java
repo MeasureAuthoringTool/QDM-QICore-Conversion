@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class CodeSystemValidator extends CqlValidatorHelper {
+    static final String CODE_ERRORS = "802";
     private final VsacCodeSystemValidator vsacCodeSystemValidator;
 
     public CodeSystemValidator(VsacCodeSystemValidator vsacCodeSystemValidator) {
@@ -35,14 +36,29 @@ public class CodeSystemValidator extends CqlValidatorHelper {
             CqlTextParser cqlTextParser = new CqlTextParser(cql);
             LibraryErrors libraryErrors = buildLibraryErrors(cqlTextParser);
 
-            List<CQLError> cqlErrors = failingCodes.stream()
+            List<CQLError> codeSystemErrors = failingCodes.stream()
+                    .filter(c -> c.getErrorCode() == null || !c.getErrorCode().equals(CODE_ERRORS))
                     .map(c -> findLine(c.getCodeSystemOID(), c.getErrorMessage(), cqlTextParser.getLines()))
                     .collect(Collectors.toList());
 
-            libraryErrors.setErrors(cqlErrors);
+            libraryErrors.getErrors().addAll(codeSystemErrors);
+
+            List<CQLError> codeErrors = failingCodes.stream()
+                    .filter(c -> c.getErrorCode() != null && c.getErrorCode().equals(CODE_ERRORS))
+                    .map(this::createCodeError)
+                    .collect(Collectors.toList());
+
+            libraryErrors.getErrors().addAll(codeErrors);
 
             return CompletableFuture.completedFuture(List.of(libraryErrors));
         }
+    }
+
+
+    private CQLError createCodeError(CQLCode cqlCode) {
+        String code = "codesystem " + cqlCode.getCodeSystemName() + ": " + cqlCode.getCodeIdentifier();
+
+        return createCqlError(cqlCode.getErrorMessage(), cqlCode.getLineNumber(), code.length());
     }
 
     @Override

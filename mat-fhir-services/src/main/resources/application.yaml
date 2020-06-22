@@ -9,7 +9,7 @@ spring:
 
 vsac-client:
   server: ${VSAC_VASE_URL}/vsac/ws/Ticket
-  service: ${VSAC_SERVICE_URL}
+  service: ${VSAC_VASE_URL}
   retrieve-multi-oids-service: ${VSAC_VASE_URL}/vsac/svs/RetrieveMultipleValueSets?
   profile-service: ${VSAC_VASE_URL}/vsac/profiles
   version-service: ${VSAC_VASE_URL}/vsac/oid/
@@ -30,7 +30,6 @@ conversion-lib-lookup-4-1:
     SupplementalDataElements: 2.0.000
     TJCOverall: 5.0.000
     VTEICU: 4.0.000
-
 
 measures:
   allowed:

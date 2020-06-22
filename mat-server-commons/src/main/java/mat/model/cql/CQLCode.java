@@ -61,6 +61,7 @@ public class CQLCode implements CQLExpression, IsSerializable {
 
     //This for micro service side only
     private String errorMessage;
+    private String errorCode; // from vsac service
 
     private transient int lineNumber;
 
@@ -277,5 +278,13 @@ public class CQLCode implements CQLExpression, IsSerializable {
 
     public void setLineNumber(int lineNumber) {
         this.lineNumber = lineNumber;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
     }
 }

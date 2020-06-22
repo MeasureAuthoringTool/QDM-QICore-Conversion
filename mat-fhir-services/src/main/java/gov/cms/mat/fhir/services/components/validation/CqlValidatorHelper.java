@@ -34,7 +34,7 @@ abstract class CqlValidatorHelper {
     }
 
 
-    private CQLError createCqlError(String message, int lineIndex, int lineLength) {
+     CQLError createCqlError(String message, int lineIndex, int lineLength) {
         CQLError cqlError = new CQLError();
         cqlError.setSeverity("Error");
         cqlError.setErrorMessage(message);
