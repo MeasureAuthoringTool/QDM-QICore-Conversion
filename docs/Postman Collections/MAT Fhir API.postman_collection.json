@@ -1,577 +1,16 @@
 {
 	"info": {
-		"_postman_id": "872dce54-03f4-4fae-b931-4219b354b491",
+		"_postman_id": "0c480ea5-770e-4b75-932f-64cd40863362",
 		"name": "MAT Fhir API",
 		"description": "This is a SpringBoot v2.3.x restful service for converting MAT objects to FHIR.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "report",
+			"name": "measure",
 			"item": [
 				{
-					"name": "Find all Reports for batch.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/report/findAll?batchId=<string>",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"report",
-								"findAll"
-							],
-							"query": [
-								{
-									"key": "batchId",
-									"value": "<string>"
-								}
-							]
-						},
-						"description": "Find and return the reports for all the measures in the batch."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/report/findAll?batchId=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"report",
-										"findAll"
-									],
-									"query": [
-										{
-											"key": "batchId",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						}
-					]
-				},
-				{
-					"name": "Find report for a measure.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/report/find?measureId=dc720c827294be8c017295b260ee0017&find=ALL",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"report",
-								"find"
-							],
-							"query": [
-								{
-									"key": "measureId",
-									"value": "dc720c827294be8c017295b260ee0017",
-									"description": "(Required) "
-								},
-								{
-									"key": "find",
-									"value": "ALL",
-									"description": "(Required) "
-								}
-							]
-						},
-						"description": "Find and return a conversion report for a measure."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/report/find?measureId=<string>&find=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"report",
-										"find"
-									],
-									"query": [
-										{
-											"key": "measureId",
-											"value": "<string>"
-										},
-										{
-											"key": "find",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						}
-					]
-				},
-				{
-					"name": "Find last json for a measure.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/report/findLastFhirMeasureJson?measureId=dc720c827294be8c017295b260ee0017",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"report",
-								"findLastFhirMeasureJson"
-							],
-							"query": [
-								{
-									"key": "measureId",
-									"value": "dc720c827294be8c017295b260ee0017",
-									"description": "(Required) "
-								}
-							]
-						},
-						"description": "Find and return json for a measure."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/report/findLastFhirMeasureJson?measureId=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"report",
-										"findLastFhirMeasureJson"
-									],
-									"query": [
-										{
-											"key": "measureId",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<string>"
-						}
-					]
-				},
-				{
-					"name": "Find all Reports for batch.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/report/libraryErrors?batchId=<string>",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"report",
-								"libraryErrors"
-							],
-							"query": [
-								{
-									"key": "batchId",
-									"value": "<string>",
-									"description": "(Required) "
-								}
-							]
-						},
-						"description": "Find and return the reports for all the measures in the batch."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/report/libraryErrors?batchId=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"report",
-										"libraryErrors"
-									],
-									"query": [
-										{
-											"key": "batchId",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						}
-					]
-				},
-				{
-					"name": "Display all missing ValueSets.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/report/missingValueSets?batchId=<string>",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"report",
-								"missingValueSets"
-							],
-							"query": [
-								{
-									"key": "batchId",
-									"value": "<string>",
-									"description": "(Required) "
-								}
-							]
-						},
-						"description": "Display the OID's of the ValueSets that could not be located in VSAC."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/report/missingValueSets?batchId=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"report",
-										"missingValueSets"
-									],
-									"query": [
-										{
-											"key": "batchId",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						}
-					]
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "batch",
-			"item": [
-				{
-					"name": "find Batch Ids",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/batch",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"batch"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/batch",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"batch"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						}
-					]
-				},
-				{
-					"name": "translate Measures",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "[\n    \"<string>\",\n    \"<string>\"\n]",
-							"options": {
-								"raw": {}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/batch?conversionType=VALIDATION&xmlSource=SIMPLE&batchId=<string>&vsacGrantingTicket=",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"batch"
-							],
-							"query": [
-								{
-									"key": "conversionType",
-									"value": "VALIDATION",
-									"description": "(Required) "
-								},
-								{
-									"key": "xmlSource",
-									"value": "SIMPLE"
-								},
-								{
-									"key": "batchId",
-									"value": "<string>",
-									"description": "(Required) "
-								},
-								{
-									"key": "vsacGrantingTicket",
-									"value": ""
-								}
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "[\n    \"<string>\",\n    \"<string>\"\n]"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/batch?conversionType=<string>&xmlSource=SIMPLE&batchId=<string>&vsacGrantingTicket=",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"batch"
-									],
-									"query": [
-										{
-											"key": "conversionType",
-											"value": "<string>"
-										},
-										{
-											"key": "xmlSource",
-											"value": "SIMPLE"
-										},
-										{
-											"key": "batchId",
-											"value": "<string>"
-										},
-										{
-											"key": "vsacGrantingTicket",
-											"value": ""
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<object>"
-						}
-					]
-				},
-				{
-					"name": "find Batch Results",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/batch/findReport?batchId=<string>",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"batch",
-								"findReport"
-							],
-							"query": [
-								{
-									"key": "batchId",
-									"value": "<string>",
-									"description": "(Required) "
-								}
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/batch/findReport?batchId=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"batch",
-										"findReport"
-									],
-									"query": [
-										{
-											"key": "batchId",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<object>"
-						}
-					]
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "orchestration",
-			"item": [
-				{
-					"name": "Orchestrate Measure in MAT to FHIR.",
+					"name": "Convert",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -579,14 +18,14 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}:{{port}}/orchestration/measure?id=<string>&conversionType=VALIDATION&xmlSource=SIMPLE&batchId=MEASURE-ORCHESTRATION&showWarnings=false&vsacGrantingTicket=",
+							"raw": "{{baseUrl}}:{{port}}/orchestration/vsac?id=<string>&conversionType=CONVERSION&xmlSource=SIMPLE&batchId=ORCHESTRATION&showWarnings=false&vsacGrantingTicket=",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"port": "{{port}}",
 							"path": [
 								"orchestration",
-								"measure"
+								"vsac"
 							],
 							"query": [
 								{
@@ -596,7 +35,7 @@
 								},
 								{
 									"key": "conversionType",
-									"value": "VALIDATION",
+									"value": "CONVERSION",
 									"description": "(Required) "
 								},
 								{
@@ -605,7 +44,7 @@
 								},
 								{
 									"key": "batchId",
-									"value": "MEASURE-ORCHESTRATION"
+									"value": "ORCHESTRATION"
 								},
 								{
 									"key": "showWarnings",
@@ -677,1101 +116,7 @@
 					]
 				},
 				{
-					"name": "Orchestrate Measure in MAT to FHIR.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/orchestration/vsac?id=<string>&conversionType=VALIDATION&xmlSource=SIMPLE&batchId=ORCHESTRATION&showWarnings=false&vsacGrantingTicket=",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"orchestration",
-								"vsac"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "<string>",
-									"description": "(Required) "
-								},
-								{
-									"key": "conversionType",
-									"value": "VALIDATION",
-									"description": "(Required) "
-								},
-								{
-									"key": "xmlSource",
-									"value": "SIMPLE"
-								},
-								{
-									"key": "batchId",
-									"value": "ORCHESTRATION"
-								},
-								{
-									"key": "showWarnings",
-									"value": "false"
-								},
-								{
-									"key": "vsacGrantingTicket",
-									"value": ""
-								}
-							]
-						},
-						"description": "Orchestrate one Measure in the MAT Database and verify and persist (if applicable) to the HAPI FHIR Database. Method returns the fhir conversion results."
-					},
-					"response": [
-						{
-							"name": "Orchestration ran and report generated",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/orchestration/vsac?id=<string>&conversionType=<string>&xmlSource=SIMPLE&batchId=ORCHESTRATION&showWarnings=false&vsacGrantingTicket=",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"orchestration",
-										"vsac"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>"
-										},
-										{
-											"key": "conversionType",
-											"value": "<string>"
-										},
-										{
-											"key": "xmlSource",
-											"value": "SIMPLE"
-										},
-										{
-											"key": "batchId",
-											"value": "ORCHESTRATION"
-										},
-										{
-											"key": "showWarnings",
-											"value": "false"
-										},
-										{
-											"key": "vsacGrantingTicket",
-											"value": ""
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "Measure is not valid for fhir conversion ",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/orchestration/vsac?id=<string>&conversionType=<string>&xmlSource=SIMPLE&batchId=ORCHESTRATION&showWarnings=false&vsacGrantingTicket=",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"orchestration",
-										"vsac"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>"
-										},
-										{
-											"key": "conversionType",
-											"value": "<string>"
-										},
-										{
-											"key": "xmlSource",
-											"value": "SIMPLE"
-										},
-										{
-											"key": "batchId",
-											"value": "ORCHESTRATION"
-										},
-										{
-											"key": "showWarnings",
-											"value": "false"
-										},
-										{
-											"key": "vsacGrantingTicket",
-											"value": ""
-										}
-									]
-								}
-							},
-							"status": "Precondition Failed",
-							"code": 412,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "Measure is not found in the mat db using the id",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/orchestration/vsac?id=<string>&conversionType=<string>&xmlSource=SIMPLE&batchId=ORCHESTRATION&showWarnings=false&vsacGrantingTicket=",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"orchestration",
-										"vsac"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>"
-										},
-										{
-											"key": "conversionType",
-											"value": "<string>"
-										},
-										{
-											"key": "xmlSource",
-											"value": "SIMPLE"
-										},
-										{
-											"key": "batchId",
-											"value": "ORCHESTRATION"
-										},
-										{
-											"key": "showWarnings",
-											"value": "false"
-										},
-										{
-											"key": "vsacGrantingTicket",
-											"value": ""
-										}
-									]
-								}
-							},
-							"status": "Not Found",
-							"code": 404,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						}
-					]
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "value Set",
-			"item": [
-				{
-					"name": "Find a Hapi FHIR ValueSet with the oid (id)",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/valueSet/findOne?oid=<string>",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"valueSet",
-								"findOne"
-							],
-							"query": [
-								{
-									"key": "oid",
-									"value": "<string>",
-									"description": "(Required) "
-								}
-							]
-						},
-						"description": "Find the Hapi ValueSet converted to json"
-					},
-					"response": [
-						{
-							"name": "Measure is not found in the mat db using the id",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/valueSet/findOne?oid=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"valueSet",
-										"findOne"
-									],
-									"query": [
-										{
-											"key": "oid",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "Not Found",
-							"code": 404,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<string>"
-						},
-						{
-							"name": "Value set found and json returned",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/valueSet/findOne?oid=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"valueSet",
-										"findOne"
-									],
-									"query": [
-										{
-											"key": "oid",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<string>"
-						}
-					]
-				},
-				{
-					"name": "Count of persisted FHIR ValueSets.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/valueSet/count",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"valueSet",
-								"count"
-							]
-						},
-						"description": "The count of all the ValueSets in the HAPI FHIR Database."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/valueSet/count",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"valueSet",
-										"count"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<integer>"
-						}
-					]
-				},
-				{
-					"name": "Delete all persisted FHIR ValueSets.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/valueSet/deleteAll",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"valueSet",
-								"deleteAll"
-							]
-						},
-						"description": "Delete all the ValueSets in the HAPI FHIR Database."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/valueSet/deleteAll",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"valueSet",
-										"deleteAll"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<integer>"
-						}
-					]
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "measure",
-			"item": [
-				{
-					"name": "package",
-					"item": [
-						{
-							"name": "Full json Package of FHIR Measure",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/measure/package?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"measure",
-										"package"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								},
-								"description": "Full Packaging of Measure in json"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/measure/package?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"measure",
-												"package"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Full json Package of FHIR Measure",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "PUT",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/measure/package?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"measure",
-										"package"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								},
-								"description": "Full Packaging of Measure in json"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "PUT",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/measure/package?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"measure",
-												"package"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Full json Package of FHIR Measure",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/measure/package?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"measure",
-										"package"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								},
-								"description": "Full Packaging of Measure in json"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/measure/package?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"measure",
-												"package"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Full json Package of FHIR Measure",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/measure/package?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"measure",
-										"package"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								},
-								"description": "Full Packaging of Measure in json"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "DELETE",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/measure/package?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"measure",
-												"package"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Full json Package of FHIR Measure",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "OPTIONS",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/measure/package?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"measure",
-										"package"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								},
-								"description": "Full Packaging of Measure in json"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "OPTIONS",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/measure/package?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"measure",
-												"package"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Full json Package of FHIR Measure",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "HEAD",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/measure/package?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"measure",
-										"package"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								},
-								"description": "Full Packaging of Measure in json"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "HEAD",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/measure/package?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"measure",
-												"package"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Full json Package of FHIR Measure",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "PATCH",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/measure/package?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"measure",
-										"package"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								},
-								"description": "Full Packaging of Measure in json"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "PATCH",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/measure/package?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"measure",
-												"package"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Find a Hapi FHIR Library with the id",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/measure/findOne?id=<string>",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"measure",
-								"findOne"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "<string>",
-									"description": "(Required) "
-								}
-							]
-						},
-						"description": "Find the Hapi Library converted to json"
-					},
-					"response": [
-						{
-							"name": "Value set found and json returned",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/measure/findOne?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"measure",
-										"findOne"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<string>"
-						},
-						{
-							"name": "Measure is not found in the mat db using the id",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/measure/findOne?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"measure",
-										"findOne"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "Not Found",
-							"code": 404,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<string>"
-						}
-					]
-				},
-				{
-					"name": "Delete all persisted FHIR Measures.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/measure/deleteAll",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"measure",
-								"deleteAll"
-							]
-						},
-						"description": "Delete all the Measures in the HAPI FHIR Database."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/measure/deleteAll",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"measure",
-										"deleteAll"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<integer>"
-						}
-					]
-				},
-				{
-					"name": "Count of persisted FHIR Measures.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/measure/count",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"measure",
-								"count"
-							]
-						},
-						"description": "The count of all the Measures in the HAPI FHIR Database."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/measure/count",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"measure",
-										"count"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<integer>"
-						}
-					]
-				},
-				{
-					"name": "Orchestrate Stand alone Hapi FHIR Measure with the id",
+					"name": "Push",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -1880,6 +225,71 @@
 							"body": "<string>"
 						}
 					]
+				},
+				{
+					"name": "Package",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/measure/package?id=<string>",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"measure",
+								"package"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "<string>",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Full Packaging of Measure in json"
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/measure/package?id=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"measure",
+										"package"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -1888,236 +298,7 @@
 			"name": "vsac",
 			"item": [
 				{
-					"name": "batch",
-					"item": [
-						{
-							"name": "find Batch Ids 1",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/vsac/batch",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"vsac",
-										"batch"
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/vsac/batch",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"vsac",
-												"batch"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "translate Measures 1",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "[\n    \"<string>\",\n    \"<string>\"\n]",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/vsac/batch?conversionType=VALIDATION&xmlSource=SIMPLE&batchId=<string>&vsacGrantingTicket=",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"vsac",
-										"batch"
-									],
-									"query": [
-										{
-											"key": "conversionType",
-											"value": "VALIDATION",
-											"description": "(Required) "
-										},
-										{
-											"key": "xmlSource",
-											"value": "SIMPLE"
-										},
-										{
-											"key": "batchId",
-											"value": "<string>",
-											"description": "(Required) "
-										},
-										{
-											"key": "vsacGrantingTicket",
-											"value": ""
-										}
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "PUT",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "[\n    \"<string>\",\n    \"<string>\"\n]"
-										},
-										"url": {
-											"raw": "{{baseUrl}}/vsac/batch?conversionType=<string>&xmlSource=SIMPLE&batchId=<string>&vsacGrantingTicket=",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"vsac",
-												"batch"
-											],
-											"query": [
-												{
-													"key": "conversionType",
-													"value": "<string>"
-												},
-												{
-													"key": "xmlSource",
-													"value": "SIMPLE"
-												},
-												{
-													"key": "batchId",
-													"value": "<string>"
-												},
-												{
-													"key": "vsacGrantingTicket",
-													"value": ""
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "<object>"
-								}
-							]
-						},
-						{
-							"name": "find Batch Results 1",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/vsac/batch/findReport?batchId=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"vsac",
-										"batch",
-										"findReport"
-									],
-									"query": [
-										{
-											"key": "batchId",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/vsac/batch/findReport?batchId=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"vsac",
-												"batch",
-												"findReport"
-											],
-											"query": [
-												{
-													"key": "batchId",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "<object>"
-								}
-							]
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Get Granting Ticket from VSAC",
+					"name": "Get VSAC Ticket",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -2197,551 +378,7 @@
 			"name": "library",
 			"item": [
 				{
-					"name": "find",
-					"item": [
-						{
-							"name": "Find Include Library in FHIR.",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "text/plain"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "library SepsisExport version '1.0.039'\n\nusing FHIR version '4.0.1'\n\ninclude FHIRHelpers version '4.0.001' called FHIRHelpers\ninclude SupplementalDataElements_FHIR4 version '2.0.000' called SDE\ninclude MATGlobalCommonFunctions_FHIR4 version '5.0.000' called Global\n\nparameter \"Measurement Period\" Interval<DateTime>\n\ncontext Patient\n\ndefine \"Numerator\":\n  1\n\ndefine \"Denominator\":\n  2\n\ndefine \"Numerator Exclusion\":\n  3\n\ndefine \"Denominator Exclusion\":\n  4\n\ndefine \"initial Population\":\n  5\n\ndefine \"SDE Ethnicity\":\n  SDE.\"SDE Ethnicity\"\n\ndefine \"SDE Payer\":\n  SDE.\"SDE Payer\"\n\ndefine \"SDE Race\":\n  SDE.\"SDE Race\"\n\ndefine \"SDE Sex\":\n  SDE.\"SDE Sex\"\n",
-									"options": {
-										"raw": {}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/library/find/includeLibrarySearch",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"library",
-										"find",
-										"includeLibrarySearch"
-									]
-								},
-								"description": "Finding included FHIR libraries using the main measure library"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "\"<string>\""
-										},
-										"url": {
-											"raw": "{{baseUrl}}/library/find/includeLibrarySearch",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"library",
-												"find",
-												"includeLibrarySearch"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Find Cql-XML in mat.",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/library/find/mat?qdmVersion=<string>&name=<string>&version=<string>&type=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"library",
-										"find",
-										"mat"
-									],
-									"query": [
-										{
-											"key": "qdmVersion",
-											"value": "<string>",
-											"description": "(Required) "
-										},
-										{
-											"key": "name",
-											"value": "<string>",
-											"description": "(Required) "
-										},
-										{
-											"key": "version",
-											"value": "<string>",
-											"description": "(Required) "
-										},
-										{
-											"key": "type",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								},
-								"description": "Find Cql-XML in mat using the request params"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/library/find/mat?qdmVersion=<string>&name=<string>&version=<string>&type=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"library",
-												"find",
-												"mat"
-											],
-											"query": [
-												{
-													"key": "qdmVersion",
-													"value": "<string>"
-												},
-												{
-													"key": "name",
-													"value": "<string>"
-												},
-												{
-													"key": "version",
-													"value": "<string>"
-												},
-												{
-													"key": "type",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
-							"name": "Find Cql-XML in HAPI_FHIR.",
-							"request": {
-								"auth": {
-									"type": "noauth"
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}:{{port}}/library/find/hapi?name=<string>&version=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"port": "{{port}}",
-									"path": [
-										"library",
-										"find",
-										"hapi"
-									],
-									"query": [
-										{
-											"key": "name",
-											"value": "<string>",
-											"description": "(Required) "
-										},
-										{
-											"key": "version",
-											"value": "<string>",
-											"description": "(Required) "
-										}
-									]
-								},
-								"description": "Find Cql-XML in hapi using the request params"
-							},
-							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}/library/find/hapi?name=<string>&version=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"library",
-												"find",
-												"hapi"
-											],
-											"query": [
-												{
-													"key": "name",
-													"value": "<string>"
-												},
-												{
-													"key": "version",
-													"value": "<string>"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "<string>"
-								}
-							]
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "packager",
-					"item": [
-						{
-							"name": "minimum",
-							"item": [
-								{
-									"name": "Minimum Package of FHIR  Library",
-									"request": {
-										"auth": {
-											"type": "noauth"
-										},
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}:{{port}}/library/packager/minimum/json?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"port": "{{port}}",
-											"path": [
-												"library",
-												"packager",
-												"minimum",
-												"json"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>",
-													"description": "(Required) "
-												}
-											]
-										},
-										"description": "Minimum Packaging of  Library in json"
-									},
-									"response": [
-										{
-											"name": "OK",
-											"originalRequest": {
-												"method": "GET",
-												"header": [],
-												"url": {
-													"raw": "{{baseUrl}}/library/packager/minimum/json?id=<string>",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"library",
-														"packager",
-														"minimum",
-														"json"
-													],
-													"query": [
-														{
-															"key": "id",
-															"value": "<string>"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "json",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "application/json"
-												}
-											],
-											"cookie": [],
-											"body": "\"<string>\""
-										}
-									]
-								},
-								{
-									"name": "Minimum Package of FHIR  Library",
-									"request": {
-										"auth": {
-											"type": "noauth"
-										},
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}:{{port}}/library/packager/minimum/xml?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"port": "{{port}}",
-											"path": [
-												"library",
-												"packager",
-												"minimum",
-												"xml"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>",
-													"description": "(Required) "
-												}
-											]
-										},
-										"description": "Minimum Packaging of  Library in json"
-									},
-									"response": [
-										{
-											"name": "OK",
-											"originalRequest": {
-												"method": "GET",
-												"header": [],
-												"url": {
-													"raw": "{{baseUrl}}/library/packager/minimum/xml?id=<string>",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"library",
-														"packager",
-														"minimum",
-														"xml"
-													],
-													"query": [
-														{
-															"key": "id",
-															"value": "<string>"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "json",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "application/json"
-												}
-											],
-											"cookie": [],
-											"body": "\"<string>\""
-										}
-									]
-								}
-							],
-							"protocolProfileBehavior": {},
-							"_postman_isSubFolder": true
-						},
-						{
-							"name": "full",
-							"item": [
-								{
-									"name": "Full json Package of FHIR  Library",
-									"request": {
-										"auth": {
-											"type": "noauth"
-										},
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}:{{port}}/library/packager/full/json?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"port": "{{port}}",
-											"path": [
-												"library",
-												"packager",
-												"full",
-												"json"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>",
-													"description": "(Required) "
-												}
-											]
-										},
-										"description": "Minimum Packaging of  Library in json"
-									},
-									"response": [
-										{
-											"name": "OK",
-											"originalRequest": {
-												"method": "GET",
-												"header": [],
-												"url": {
-													"raw": "{{baseUrl}}/library/packager/full/json?id=<string>",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"library",
-														"packager",
-														"full",
-														"json"
-													],
-													"query": [
-														{
-															"key": "id",
-															"value": "<string>"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "*/*"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										}
-									]
-								},
-								{
-									"name": "Full xml Package of FHIR  Library",
-									"request": {
-										"auth": {
-											"type": "noauth"
-										},
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{baseUrl}}:{{port}}/library/packager/full/xml?id=<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"port": "{{port}}",
-											"path": [
-												"library",
-												"packager",
-												"full",
-												"xml"
-											],
-											"query": [
-												{
-													"key": "id",
-													"value": "<string>",
-													"description": "(Required) "
-												}
-											]
-										},
-										"description": "Minimum Packaging of  Library in xml"
-									},
-									"response": [
-										{
-											"name": "OK",
-											"originalRequest": {
-												"method": "GET",
-												"header": [],
-												"url": {
-													"raw": "{{baseUrl}}/library/packager/full/xml?id=<string>",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"library",
-														"packager",
-														"full",
-														"xml"
-													],
-													"query": [
-														{
-															"key": "id",
-															"value": "<string>"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "text",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "*/*"
-												}
-											],
-											"cookie": [],
-											"body": ""
-										}
-									]
-								}
-							],
-							"protocolProfileBehavior": {},
-							"_postman_isSubFolder": true
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Orchestrate QDM to Hapi FHIR Library with the id",
+					"name": "Convert",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -2876,7 +513,7 @@
 					]
 				},
 				{
-					"name": "Orchestrate Stand alone Hapi FHIR Library with the id",
+					"name": "Push",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -2908,6 +545,44 @@
 						"description": "Find the HAPI stand alone Library and persist to FHIR"
 					},
 					"response": [
+						{
+							"name": "Value set found and json returned",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/library/pushStandAloneLibrary?id=<string>&batchId=LIBRARY-STANDALONE-ORCHESTRATION",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"library",
+										"pushStandAloneLibrary"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										},
+										{
+											"key": "batchId",
+											"value": "LIBRARY-STANDALONE-ORCHESTRATION"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
 						{
 							"name": "CqlLibrary is not found in the mat db using the id",
 							"originalRequest": {
@@ -2945,49 +620,11 @@
 							],
 							"cookie": [],
 							"body": "<string>"
-						},
-						{
-							"name": "Value set found and json returned",
-							"originalRequest": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/library/pushStandAloneLibrary?id=<string>&batchId=LIBRARY-STANDALONE-ORCHESTRATION",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"library",
-										"pushStandAloneLibrary"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>"
-										},
-										{
-											"key": "batchId",
-											"value": "LIBRARY-STANDALONE-ORCHESTRATION"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<string>"
 						}
 					]
 				},
 				{
-					"name": "Find a Hapi FHIR Library with the id",
+					"name": "Package",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -2995,14 +632,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}:{{port}}/library/findOne?id=<string>",
+							"raw": "{{baseUrl}}:{{port}}/library/packager/full/json?id=<string>",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"port": "{{port}}",
 							"path": [
 								"library",
-								"findOne"
+								"packager",
+								"full",
+								"json"
 							],
 							"query": [
 								{
@@ -3012,56 +651,24 @@
 								}
 							]
 						},
-						"description": "Find the Hapi Library converted to json"
+						"description": "Minimum Packaging of  Library in json"
 					},
 					"response": [
 						{
-							"name": "Measure is not found in the mat db using the id",
+							"name": "OK",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/library/findOne?id=<string>",
+									"raw": "{{baseUrl}}/library/packager/full/json?id=<string>",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"library",
-										"findOne"
-									],
-									"query": [
-										{
-											"key": "id",
-											"value": "<string>"
-										}
-									]
-								}
-							},
-							"status": "Not Found",
-							"code": 404,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<string>"
-						},
-						{
-							"name": "Value set found and json returned",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/library/findOne?id=<string>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"library",
-										"findOne"
+										"packager",
+										"full",
+										"json"
 									],
 									"query": [
 										{
@@ -3081,111 +688,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "<string>"
-						}
-					]
-				},
-				{
-					"name": "Count of persisted FHIR Libraries.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/library/count",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"library",
-								"count"
-							]
-						},
-						"description": "The count of all the Libraries in the HAPI FHIR Database."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/library/count",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"library",
-										"count"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<integer>"
-						}
-					]
-				},
-				{
-					"name": "Delete all persisted FHIR Libraries.",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}:{{port}}/library/deleteAll",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"library",
-								"deleteAll"
-							]
-						},
-						"description": "Delete all the Libraries in the HAPI FHIR Database. (chiefly used for testing). Returns the count of resources deleted."
-					},
-					"response": [
-						{
-							"name": "OK",
-							"originalRequest": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/library/deleteAll",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"library",
-										"deleteAll"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": "<integer>"
+							"body": ""
 						}
 					]
 				}
@@ -3193,7 +696,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "cql-xml-gen",
+			"name": "CQL to Mat XML (Includes validation)",
 			"item": [
 				{
 					"name": "from Standalone Lib",
@@ -3234,7 +737,6 @@
 								{
 									"key": "id",
 									"value": "<string>",
-									"type": "string",
 									"description": "(Required) "
 								}
 							]
@@ -3325,7 +827,6 @@
 								{
 									"key": "id",
 									"value": "<string>",
-									"type": "string",
 									"description": "(Required) "
 								}
 							]
@@ -3454,131 +955,94 @@
 					]
 				}
 			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "49a02db5-5846-4c51-8716-e28f35118c68",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "86edcd3e-3d8f-4573-b7d7-e00d8d2c5065",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Find all Reports for batch.",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}:{{port}}/libraryErrorReport/libraryErrors?batchId=123",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"port": "{{port}}",
-					"path": [
-						"libraryErrorReport",
-						"libraryErrors"
-					],
-					"query": [
-						{
-							"key": "batchId",
-							"value": "123",
-							"description": "(Required) "
-						}
-					]
-				},
-				"description": "Find and return the reports for all the measures in the batch."
-			},
-			"response": [
+			"name": "codeSystems",
+			"item": [
 				{
-					"name": "OK",
-					"originalRequest": {
+					"name": "Spreadsheet mappings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/libraryErrorReport/libraryErrors?batchId=<string>",
+							"raw": "{{baseUrl}}:{{port}}/codeSystem/mappings",
 							"host": [
 								"{{baseUrl}}"
 							],
-							"path": [
-								"libraryErrorReport",
-								"libraryErrors"
-							],
-							"query": [
-								{
-									"key": "batchId",
-									"value": "<string>"
-								}
-							]
-						}
-					},
-					"status": "OK",
-					"code": 200,
-					"_postman_previewlanguage": "text",
-					"header": [
-						{
-							"key": "Content-Type",
-							"value": "*/*"
-						}
-					],
-					"cookie": [],
-					"body": ""
-				}
-			]
-		},
-		{
-			"name": "mappings",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}:{{port}}/codeSystem/mappings",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"port": "{{port}}",
-					"path": [
-						"codeSystem",
-						"mappings"
-					]
-				},
-				"description": "Returns the clist of CodeSystemEntries from the spreadsheet."
-			},
-			"response": [
-				{
-					"name": "OK",
-					"originalRequest": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/codeSystem/mappings",
-							"host": [
-								"{{baseUrl}}"
-							],
+							"port": "{{port}}",
 							"path": [
 								"codeSystem",
 								"mappings"
 							]
-						}
+						},
+						"description": "Returns the clist of CodeSystemEntries from the spreadsheet."
 					},
-					"status": "OK",
-					"code": 200,
-					"_postman_previewlanguage": "text",
-					"header": [
+					"response": [
 						{
-							"key": "Content-Type",
-							"value": "*/*"
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/codeSystem/mappings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"codeSystem",
+										"mappings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
 						}
-					],
-					"cookie": [],
-					"body": ""
+					]
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "5937336d-d479-40e7-9312-d5e47ed0bfc7",
+				"id": "624f3dfe-8783-420c-8d94-86706422e7ed",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -3588,7 +1052,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "6c50930d-fccc-441c-a762-2b6ed90dc454",
+				"id": "57527bad-a0fd-4397-b433-9783af5f0a06",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -3598,14 +1062,14 @@
 	],
 	"variable": [
 		{
-			"id": "adf41002-3949-484a-8ce2-a2ae5e2a93c1",
+			"id": "027e1543-2372-402e-87de-2d11561f2565",
 			"key": "baseUrl",
 			"value": "internal-mat-dev-ecs-lb-1195232407.us-east-1.elb.amazonaws.com:9080",
 			"type": "string",
 			"disabled": true
 		},
 		{
-			"id": "e80510ba-cb25-47b8-bb05-971d2390fe37",
+			"id": "8bd40dfa-0db1-4d15-a824-e1fe63fe92b3",
 			"key": "port",
 			"value": "9080",
 			"type": "string"
