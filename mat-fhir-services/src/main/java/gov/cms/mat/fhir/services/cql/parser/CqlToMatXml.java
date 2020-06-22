@@ -84,6 +84,7 @@ public class CqlToMatXml implements CqlVisitor {
         codeSystemValueSetExecutor = Executors.newFixedThreadPool(simultaneousValidations);
     }
 
+    @Override
     public void handleError(CQLError e) {
         if (StringUtils.equalsIgnoreCase("Warning", e.getSeverity())) {
             warnings.add(e);
@@ -329,7 +330,7 @@ public class CqlToMatXml implements CqlVisitor {
         if (codeIdentifier != null) {
             c.setCodeIdentifier(existingCode.isPresent() ?
                     existingCode.get().getCodeIdentifier() :
-                    buildCodeIdentifier(c, lineNumber));
+                    codeIdentifier);
         }
     }
 

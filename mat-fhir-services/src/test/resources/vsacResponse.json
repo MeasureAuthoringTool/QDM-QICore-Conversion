@@ -1,0 +1,20 @@
+{
+  "data": {
+    "resultCount": 1,
+    "resultSet": [
+      {
+        "csName": "LOINC",
+        "csOID": "2.16.840.1.113883.6.1",
+        "csVersion": "2.67",
+        "code": "21112-8",
+        "contentMode": "Complete",
+        "codeName": "Birth date",
+        "termType": "LC",
+        "active": "Yes",
+        "revision": 2626379744
+      }
+    ]
+  },
+  "message": "ok",
+  "status": "ok"
+}

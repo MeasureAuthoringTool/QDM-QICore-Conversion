@@ -11,24 +11,14 @@ import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
 import gov.cms.mat.fhir.services.rest.dto.ValidationRequest;
 import gov.cms.mat.fhir.services.service.ValidationOrchestrationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLModel;
 import mat.server.CQLUtilityClass;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -47,8 +37,33 @@ import java.util.Optional;
 @Slf4j
 @Controller
 public class MatXmlController {
+    @PutMapping("/cql")
+    public @ResponseBody
+    MatXmlResponse fromCql(@RequestHeader(value = "UMLS-TOKEN", required=false) String umlsToken,
+                           @Valid @RequestBody MatCqlXmlReq matCqlXmlReq) {
+        log.debug("MatXmlController::fromCql -> enter {}", matCqlXmlReq);
+
+        try {
+            MatXmlResponse resp = run(umlsToken,
+                    matCqlXmlReq.getCql(),
+                    matCqlXmlReq.getSourceModel(),
+                    matCqlXmlReq);
+            log.debug("MatXmlController::fromCql -> exit {}", resp);
+            return resp;
+        } catch (RuntimeException e) {
+            log.error("fromCql", e);
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Unexpected error in fromMeasure(" + umlsToken + "," + matCqlXmlReq.getCql() + "," + matCqlXmlReq,
+                    e);
+        }
+    }
+
+    private final MeasureXmlRepository measureXmlRepo;
+
     @Getter
     @Setter
+    @ToString
     @NoArgsConstructor
     public static class MatXmlResponse {
         @NotNull
@@ -57,17 +72,6 @@ public class MatXmlController {
         private CQLModel cqlModel;
         @NotBlank
         private String cql;
-    }
-
-    private final MeasureXmlRepository measureXmlRepo;
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class MatCqlXmlReq extends MatXmlReq {
-        @NotBlank
-        private String cql;
-        private CQLModel sourceModel;
     }
 
     private final CqlLibraryRepository cqlLibRepo;
@@ -161,30 +165,19 @@ public class MatXmlController {
         }
     }
 
-    @PutMapping("/cql")
-    public @ResponseBody
-    MatXmlResponse fromCql(@RequestHeader(value = "UMLS-TOKEN", required=false) String umlsToken,
-                           @Valid @RequestBody MatCqlXmlReq matCqlXmlReq) {
-        log.debug("MatXmlController::fromCql -> enter {}", matCqlXmlReq);
-        String cql = matCqlXmlReq.getCql();
-        try {
-            MatXmlResponse resp = run(umlsToken,
-                    matCqlXmlReq.getCql(),
-                    matCqlXmlReq.getSourceModel(),
-                    matCqlXmlReq);
-            log.debug("MatXmlController::fromCql -> exit {}", resp);
-            return resp;
-        } catch (RuntimeException e) {
-            log.error("fromCql", e);
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Unexpected error in fromMeasure(" + umlsToken + "," + cql + "," + matCqlXmlReq,
-                    e);
-        }
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor
+    public static class MatCqlXmlReq extends MatXmlReq {
+        @NotBlank
+        private String cql;
+        private CQLModel sourceModel;
     }
 
     @Data
     @NoArgsConstructor
+    @ToString
     public static class MatXmlReq {
         private boolean isLinting = true;
         @Valid

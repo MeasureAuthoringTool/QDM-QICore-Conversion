@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import mat.model.cql.CQLCodeSystem;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,8 @@ import mat.model.cql.CQLParameter;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -41,13 +44,13 @@ public class AntlrCqlToMatXmlTest {
     private CqlToMatXml cqlToMatXml;
 
     public void mockSpreadsheet() {
-        log.info("an offering to the Codacy gods: " + mappingService);
+        //log.info("an offering to the Codacy gods: " + mappingService);
         Map<String, CodeSystemEntry> map = new HashMap<>();
         map.put("urn:oid:2.16.840.1.113883.6.96", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.96", "http://snomed.info/sct/731000124108", "SNOMEDCT", "2019-03"));
         map.put("urn:oid:2.16.840.1.113883.5.1001", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.1001", "http://terminology.hl7.org/CodeSystem/v3-ActMood", "ActMood", "TBD"));
         map.put("urn:oid:2.16.840.1.113883.5.1", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.1", "http://hl7.org/fhir/ValueSet/v3-AdministrativeGender", "SNOMEDCT", "2019-03"));
         map.put("urn:oid:2.16.840.1.113883.6.88", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.88", "http://www.nlm.nih.gov/research/umls/rxnorm", "SNOMEDCT", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.6.1", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.1", "http://loinc.org", "SNOMEDCT", "2019-03"));
+        map.put("urn:oid:2.16.840.1.113883.6.1", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.1", "http://loinc.org", "LOINC", "2019-03"));
         map.put("urn:oid:2.16.840.1.113883.6.12", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.12", "http://www.ama-assn.org/go/cpt", "SNOMEDCT", "2019-03"));
         map.put("urn:oid:2.16.840.1.113883.12.292", new CodeSystemEntry("urn:oid:2.16.840.1.113883.12.292", "http://hl7.org/fhir/sid/cvx", "SNOMEDCT", "2019-03"));
         map.put("urn:oid:2.16.840.1.113883.6.238", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.238", "https://www.hl7.org/fhir/us/core/CodeSystem-cdcrec.html", "SNOMEDCT", "2019-03"));
@@ -81,6 +84,20 @@ public class AntlrCqlToMatXmlTest {
         String cql = loadCqlResource(resource);
         parser.parse(cql, cqlToMatXml);
         return cqlToMatXml.getDestinationModel();
+    }
+
+    @Test
+    public void testCodeSystems() throws Exception {
+        mockSpreadsheet();
+        var destination = parseModel("code_system_test.cql");
+        assertEquals(1, destination.getCodeSystemList().size());
+
+        CQLCodeSystem cqlCodeSystem =destination.getCodeSystemList().get(0);
+        assertNull( cqlCodeSystem.getVersionUri());
+
+        assertEquals(1,  destination.getCodeList());
+
+        verifyNoInteractions(codeListService);
     }
 
     @Test
