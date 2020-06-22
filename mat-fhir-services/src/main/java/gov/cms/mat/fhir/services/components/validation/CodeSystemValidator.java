@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class CodeSystemValidator extends CqlValidatorHelper {
-    static final String CODE_ERRORS = "802";
+   private static final String CODE_ERRORS = "802";
     private final VsacCodeSystemValidator vsacCodeSystemValidator;
 
     public CodeSystemValidator(VsacCodeSystemValidator vsacCodeSystemValidator) {

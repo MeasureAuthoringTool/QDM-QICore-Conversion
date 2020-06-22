@@ -34,9 +34,9 @@ class VsacRestClientUnitTest implements ResourceFileUtil {
     private static final String CODE = "/CodeSystem/LOINC/Version/2.67/Code/21112-8/Info";
 
     @Mock
-    VsacConfig vsacConfig;
+    private VsacConfig vsacConfig;
     @InjectMocks
-    VsacRestClient vsacRestClient;
+    private VsacRestClient vsacRestClient;
     @Mock
     private RestTemplate restTemplate;
 

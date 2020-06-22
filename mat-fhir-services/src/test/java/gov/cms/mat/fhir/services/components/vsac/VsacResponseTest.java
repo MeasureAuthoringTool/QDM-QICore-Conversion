@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class VsacResponseTest implements ResourceFileUtil {
 

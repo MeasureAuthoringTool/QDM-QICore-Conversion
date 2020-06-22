@@ -2,7 +2,6 @@ package gov.cms.mat.fhir.services.components.validation;
 
 import gov.cms.mat.fhir.services.components.vsac.VsacResponse;
 import gov.cms.mat.fhir.services.components.vsac.VsacRestClient;
-import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.cql.CQLCode;
 import mat.model.cql.VsacStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,13 +22,9 @@ import static org.testng.Assert.assertEquals;
 @ExtendWith(MockitoExtension.class)
 class CodeSystemVsacAsyncTest {
     private static final String TOKEN = "token";
-    private static final String TICKET = "a-golden-ticket-charlie";
-
-    private static final String URL = "http://terminology.hl7.org/CodeSystem/request-intent";
 
     CQLCode cqlCode;
-    @Mock
-    private VsacService vsacService; //todo needs to be removed when value set refactored
+
     @InjectMocks
     private CodeSystemVsacAsync codeSystemVsacAsync;
     @Mock
@@ -58,6 +53,7 @@ class CodeSystemVsacAsyncTest {
         assertEquals(VsacStatus.IN_VALID, cqlCode.obtainValidatedWithVsac());
 
         verifyNoMoreInteractions(vsacRestClient);
+
     }
 
     @Test
@@ -79,7 +75,7 @@ class CodeSystemVsacAsyncTest {
         completableFuture.get();
 
         assertEquals("Code system uri is required", cqlCode.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlCode.obtainValidatedWithVsac());
+
 
         verifyNoInteractions(vsacRestClient);
     }

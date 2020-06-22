@@ -32,9 +32,6 @@ public class AntlrCqlToMatXmlTest {
     private static final String CQL_TEST_RESOURCES_DIR = "/test-cql/";
 
     @Mock
-    private MappingSpreadsheetService mappingService;
-
-    @Mock
     private CodeListService codeListService;
 
     @InjectMocks
