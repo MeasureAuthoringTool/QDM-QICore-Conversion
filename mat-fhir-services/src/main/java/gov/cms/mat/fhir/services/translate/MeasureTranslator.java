@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.commons.model.MeasureDetails;
 import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
 import gov.cms.mat.fhir.commons.model.MeasureReferenceType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureDetailsReferenceRepository;
 import gov.cms.mat.fhir.services.repository.MeasureDetailsRepository;
@@ -192,11 +193,11 @@ public class MeasureTranslator extends TranslatorBase {
 
     private void processImprovementNotation(ManageCompositeMeasureDetailModel simpleXmlModel,Measure fhirMeasure) {
         if (StringUtils.isBlank(simpleXmlModel.getImprovNotations())) {
-            throw new RuntimeException("simpleMeasureXml.getImprovementNotations() can not be blank.");
+            throw new CqlConversionException("simpleMeasureXml.getImprovementNotations() can not be blank.");
         }
         if (!StringUtils.equals(simpleXmlModel.getImprovNotations(),"increase") &&
                 !StringUtils.equals(simpleXmlModel.getImprovNotations(),"decrease")) {
-            throw new RuntimeException("invalid simpleMeasureXml.getImprovementNotations(), " +
+            throw new CqlConversionException("invalid simpleMeasureXml.getImprovementNotations(), " +
                     simpleXmlModel.getImprovNotations() +
                     " must be either increase or decrease.");
         }
