@@ -67,16 +67,13 @@ public class CqlToMatXml implements CqlVisitor {
     private CQLModel destinationModel = new CQLModel();
     private CQLModel sourceModel;
     private CodeListService codeListService;
-    private MappingSpreadsheetService mappingService;
     private boolean isValidatingCodesystems = true;
     private boolean isValidatingValuesets = true;
     private ExecutorService codeSystemValueSetExecutor;
     private String umlsToken;
 
-    public CqlToMatXml(CodeListService codeListService,
-                       MappingSpreadsheetService mappingService) {
+    public CqlToMatXml(CodeListService codeListService) {
         this.codeListService = codeListService;
-        this.mappingService = mappingService;
     }
 
     @PostConstruct
