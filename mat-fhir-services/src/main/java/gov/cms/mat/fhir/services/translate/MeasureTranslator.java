@@ -18,6 +18,7 @@ import mat.client.measure.PeriodModel;
 import mat.model.MeasureType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.CanonicalType;
 import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.CodeableConcept;
@@ -147,12 +148,12 @@ public class MeasureTranslator extends TranslatorBase {
         result.setDisclaimer(simpleXmlModel.getDisclaimer());
         result.setPurpose("Unknown");
         result.setLibrary(Collections.singletonList(new CanonicalType("Library/" + cqlLib.getId())));
+        processImprovementNotation(simpleXmlModel,result);
 
         //Note:
         // These are contextual and we might need to add them in later on.
         //result.setJurisdiction();
         //result.setCompositeScoring();
-        //result.setImprovementNotation(); //Needs to be a new MAT feature for fhir.
         //result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
         //result.setTopic(createTopic());
 
@@ -187,6 +188,22 @@ public class MeasureTranslator extends TranslatorBase {
         processXml(simpleXml, result);
 
         return result;
+    }
+
+    private void processImprovementNotation(ManageCompositeMeasureDetailModel simpleXmlModel,Measure fhirMeasure) {
+        if (StringUtils.isBlank(simpleXmlModel.getImprovNotations())) {
+            throw new RuntimeException("simpleMeasureXml.getImprovementNotations() can not be blank.");
+        }
+        if (!StringUtils.equals(simpleXmlModel.getImprovNotations(),"increase") &&
+                !StringUtils.equals(simpleXmlModel.getImprovNotations(),"decrease")) {
+            throw new RuntimeException("invalid simpleMeasureXml.getImprovementNotations(), " +
+                    simpleXmlModel.getImprovNotations() +
+                    " must be either increase or decrease.");
+        }
+
+        fhirMeasure.setImprovementNotation(buildCodeableConcept(simpleXmlModel.getImprovNotations(),
+                "http://terminology.hl7.org/CodeSystem/measure-improvement-notation",
+                null));
     }
 
     private void processExtension(Measure fhirMeasure) {
