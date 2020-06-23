@@ -67,16 +67,13 @@ public class CqlToMatXml implements CqlVisitor {
     private CQLModel destinationModel = new CQLModel();
     private CQLModel sourceModel;
     private CodeListService codeListService;
-    private MappingSpreadsheetService mappingService;
     private boolean isValidatingCodesystems = true;
     private boolean isValidatingValuesets = true;
     private ExecutorService codeSystemValueSetExecutor;
     private String umlsToken;
 
-    public CqlToMatXml(CodeListService codeListService,
-                       MappingSpreadsheetService mappingService) {
+    public CqlToMatXml(CodeListService codeListService) {
         this.codeListService = codeListService;
-        this.mappingService = mappingService;
     }
 
     @PostConstruct
@@ -228,19 +225,13 @@ public class CqlToMatXml implements CqlVisitor {
             CQLFunctionArgument argument = new CQLFunctionArgument();
             argument.setId(newGuid());
             argument.setArgumentName(a.getName());
-            if (mappingService.getFhirTypes().contains(a.getType())) {
-                //Reuse QdmDataType for FhirDataType. This isn't ideal but its a real pain to change mat XML.
-                argument.setQdmDataType(a.getType());
-                argument.setArgumentType("FHIR Datatype");
-            } else if (isQuoted(a.getType())) {
+            if (isQuoted(a.getType())) {
                 //In conversions we will still have quoted strings here for QDM type.
                 argument.setQdmDataType(chomp1(a.getType()));
                 argument.setArgumentType("QDM Datatype");
-            } else if (CQLKeywordsUtil.getCQLKeywords().getCqlDataTypeList().contains(a.getType())) {
-                argument.setArgumentType(a.getType());
-            } else { // Other type.
-                argument.setArgumentType(("Others"));
-                argument.setOtherType(a.getType());
+            } else {
+                argument.setQdmDataType(a.getType());
+                argument.setArgumentType("FHIR Datatype");
             }
             return argument;
         }).collect(Collectors.toList()));

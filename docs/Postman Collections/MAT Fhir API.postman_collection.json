@@ -1,0 +1,1079 @@
+{
+	"info": {
+		"_postman_id": "0c480ea5-770e-4b75-932f-64cd40863362",
+		"name": "MAT Fhir API",
+		"description": "This is a SpringBoot v2.3.x restful service for converting MAT objects to FHIR.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "measure",
+			"item": [
+				{
+					"name": "Convert",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/orchestration/vsac?id=<string>&conversionType=CONVERSION&xmlSource=SIMPLE&batchId=ORCHESTRATION&showWarnings=false&vsacGrantingTicket=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"orchestration",
+								"vsac"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "<string>",
+									"description": "(Required) "
+								},
+								{
+									"key": "conversionType",
+									"value": "CONVERSION",
+									"description": "(Required) "
+								},
+								{
+									"key": "xmlSource",
+									"value": "SIMPLE"
+								},
+								{
+									"key": "batchId",
+									"value": "ORCHESTRATION"
+								},
+								{
+									"key": "showWarnings",
+									"value": "false"
+								},
+								{
+									"key": "vsacGrantingTicket",
+									"value": ""
+								}
+							]
+						},
+						"description": "Orchestrate one Measure in the MAT Database and verify and persist (if applicable) to the HAPI FHIR Database. Method returns the fhir conversion results."
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/orchestration/measure?id=<string>&conversionType=<string>&xmlSource=SIMPLE&batchId=MEASURE-ORCHESTRATION&showWarnings=false&vsacGrantingTicket=",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"orchestration",
+										"measure"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										},
+										{
+											"key": "conversionType",
+											"value": "<string>"
+										},
+										{
+											"key": "xmlSource",
+											"value": "SIMPLE"
+										},
+										{
+											"key": "batchId",
+											"value": "MEASURE-ORCHESTRATION"
+										},
+										{
+											"key": "showWarnings",
+											"value": "false"
+										},
+										{
+											"key": "vsacGrantingTicket",
+											"value": ""
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Push",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/measure/pushMeasure?id=<string>&batchId=PUSH-MEASURE-ORCHESTRATION",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"measure",
+								"pushMeasure"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "<string>",
+									"description": "(Required) "
+								},
+								{
+									"key": "batchId",
+									"value": "PUSH-MEASURE-ORCHESTRATION"
+								}
+							]
+						},
+						"description": "Find the HAPI stand alone Measure in Mat convert and persist to FHIR"
+					},
+					"response": [
+						{
+							"name": "Measure is found in mat and updated in hapi and json returned",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/measure/pushMeasure?id=<string>&batchId=PUSH-MEASURE-ORCHESTRATION",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"measure",
+										"pushMeasure"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										},
+										{
+											"key": "batchId",
+											"value": "PUSH-MEASURE-ORCHESTRATION"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "Measure is not found in the mat db using the id",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/measure/pushMeasure?id=<string>&batchId=PUSH-MEASURE-ORCHESTRATION",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"measure",
+										"pushMeasure"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										},
+										{
+											"key": "batchId",
+											"value": "PUSH-MEASURE-ORCHESTRATION"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				},
+				{
+					"name": "Package",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/measure/package?id=<string>",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"measure",
+								"package"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "<string>",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Full Packaging of Measure in json"
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/measure/package?id=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"measure",
+										"package"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "vsac",
+			"item": [
+				{
+					"name": "Get VSAC Ticket",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/vsac/getTicketGrantingTicket?username=<string>&password=<string>",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"vsac",
+								"getTicketGrantingTicket"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "<string>",
+									"description": "(Required) "
+								},
+								{
+									"key": "password",
+									"value": "<string>",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Ticket to apply to other MAT FHIR Services Requiring VSAC integration and testing purposes"
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/vsac/getTicketGrantingTicket?username=<string>&password=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vsac",
+										"getTicketGrantingTicket"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "<string>"
+										},
+										{
+											"key": "password",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "library",
+			"item": [
+				{
+					"name": "Convert",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/library/convertStandAlone?id=<string>&conversionType=VALIDATION&showWarnings=false&batchId=LIBRARY-QDM-ORCHESTRATION",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"library",
+								"convertStandAlone"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "<string>",
+									"description": "(Required) "
+								},
+								{
+									"key": "conversionType",
+									"value": "VALIDATION"
+								},
+								{
+									"key": "showWarnings",
+									"value": "false"
+								},
+								{
+									"key": "batchId",
+									"value": "LIBRARY-QDM-ORCHESTRATION"
+								}
+							]
+						},
+						"description": "Find the CQL QDM Library and convert and persist to FHIR"
+					},
+					"response": [
+						{
+							"name": "Library found and results returnd",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/library/convertStandAlone?id=<string>&conversionType=<string>&showWarnings=false&batchId=LIBRARY-QDM-ORCHESTRATION",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"library",
+										"convertStandAlone"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										},
+										{
+											"key": "conversionType",
+											"value": "<string>"
+										},
+										{
+											"key": "showWarnings",
+											"value": "false"
+										},
+										{
+											"key": "batchId",
+											"value": "LIBRARY-QDM-ORCHESTRATION"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "CqlLibrary is not found in the mat db using the id",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/library/convertStandAlone?id=<string>&conversionType=<string>&showWarnings=false&batchId=LIBRARY-QDM-ORCHESTRATION",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"library",
+										"convertStandAlone"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										},
+										{
+											"key": "conversionType",
+											"value": "<string>"
+										},
+										{
+											"key": "showWarnings",
+											"value": "false"
+										},
+										{
+											"key": "batchId",
+											"value": "LIBRARY-QDM-ORCHESTRATION"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Push",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/library/pushStandAloneLibrary?id=<string>&batchId=LIBRARY-STANDALONE-ORCHESTRATION",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"library",
+								"pushStandAloneLibrary"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "<string>",
+									"description": "(Required) "
+								},
+								{
+									"key": "batchId",
+									"value": "LIBRARY-STANDALONE-ORCHESTRATION"
+								}
+							]
+						},
+						"description": "Find the HAPI stand alone Library and persist to FHIR"
+					},
+					"response": [
+						{
+							"name": "Value set found and json returned",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/library/pushStandAloneLibrary?id=<string>&batchId=LIBRARY-STANDALONE-ORCHESTRATION",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"library",
+										"pushStandAloneLibrary"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										},
+										{
+											"key": "batchId",
+											"value": "LIBRARY-STANDALONE-ORCHESTRATION"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "CqlLibrary is not found in the mat db using the id",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/library/pushStandAloneLibrary?id=<string>&batchId=LIBRARY-STANDALONE-ORCHESTRATION",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"library",
+										"pushStandAloneLibrary"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										},
+										{
+											"key": "batchId",
+											"value": "LIBRARY-STANDALONE-ORCHESTRATION"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				},
+				{
+					"name": "Package",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/library/packager/full/json?id=<string>",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"library",
+								"packager",
+								"full",
+								"json"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "<string>",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Minimum Packaging of  Library in json"
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/library/packager/full/json?id=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"library",
+										"packager",
+										"full",
+										"json"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "CQL to Mat XML (Includes validation)",
+			"item": [
+				{
+					"name": "from Standalone Lib",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "UMLS-TOKEN",
+								"value": "<string>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"validationRequest\": {\n        \"timeoutSeconds\": \"<integer>\",\n        \"validateValueSets\": \"<boolean>\",\n        \"validateCodeSystems\": \"<boolean>\",\n        \"validateSyntax\": \"<boolean>\",\n        \"validateCqlToElm\": \"<boolean>\"\n    },\n    \"linting\": \"<boolean>\"\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/cql-xml-gen/standalone-lib/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"cql-xml-gen",
+								"standalone-lib",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "<string>",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "UMLS-TOKEN",
+										"value": "<string>"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"validationRequest\": {\n        \"timeoutSeconds\": \"<integer>\",\n        \"validateValueSets\": \"<boolean>\",\n        \"validateCodeSystems\": \"<boolean>\",\n        \"validateSyntax\": \"<boolean>\",\n        \"validateCqlToElm\": \"<boolean>\"\n    },\n    \"linting\": \"<boolean>\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cql-xml-gen/standalone-lib/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cql-xml-gen",
+										"standalone-lib",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "from Measure",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "UMLS-TOKEN",
+								"value": "<string>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"validationRequest\": {\n        \"timeoutSeconds\": \"<integer>\",\n        \"validateValueSets\": \"<boolean>\",\n        \"validateCodeSystems\": \"<boolean>\",\n        \"validateSyntax\": \"<boolean>\",\n        \"validateCqlToElm\": \"<boolean>\"\n    },\n    \"linting\": \"<boolean>\"\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/cql-xml-gen/measure/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"cql-xml-gen",
+								"measure",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "<string>",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "UMLS-TOKEN",
+										"value": "<string>"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"validationRequest\": {\n        \"timeoutSeconds\": \"<integer>\",\n        \"validateValueSets\": \"<boolean>\",\n        \"validateCodeSystems\": \"<boolean>\",\n        \"validateSyntax\": \"<boolean>\",\n        \"validateCqlToElm\": \"<boolean>\"\n    },\n    \"linting\": \"<boolean>\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cql-xml-gen/measure/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cql-xml-gen",
+										"measure",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "from Cql",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "UMLS-TOKEN",
+								"value": "<string>"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"validationRequest\": {\n        \"timeoutSeconds\": \"<integer>\",\n        \"validateValueSets\": \"<boolean>\",\n        \"validateCodeSystems\": \"<boolean>\",\n        \"validateSyntax\": \"<boolean>\",\n        \"validateCqlToElm\": \"<boolean>\"\n    },\n    \"sourceModel\": {\n        \"libraryName\": \"<string>\",\n        \"versionUsed\": \"<string>\",\n        \"libraryComment\": \"<string>\",\n        \"usingModelVersion\": \"<string>\",\n        \"usingModel\": \"<string>\",\n        \"context\": \"<string>\",\n        \"valueSetList\": [\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            },\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            }\n        ],\n        \"allValueSetAndCodeList\": [\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            },\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            }\n        ],\n        \"cqlParameters\": [\n            {\n                \"parameterName\": \"<string>\",\n                \"cqlType\": \"<string>\",\n                \"defaultValue\": \"<string>\",\n                \"parameterLogic\": \"<string>\",\n                \"id\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"parameterName\": \"<string>\",\n                \"cqlType\": \"<string>\",\n                \"defaultValue\": \"<string>\",\n                \"parameterLogic\": \"<string>\",\n                \"id\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlFunctions\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"functionName\": \"<string>\",\n                \"functionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"argumentList\": [\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    },\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    }\n                ],\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"functionName\": \"<string>\",\n                \"functionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"argumentList\": [\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    },\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    }\n                ],\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"codeSystemList\": [\n            {\n                \"id\": \"<string>\",\n                \"codeSystem\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"valueSetOID\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"versionUri\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"codeSystem\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"valueSetOID\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"versionUri\": \"<string>\"\n            }\n        ],\n        \"codeList\": [\n            {\n                \"id\": \"<string>\",\n                \"codeName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"codeSystemVersionUri\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeOID\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"suffix\": \"<string>\",\n                \"isCodeSystemVersionIncluded\": \"<boolean>\",\n                \"errorMessage\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"codeName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"codeSystemVersionUri\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeOID\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"suffix\": \"<string>\",\n                \"isCodeSystemVersionIncluded\": \"<boolean>\",\n                \"errorMessage\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlIncludeLibrarys\": [\n            {\n                \"id\": \"<string>\",\n                \"aliasName\": \"<string>\",\n                \"cqlLibraryId\": \"<string>\",\n                \"version\": \"<string>\",\n                \"cqlLibraryName\": \"<string>\",\n                \"qdmVersion\": \"<string>\",\n                \"setId\": \"<string>\",\n                \"isComponent\": \"<string>\",\n                \"measureId\": \"<string>\",\n                \"libraryModelType\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"aliasName\": \"<string>\",\n                \"cqlLibraryId\": \"<string>\",\n                \"version\": \"<string>\",\n                \"cqlLibraryName\": \"<string>\",\n                \"qdmVersion\": \"<string>\",\n                \"setId\": \"<string>\",\n                \"isComponent\": \"<string>\",\n                \"measureId\": \"<string>\",\n                \"libraryModelType\": \"<string>\"\n            }\n        ],\n        \"lines\": \"<integer>\",\n        \"definitionList\": [\n            {\n                \"id\": \"<string>\",\n                \"definitionName\": \"<string>\",\n                \"definitionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"supplDataElement\": \"<boolean>\",\n                \"popDefinition\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"definitionName\": \"<string>\",\n                \"definitionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"supplDataElement\": \"<boolean>\",\n                \"popDefinition\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlidentifierDefinitions\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"includedFunc\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"functionName\": \"<string>\",\n                \"functionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"argumentList\": [\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    },\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    }\n                ],\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"functionName\": \"<string>\",\n                \"functionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"argumentList\": [\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    },\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    }\n                ],\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlidentifierFunctions\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"includedValueSet\": [\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            },\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            }\n        ],\n        \"cqlidentifierValueSet\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"includedParam\": [\n            {\n                \"parameterName\": \"<string>\",\n                \"cqlType\": \"<string>\",\n                \"defaultValue\": \"<string>\",\n                \"parameterLogic\": \"<string>\",\n                \"id\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"parameterName\": \"<string>\",\n                \"cqlType\": \"<string>\",\n                \"defaultValue\": \"<string>\",\n                \"parameterLogic\": \"<string>\",\n                \"id\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlidentifierParam\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"includedCode\": [\n            {\n                \"id\": \"<string>\",\n                \"codeName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"codeSystemVersionUri\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeOID\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"suffix\": \"<string>\",\n                \"isCodeSystemVersionIncluded\": \"<boolean>\",\n                \"errorMessage\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"codeName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"codeSystemVersionUri\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeOID\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"suffix\": \"<string>\",\n                \"isCodeSystemVersionIncluded\": \"<boolean>\",\n                \"errorMessage\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlidentifierCode\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"expressionListFromCqlModel\": [\n            \"<string>\",\n            \"<string>\"\n        ],\n        \"includedDef\": [\n            {\n                \"id\": \"<string>\",\n                \"definitionName\": \"<string>\",\n                \"definitionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"supplDataElement\": \"<boolean>\",\n                \"popDefinition\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"definitionName\": \"<string>\",\n                \"definitionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"supplDataElement\": \"<boolean>\",\n                \"popDefinition\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ]\n    },\n    \"linting\": \"<boolean>\"\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/cql-xml-gen/cql",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"cql-xml-gen",
+								"cql"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "UMLS-TOKEN",
+										"value": "<string>"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"cql\": \"<string>\",\n    \"validationRequest\": {\n        \"timeoutSeconds\": \"<integer>\",\n        \"validateValueSets\": \"<boolean>\",\n        \"validateCodeSystems\": \"<boolean>\",\n        \"validateSyntax\": \"<boolean>\",\n        \"validateCqlToElm\": \"<boolean>\"\n    },\n    \"sourceModel\": {\n        \"libraryName\": \"<string>\",\n        \"versionUsed\": \"<string>\",\n        \"libraryComment\": \"<string>\",\n        \"usingModelVersion\": \"<string>\",\n        \"usingModel\": \"<string>\",\n        \"context\": \"<string>\",\n        \"valueSetList\": [\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            },\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            }\n        ],\n        \"allValueSetAndCodeList\": [\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            },\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            }\n        ],\n        \"cqlParameters\": [\n            {\n                \"parameterName\": \"<string>\",\n                \"cqlType\": \"<string>\",\n                \"defaultValue\": \"<string>\",\n                \"parameterLogic\": \"<string>\",\n                \"id\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"parameterName\": \"<string>\",\n                \"cqlType\": \"<string>\",\n                \"defaultValue\": \"<string>\",\n                \"parameterLogic\": \"<string>\",\n                \"id\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlFunctions\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"functionName\": \"<string>\",\n                \"functionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"argumentList\": [\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    },\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    }\n                ],\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"functionName\": \"<string>\",\n                \"functionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"argumentList\": [\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    },\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    }\n                ],\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"codeSystemList\": [\n            {\n                \"id\": \"<string>\",\n                \"codeSystem\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"valueSetOID\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"versionUri\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"codeSystem\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"valueSetOID\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"versionUri\": \"<string>\"\n            }\n        ],\n        \"codeList\": [\n            {\n                \"id\": \"<string>\",\n                \"codeName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"codeSystemVersionUri\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeOID\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"suffix\": \"<string>\",\n                \"isCodeSystemVersionIncluded\": \"<boolean>\",\n                \"errorMessage\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"codeName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"codeSystemVersionUri\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeOID\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"suffix\": \"<string>\",\n                \"isCodeSystemVersionIncluded\": \"<boolean>\",\n                \"errorMessage\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlIncludeLibrarys\": [\n            {\n                \"id\": \"<string>\",\n                \"aliasName\": \"<string>\",\n                \"cqlLibraryId\": \"<string>\",\n                \"version\": \"<string>\",\n                \"cqlLibraryName\": \"<string>\",\n                \"qdmVersion\": \"<string>\",\n                \"setId\": \"<string>\",\n                \"isComponent\": \"<string>\",\n                \"measureId\": \"<string>\",\n                \"libraryModelType\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"aliasName\": \"<string>\",\n                \"cqlLibraryId\": \"<string>\",\n                \"version\": \"<string>\",\n                \"cqlLibraryName\": \"<string>\",\n                \"qdmVersion\": \"<string>\",\n                \"setId\": \"<string>\",\n                \"isComponent\": \"<string>\",\n                \"measureId\": \"<string>\",\n                \"libraryModelType\": \"<string>\"\n            }\n        ],\n        \"lines\": \"<integer>\",\n        \"definitionList\": [\n            {\n                \"id\": \"<string>\",\n                \"definitionName\": \"<string>\",\n                \"definitionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"supplDataElement\": \"<boolean>\",\n                \"popDefinition\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"definitionName\": \"<string>\",\n                \"definitionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"supplDataElement\": \"<boolean>\",\n                \"popDefinition\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlidentifierDefinitions\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"includedFunc\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"functionName\": \"<string>\",\n                \"functionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"argumentList\": [\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    },\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    }\n                ],\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"functionName\": \"<string>\",\n                \"functionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"argumentList\": [\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    },\n                    {\n                        \"id\": \"<string>\",\n                        \"argumentName\": \"<string>\",\n                        \"argumentType\": \"<string>\",\n                        \"otherType\": \"<string>\",\n                        \"qdmDataType\": \"<string>\",\n                        \"attributeName\": \"<string>\",\n                        \"valid\": \"<boolean>\",\n                        \"returnType\": \"<string>\"\n                    }\n                ],\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlidentifierFunctions\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"includedValueSet\": [\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            },\n            {\n                \"hasModifiedAtVSAC\": \"<boolean>\",\n                \"notFoundInVSAC\": \"<boolean>\",\n                \"codeListName\": \"<string>\",\n                \"suffix\": \"<string>\",\n                \"originalCodeListName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"dataType\": \"<string>\",\n                \"id\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"oid\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"suppDataElement\": \"<boolean>\",\n                \"taxonomy\": \"<string>\",\n                \"type\": \"<string>\",\n                \"uuid\": \"<string>\",\n                \"version\": \"<string>\",\n                \"release\": \"<string>\",\n                \"program\": \"<string>\",\n                \"dataTypeHasRemoved\": \"<boolean>\",\n                \"valueSetType\": \"<string>\",\n                \"errorMessage\": \"<string>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"qdmelement\": \"<string>\",\n                \"name\": \"<string>\",\n                \"readOnly\": \"<boolean>\"\n            }\n        ],\n        \"cqlidentifierValueSet\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"includedParam\": [\n            {\n                \"parameterName\": \"<string>\",\n                \"cqlType\": \"<string>\",\n                \"defaultValue\": \"<string>\",\n                \"parameterLogic\": \"<string>\",\n                \"id\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"parameterName\": \"<string>\",\n                \"cqlType\": \"<string>\",\n                \"defaultValue\": \"<string>\",\n                \"parameterLogic\": \"<string>\",\n                \"id\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlidentifierParam\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"includedCode\": [\n            {\n                \"id\": \"<string>\",\n                \"codeName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"codeSystemVersionUri\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeOID\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"suffix\": \"<string>\",\n                \"isCodeSystemVersionIncluded\": \"<boolean>\",\n                \"errorMessage\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"codeName\": \"<string>\",\n                \"codeSystemName\": \"<string>\",\n                \"codeSystemVersion\": \"<string>\",\n                \"codeSystemVersionUri\": \"<string>\",\n                \"codeSystemOID\": \"<string>\",\n                \"codeOID\": \"<string>\",\n                \"displayName\": \"<string>\",\n                \"codeIdentifier\": \"<string>\",\n                \"readOnly\": \"<boolean>\",\n                \"suffix\": \"<string>\",\n                \"isCodeSystemVersionIncluded\": \"<boolean>\",\n                \"errorMessage\": \"<string>\",\n                \"lineNumber\": \"<integer>\",\n                \"used\": \"<boolean>\",\n                \"logic\": \"<string>\",\n                \"validatedWithVsac\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ],\n        \"cqlidentifierCode\": [\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            },\n            {\n                \"aliasName\": \"<string>\",\n                \"id\": \"<string>\",\n                \"identifier\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"display\": \"<string>\"\n            }\n        ],\n        \"expressionListFromCqlModel\": [\n            \"<string>\",\n            \"<string>\"\n        ],\n        \"includedDef\": [\n            {\n                \"id\": \"<string>\",\n                \"definitionName\": \"<string>\",\n                \"definitionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"supplDataElement\": \"<boolean>\",\n                \"popDefinition\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            },\n            {\n                \"id\": \"<string>\",\n                \"definitionName\": \"<string>\",\n                \"definitionLogic\": \"<string>\",\n                \"context\": \"<string>\",\n                \"supplDataElement\": \"<boolean>\",\n                \"popDefinition\": \"<boolean>\",\n                \"commentString\": \"<string>\",\n                \"returnType\": \"<string>\",\n                \"logic\": \"<string>\",\n                \"name\": \"<string>\"\n            }\n        ]\n    },\n    \"linting\": \"<boolean>\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cql-xml-gen/cql",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cql-xml-gen",
+										"cql"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "49a02db5-5846-4c51-8716-e28f35118c68",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "86edcd3e-3d8f-4573-b7d7-e00d8d2c5065",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "codeSystems",
+			"item": [
+				{
+					"name": "Spreadsheet mappings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/codeSystem/mappings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"codeSystem",
+								"mappings"
+							]
+						},
+						"description": "Returns the clist of CodeSystemEntries from the spreadsheet."
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/codeSystem/mappings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"codeSystem",
+										"mappings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "624f3dfe-8783-420c-8d94-86706422e7ed",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "57527bad-a0fd-4397-b433-9783af5f0a06",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "027e1543-2372-402e-87de-2d11561f2565",
+			"key": "baseUrl",
+			"value": "internal-mat-dev-ecs-lb-1195232407.us-east-1.elb.amazonaws.com:9080",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"id": "8bd40dfa-0db1-4d15-a824-e1fe63fe92b3",
+			"key": "port",
+			"value": "9080",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
