@@ -309,31 +309,55 @@ public class CqlToMatXml implements CqlVisitor {
         }
     }
 
-    private void updateCodeIdentifierAndVsacValidationFlag(CQLCode c, int lineNumber) {
-        var existingCode = findExisting(sourceModel.getCodeList(),
-                ec -> StringUtils.equals(ec.getCodeName(), c.getCodeName()) &&
-                        StringUtils.equals(ec.getCodeSystemName(), c.getCodeSystemName()));
+    private void updateCodeIdentifierAndVsacValidationFlag(CQLCode incoming, int lineNumber) {
 
-        c.addValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).
-                orElse(VsacStatus.PENDING));
+        var existingCodeOptional = findExisting(sourceModel.getCodeList(),
+                ec -> StringUtils.equals(ec.getCodeName(), incoming.getCodeName()) &&
+                        StringUtils.equals(ec.getCodeSystemName(), incoming.getCodeSystemName()));
 
-        if (c.obtainValidatedWithVsac() == VsacStatus.VALID) {
+
+        incoming.addValidatedWithVsac(existingCodeOptional.map(CQLCode::obtainValidatedWithVsac).orElse(VsacStatus.PENDING));
+
+        if (incoming.obtainValidatedWithVsac() == VsacStatus.VALID) {
             var existingCodeSystem = findExisting(sourceModel.getCodeSystemList(),
-                    ecs -> StringUtils.equals(ecs.getCodeSystem(), c.getCodeSystemOID()));
+                    ecs -> StringUtils.equals(ecs.getCodeSystem(), incoming.getCodeSystemOID()));
             if (existingCodeSystem.isEmpty()) {
-                c.addValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).
+                incoming.addValidatedWithVsac(existingCodeOptional.map(CQLCode::obtainValidatedWithVsac).
                         orElse(VsacStatus.PENDING));
             }
         }
 
-        String codeIdentifier = buildCodeIdentifier(c, lineNumber);
+        String codeIdentifier = buildCodeIdentifier(incoming, lineNumber);
 
+
+        // if existing not found force validation
 
         if (codeIdentifier != null) {
-            c.setCodeIdentifier(codeIdentifier);
+            incoming.setCodeIdentifier(codeIdentifier);
+//            if( incoming.getCodeIdentifier() == null) {
+//                log.info("Code did not have an identifier we will validate"); // if mat  messes up we will validate
+//                incoming.setCodeIdentifier(codeIdentifier);
+//            } else if (incoming.getCodeIdentifier().equals(codeIdentifier)) {
+//                log.info("Code does not re validated");
+//            } else {
+//                log.info("Code does need validated");
+//                incoming.setCodeIdentifier(codeIdentifier);
+//            }
+
 //            c.setCodeIdentifier(existingCode.isPresent() ?
 //                    existingCode.get().getCodeIdentifier() :
 //                    codeIdentifier);
+
+
+            if (incoming.obtainValidatedWithVsac() == VsacStatus.VALID && existingCodeOptional.isPresent()) {
+                CQLCode existingCode = existingCodeOptional.get();
+                String existingCodeIdentifier = buildCodeIdentifier(existingCode, lineNumber);
+
+                if (existingCodeIdentifier == null || !existingCodeIdentifier.equals(codeIdentifier)) {
+                    incoming.addValidatedWithVsac(VsacStatus.PENDING);
+                }
+            }
+
         }
     }
 
@@ -349,6 +373,7 @@ public class CqlToMatXml implements CqlVisitor {
         if (vsacCodeSystem.isPresent()) {
             String defaultVersion = vsacCodeSystem.get().getDefaultVsacVersion();
 
+            //todo use vsac to get latest version
             return String.format(CODE_IDENTIFIER_FORMAT,
                     parseCodeSystemName(c.getCodeSystemName()).getLeft(),
                     StringUtils.isBlank(c.getCodeSystemVersionUri()) ? defaultVersion : c.getCodeSystemVersionUri(),
