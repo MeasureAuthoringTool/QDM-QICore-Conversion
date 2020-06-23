@@ -220,6 +220,7 @@ public class MatXmlController {
             libraryErrors.setVersion(matXmlResponse.getCqlModel().getVersionUsed());
             matXmlResponse.setErrors(Collections.singletonList(libraryErrors));
         } else {
+            req.getValidationRequest().setValidateCodeSystems(false);
             List<LibraryErrors> libraryErrors =
                     validationOrchestrationService.validateCql(cql,
                             matXmlResponse.getCqlModel(),
