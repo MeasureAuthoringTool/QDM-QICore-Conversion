@@ -205,12 +205,12 @@ public class MatXmlController {
         matXmlResponse.setCql(cql);
         matXmlResponse.setCqlModel(cqlToMatXml.getDestinationModel());
 
-        if (sourceModel != null) {
+        if (sourceModel != null && sourceModel.isFhir()) {
             // Overwrite fields the user is not allowed to change for FHIR.
-            matXmlResponse.getCqlModel().setLibraryName(sourceModel.getLibraryName());
-            matXmlResponse.getCqlModel().setUsingModelVersion(sourceModel.getUsingModelVersion());
             matXmlResponse.getCqlModel().setUsingModel(sourceModel.getUsingModel());
             matXmlResponse.getCqlModel().setVersionUsed(sourceModel.getVersionUsed());
+            matXmlResponse.getCqlModel().setLibraryName(sourceModel.getLibraryName());
+            matXmlResponse.getCqlModel().setUsingModelVersion(sourceModel.getUsingModelVersion());
         }
 
         if (!cqlToMatXml.getErrors().isEmpty()) {
