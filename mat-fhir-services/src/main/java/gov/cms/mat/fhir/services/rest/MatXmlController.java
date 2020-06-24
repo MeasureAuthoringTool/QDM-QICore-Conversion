@@ -11,7 +11,6 @@ import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
 import gov.cms.mat.fhir.services.rest.dto.ValidationRequest;
 import gov.cms.mat.fhir.services.service.ValidationOrchestrationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -84,6 +83,26 @@ public class MatXmlController {
         private String cql;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class MatCqlXmlReq extends MatXmlReq {
+        @NotBlank
+        private String cql;
+        private CQLModel sourceModel;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class MatXmlReq {
+        //Currently not functional.
+        private boolean isLinting = true;
+        @Valid
+        private ValidationRequest validationRequest;
+    }
+
+    private final MeasureXmlRepository measureXmlRepo;
     private final CqlLibraryRepository cqlLibRepo;
     private final CqlVisitorFactory visitorFactory;
     private final CqlParser cqlParser;
@@ -103,7 +122,7 @@ public class MatXmlController {
 
     @PutMapping("/standalone-lib/{id}")
     public @ResponseBody
-    MatXmlResponse fromStandaloneLib(@RequestHeader(value = "UMLS-TOKEN", required=false) String ulmsToken,
+    MatXmlResponse fromStandaloneLib(@RequestHeader(value = "UMLS-TOKEN", required = false) String ulmsToken,
                                      @NotBlank @PathVariable("id") String libId,
                                      @Valid @RequestBody MatXmlReq matXmlReq) {
         try {
@@ -118,7 +137,7 @@ public class MatXmlController {
                 }
 
                 CQLModel model = CQLUtilityClass.getCQLModelFromXML(lib.getCqlXml());
-                String cql = CQLUtilityClass.getCqlString(model,"").getLeft();
+                String cql = CQLUtilityClass.getCqlString(model, "").getLeft();
 
                 return run(ulmsToken,
                         cql,
@@ -140,7 +159,7 @@ public class MatXmlController {
 
     @PutMapping("/measure/{id}")
     public @ResponseBody
-    MatXmlResponse fromMeasure(@RequestHeader(value = "UMLS-TOKEN", required=false) String ulmsToken,
+    MatXmlResponse fromMeasure(@RequestHeader(value = "UMLS-TOKEN", required = false) String ulmsToken,
                                @NotBlank @PathVariable("id") String measureId,
                                @Valid @RequestBody MatXmlReq matXmlReq) {
         try {
@@ -155,7 +174,7 @@ public class MatXmlController {
                 }
                 String matXml = new String(measureXmlBytes, StandardCharsets.UTF_8);
                 CQLModel model = CQLUtilityClass.getCQLModelFromXML(matXml);
-                String cql = CQLUtilityClass.getCqlString(model,"").getLeft();
+                String cql = CQLUtilityClass.getCqlString(model, "").getLeft();
 
                 return run(ulmsToken,
                         cql,
@@ -175,23 +194,26 @@ public class MatXmlController {
         }
     }
 
-    @Getter
-    @Setter
-    @ToString
-    @NoArgsConstructor
-    public static class MatCqlXmlReq extends MatXmlReq {
-        @NotBlank
-        private String cql;
-        private CQLModel sourceModel;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @ToString
-    public static class MatXmlReq {
-        private boolean isLinting = true;
-        @Valid
-        private ValidationRequest validationRequest;
+    @PutMapping("/cql")
+    public @ResponseBody
+    MatXmlResponse fromCql(@RequestHeader(value = "UMLS-TOKEN", required = false) String umlsToken,
+                           @Valid @RequestBody MatCqlXmlReq matCqlXmlReq) {
+        log.debug("MatXmlController::fromCql -> enter {}", matCqlXmlReq);
+        String cql = matCqlXmlReq.getCql();
+        try {
+            MatXmlResponse resp = run(umlsToken,
+                    matCqlXmlReq.getCql(),
+                    matCqlXmlReq.getSourceModel(),
+                    matCqlXmlReq);
+            log.debug("MatXmlController::fromCql -> exit {}", resp);
+            return resp;
+        } catch (RuntimeException e) {
+            log.error("fromCql", e);
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Unexpected error in fromMeasure(" + umlsToken + "," + cql + "," + matCqlXmlReq,
+                    e);
+        }
     }
 
     private MatXmlResponse run(String umlsToken,
@@ -216,21 +238,30 @@ public class MatXmlController {
             matXmlResponse.getCqlModel().setUsingModelVersion(sourceModel.getUsingModelVersion());
         }
 
-        if (!cqlToMatXml.getErrors().isEmpty()) {
+        if (!cqlToMatXml.getSeveres().isEmpty()) {
+            // If there are any severe errors, we stop and don't validate any further.
+            // The are intended to mean we can't save the CQL like it is now because it is invalid.
             LibraryErrors libraryErrors = new LibraryErrors();
-            libraryErrors.setErrors(cqlToMatXml.getErrors());
+            libraryErrors.setErrors(cqlToMatXml.getSeveres());
             libraryErrors.setName(matXmlResponse.getCqlModel().getLibraryName());
             libraryErrors.setVersion(matXmlResponse.getCqlModel().getVersionUsed());
             matXmlResponse.setErrors(Collections.singletonList(libraryErrors));
         } else {
+            // Create a library error for all preexisting errors and warnings.
+            LibraryErrors preexistingErrors = new LibraryErrors();
+            preexistingErrors.setErrors(cqlToMatXml.getErrors());
+            preexistingErrors.getErrors().addAll(cqlToMatXml.getWarnings());
+            preexistingErrors.setName(matXmlResponse.getCqlModel().getLibraryName());
+            preexistingErrors.setVersion(matXmlResponse.getCqlModel().getVersionUsed());
+
             List<LibraryErrors> libraryErrors =
                     validationOrchestrationService.validateCql(cql,
                             matXmlResponse.getCqlModel(),
                             umlsToken,
+                            Collections.singletonList(preexistingErrors),
                             req.getValidationRequest());
             matXmlResponse.setErrors(libraryErrors);
         }
-
         return matXmlResponse;
     }
 }
