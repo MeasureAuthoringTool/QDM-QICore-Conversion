@@ -14,7 +14,6 @@ import mat.model.cql.CQLModel;
 import mat.model.cql.CQLParameter;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.model.cql.VsacStatus;
-import mat.server.CQLKeywordsUtil;
 import mat.shared.CQLError;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.chomp1;
@@ -56,12 +56,18 @@ public class CqlToMatXml implements CqlVisitor {
      * %2s is the code system version.
      * %3s os the code value.
      */
-    private static final String CODE_IDENTIFIER_FORMAT = "CODE:/CodeSystem/%1$s/Version/%2$s/Code/%3$s/Info";
+    public static final String CODE_IDENTIFIER_FORMAT = "CODE:/CodeSystem/%1$s/Version/%2$s/Code/%3$s/Info";
+    public static final String LIB_NAME_REGEX = "^[A-Z]([A-Za-z0-9_]){0,254}$";
+    public static final String LIB_VERSION_REGEX = "^(([1-9][0-9][0-9])|([1-9][0-9])|([0-9])).(([1-9][0-9][0-9])|([1-9][0-9])|([0-9])).[0-9][0-9][0-9]$";
+    public static final Pattern LIBRARY_NAME_PATTERN = Pattern.compile(LIB_NAME_REGEX);
+    public static final Pattern LIBRARY_VERSION_PATTERN = Pattern.compile(LIB_VERSION_REGEX);
+
     @Value("${mat.codesystem.valueset.simultaneous.validations}")
     private int simultaneousValidations;
     @Value("${mat.qdm.default.expansion.id}")
     private String defaultExpId;
     private List<CQLIncludeLibrary> libsNotFound = new ArrayList<>();
+    private List<CQLError> severes = new ArrayList<>();
     private List<CQLError> errors = new ArrayList<>();
     private List<CQLError> warnings = new ArrayList<>();
     private CQLModel destinationModel = new CQLModel();
@@ -79,13 +85,19 @@ public class CqlToMatXml implements CqlVisitor {
     @PostConstruct
     protected void setupExecutor() {
         codeSystemValueSetExecutor = Executors.newFixedThreadPool(simultaneousValidations);
+
+        // Appease the codacy gods. Want to keep this code for future use.
+        // Remove this if it is being used.
+        errorAtLine("foo",1);
     }
 
     public void handleError(CQLError e) {
         if (StringUtils.equalsIgnoreCase("Warning", e.getSeverity())) {
             warnings.add(e);
-        } else { //Severe and Error
+        } else if (StringUtils.equalsIgnoreCase("Error", e.getSeverity())) {
             errors.add(e);
+        } else {
+            severes.add(e);
         }
     }
 
@@ -98,7 +110,15 @@ public class CqlToMatXml implements CqlVisitor {
     }
 
     @Override
-    public void libraryTag(String libraryName, String version, @Nullable String libraryComment) {
+    public void libraryTag(String libraryName, String version, @Nullable String libraryComment, int lineNumber) {
+        if (!LIBRARY_NAME_PATTERN.matcher(libraryName).matches()) {
+            handleError(severErrorAtLine("Library name must follow this regex: " + LIB_NAME_REGEX +
+                    ". You are only allowed to change this in General Information. It is called CQL Library name.", lineNumber));
+        }
+        if (!LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
+            handleError(severErrorAtLine("Library version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
+        }
+
         destinationModel.setLibraryName(libraryName);
         destinationModel.setVersionUsed(version);
         destinationModel.setLibraryComment(libraryComment);
@@ -111,7 +131,14 @@ public class CqlToMatXml implements CqlVisitor {
     }
 
     @Override
-    public void includeLib(String libName, String version, String alias, String model, String modelVersion) {
+    public void includeLib(String libName, String version, String alias, String model, String modelVersion, int lineNumber) {
+        if (!LIBRARY_NAME_PATTERN.matcher(libName).matches()) {
+            handleError(severErrorAtLine("Library name must follow this regex: " + LIB_NAME_REGEX, lineNumber));
+        }
+        if (!LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
+            handleError(severErrorAtLine("Library version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
+        }
+
         CQLIncludeLibrary lib = new CQLIncludeLibrary();
         lib.setId(newGuid());
         lib.setCqlLibraryName(libName);
@@ -127,9 +154,6 @@ public class CqlToMatXml implements CqlVisitor {
     @Override
     public void codeSystem(String name, String uri, String versionUri, int lineNumber) {
         var parsedCodeSystemName = parseCodeSystemName(name);
-        // Backward compatibility this is ugly.
-        // versionUri is a new concept in fhir4 yet they have a version already
-        // that is after the colon in the system name.
         CQLCodeSystem cs = new CQLCodeSystem();
         cs.setId(newGuid());
         cs.setCodeSystemName(name);
@@ -142,7 +166,6 @@ public class CqlToMatXml implements CqlVisitor {
 
     @Override
     public void valueSet(String name, String uri, int lineNumber) {
-
         try {
             validateValuesetUri(uri);
         } catch (IllegalArgumentException e) {
@@ -285,7 +308,7 @@ public class CqlToMatXml implements CqlVisitor {
                 if (vsacCodeSystem.isEmpty()) {
                     //Hard error since we can't find the an entry in the spreadsheet.
                     handleError(severErrorAtLine("This code system uri is not permitted. " +
-                            "Please contact the MAT team if you feel this is in error.",
+                                    "Please contact the MAT team if you feel this is in error.",
                             currentCS.get().getLineNumber()));
                 } else {
                     c.setCodeSystemVersion(vsacCodeSystem.get().getDefaultVsacVersion());
@@ -309,7 +332,7 @@ public class CqlToMatXml implements CqlVisitor {
 
         if (c.obtainValidatedWithVsac() == VsacStatus.VALID) {
             var existingCodeSystem = findExisting(sourceModel.getCodeSystemList(),
-                    ecs-> StringUtils.equals(ecs.getCodeSystem(),c.getCodeSystemOID()));
+                    ecs -> StringUtils.equals(ecs.getCodeSystem(), c.getCodeSystemOID()));
             if (existingCodeSystem.isEmpty()) {
                 c.addValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).
                         orElse(VsacStatus.PENDING));
@@ -347,6 +370,17 @@ public class CqlToMatXml implements CqlVisitor {
     private CQLError severErrorAtLine(String msg, int lineNumber) {
         CQLError e = new CQLError();
         e.setSeverity("Severe");
+        e.setErrorMessage(msg);
+        e.setErrorInLine(lineNumber);
+        e.setErrorAtOffset(0);
+        e.setStartErrorInLine(lineNumber);
+        e.setEndErrorInLine(lineNumber);
+        return e;
+    }
+
+    private CQLError errorAtLine(String msg, int lineNumber) {
+        CQLError e = new CQLError();
+        e.setSeverity("Error");
         e.setErrorMessage(msg);
         e.setErrorInLine(lineNumber);
         e.setErrorAtOffset(0);

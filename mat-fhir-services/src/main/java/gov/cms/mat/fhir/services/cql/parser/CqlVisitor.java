@@ -32,7 +32,8 @@ public interface CqlVisitor {
 
     default void libraryTag(String libraryName,
                             String version,
-                            @Nullable String libraryComment) {
+                            @Nullable String libraryComment,
+                            int lineNumber) {
         // by default do nothing unless its implemented.
     }
 
@@ -44,7 +45,8 @@ public interface CqlVisitor {
                             String version,
                             String alias,
                             String model,
-                            String modelVersion) {
+                            String modelVersion,
+                            int lineNumber) {
         // by default do nothing unless its implemented.
     }
 
