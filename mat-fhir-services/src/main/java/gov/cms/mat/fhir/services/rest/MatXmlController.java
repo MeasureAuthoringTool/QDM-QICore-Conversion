@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLModel;
 import mat.server.CQLUtilityClass;
@@ -46,33 +45,8 @@ import java.util.Optional;
 @Slf4j
 @Controller
 public class MatXmlController {
-    @PutMapping("/cql")
-    public @ResponseBody
-    MatXmlResponse fromCql(@RequestHeader(value = "UMLS-TOKEN", required=false) String umlsToken,
-                           @Valid @RequestBody MatCqlXmlReq matCqlXmlReq) {
-        log.debug("MatXmlController::fromCql -> enter {}", matCqlXmlReq);
-
-        try {
-            MatXmlResponse resp = run(umlsToken,
-                    matCqlXmlReq.getCql(),
-                    matCqlXmlReq.getSourceModel(),
-                    matCqlXmlReq);
-            log.debug("MatXmlController::fromCql -> exit {}", resp);
-            return resp;
-        } catch (RuntimeException e) {
-            log.error("fromCql", e);
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Unexpected error in fromMeasure(" + umlsToken + "," + matCqlXmlReq.getCql() + "," + matCqlXmlReq,
-                    e);
-        }
-    }
-
-    private final MeasureXmlRepository measureXmlRepo;
-
     @Getter
     @Setter
-    @ToString
     @NoArgsConstructor
     public static class MatXmlResponse {
         @NotNull
