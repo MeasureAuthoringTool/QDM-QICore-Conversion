@@ -37,6 +37,7 @@ public class ValidationOrchestrationService {
     public List<LibraryErrors> validateCql(String cql,
                                            CQLModel cqlModel,
                                            String ulmsToken,
+                                           List<LibraryErrors> errorsDetectedAlready,
                                            ValidationRequest validationRequest) {
         List<CompletableFuture<List<LibraryErrors>>> futures = new ArrayList<>();
         long validationTimeout = Math.max(validationRequest.getTimeoutSeconds(), validationPoolTimeOut);
@@ -88,6 +89,9 @@ public class ValidationOrchestrationService {
                         .map(this::getFromFuture)
                         .flatMap(List::stream)
                         .collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(errorsDetectedAlready)) {
+            libraryErrors.addAll(errorsDetectedAlready);
+        }
 
         if (libraryErrors.isEmpty()) {
             return libraryErrors;

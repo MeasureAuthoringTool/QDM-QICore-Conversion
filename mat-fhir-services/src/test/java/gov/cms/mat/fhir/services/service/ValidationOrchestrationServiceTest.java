@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -65,7 +66,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(false, false, false);
 
         List<LibraryErrors> libraryErrors =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
 
         assertTrue(libraryErrors.isEmpty());
 
@@ -80,7 +81,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(true, true, false);
 
         List<LibraryErrors> libraryErrors =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
 
         assertTrue(libraryErrors.isEmpty());
 
@@ -94,7 +95,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(false, false, true);
 
         List<LibraryErrors> libraryErrors =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
 
         assertTrue(libraryErrors.isEmpty());
 
@@ -108,7 +109,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(false, false, true);
 
         List<LibraryErrors> result =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
 
         checkResult(result);
 
@@ -124,7 +125,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(true, false, false);
 
         List<LibraryErrors> result =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
 
         checkResult(result);
 
@@ -139,7 +140,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(false, true, false);
 
         List<LibraryErrors> result =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
 
         checkResult(result);
 
@@ -172,7 +173,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(true, true, true);
 
         List<LibraryErrors> result =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
 
         assertEquals(2, result.size());
 

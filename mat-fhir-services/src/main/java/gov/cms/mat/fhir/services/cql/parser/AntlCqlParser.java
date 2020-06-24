@@ -7,7 +7,13 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import mat.server.CQLUtilityClass;
 import mat.shared.CQLError;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -121,7 +127,8 @@ public class AntlCqlParser implements CqlParser {
 
             visitor.libraryTag(getFullText(ctx.qualifiedIdentifier()),
                     getUnquotedFullText(ctx.versionSpecifier()),
-                    comments);
+                    comments,
+                    tokens.get(ctx.getSourceInterval().a).getLine());
         }
 
         private String findLibraryComments(int start) {
@@ -142,7 +149,7 @@ public class AntlCqlParser implements CqlParser {
             String alias = getFullText(ctx.localIdentifier());
             String model = BaseProperties.LIBRARY_FHIR_TYPE;
             String modelVersion = BaseProperties.LIBRARY_FHIR_VERSION;
-            visitor.includeLib(libName, version, alias, model, modelVersion);
+            visitor.includeLib(libName, version, alias, model, modelVersion, tokens.get(ctx.getSourceInterval().a).getLine());
         }
 
         @Override
