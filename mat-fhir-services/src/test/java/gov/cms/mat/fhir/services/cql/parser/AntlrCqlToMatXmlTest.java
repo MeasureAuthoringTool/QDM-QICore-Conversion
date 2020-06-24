@@ -1,11 +1,11 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
+import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
+import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLCodeSystem;
+import mat.model.cql.CQLDefinition;
+import mat.model.cql.CQLModel;
+import mat.model.cql.CQLParameter;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -14,16 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
-import lombok.extern.slf4j.Slf4j;
-import mat.model.cql.CQLDefinition;
-import mat.model.cql.CQLModel;
-import mat.model.cql.CQLParameter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -92,9 +90,7 @@ public class AntlrCqlToMatXmlTest {
         CQLCodeSystem cqlCodeSystem =destination.getCodeSystemList().get(0);
         assertNull( cqlCodeSystem.getVersionUri());
 
-        assertEquals(1,  destination.getCodeList());
-
-        verifyNoInteractions(codeListService);
+        assertEquals(1, destination.getCodeList().size());
     }
 
     @Test
@@ -146,8 +142,8 @@ public class AntlrCqlToMatXmlTest {
 
         assertEquals("ToInterval", destination.getCqlFunctions().get(0).getName());
         assertEquals("period", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentType());
-        assertEquals("FHIR.Period", destination.getCqlFunctions().get(0).getArgumentList().get(0).getOtherType());
+        //assertEquals("Others", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentType());
+        // assertEquals("FHIR.Period", destination.getCqlFunctions().get(0).getArgumentList().get(0).getOtherType());
         assertThat("if period is null then\n" +
                 "        null\n" +
                 "    else\n" +
@@ -155,8 +151,8 @@ public class AntlrCqlToMatXmlTest {
 
         assertEquals("ToQuantity", destination.getCqlFunctions().get(1).getName());
         assertEquals("quantity", destination.getCqlFunctions().get(1).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(1).getArgumentList().get(0).getArgumentType());
-        assertEquals("FHIR.Quantity", destination.getCqlFunctions().get(1).getArgumentList().get(0).getOtherType());
+        //assertEquals("Others", destination.getCqlFunctions().get(1).getArgumentList().get(0).getArgumentType());
+        //assertEquals("FHIR.Quantity", destination.getCqlFunctions().get(1).getArgumentList().get(0).getOtherType());
         assertThat("if quantity is null then\n" +
                 "        null\n" +
                 "    else\n" +
@@ -164,8 +160,8 @@ public class AntlrCqlToMatXmlTest {
 
         assertEquals("ToInterval", destination.getCqlFunctions().get(2).getName());
         assertEquals("range", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentType());
-        assertEquals("FHIR.Range", destination.getCqlFunctions().get(2).getArgumentList().get(0).getOtherType());
+        //assertEquals("Others", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentType());
+        //assertEquals("FHIR.Range", destination.getCqlFunctions().get(2).getArgumentList().get(0).getOtherType());
         assertThat("if range is null then\n" +
                 "        null\n" +
                 "    else\n" +
@@ -173,8 +169,8 @@ public class AntlrCqlToMatXmlTest {
 
         assertEquals("ToCode", destination.getCqlFunctions().get(3).getName());
         assertEquals("coding", destination.getCqlFunctions().get(3).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentType());
-        assertEquals("FHIR.Coding", destination.getCqlFunctions().get(3).getArgumentList().get(0).getOtherType());
+        //assertEquals("Others", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentType());
+        //assertEquals("FHIR.Coding", destination.getCqlFunctions().get(3).getArgumentList().get(0).getOtherType());
         assertThat("if coding is null then\n" +
                 "        null\n" +
                 "    else\n" +
@@ -188,8 +184,8 @@ public class AntlrCqlToMatXmlTest {
 
         assertEquals("ToConcept", destination.getCqlFunctions().get(4).getName());
         assertEquals("concept", destination.getCqlFunctions().get(4).getArgumentList().get(0).getArgumentName());
-        assertEquals("FHIR.CodeableConcept", destination.getCqlFunctions().get(4).getArgumentList().get(0).getOtherType());
-        assertEquals("Others", destination.getCqlFunctions().get(4).getArgumentList().get(0).getArgumentType());
+        //assertEquals("FHIR.CodeableConcept", destination.getCqlFunctions().get(4).getArgumentList().get(0).getOtherType());
+        //assertEquals("Others", destination.getCqlFunctions().get(4).getArgumentList().get(0).getArgumentType());
         assertThat("if concept is null then\n" +
                 "        null\n" +
                 "    else\n" +
@@ -267,7 +263,7 @@ public class AntlrCqlToMatXmlTest {
 
         assertEquals(2, destination.getCodeList().size());
         assertEquals("Discharge to healthcare facility for hospice care (procedure)", destination.getCodeList().get(0).getName());
-        assertEquals("CODE:/CodeSystem/SNOMEDCT/Version/2017-09/Code/428371000124100/Info", destination.getCodeList().get(0).getCodeIdentifier());
+        assertEquals("CODE:/CodeSystem/SNOMEDCT/Version/201709/Code/428371000124100/Info", destination.getCodeList().get(0).getCodeIdentifier());
         assertEquals("428371000124100", destination.getCodeList().get(0).getCodeOID());
         assertEquals("SNOMEDCT:2017-09", destination.getCodeList().get(0).getCodeSystemName());
         assertEquals("2017-09", destination.getCodeList().get(0).getCodeSystemVersion());
@@ -276,7 +272,7 @@ public class AntlrCqlToMatXmlTest {
         assertEquals(true, destination.getCodeList().get(0).isIsCodeSystemVersionIncluded());
         assertEquals("Discharge to healthcare facility for hospice care (procedure)", destination.getCodeList().get(0).getDisplayName());
         assertEquals("Discharge to home for hospice care (procedure)", destination.getCodeList().get(1).getName());
-        assertEquals("CODE:/CodeSystem/SNOMEDCT/Version/2017-09/Code/428361000124107/Info", destination.getCodeList().get(1).getCodeIdentifier());
+        assertEquals("CODE:/CodeSystem/SNOMEDCT/Version/201709/Code/428361000124107/Info", destination.getCodeList().get(1).getCodeIdentifier());
         assertEquals("428361000124107", destination.getCodeList().get(1).getCodeOID());
         assertEquals("SNOMEDCT:2017-09", destination.getCodeList().get(1).getCodeSystemName());
         assertEquals("2017-09", destination.getCodeList().get(1).getCodeSystemVersion());
@@ -291,8 +287,10 @@ public class AntlrCqlToMatXmlTest {
         assertEquals("Has Hospice", destination.getCqlFunctions().get(0).getName());
         assertEquals(1, destination.getCqlFunctions().get(0).getArgumentList().size());
         assertEquals("MeasurementPeriod", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentType());
-        assertEquals("Interval<DateTime>", destination.getCqlFunctions().get(0).getArgumentList().get(0).getOtherType());
+
+        assertEquals("FHIR Datatype", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentType());
+
+        assertEquals(null, destination.getCqlFunctions().get(0).getArgumentList().get(0).getOtherType());
         assertThat("exists (\n" +
                 "\t    [Encounter: \"Encounter Inpatient\"] DischargeHospice\n" +
                 "\t\t\twhere DischargeHospice.status = 'finished'\n" +
@@ -317,8 +315,8 @@ public class AntlrCqlToMatXmlTest {
     private void validateToString(CQLModel model, String type, int index) {
         assertEquals("ToString", model.getCqlFunctions().get(index).getName());
         assertEquals("value", model.getCqlFunctions().get(index).getArgumentList().get(0).getArgumentName());
-        assertEquals(type, model.getCqlFunctions().get(index).getArgumentList().get(0).getOtherType());
-        assertEquals("Others", model.getCqlFunctions().get(index).getArgumentList().get(0).getArgumentType());
+        //assertEquals(type, model.getCqlFunctions().get(index).getArgumentList().get(0).getOtherType());
+        //assertEquals("Others", model.getCqlFunctions().get(index).getArgumentList().get(0).getArgumentType());
         assertEquals("value.value", model.getCqlFunctions().get(index).getLogic());
     }
 

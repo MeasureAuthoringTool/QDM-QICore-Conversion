@@ -1,11 +1,10 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import lombok.extern.slf4j.Slf4j;
 
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.nextQuotedString;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.nextTickedString;
@@ -215,13 +214,8 @@ public class CqlCqlUtilsTest {
     @Test
     public void testParseInvalidOidUrl() {
         String url = "fooobarrred";
-        try {
-            CqlUtils.parseOid(url);
-            // This assert to get past codacy nonsense.
-            assertEquals( url,"fail");
-        } catch (IllegalArgumentException iae) {
-            log.warn("IAE", iae);
-        }
+        String result = CqlUtils.parseOid(url);
+        assertEquals(url, result);
     }
 
     @Test

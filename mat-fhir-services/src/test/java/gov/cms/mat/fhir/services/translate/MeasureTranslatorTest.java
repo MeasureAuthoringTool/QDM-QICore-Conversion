@@ -285,11 +285,11 @@ class MeasureTranslatorTest implements IdGenerator {
 
         when(matMeasureDetailMapper.convert(any(),eq(matMeasure))).thenReturn(compositeModel);
 
-        when(matMeasureDetailsRepo.getMeasureDetailsByMeasureId(any())).
-                thenReturn(getMeasureDetails());
+      //  when(matMeasureDetailsRepo.getMeasureDetailsByMeasureId(any())).
+       //         thenReturn(getMeasureDetails());
 
-        when(matMeasureDetailsReferenceRepo.getMeasureDetailsReferenceByMeasureDetailsId(any())).
-                thenReturn(mdrs);
+     //   when(matMeasureDetailsReferenceRepo.getMeasureDetailsReferenceByMeasureDetailsId(any())).
+      //          thenReturn(mdrs);
 
         CqlLibrary lib = new CqlLibrary();
         lib.setId("libId");

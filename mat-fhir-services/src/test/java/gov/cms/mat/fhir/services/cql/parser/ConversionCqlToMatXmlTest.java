@@ -1,9 +1,10 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
+import mat.model.cql.CQLFunctions;
+import mat.model.cql.CQLModel;
+import mat.server.service.impl.XMLMarshalUtil;
+import mat.server.util.XmlProcessor;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,26 +12,26 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import lombok.extern.slf4j.Slf4j;
-import mat.model.cql.CQLFunctions;
-import mat.model.cql.CQLModel;
-import mat.server.service.impl.XMLMarshalUtil;
-import mat.server.util.XmlProcessor;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 public class ConversionCqlToMatXmlTest {
     private static final String CQL_TEST_RESOURCES_DIR = "/test-cql/";
-    private XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
+    private final XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
 
     @Mock
     private MappingSpreadsheetService mappingService;
+    @Mock
+    private CodeListService codeListService;
 
     @InjectMocks
     private AntlCqlParser parser;
-
     @InjectMocks
     private CqlToMatXml conversionCqlToMatXml;
 
@@ -86,8 +87,8 @@ public class ConversionCqlToMatXmlTest {
         assertEquals("Test ,\\\" 3", test3.getArgumentList().get(0).getQdmDataType());
         assertEquals("QDM Datatype", test3.getArgumentList().get(0).getArgumentType());
         assertEquals("Value", test3.getArgumentList().get(1).getArgumentName());
-        assertEquals(null, test3.getArgumentList().get(1).getQdmDataType());
-        assertEquals("Integer", test3.getArgumentList().get(1).getArgumentType());
+        assertEquals("Integer", test3.getArgumentList().get(1).getQdmDataType());
+        assertEquals("FHIR Datatype", test3.getArgumentList().get(1).getArgumentType());
 
         CQLFunctions test4 = funs.stream().filter(f -> f.getName().equals("test4")).findFirst().get();
         assertEquals("test4", test4.getName());
@@ -97,8 +98,8 @@ public class ConversionCqlToMatXmlTest {
         assertEquals("Test ,\\\" 4", test4.getArgumentList().get(0).getQdmDataType());
         assertEquals("QDM Datatype", test4.getArgumentList().get(0).getArgumentType());
         assertEquals("b", test4.getArgumentList().get(1).getArgumentName());
-        assertEquals("List<\"Medication, Order\">", test4.getArgumentList().get(1).getOtherType());
-        assertEquals("Others", test4.getArgumentList().get(1).getArgumentType());
+        assertNull(test4.getArgumentList().get(1).getOtherType());
+        assertEquals("FHIR Datatype", test4.getArgumentList().get(1).getArgumentType());
         assertEquals("QDM Datatype", test4.getArgumentList().get(2).getArgumentType());
         assertEquals("c", test4.getArgumentList().get(2).getArgumentName());
         assertEquals("C", test4.getArgumentList().get(2).getQdmDataType());
@@ -108,11 +109,7 @@ public class ConversionCqlToMatXmlTest {
         assertEquals("CalculateMME", test5.getName());
         assertEquals(1, test5.getArgumentList().size());
         assertEquals("prescriptions", test5.getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", test5.getArgumentList().get(0).getArgumentType());
-        assertEquals("List<Tuple {\n" +
-                "  rxNormCode Code,\n" +
-                "  doseQuantity Quantity,\n" +
-                "  dosesPerDay Decimal\n" +
-                "}>", test5.getArgumentList().get(0).getOtherType());
+        assertEquals("FHIR Datatype", test5.getArgumentList().get(0).getArgumentType());
+        assertNull(test5.getArgumentList().get(0).getOtherType());
     }
 }

@@ -14,7 +14,6 @@ import mat.model.cql.CQLModel;
 import mat.model.cql.CQLParameter;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.model.cql.VsacStatus;
-import mat.server.CQLKeywordsUtil;
 import mat.shared.CQLError;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +65,9 @@ public class CqlToMatXml implements CqlVisitor {
     private List<CQLError> warnings = new ArrayList<>();
     private CQLModel destinationModel = new CQLModel();
     private CQLModel sourceModel;
-    private CodeListService codeListService;
+
+    private final CodeListService codeListService;
+
     private boolean isValidatingCodesystems = true;
     private boolean isValidatingValuesets = true;
     private ExecutorService codeSystemValueSetExecutor;
@@ -367,12 +368,22 @@ public class CqlToMatXml implements CqlVisitor {
             //todo use vsac to get latest version
             return String.format(CODE_IDENTIFIER_FORMAT,
                     parseCodeSystemName(c.getCodeSystemName()).getLeft(),
-                    StringUtils.isBlank(c.getCodeSystemVersionUri()) ? defaultVersion : c.getCodeSystemVersionUri(),
+                    StringUtils.isBlank(c.getCodeSystemVersionUri()) ? defaultVersion : processCodeSystemVersionUri(c.getCodeSystemVersionUri()),
                     c.getCodeOID());
         } else {
             return null;
         }
     }
+
+
+    private String processCodeSystemVersionUri(String codeSystemVersionUri) {
+        if (codeSystemVersionUri.startsWith("http://snomed.info/")) {
+            return StringUtils.substringAfter(codeSystemVersionUri, "/version/");
+        } else {
+            return codeSystemVersionUri;
+        }
+    }
+
 
     private CQLError severErrorAtLine(String msg, int lineNumber) {
         CQLError e = new CQLError();

@@ -15,7 +15,7 @@ import java.io.StringReader;
 @Slf4j
 public class CQLAntlrUtils {
 
-    public cqlParser.LibraryContext getLibraryContext(byte[] charBytes) {
+    public cqlParser.LibraryContext getLibraryContextBytes(byte[] charBytes) {
         return getLibraryContext(new String(charBytes, Charsets.UTF_8));
     }
 
