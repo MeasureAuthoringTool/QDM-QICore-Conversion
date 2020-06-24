@@ -45,8 +45,23 @@ public class ValueSetValidator extends CqlValidatorHelper {
         }
     }
 
-    @Override
-    public String getType() {
-        return "ValueSet";
+    private CQLError findLine(String oid, String errorMessage, String[] lines) {
+        int lineCounter = 1;
+        int lineIndex = -1;
+        int lineLength = -1;
+
+        //filter by comment & todo antlr
+
+        for (String cqlLine : lines) {
+            if (cqlLine.contains(oid)) {
+                lineLength = cqlLine.length();
+                lineIndex = lineCounter;
+                break;
+            } else {
+                lineCounter++;
+            }
+        }
+
+        return createCqlError(errorMessage, lineIndex, lineLength);
     }
 }

@@ -197,7 +197,6 @@ class VsacRestClientUnitTest implements ResourceFileUtil {
         verifyNoMoreInteractions(vsacConfig, restTemplate);
     }
 
-
     @Test
     void fetchCodeSystemExceptionWithStatusAndError() {
         mockFetchingSingleUse();

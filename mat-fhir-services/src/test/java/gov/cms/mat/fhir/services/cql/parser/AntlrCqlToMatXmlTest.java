@@ -263,7 +263,7 @@ public class AntlrCqlToMatXmlTest {
 
         assertEquals(2, destination.getCodeList().size());
         assertEquals("Discharge to healthcare facility for hospice care (procedure)", destination.getCodeList().get(0).getName());
-        assertEquals("CODE:/CodeSystem/SNOMEDCT/Version/201709/Code/428371000124100/Info", destination.getCodeList().get(0).getCodeIdentifier());
+        assertEquals("CODE:/CodeSystem/SNOMEDCT/Version/2017-09/Code/428371000124100/Info", destination.getCodeList().get(0).getCodeIdentifier());
         assertEquals("428371000124100", destination.getCodeList().get(0).getCodeOID());
         assertEquals("SNOMEDCT:2017-09", destination.getCodeList().get(0).getCodeSystemName());
         assertEquals("2017-09", destination.getCodeList().get(0).getCodeSystemVersion());
@@ -272,7 +272,7 @@ public class AntlrCqlToMatXmlTest {
         assertEquals(true, destination.getCodeList().get(0).isIsCodeSystemVersionIncluded());
         assertEquals("Discharge to healthcare facility for hospice care (procedure)", destination.getCodeList().get(0).getDisplayName());
         assertEquals("Discharge to home for hospice care (procedure)", destination.getCodeList().get(1).getName());
-        assertEquals("CODE:/CodeSystem/SNOMEDCT/Version/201709/Code/428361000124107/Info", destination.getCodeList().get(1).getCodeIdentifier());
+        assertEquals("CODE:/CodeSystem/SNOMEDCT/Version/2017-09/Code/428361000124107/Info", destination.getCodeList().get(1).getCodeIdentifier());
         assertEquals("428361000124107", destination.getCodeList().get(1).getCodeOID());
         assertEquals("SNOMEDCT:2017-09", destination.getCodeList().get(1).getCodeSystemName());
         assertEquals("2017-09", destination.getCodeList().get(1).getCodeSystemVersion());

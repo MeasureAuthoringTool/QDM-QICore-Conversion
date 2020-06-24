@@ -11,27 +11,6 @@ abstract class CqlValidatorHelper {
         return new LibraryErrors(libraryProperties.getName(), libraryProperties.getVersion());
     }
 
-    protected CQLError findLine(String oid, String errorMessage, String[] lines) {
-        int lineCounter = 1;
-        int lineIndex = -1;
-        int lineLength = -1;
-
-        //filter by comment & todo antlr
-
-        for (String cqlLine : lines) {
-            if (cqlLine.contains(oid)) {
-                lineLength = cqlLine.length();
-                lineIndex = lineCounter;
-                break;
-            } else {
-                lineCounter++;
-            }
-        }
-
-        return createCqlError(errorMessage, lineIndex, lineLength);
-    }
-
-
     protected CQLError createCqlError(String message, int lineIndex, int lineLength) {
         CQLError cqlError = new CQLError();
         cqlError.setSeverity("Error");
@@ -47,6 +26,4 @@ abstract class CqlValidatorHelper {
 
         return cqlError;
     }
-
-    abstract String getType();
 }

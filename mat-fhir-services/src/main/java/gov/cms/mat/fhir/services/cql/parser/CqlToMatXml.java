@@ -347,7 +347,7 @@ public class CqlToMatXml implements CqlVisitor {
         if (vsacCodeSystem.isPresent()) {
             String defaultVersion = vsacCodeSystem.get().getDefaultVsacVersion();
 
-            //todo use vsac to get latest version
+            //todo use vsac to get latest version MCG add story
             return String.format(CODE_IDENTIFIER_FORMAT,
                     parseCodeSystemName(c.getCodeSystemName()).getLeft(),
                     StringUtils.isBlank(c.getCodeSystemVersionUri()) ? defaultVersion : processCodeSystemVersionUri(c.getCodeSystemVersionUri()),
@@ -360,12 +360,19 @@ public class CqlToMatXml implements CqlVisitor {
 
     private String processCodeSystemVersionUri(String codeSystemVersionUri) {
         if (codeSystemVersionUri.startsWith("http://snomed.info/")) {
-            return StringUtils.substringAfter(codeSystemVersionUri, "/version/");
-        } else {
-            return codeSystemVersionUri;
-        }
-    }
+            String version = StringUtils.substringAfter(codeSystemVersionUri, "/version/");
 
+            if (StringUtils.isEmpty(version)) {
+                log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", codeSystemVersionUri);
+            } else if (version.length() != 6) { //201907 YYYYMM
+                log.warn("Version string length is not 6: {}", version);
+            } else {
+                codeSystemVersionUri = version.substring(0,4) + "-" + version.substring(4);
+            }
+        }
+
+        return codeSystemVersionUri;
+    }
 
     private CQLError severErrorAtLine(String msg, int lineNumber) {
         CQLError e = new CQLError();

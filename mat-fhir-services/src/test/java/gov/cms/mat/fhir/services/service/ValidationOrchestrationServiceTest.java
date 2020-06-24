@@ -133,7 +133,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
 
     @Test
     void validateCodeSystems() {
-        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cql, TOKEN))
+        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors)));
 
         ValidationRequest validationRequest = getValidationRequest(false, true, false);
@@ -165,7 +165,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         CQLError start = buildError(1);
         codeSystemErrors.getErrors().add(start);
 
-        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cql, TOKEN))
+        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN))
                 .thenReturn(CompletableFuture.completedFuture(List.of(codeSystemErrors)));
 
 
