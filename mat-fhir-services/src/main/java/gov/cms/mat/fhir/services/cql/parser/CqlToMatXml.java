@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,12 +35,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.chomp1;
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.getGlobalLibId;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.isQuoted;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.newGuid;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseCodeSystemName;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseOid;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.validateValuesetUri;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.versionToVersionAndRevision;
 
 /**
  * A CqlVisitor for converting FHIR to MatXml format without a source model.
@@ -72,16 +74,17 @@ public class CqlToMatXml implements CqlVisitor {
     private List<CQLError> warnings = new ArrayList<>();
     private CQLModel destinationModel = new CQLModel();
     private CQLModel sourceModel;
-
-    private final CodeListService codeListService;
-
     private boolean isValidatingCodesystems = true;
     private boolean isValidatingValuesets = true;
     private ExecutorService codeSystemValueSetExecutor;
     private String umlsToken;
 
-    public CqlToMatXml(CodeListService codeListService) {
+    private final CqlLibraryRepository cqlLibraryRepository;
+    private final CodeListService codeListService;
+
+    public CqlToMatXml(CodeListService codeListService, CqlLibraryRepository cqlLibraryRepository) {
         this.codeListService = codeListService;
+        this.cqlLibraryRepository = cqlLibraryRepository;
     }
 
     @PostConstruct
@@ -149,8 +152,16 @@ public class CqlToMatXml implements CqlVisitor {
         lib.setAliasName(alias);
         lib.setLibraryModelType(model);
         lib.setQdmVersion(modelVersion);
-        lib.setCqlLibraryId(getGlobalLibId(libName));
-        lib.setCqlLibraryId(getGlobalLibId(lib.getCqlLibraryName()));
+        var versionPair = versionToVersionAndRevision(version);
+        var cqlLibrary = cqlLibraryRepository.findByVersionAndCqlNameAndRevisionNumberAndLibraryModelAndDraft(new BigDecimal(versionPair.getLeft()),
+                libName,
+                versionPair.getRight(),
+                model, false);
+        if(cqlLibrary != null) {
+            lib.setCqlLibraryId(cqlLibrary.getId());
+        } else {
+            handleError(severErrorAtLine("Could not find library " + libName + " " + version, lineNumber));
+        }
         destinationModel.getCqlIncludeLibrarys().add(lib);
     }
 
