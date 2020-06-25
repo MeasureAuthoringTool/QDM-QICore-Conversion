@@ -18,6 +18,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -111,5 +113,7 @@ public class ConversionCqlToMatXmlTest {
         assertEquals("prescriptions", test5.getArgumentList().get(0).getArgumentName());
         assertEquals("FHIR Datatype", test5.getArgumentList().get(0).getArgumentType());
         assertNull(test5.getArgumentList().get(0).getOtherType());
+
+        verify(codeListService, times(2)).getOidToVsacCodeSystemMap();
     }
 }

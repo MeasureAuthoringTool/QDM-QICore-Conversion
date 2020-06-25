@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.verify;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -65,6 +66,8 @@ public class AntlrConversionCqlToMatXmlTest {
                 "Patient-based\n" +
                 "(EH or EP?)\n" +
                 "Proportion scoring", destination.getLibraryComment());
+
+        verify(codeListService).getOidToVsacCodeSystemMap();
     }
 
     @Test
@@ -74,6 +77,7 @@ public class AntlrConversionCqlToMatXmlTest {
         var destination = cqlToMatXml.getDestinationModel();
 
         assertNull(destination.getLibraryComment());
+        verify(codeListService).getOidToVsacCodeSystemMap();
     }
 
     @Test

@@ -382,7 +382,10 @@ public class CqlToMatXml implements CqlVisitor {
     }
 
 
-    private String processCodeSystemVersionUri(String codeSystemVersionUri) {
+    private String processCodeSystemVersionUri(String codeSystemVersionUriIn) {
+
+        String codeSystemVersionUri = codeSystemVersionUriIn;
+
         if (codeSystemVersionUri.startsWith("http://snomed.info/")) {
             String version = StringUtils.substringAfter(codeSystemVersionUri, "/version/");
 
@@ -391,7 +394,7 @@ public class CqlToMatXml implements CqlVisitor {
             } else if (version.length() != 6) { //201907 YYYYMM
                 log.warn("Version string length is not 6: {}", version);
             } else {
-                codeSystemVersionUri = version.substring(0,4) + "-" + version.substring(4);
+                codeSystemVersionUri = version.substring(0, 4) + "-" + version.substring(4);
             }
         }
 

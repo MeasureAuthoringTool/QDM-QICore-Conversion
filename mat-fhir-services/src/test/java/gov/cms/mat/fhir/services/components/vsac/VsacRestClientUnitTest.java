@@ -41,12 +41,12 @@ class VsacRestClientUnitTest implements ResourceFileUtil {
     private RestTemplate restTemplate;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         when(vsacConfig.getService()).thenReturn(BASE_URL);
     }
 
     @Test
-    void fetchGrantingTicketOK() {
+    public void fetchGrantingTicketOK() {
         when(restTemplate.exchange(ArgumentMatchers.eq(TICKET_URL),
                 ArgumentMatchers.eq(HttpMethod.POST),
                 ArgumentMatchers.any(),

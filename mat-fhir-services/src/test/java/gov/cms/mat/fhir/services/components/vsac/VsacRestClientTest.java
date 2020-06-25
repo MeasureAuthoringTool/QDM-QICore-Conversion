@@ -18,7 +18,7 @@ class VsacRestClientIntegrationTest {
     private String grantingTicket = "";
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         VsacConfig vsacConfig = new VsacConfig();
         vsacConfig.setService("https://vsac.nlm.nih.gov");
 
@@ -33,7 +33,7 @@ class VsacRestClientIntegrationTest {
     }
 
     @Test
-    void fetchGrantingTicket() {
+    public void fetchGrantingTicket() {
         assertNotNull(grantingTicket);
     }
 
