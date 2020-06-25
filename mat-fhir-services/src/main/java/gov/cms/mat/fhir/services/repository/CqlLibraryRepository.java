@@ -35,4 +35,9 @@ public interface CqlLibraryRepository extends JpaRepository<CqlLibrary, String> 
                                                                              String cqlName,
                                                                              int revision,
                                                                              String libraryModel);
+
+    CqlLibrary findByVersionAndCqlNameAndRevisionNumberAndLibraryModelAndDraft(BigDecimal version,
+                                                                                     String cqlName,
+                                                                                     int revision,
+                                                                                     String libraryModel, boolean draft);
 }
