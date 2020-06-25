@@ -29,36 +29,6 @@ public class CqlUtils {
     public static final String OID_URL_TOKEN = "urn:oid:";
     public static final int BLK_SEP_LENGTH = BLOCK_COMMENT_END.length();
 
-    private static final Map<String, String> nameToGlobalLibId = new HashMap<>();
-
-    static {
-        //TO DO move this into properties config or a DB lookup eventually.
-        nameToGlobalLibId.put("MATGlobalCommonFunctions_FHIR4", "MATGlobalCommonFunctions-FHIR4-5-0-000");
-        nameToGlobalLibId.put("AdultOutpatientEncounters_FHIR4", "AdultOutpatientEncounters-FHIR4-2-0-000");
-        nameToGlobalLibId.put("AdvancedIllnessandFrailtyExclusion_FHIR4", "AdvancedIllnessandFrailtyExclusion-FHIR4-5-0-000");
-        nameToGlobalLibId.put("FHIRHelpers", "FHIRHelpers-4-0-001");
-        nameToGlobalLibId.put("Hospice_FHIR4", "Hospice-FHIR4-2-0-000");
-        nameToGlobalLibId.put("SupplementalDataElements_FHIR4", "SupplementalDataElements-FHIR4-2-0-000");
-        nameToGlobalLibId.put("TJCOverall_FHIR4", "TJCOverall-FHIR4-5-0-000");
-        nameToGlobalLibId.put("VTEICU_FHIR4", "VTEICU-FHIR4-4-0-000");
-    }
-
-    /**
-     * @param libName The include library name.
-     * @return Returns the global fhir id for the specified include name. Returns null if includeName is not a global fhir lib.
-     */
-    public static String getGlobalLibId(String libName) {
-        return nameToGlobalLibId.get(libName);
-    }
-
-    /**
-     * @param libName The include library name.
-     * @return Returns true if libName is a global fhir id.
-     */
-    public static boolean isGlobalLib(String libName) {
-        return nameToGlobalLibId.containsKey(libName);
-    }
-
     /**
      * Validates that all the specified indexes are non-negative and they are in ascending order.
      * This is very useful when parsing because it eliminates a lot of if/else branching code.
