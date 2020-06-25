@@ -52,7 +52,7 @@ class VsacCodeSystemValidatorTest implements CqlHelper {
 
         assertEquals(cqlModel.getCodeList().size(), dtoList.size());
 
-        dtoList.forEach(d -> assertEquals("UMLS token is blank", d.getErrorMessage()));
+        dtoList.forEach(d -> assertEquals("Code system not found in VSAC.", d.getErrorMessage()));
         dtoList.forEach(d -> assertEquals(VsacStatus.IN_VALID, d.obtainValidatedWithVsac()));
         verifyNoInteractions(vsacService, codeSystemVsacAsync);
     }

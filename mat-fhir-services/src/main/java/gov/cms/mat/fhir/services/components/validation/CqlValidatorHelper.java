@@ -3,8 +3,6 @@ package gov.cms.mat.fhir.services.components.validation;
 import gov.cms.mat.cql.CqlTextParser;
 import gov.cms.mat.cql.elements.LibraryProperties;
 import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
-import mat.model.cql.CQLCode;
-import mat.model.cql.CQLQualityDataSetDTO;
 import mat.shared.CQLError;
 
 abstract class CqlValidatorHelper {
@@ -13,28 +11,7 @@ abstract class CqlValidatorHelper {
         return new LibraryErrors(libraryProperties.getName(), libraryProperties.getVersion());
     }
 
-    CQLError findLine(String oid, String errorMessage, String[] lines) {
-        int lineCounter = 1;
-        int lineIndex = -1;
-        int lineLength = -1;
-
-        //filter by comment & todo antlr
-
-        for (String cqlLine : lines) {
-            if (cqlLine.contains(oid)) {
-                lineLength = cqlLine.length();
-                lineIndex = lineCounter;
-                break;
-            } else {
-                lineCounter++;
-            }
-        }
-
-        return createCqlError(errorMessage, lineIndex, lineLength);
-    }
-
-
-    private CQLError createCqlError(String message, int lineIndex, int lineLength) {
+    protected CQLError createCqlError(String message, int lineIndex, int lineLength) {
         CQLError cqlError = new CQLError();
         cqlError.setSeverity("Error");
         cqlError.setErrorMessage(message);
@@ -49,6 +26,4 @@ abstract class CqlValidatorHelper {
 
         return cqlError;
     }
-
-    abstract String getType();
 }

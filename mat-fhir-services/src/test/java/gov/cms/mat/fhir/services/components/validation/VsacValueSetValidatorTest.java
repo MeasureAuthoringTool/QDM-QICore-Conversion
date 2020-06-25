@@ -47,13 +47,13 @@ class VsacValueSetValidatorTest implements CqlHelper {
 
     @Test
     void validateBlankToken() {
-        cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.IN_VALID));
+        cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.PENDING));
         List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), "");
 
         assertEquals(cqlModel.getValueSetList().size(), dtoList.size());
 
-        dtoList.forEach(d -> assertEquals("UMLS token is blank", d.getErrorMessage()));
-        dtoList.forEach(d -> assertEquals(VsacStatus.IN_VALID, d.obtainValidatedWithVsac()));
+        dtoList.forEach(d -> assertEquals("Value set requires validation. Please login to UMLS to validate it.", d.getErrorMessage()));
+        dtoList.forEach(d -> assertEquals(VsacStatus.PENDING, d.obtainValidatedWithVsac()));
         verifyNoInteractions(vsacService);
     }
 

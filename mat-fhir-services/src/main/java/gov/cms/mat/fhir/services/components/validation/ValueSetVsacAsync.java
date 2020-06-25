@@ -38,8 +38,10 @@ class ValueSetVsacAsync extends VsacValidator {
             code.setErrorMessage(isValid ? null : NOT_FOUND);
             code.addValidatedWithVsac(isValid ? VsacStatus.VALID : VsacStatus.IN_VALID);
         } catch (Exception e) {
+            log.warn("Error validating ValueSetVsac with vsac oid: {}", code.getOid(), e);
             code.setErrorMessage(code.obtainValidatedWithVsac() == VsacStatus.PENDING ?
                     REQURIES_VALIDATION : NOT_FOUND);
+            code.addValidatedWithVsac(VsacStatus.IN_VALID);
         }
         return CompletableFuture.completedFuture(null);
     }

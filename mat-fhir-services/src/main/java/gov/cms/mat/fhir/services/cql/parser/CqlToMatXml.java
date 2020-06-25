@@ -96,6 +96,7 @@ public class CqlToMatXml implements CqlVisitor {
         errorAtLine("foo",1);
     }
 
+    @Override
     public void handleError(CQLError e) {
         if (StringUtils.equalsIgnoreCase("Warning", e.getSeverity())) {
             warnings.add(e);
@@ -335,28 +336,37 @@ public class CqlToMatXml implements CqlVisitor {
         }
     }
 
-    private void updateCodeIdentifierAndVsacValidationFlag(CQLCode c, int lineNumber) {
-        var existingCode = findExisting(sourceModel.getCodeList(),
-                ec -> StringUtils.equals(ec.getCodeName(), c.getCodeName()) &&
-                        StringUtils.equals(ec.getCodeSystemName(), c.getCodeSystemName()));
+    private void updateCodeIdentifierAndVsacValidationFlag(CQLCode incoming, int lineNumber) {
+        var existingCodeOptional = findExisting(sourceModel.getCodeList(),
+                ec -> StringUtils.equals(ec.getCodeName(), incoming.getCodeName()) &&
+                        StringUtils.equals(ec.getCodeSystemName(), incoming.getCodeSystemName()));
 
-        c.addValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).
-                orElse(VsacStatus.PENDING));
 
-        if (c.obtainValidatedWithVsac() == VsacStatus.VALID) {
+        incoming.addValidatedWithVsac(existingCodeOptional.map(CQLCode::obtainValidatedWithVsac).orElse(VsacStatus.PENDING));
+
+        if (incoming.obtainValidatedWithVsac() == VsacStatus.VALID) {
             var existingCodeSystem = findExisting(sourceModel.getCodeSystemList(),
-                    ecs -> StringUtils.equals(ecs.getCodeSystem(), c.getCodeSystemOID()));
+                    ecs -> StringUtils.equals(ecs.getCodeSystem(), incoming.getCodeSystemOID()));
             if (existingCodeSystem.isEmpty()) {
-                c.addValidatedWithVsac(existingCode.map(CQLCode::obtainValidatedWithVsac).
+                incoming.addValidatedWithVsac(existingCodeOptional.map(CQLCode::obtainValidatedWithVsac).
                         orElse(VsacStatus.PENDING));
             }
         }
 
-        String codeIdentifier = buildCodeIdentifier(c, lineNumber);
+        String codeIdentifier = buildCodeIdentifier(incoming, lineNumber);
+
+        // if existing not found force validation
         if (codeIdentifier != null) {
-            c.setCodeIdentifier(existingCode.isPresent() ?
-                    existingCode.get().getCodeIdentifier() :
-                    buildCodeIdentifier(c, lineNumber));
+            incoming.setCodeIdentifier(codeIdentifier);
+
+            if (incoming.obtainValidatedWithVsac() == VsacStatus.VALID && existingCodeOptional.isPresent()) {
+                CQLCode existingCode = existingCodeOptional.get();
+                String existingCodeIdentifier = buildCodeIdentifier(existingCode, lineNumber);
+
+                if (existingCodeIdentifier == null || !existingCodeIdentifier.equals(codeIdentifier)) {
+                    incoming.addValidatedWithVsac(VsacStatus.PENDING);
+                }
+            }
         }
     }
 
@@ -371,13 +381,35 @@ public class CqlToMatXml implements CqlVisitor {
                 v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).findFirst();
         if (vsacCodeSystem.isPresent()) {
             String defaultVersion = vsacCodeSystem.get().getDefaultVsacVersion();
+
+            //todo use vsac to get latest version MCG add story
             return String.format(CODE_IDENTIFIER_FORMAT,
                     parseCodeSystemName(c.getCodeSystemName()).getLeft(),
-                    StringUtils.isBlank(c.getCodeSystemVersionUri()) ? defaultVersion : c.getCodeSystemVersion(),
+                    StringUtils.isBlank(c.getCodeSystemVersionUri()) ? defaultVersion : processCodeSystemVersionUri(c.getCodeSystemVersionUri()),
                     c.getCodeOID());
         } else {
             return null;
         }
+    }
+
+
+    private String processCodeSystemVersionUri(String codeSystemVersionUriIn) {
+
+        String codeSystemVersionUri = codeSystemVersionUriIn;
+
+        if (codeSystemVersionUri.startsWith("http://snomed.info/")) {
+            String version = StringUtils.substringAfter(codeSystemVersionUri, "/version/");
+
+            if (StringUtils.isEmpty(version)) {
+                log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", codeSystemVersionUri);
+            } else if (version.length() != 6) { //201907 YYYYMM
+                log.warn("Version string length is not 6: {}", version);
+            } else {
+                codeSystemVersionUri = version.substring(0, 4) + "-" + version.substring(4);
+            }
+        }
+
+        return codeSystemVersionUri;
     }
 
     private CQLError severErrorAtLine(String msg, int lineNumber) {

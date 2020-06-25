@@ -65,12 +65,13 @@ public class ValidationOrchestrationService {
         }
 
         if (validationRequest.isValidateCodeSystems()) {
-            if (CollectionUtils.isEmpty(cqlModel.getCodeList())) {
+            if (CollectionUtils.isEmpty(cqlModel.getCodeList()) && CollectionUtils.isEmpty(cqlModel.getCodeSystemList())) {
                 log.debug("No code systems to validate for library: {}-{}", cqlModel.getLibraryName(), cqlModel.getVersionUsed());
             } else {
                 CompletableFuture<List<LibraryErrors>> f =
                         codeSystemValidator.validate(validationRequest.getTimeoutSeconds(),
                                 cqlModel.getCodeList(),
+                                cqlModel.getCodeSystemList(),
                                 cql,
                                 ulmsToken);
                 f.orTimeout(validationTimeout, TimeUnit.SECONDS);

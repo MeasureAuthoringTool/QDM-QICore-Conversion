@@ -43,11 +43,12 @@ class ValueSetVsacAsyncTest {
     @Test
     void validateMissingTicket() throws ExecutionException, InterruptedException {
         when(vsacService.getServiceTicket(TOKEN)).thenReturn(null);
+        cqlQualityDataSetDTO.addValidatedWithVsac(VsacStatus.PENDING);
 
         CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN);
         completableFuture.get();
 
-        assertEquals("VSAC ticket has expired", cqlQualityDataSetDTO.getErrorMessage());
+        assertEquals("Value set requires validation. Please login to UMLS to validate it.", cqlQualityDataSetDTO.getErrorMessage());
         assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
 
         verifyNoMoreInteractions(vsacService);
@@ -60,8 +61,8 @@ class ValueSetVsacAsyncTest {
         CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN);
         completableFuture.get();
 
-        assertEquals("Golly Gee", cqlQualityDataSetDTO.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
+        assertEquals("Value set not found in VSAC.", cqlQualityDataSetDTO.getErrorMessage());
+          assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
 
         verifyNoMoreInteractions(vsacService);
     }
@@ -78,7 +79,7 @@ class ValueSetVsacAsyncTest {
         CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN);
         completableFuture.get();
 
-        assertEquals("Not In Vsac", cqlQualityDataSetDTO.getErrorMessage());
+        assertEquals("Value set not found in VSAC.", cqlQualityDataSetDTO.getErrorMessage());
         assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
     }
 

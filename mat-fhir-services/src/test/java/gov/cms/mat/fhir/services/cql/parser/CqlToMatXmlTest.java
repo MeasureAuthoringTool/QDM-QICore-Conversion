@@ -1,10 +1,10 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
+import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
+import lombok.extern.slf4j.Slf4j;
+import mat.model.cql.CQLDefinition;
+import mat.model.cql.CQLModel;
+import mat.model.cql.CQLParameter;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -13,14 +13,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
-import lombok.extern.slf4j.Slf4j;
-import mat.model.cql.CQLDefinition;
-import mat.model.cql.CQLModel;
-import mat.model.cql.CQLParameter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -132,57 +133,57 @@ public class CqlToMatXmlTest {
 
         assertEquals("ToInterval", destination.getCqlFunctions().get(0).getName());
         assertEquals("period", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentType());
-        assertEquals("FHIR.Period", destination.getCqlFunctions().get(0).getArgumentList().get(0).getOtherType());
+        assertEquals("FHIR Datatype", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentType());
+        assertEquals(null, destination.getCqlFunctions().get(0).getArgumentList().get(0).getOtherType());
         assertEquals("if period is null then\n" +
-                "        null\n" +
-                "    else\n" +
-                "        Interval[period.\"start\".value, period.\"end\".value]", destination.getCqlFunctions().get(0).getLogic());
+                "      null\n" +
+                "  else\n" +
+                "      Interval[period.\"start\".value, period.\"end\".value]", destination.getCqlFunctions().get(0).getLogic());
 
         assertEquals("ToQuantity", destination.getCqlFunctions().get(1).getName());
         assertEquals("quantity", destination.getCqlFunctions().get(1).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(1).getArgumentList().get(0).getArgumentType());
-        assertEquals("FHIR.Quantity", destination.getCqlFunctions().get(1).getArgumentList().get(0).getOtherType());
+        assertEquals("FHIR Datatype", destination.getCqlFunctions().get(1).getArgumentList().get(0).getArgumentType());
+        assertNull(destination.getCqlFunctions().get(1).getArgumentList().get(0).getOtherType());
         assertEquals("if quantity is null then\n" +
-                "        null\n" +
-                "    else\n" +
-                "        System.Quantity { value: quantity.value.value, unit: quantity.unit.value }", destination.getCqlFunctions().get(1).getLogic());
+                "      null\n" +
+                "  else\n" +
+                "      System.Quantity { value: quantity.value.value, unit: quantity.unit.value }", destination.getCqlFunctions().get(1).getLogic());
 
         assertEquals("ToInterval", destination.getCqlFunctions().get(2).getName());
         assertEquals("range", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentType());
-        assertEquals("FHIR.Range", destination.getCqlFunctions().get(2).getArgumentList().get(0).getOtherType());
+        assertEquals("FHIR Datatype", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentType());
+        assertNull(destination.getCqlFunctions().get(2).getArgumentList().get(0).getOtherType());
         assertEquals("if range is null then\n" +
-                "        null\n" +
-                "    else\n" +
-                "        Interval[ToQuantity(range.low), ToQuantity(range.high)]", destination.getCqlFunctions().get(2).getLogic());
+                "      null\n" +
+                "  else\n" +
+                "      Interval[ToQuantity(range.low), ToQuantity(range.high)]", destination.getCqlFunctions().get(2).getLogic());
 
         assertEquals("ToCode", destination.getCqlFunctions().get(3).getName());
         assertEquals("coding", destination.getCqlFunctions().get(3).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentType());
-        assertEquals("FHIR.Coding", destination.getCqlFunctions().get(3).getArgumentList().get(0).getOtherType());
+        assertEquals("FHIR Datatype", destination.getCqlFunctions().get(2).getArgumentList().get(0).getArgumentType());
+        assertNull(destination.getCqlFunctions().get(3).getArgumentList().get(0).getOtherType());
         assertEquals("if coding is null then\n" +
-                "        null\n" +
-                "    else\n" +
-                "        System.Code {\n" +
-                "          code: coding.code.value,\n" +
-                "          system: coding.system.value,\n" +
-                "          version: coding.version.value,\n" +
-                "          display: coding.display.value\n" +
-                "        }", destination.getCqlFunctions().get(3).getLogic());
+                "      null\n" +
+                "  else\n" +
+                "      System.Code {\n" +
+                "        code: coding.code.value,\n" +
+                "        system: coding.system.value,\n" +
+                "        version: coding.version.value,\n" +
+                "        display: coding.display.value\n" +
+                "      }", destination.getCqlFunctions().get(3).getLogic());
 
 
         assertEquals("ToConcept", destination.getCqlFunctions().get(4).getName());
         assertEquals("concept", destination.getCqlFunctions().get(4).getArgumentList().get(0).getArgumentName());
-        assertEquals("FHIR.CodeableConcept", destination.getCqlFunctions().get(4).getArgumentList().get(0).getOtherType());
-        assertEquals("Others", destination.getCqlFunctions().get(4).getArgumentList().get(0).getArgumentType());
+        assertNull(destination.getCqlFunctions().get(4).getArgumentList().get(0).getOtherType());
+        assertEquals("FHIR Datatype", destination.getCqlFunctions().get(4).getArgumentList().get(0).getArgumentType());
         assertEquals("if concept is null then\n" +
-                "        null\n" +
-                "    else\n" +
-                "        System.Concept {\n" +
-                "            codes: concept.coding C return ToCode(C),\n" +
-                "            display: concept.text.value\n" +
-                "        }", destination.getCqlFunctions().get(4).getLogic());
+                "      null\n" +
+                "  else\n" +
+                "      System.Concept {\n" +
+                "          codes: concept.coding C return ToCode(C),\n" +
+                "          display: concept.text.value\n" +
+                "      }", destination.getCqlFunctions().get(4).getLogic());
 
         validateToString(destination, "FHIR.uuid", 5);
         validateToString(destination, "FHIR.TestScriptRequestMethodCode", 6);
@@ -207,8 +208,11 @@ public class CqlToMatXmlTest {
         var destination = parseModel("AdultOutpatientEncounters_FHIR4-1.1.000.cql");
         assertEquals(1, destination.getCqlParameters().size());
         assertEquals("Measurement Period", destination.getCqlParameters().get(0).getName());
-        assertEquals("Interval<DateTime> default Interval[@2019-01-01T00:00:00.0, @2020-01-01T00:00:00.0)", destination.getCqlParameters().get(0).getLogic());
+        assertEquals("Interval<DateTime>\n" +
+                "  default Interval[@2019-01-01T00:00:00.0, @2020-01-01T00:00:00.0)", destination.getCqlParameters().get(0).getLogic());
         assertEquals(null, destination.getCqlParameters().get(0).getCqlType());
+
+
     }
 
     @Test
@@ -277,37 +281,18 @@ public class CqlToMatXmlTest {
         assertEquals("Has Hospice", destination.getCqlFunctions().get(0).getName());
         assertEquals(1, destination.getCqlFunctions().get(0).getArgumentList().size());
         assertEquals("MeasurementPeriod", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentName());
-        assertEquals("Others", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentType());
-        assertEquals("Interval<DateTime>", destination.getCqlFunctions().get(0).getArgumentList().get(0).getOtherType());
-        assertEquals("exists (\n" +
-                "\t    [Encounter: \"Encounter Inpatient\"] DischargeHospice\n" +
-                "\t\t\twhere DischargeHospice.status = 'finished'\n" +
-                "\t\t\t    and (\n" +
-                "\t\t\t        FHIRHelpers.ToConcept(DischargeHospice.hospitalization.dischargeDisposition).codes[0] ~ \"Discharge to home for hospice care (procedure)\"\n" +
-                "\t\t\t\t\t    or FHIRHelpers.ToConcept(DischargeHospice.hospitalization.dischargeDisposition).codes[0] ~ \"Discharge to healthcare facility for hospice care (procedure)\"\n" +
-                "\t\t\t    )\n" +
-                "\t\t\t\tand DischargeHospice.period ends during day of MeasurementPeriod\n" +
-                "\t)\n" +
-                "    or exists (\n" +
-                "        [ServiceRequest: \"Hospice care ambulatory\"] HospiceOrder\n" +
-                "            where HospiceOrder.intent = 'order'\n" +
-                "                and FHIRHelpers.ToDateTime(HospiceOrder.authoredOn) in day of MeasurementPeriod\n" +
-                "    )\n" +
-                "    or exists (\n" +
-                "        [Procedure: \"Hospice care ambulatory\"] HospicePerformed\n" +
-                "            where HospicePerformed.status = 'completed'\n" +
-                "                and Global.\"Normalize Interval\"(HospicePerformed.performed) overlaps MeasurementPeriod\n" +
-                "    )", destination.getCqlFunctions().get(0).getLogic());
+        assertEquals("FHIR Datatype", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentType());
+        assertNull(destination.getCqlFunctions().get(0).getArgumentList().get(0).getOtherType());
+        assertNotNull(destination.getCqlFunctions().get(0).getLogic());
     }
 
     private void validateToString(CQLModel model, String type, int index) {
         assertEquals("ToString", model.getCqlFunctions().get(index).getName());
         assertEquals("value", model.getCqlFunctions().get(index).getArgumentList().get(0).getArgumentName());
-        assertEquals(type, model.getCqlFunctions().get(index).getArgumentList().get(0).getOtherType());
-        assertEquals("Others", model.getCqlFunctions().get(index).getArgumentList().get(0).getArgumentType());
+        assertNull(model.getCqlFunctions().get(index).getArgumentList().get(0).getOtherType());
+        assertEquals("FHIR Datatype", model.getCqlFunctions().get(index).getArgumentList().get(0).getArgumentType());
         assertEquals("value.value", model.getCqlFunctions().get(index).getLogic());
     }
-
 
     @Test
     public void testFunctionFhirComment() throws Exception {
@@ -371,7 +356,7 @@ public class CqlToMatXmlTest {
 
 
         assertEquals("testpopulation", definition3.getName());
-        assertEquals(" testpopulation comment ", definition3.getCommentString());
+        assertEquals("testpopulation comment", definition3.getCommentString());
         assertEquals("true\n" +
                 "\n" +
                 "  /* last comment */", definition3.getLogic().replaceAll("\\r\\n", "\n"));

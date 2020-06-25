@@ -1,45 +1,53 @@
 package gov.cms.mat.fhir.services.components.validation;
 
+import gov.cms.mat.fhir.services.components.vsac.VsacResponse;
+import gov.cms.mat.fhir.services.components.vsac.VsacRestClient;
 import gov.cms.mat.fhir.services.service.VsacService;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLCode;
 import mat.model.cql.VsacStatus;
 import mat.shared.CQLModelValidator;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.vsac.VSACResponseResult;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 class CodeSystemVsacAsync extends VsacValidator {
+
     private static final String INVALID_CODE_URL = "Invalid code system uri";
     private static final String URL_IS_REQUIRED = "Code system uri is required";
 
     public static final String REQUIRES_VALIDATION = "Code system requires validation. Please login to UMLS to validate it.";
     public static final String NOT_FOUND = "Code system not found in VSAC.";
 
-    CodeSystemVsacAsync(VsacService vsacService) {
+    private final VsacRestClient vsacRestClient;
+
+    CodeSystemVsacAsync(VsacService vsacService, VsacRestClient vsacRestClient) {
         super(vsacService);
+        this.vsacRestClient = vsacRestClient;
     }
 
     @Async("codeSystemTheadPoolValidation")
     CompletableFuture<Void> validateCode(CQLCode cqlCode, String umlsToken) {
-
         if (StringUtils.contains(cqlCode.getCodeSystemOID(), "NOT.IN.VSAC")) {
             log.debug("No need to process NOT.IN.VSAC cqlCode: {}", cqlCode.getCodeSystemName());
         } else {
             try {
-                boolean isValid = isDirectReferenceCodeValid(cqlCode.getCodeIdentifier(), umlsToken);
-                log.info("Validated code {} with vsac. {}", cqlCode.getCodeIdentifier(), isValid);
+                isDirectReferenceCodeValid(cqlCode, umlsToken);
+                log.info("Validated code {} with vsac {} message: {}",
+                        cqlCode.getCodeIdentifier(),
+                        cqlCode.isValidatedWithVsac(),
+                        cqlCode.getErrorMessage());
 
-                cqlCode.setErrorMessage(isValid ? null : NOT_FOUND);
-                cqlCode.addValidatedWithVsac(isValid ? VsacStatus.VALID : VsacStatus.IN_VALID);
             } catch (VsacCodeSystemValidatorException vc) {
                 cqlCode.setErrorMessage(vc.getMessage());
-            }catch (Exception e) {
+            } catch (Exception e) {
                 cqlCode.setErrorMessage(cqlCode.obtainValidatedWithVsac() == VsacStatus.PENDING ?
                         REQUIRES_VALIDATION : NOT_FOUND);
             }
@@ -48,7 +56,9 @@ class CodeSystemVsacAsync extends VsacValidator {
         return CompletableFuture.completedFuture(null);
     }
 
-    private boolean isDirectReferenceCodeValid(String url, String umlsToken) {
+    private void isDirectReferenceCodeValid(CQLCode cqlCode, String umlsToken) {
+
+        String url = cqlCode.getCodeIdentifier();
 
         if (StringUtils.isBlank(url)) {
             throw new VsacCodeSystemValidatorException(URL_IS_REQUIRED);
@@ -60,8 +70,6 @@ class CodeSystemVsacAsync extends VsacValidator {
             throw new VsacCodeSystemValidatorException(INVALID_CODE_URL);
         }
 
-        String fiveMinServiceTicket = fetchFiveMinuteTicket(umlsToken);
-
         if (url.contains(":")) {
             String[] arg = url.split(":");
             if (arg.length > 0 && arg[1] != null) {
@@ -69,9 +77,29 @@ class CodeSystemVsacAsync extends VsacValidator {
             }
         }
 
-        VSACResponseResult vsacResponseResult = vsacService.getDirectReferenceCode(url, fiveMinServiceTicket);
+        VsacResponse vsacResponse = vsacRestClient.fetchCodeSystem(url, umlsToken);
 
-        return vsacResponseResult != null && vsacResponseResult.getXmlPayLoad() != null && !StringUtils.isEmpty(vsacResponseResult.getXmlPayLoad());
+        if (vsacResponse.getStatus().equals("ok")) {
+            cqlCode.setErrorMessage(null);
+            cqlCode.setErrorCode(null);
+            cqlCode.addValidatedWithVsac(VsacStatus.VALID);
+        } else {
+            cqlCode.addValidatedWithVsac(VsacStatus.IN_VALID);
+
+            if (vsacResponse.getErrors() == null || CollectionUtils.isEmpty(vsacResponse.getErrors().getResultSet())) {
+                cqlCode.setErrorMessage(vsacResponse.getMessage());
+                cqlCode.setErrorCode(null);
+            } else {
+
+                List<String> strList = vsacResponse.getErrors().getResultSet()
+                        .stream()
+                        .map(VsacResponse.VsacErrorResultSet::getErrDesc)
+                        .collect(Collectors.toList());
+
+                cqlCode.setErrorMessage(String.join(", ", strList));
+                cqlCode.setErrorCode(vsacResponse.getErrors().getResultSet().get(0).getErrCode());
+            }
+        }
     }
 
 }

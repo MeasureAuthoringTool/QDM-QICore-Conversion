@@ -6,6 +6,7 @@ import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
+import gov.cms.mat.fhir.services.cql.CQLAntlrUtils;
 import gov.cms.mat.fhir.services.exceptions.FhirIncludeLibrariesNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
@@ -29,6 +30,8 @@ import java.util.Arrays;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,6 +48,8 @@ class LibraryPackagerServiceTest implements ResourceFileUtil, LibraryHelper {
     private FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor;
     @Mock
     private FhirValidatorService fhirValidatorService;
+    @Mock
+    private CQLAntlrUtils cqlAntlrUtils;
     @InjectMocks
     private LibraryPackagerService libraryPackagerService;
 
@@ -111,9 +116,13 @@ class LibraryPackagerServiceTest implements ResourceFileUtil, LibraryHelper {
         when(fhirIncludeLibraryProcessor.findIncludedFhirLibraries(qiCorePatternCql))
                 .thenReturn(new FhirIncludeLibraryResult());
 
+        when(cqlAntlrUtils.getLibraryContextBytes(any())).thenCallRealMethod();
+        when(cqlAntlrUtils.getLibraryContext(anyString())).thenCallRealMethod();
+
+
         LibraryPackageFullHapi fullHapi = libraryPackagerService.packageFull(ID);
         assertEquals(qiCorePatternLibrary, fullHapi.getLibrary());
-        assertFalse(fullHapi.getIncludeBundle().hasEntry());
+        assertTrue(fullHapi.getIncludeBundle().hasEntry());
 
         verify(hapiFhirServer).getLibraryBundle(ID);
         verify(fhirValidatorService).validate(qiCorePatternLibrary);
@@ -184,13 +193,15 @@ class LibraryPackagerServiceTest implements ResourceFileUtil, LibraryHelper {
         when(fhirIncludeLibraryProcessor.findIncludedFhirLibraries(qiCorePatternCql))
                 .thenReturn(result);
 
-        LibraryPackageFullHapi fullHapi = libraryPackagerService.packageFull(ID);
+        when(cqlAntlrUtils.getLibraryContextBytes(any())).thenCallRealMethod();
+        when(cqlAntlrUtils.getLibraryContext(anyString())).thenCallRealMethod();
 
+        LibraryPackageFullHapi fullHapi = libraryPackagerService.packageFull(ID);
 
         assertEquals(qiCorePatternLibrary, fullHapi.getLibrary());
         assertTrue(fullHapi.getIncludeBundle().hasEntry());
-        assertEquals(1, fullHapi.getIncludeBundle().getEntry().size());
-        assertEquals(fhirHelpersLibrary, fullHapi.getIncludeBundle().getEntry().get(0).getResource());
+        assertEquals(19, fullHapi.getIncludeBundle().getEntry().size()); // 17 value sets, 2 libraries
+        // assertEquals(fhirHelpersLibrary, fullHapi.getIncludeBundle().getEntry().get(0).getResource());
 
         verify(hapiFhirServer).getLibraryBundle(ID);
         verify(fhirValidatorService).validate(qiCorePatternLibrary);

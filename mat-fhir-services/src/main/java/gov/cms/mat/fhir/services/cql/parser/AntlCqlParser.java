@@ -334,6 +334,4 @@ public class AntlCqlParser implements CqlParser {
             visitor.handleError(error);
         }
     }
-
-
 }

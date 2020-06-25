@@ -43,7 +43,7 @@ class CodeSystemValidatorTest implements CqlHelper {
         when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN)).thenReturn(Collections.emptyList());
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                codeSystemValidator.validate(0, cqlModel.getCodeList(), cql, TOKEN);
+                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 
@@ -57,7 +57,7 @@ class CodeSystemValidatorTest implements CqlHelper {
         when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN)).thenReturn(failingCodes);
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                codeSystemValidator.validate(0, cqlModel.getCodeList(), cql, TOKEN);
+                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 
