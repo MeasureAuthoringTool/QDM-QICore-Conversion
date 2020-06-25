@@ -140,29 +140,28 @@ public class CqlToMatXml implements CqlVisitor {
     public void includeLib(String libName, String version, String alias, String model, String modelVersion, int lineNumber) {
         if (!LIBRARY_NAME_PATTERN.matcher(libName).matches()) {
             handleError(severErrorAtLine("Library name must follow this regex: " + LIB_NAME_REGEX, lineNumber));
-        }
-        if (!LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
+        } else if (!LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
             handleError(severErrorAtLine("Library version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
-        }
-
-        CQLIncludeLibrary lib = new CQLIncludeLibrary();
-        lib.setId(newGuid());
-        lib.setCqlLibraryName(libName);
-        lib.setVersion(version);
-        lib.setAliasName(alias);
-        lib.setLibraryModelType(model);
-        lib.setQdmVersion(modelVersion);
-        var versionPair = versionToVersionAndRevision(version);
-        var cqlLibrary = cqlLibraryRepository.findByVersionAndCqlNameAndRevisionNumberAndLibraryModelAndDraft(new BigDecimal(versionPair.getLeft()),
-                libName,
-                versionPair.getRight(),
-                model, false);
-        if(cqlLibrary != null) {
-            lib.setCqlLibraryId(cqlLibrary.getId());
         } else {
-            handleError(severErrorAtLine("Could not find library " + libName + " " + version, lineNumber));
+            CQLIncludeLibrary lib = new CQLIncludeLibrary();
+            lib.setId(newGuid());
+            lib.setCqlLibraryName(libName);
+            lib.setVersion(version);
+            lib.setAliasName(alias);
+            lib.setLibraryModelType(model);
+            lib.setQdmVersion(modelVersion);
+            var versionPair = versionToVersionAndRevision(version);
+            var cqlLibrary = cqlLibraryRepository.findByVersionAndCqlNameAndRevisionNumberAndLibraryModelAndDraft(new BigDecimal(versionPair.getLeft()),
+                    libName,
+                    versionPair.getRight(),
+                    model, false);
+            if(cqlLibrary != null) {
+                lib.setCqlLibraryId(cqlLibrary.getId());
+            } else {
+                handleError(severErrorAtLine("Could not find library " + libName + " " + version, lineNumber));
+            }
+            destinationModel.getCqlIncludeLibrarys().add(lib);
         }
-        destinationModel.getCqlIncludeLibrarys().add(lib);
     }
 
     @Override
