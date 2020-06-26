@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import gov.cms.mat.fhir.services.config.VsacConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.vsac.VSACResponseResult;
 
@@ -26,9 +27,12 @@ public class VsacClient {
 
     private final VsacConfig vsacConfig;
 
+    private final VsacRestClient vsacRestClient;
 
-    public VsacClient(VsacConfig vsacConfig) {
+    public VsacClient(VsacConfig vsacConfig,
+                      VsacRestClient vsacRestClient) {
         this.vsacConfig = vsacConfig;
+        this.vsacRestClient = vsacRestClient;
     }
 
     @PostConstruct
@@ -60,7 +64,7 @@ public class VsacClient {
     }
 
     public String getServiceTicket(String grantingTicket) {
-        return vsacConfig.getVsacRestClient().getServiceTicket(grantingTicket);
+        return vsacRestClient.fetchSingleUseTicket(grantingTicket);
     }
 
     public VSACResponseResult getDataFromProfile(String oid, String serviceTicket) {
