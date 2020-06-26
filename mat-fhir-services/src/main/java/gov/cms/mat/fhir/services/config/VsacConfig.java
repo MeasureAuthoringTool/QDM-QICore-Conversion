@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 @Configuration
-
 @ConfigurationProperties(prefix = "vsac-client")
 @Data
 public class VsacConfig {
