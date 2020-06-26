@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import gov.cms.mat.fhir.services.components.vsac.VsacRestClient;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import lombok.Getter;
 import lombok.Setter;
@@ -81,10 +82,12 @@ public class CqlToMatXml implements CqlVisitor {
 
     private final CqlLibraryRepository cqlLibraryRepository;
     private final CodeListService codeListService;
+    private final VsacRestClient vsacRestClient;
 
-    public CqlToMatXml(CodeListService codeListService, CqlLibraryRepository cqlLibraryRepository) {
+    public CqlToMatXml(CodeListService codeListService, CqlLibraryRepository cqlLibraryRepository, VsacRestClient vsacRestClient) {
         this.codeListService = codeListService;
         this.cqlLibraryRepository = cqlLibraryRepository;
+        this.vsacRestClient = vsacRestClient;
     }
 
     @PostConstruct
@@ -215,8 +218,10 @@ public class CqlToMatXml implements CqlVisitor {
         c.setCodeName(name);
         c.setId(newGuid());
         c.setLineNumber(lineNumber);
+
         updateCodeSystemInfo(c);
         updateCodeIdentifierAndVsacValidationFlag(c, lineNumber);
+
         destinationModel.getCodeList().add(c);
     }
 
@@ -299,35 +304,51 @@ public class CqlToMatXml implements CqlVisitor {
     private void updateCodeSystemInfo(CQLCode c) {
         var currentCS = destinationModel.getCodeSystemList().stream().filter(cs ->
                 StringUtils.equals(cs.getCodeSystemName(), c.getCodeSystemName())).findFirst();
+
         var previousCode = findExisting(sourceModel.getCodeList(),
                 ec -> StringUtils.equals(ec.getCodeName(), c.getCodeName()) &&
                         StringUtils.equals(ec.getCodeSystemName(), c.getCodeSystemName()));
+
         if (currentCS.isPresent()) {
+
             c.setCodeSystemName(currentCS.get().getCodeSystemName());
             c.setIsCodeSystemVersionIncluded(c.getCodeSystemName().contains(":"));
             c.setCodeSystemOID(currentCS.get().getCodeSystem());
-            c.setCodeSystemVersion(previousCode.isPresent() ?
-                    previousCode.get().getCodeSystemVersion() :
-                    currentCS.get().getCodeSystemVersion());
-            c.setCodeSystemVersionUri(currentCS.get().getVersionUri());
 
             if (c.isIsCodeSystemVersionIncluded()) {
                 c.setCodeSystemVersion(parseCodeSystemName(c.getCodeSystemName()).getRight());
+            } else {
+                previousCode.ifPresent(cqlCode -> c.setCodeSystemVersion(cqlCode.getCodeSystemVersion()));
             }
-            if (StringUtils.isBlank(c.getCodeSystemVersion())) {
-                //Grab it from vsacCodeSysteMap spread sheet.
-                var map = codeListService.getOidToVsacCodeSystemMap().values();
-                var vsacCodeSystem = map.stream().filter(
-                        v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).findFirst();
-                if (vsacCodeSystem.isEmpty()) {
-                    //Hard error since we can't find the an entry in the spreadsheet.
-                    handleError(severErrorAtLine("This code system uri is not permitted. " +
-                                    "Please contact the MAT team if you feel this is in error.",
-                            currentCS.get().getLineNumber()));
+
+            if (StringUtils.isEmpty(c.getCodeSystemVersion()) && StringUtils.isNotEmpty(umlsToken)) {
+                VsacRestClient.CodeSystemVersionResponse response = vsacRestClient.fetchVersionFromName(currentCS.get().getCodeSystemName(), umlsToken);
+
+                if (response.getSuccess()) {
+                    c.setCodeSystemVersion(response.getVersion());
                 } else {
-                    c.setCodeSystemVersion(vsacCodeSystem.get().getDefaultVsacVersion());
+                    handleError(errorAtLine(response.getMessage(), c.getLineNumber()));
                 }
             }
+
+            c.setCodeSystemVersionUri(currentCS.get().getVersionUri());
+
+
+//            if (StringUtils.isBlank(c.getCodeSystemVersion())) {
+//                //Grab it from vsacCodeSysteMap spread sheet.
+//                var map = codeListService.getOidToVsacCodeSystemMap().values();
+//                var vsacCodeSystem = map.stream().filter(
+//                        v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).findFirst();
+//
+//                if (vsacCodeSystem.isEmpty()) {
+//                    //Hard error since we can't find the an entry in the spreadsheet.
+//                    handleError(severErrorAtLine("This code system uri is not permitted. " +
+//                                    "Please contact the MAT team if you feel this is in error.",
+//                            currentCS.get().getLineNumber()));
+//                } else {
+//                    c.setCodeSystemVersion(vsacCodeSystem.get().getDefaultVsacVersion());
+//                }
+//            }
         } else {
             //Hard error since we can't find the existing code system in the cql.
             handleError(severErrorAtLine("Could not find code system named " +
@@ -377,19 +398,31 @@ public class CqlToMatXml implements CqlVisitor {
      * @return The VSAC code url, e.g. .
      */
     private String buildCodeIdentifier(CQLCode c, int lineNumber) {
-        var vsacCodeSystem = codeListService.getOidToVsacCodeSystemMap().values().stream().filter(
-                v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).findFirst();
-        if (vsacCodeSystem.isPresent()) {
-            String defaultVersion = vsacCodeSystem.get().getDefaultVsacVersion();
 
-            //todo use vsac to get latest version MCG add story
+        if (StringUtils.isEmpty(c.getCodeSystemVersion())) {
+            return null;
+        } else {
             return String.format(CODE_IDENTIFIER_FORMAT,
                     parseCodeSystemName(c.getCodeSystemName()).getLeft(),
-                    StringUtils.isBlank(c.getCodeSystemVersionUri()) ? defaultVersion : processCodeSystemVersionUri(c.getCodeSystemVersionUri()),
+                    StringUtils.isBlank(c.getCodeSystemVersionUri()) ? c.getCodeSystemVersion() : processCodeSystemVersionUri(c.getCodeSystemVersionUri()),
                     c.getCodeOID());
-        } else {
-            return null;
         }
+
+//        var vsacCodeSystem = codeListService.getOidToVsacCodeSystemMap().values().stream().filter(
+//                v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).findFirst();
+//
+//        if (vsacCodeSystem.isPresent()) {
+//            String defaultVersion = vsacCodeSystem.get().getDefaultVsacVersion();
+//
+//            //todo use vsac to get latest version MCG add story
+//            return String.format(CODE_IDENTIFIER_FORMAT,
+//                    parseCodeSystemName(c.getCodeSystemName()).getLeft(),
+//                    StringUtils.isBlank(c.getCodeSystemVersionUri()) ? defaultVersion : processCodeSystemVersionUri(c.getCodeSystemVersionUri()),
+//                    c.getCodeOID());
+//        } else {
+//
+//            return null;
+//        }
     }
 
 

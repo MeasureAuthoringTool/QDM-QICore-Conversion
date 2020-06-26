@@ -40,9 +40,21 @@ class VsacRestClientIntegrationTest {
     @Test
     void fetchSingleUseTicket() {
         String singleUseTicket = vsacRestClient.fetchSingleUseTicket(grantingTicket);
-
         assertNotNull(singleUseTicket);
     }
+
+    @Test
+    void fetchVersionFromNameSuccess() {
+        VsacRestClient.CodeSystemVersionResponse  version = vsacRestClient.fetchVersionFromName("LOINC", grantingTicket);
+        assertEquals("2.67", version.getVersion()); // This can change over time
+    }
+
+    @Test
+    void fetchVersionFromNameFailure() {
+        VsacRestClient.CodeSystemVersionResponse  version = vsacRestClient.fetchVersionFromName("FLYBYNIGHT", grantingTicket);
+        assertNull(version); // This can change over time
+    }
+
 
     @Test
     void fetchCodeSystem() {

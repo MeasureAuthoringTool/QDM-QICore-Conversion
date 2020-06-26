@@ -3,8 +3,12 @@ package gov.cms.mat.fhir.services.components.vsac;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.mat.fhir.services.config.VsacConfig;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Reference Documentation: https://www.nlm.nih.gov/vsac/support/usingvsac/vsacsvsapiv2.html
@@ -45,6 +51,55 @@ public class VsacRestClient {
         return fetchTicket(SINGLE_USE_TICKET_REQUEST, path);
     }
 
+    @Cacheable(value = "vsacVersions", key = "#name")
+    public CodeSystemVersionResponse fetchVersionFromName(String name, String grantingTicket) {
+
+//        if( true) {
+//            return CodeSystemVersionResponse.builder()
+//                    .message("error doing this and that.")
+//                    .success(Boolean.FALSE)
+//                    .build();
+//        }
+
+        String path = "/CodeSystem/" + name + "/Info";
+
+        VsacResponse vsacResponse = fetchCodeSystem(path, grantingTicket);
+
+        if (vsacResponse.getMessage().equals("ok") && vsacResponse.getData() != null
+                && vsacResponse.getData().getResultSet().size() == 1 &&
+                vsacResponse.getData().getResultSet().get(0).getCsVersion() != null) {
+
+            return CodeSystemVersionResponse.builder()
+                    .message("ok")
+                    .success(Boolean.TRUE)
+                    .version(vsacResponse.getData().getResultSet().get(0).getCsVersion())
+                    .build();
+        } else {
+            String errorMessage;
+
+            if (vsacResponse.getErrors() == null || CollectionUtils.isEmpty(vsacResponse.getErrors().getResultSet())) {
+                if (StringUtils.isEmpty(vsacResponse.getMessage())) {
+                    errorMessage = "Unknown Error obtaining version from V"; // should never happen
+                } else {
+                    errorMessage = vsacResponse.getMessage();
+                }
+            } else {
+                List<String> strList = vsacResponse.getErrors().getResultSet()
+                        .stream()
+                        .map(VsacResponse.VsacErrorResultSet::getErrDesc)
+                        .collect(Collectors.toList());
+
+                errorMessage = String.join(", ", strList);
+            }
+
+            return CodeSystemVersionResponse.builder()
+                    .message(errorMessage)
+                    .success(Boolean.FALSE)
+                    .build();
+        }
+    }
+
+    // cannot cache due to all users not having the same rights
     public VsacResponse fetchCodeSystem(String path, String grantingTicket) {
         //  https://vsac.nlm.nih.gov/vsac/CodeSystem/LOINC/Version/2.66/Code/21112-8/Info?ticket=ST-281185-McNb53ZGHYtaGjHamgKg-cas&resultFormat=json&resultSet=standard
         // "/CodeSystem/LOINC22/Version/2.67/Code/21112-8/Info";
@@ -120,5 +175,13 @@ public class VsacRestClient {
             log.info("Vsac Rest Error", e);
             return null;
         }
+    }
+
+    @Builder
+    @Getter
+    public static class CodeSystemVersionResponse {
+        private String version;
+        private Boolean success;
+        private String message;
     }
 }

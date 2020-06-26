@@ -40,6 +40,7 @@ logging:
     org.exolab: WARN
     org.springframework.data.mongodb.core.MongoTemplate: WARN
     org.hl7.fhir.r4.hapi.validation: WARN
+    org.springframework.web.client.RestTemplate: WARN
   file:
     name: mat-fhir-services.log
 
