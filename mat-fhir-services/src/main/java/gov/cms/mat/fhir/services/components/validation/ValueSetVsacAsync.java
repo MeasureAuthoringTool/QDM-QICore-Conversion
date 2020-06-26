@@ -19,6 +19,7 @@ import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseOid;
 class ValueSetVsacAsync extends VsacValidator {
     public static final String REQURIES_VALIDATION = "Value set requires validation. Please login to UMLS to validate it.";
     public static final String NOT_FOUND = "Value set not found in VSAC.";
+    public static final String TICKET_EXPIRED = "VSAC ticket has expired. Please log into ULMS again.";
 
     @Value("${mat.qdm.default.expansion.id}")
     private String defaultExpId;
@@ -37,7 +38,11 @@ class ValueSetVsacAsync extends VsacValidator {
 
             code.setErrorMessage(isValid ? null : NOT_FOUND);
             code.addValidatedWithVsac(isValid ? VsacStatus.VALID : VsacStatus.IN_VALID);
-        } catch (Exception e) {
+        } catch (ExpiredTicketException ete){
+            log.warn("Error validating ValueSetVsac with vsac oid: {}", code.getOid(), ete);
+            code.setErrorMessage(TICKET_EXPIRED);
+            code.addValidatedWithVsac(VsacStatus.PENDING);
+        }catch (Exception e) {
             log.warn("Error validating ValueSetVsac with vsac oid: {}", code.getOid(), e);
             code.setErrorMessage(code.obtainValidatedWithVsac() == VsacStatus.PENDING ?
                     REQURIES_VALIDATION : NOT_FOUND);
