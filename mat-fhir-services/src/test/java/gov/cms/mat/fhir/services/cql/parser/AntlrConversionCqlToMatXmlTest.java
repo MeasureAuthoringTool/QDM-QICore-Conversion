@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLFunctions;
 import mat.model.cql.CQLModel;
@@ -32,6 +33,9 @@ public class AntlrConversionCqlToMatXmlTest {
 
     @Mock
     private ManageCodeListServiceImpl codeListService;
+
+    @Mock
+    private CqlLibraryRepository cqlLibraryRepository;
 
     @Spy
     @InjectMocks
@@ -67,7 +71,7 @@ public class AntlrConversionCqlToMatXmlTest {
                 "(EH or EP?)\n" +
                 "Proportion scoring", destination.getLibraryComment());
 
-        verify(codeListService).getOidToVsacCodeSystemMap();
+       // verify(codeListService).getOidToVsacCodeSystemMap();
     }
 
     @Test
@@ -77,7 +81,7 @@ public class AntlrConversionCqlToMatXmlTest {
         var destination = cqlToMatXml.getDestinationModel();
 
         assertNull(destination.getLibraryComment());
-        verify(codeListService).getOidToVsacCodeSystemMap();
+
     }
 
     @Test

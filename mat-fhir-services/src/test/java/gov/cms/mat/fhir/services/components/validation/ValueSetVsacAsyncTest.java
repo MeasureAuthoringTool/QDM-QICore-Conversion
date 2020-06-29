@@ -48,8 +48,8 @@ class ValueSetVsacAsyncTest {
         CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN);
         completableFuture.get();
 
-        assertEquals("Value set requires validation. Please login to UMLS to validate it.", cqlQualityDataSetDTO.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
+        assertEquals("VSAC ticket has expired. Please log into ULMS again.", cqlQualityDataSetDTO.getErrorMessage());
+        assertEquals(VsacStatus.PENDING, cqlQualityDataSetDTO.obtainValidatedWithVsac());
 
         verifyNoMoreInteractions(vsacService);
     }

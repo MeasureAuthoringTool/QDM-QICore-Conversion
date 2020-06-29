@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 class CodeSystemVsacAsync extends VsacValidator {
 
     private static final String INVALID_CODE_URL = "Invalid code system uri.";
-    private static final String URL_IS_REQUIRED = "Error processing with vsac.";
+    private static final String URL_IS_REQUIRED = "Code system uri is required.";
 
     public static final String REQUIRES_VALIDATION = "Code system requires validation. Please login to UMLS to validate it.";
     public static final String NOT_FOUND = "Code system not found in VSAC.";

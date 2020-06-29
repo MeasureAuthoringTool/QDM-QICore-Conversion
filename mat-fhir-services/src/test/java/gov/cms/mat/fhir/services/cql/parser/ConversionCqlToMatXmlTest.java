@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLFunctions;
 import mat.model.cql.CQLModel;
@@ -31,6 +32,9 @@ public class ConversionCqlToMatXmlTest {
     private MappingSpreadsheetService mappingService;
     @Mock
     private CodeListService codeListService;
+    @Mock
+    private CqlLibraryRepository cqlLibraryRepository;
+
 
     @InjectMocks
     private AntlCqlParser parser;
@@ -114,6 +118,5 @@ public class ConversionCqlToMatXmlTest {
         assertEquals("FHIR Datatype", test5.getArgumentList().get(0).getArgumentType());
         assertNull(test5.getArgumentList().get(0).getOtherType());
 
-        verify(codeListService, times(2)).getOidToVsacCodeSystemMap();
     }
 }

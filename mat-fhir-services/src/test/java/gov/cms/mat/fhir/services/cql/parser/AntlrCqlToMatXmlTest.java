@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLCodeSystem;
@@ -31,6 +32,8 @@ public class AntlrCqlToMatXmlTest {
 
     @Mock
     private CodeListService codeListService;
+    @Mock
+    private CqlLibraryRepository cqlLibraryRepository;
 
     @InjectMocks
     private AntlCqlParser parser;
@@ -65,7 +68,7 @@ public class AntlrCqlToMatXmlTest {
         map.put("urn:oid:2.16.7.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.7.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/allergyintolerance-verification", "RoleCode", "2019-03"));
 
 
-        when(codeListService.getOidToVsacCodeSystemMap()).thenReturn(map);
+        // when(codeListService.getOidToVsacCodeSystemMap()).thenReturn(map);
     }
 
 
