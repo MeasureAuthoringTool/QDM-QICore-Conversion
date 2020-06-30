@@ -53,14 +53,6 @@ public class VsacRestClient {
 
     @Cacheable(value = "vsacVersions", key = "#name")
     public CodeSystemVersionResponse fetchVersionFromName(String name, String grantingTicket) {
-
-//        if( true) {
-//            return CodeSystemVersionResponse.builder()
-//                    .message("error doing this and that.")
-//                    .success(Boolean.FALSE)
-//                    .build();
-//        }
-
         String path = "/CodeSystem/" + name + "/Info";
 
         VsacResponse vsacResponse = fetchCodeSystem(path, grantingTicket);

@@ -123,12 +123,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void processCodeSystem(CodeSystemProperties codeSystemProperties) {
-
-        if (StringUtils.isNotEmpty(codeSystemProperties.getVersion())) {
-            log.debug("CodeSystem has version : {}, so not processing", codeSystemProperties.getVersion());
-        } else {
-            processCodeSystemInGlobalMap(codeSystemProperties);
-        }
+        processCodeSystemInGlobalMap(codeSystemProperties);
     }
 
     private void processBundleWithEntry(CodeSystemProperties codeSystemProperties, Bundle bundle) {
@@ -145,21 +140,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void processCodeSystemInGlobalMap(CodeSystemProperties codeSystemProperties) {
-
-        String name = codeSystemProperties.getName();
         CodeSystemEntry entry = findCodeSystemEntry(codeSystemProperties.getUrnOid());
-
-        if (name.contains(":")) {
-            String version = StringUtils.substringAfter(name, ":");
-
-            if (name.startsWith("SNOMEDCT")) {
-                version = fixSnoMedVersion(version, entry.getUrl());
-            }
-            codeSystemProperties.setVersion(version);
-        } else {
-            codeSystemProperties.setVersion(null);
-        }
-
         codeSystemProperties.setUrnOid(entry.getUrl());
     }
 

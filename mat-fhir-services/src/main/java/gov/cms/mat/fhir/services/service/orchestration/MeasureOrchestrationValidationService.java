@@ -42,7 +42,7 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         FhirMeasureResourceValidationResult response =
                 new FhirMeasureResourceValidationResult(properties.getMeasureId(), "Measure");
 
-        if (properties.getIsPush()) {
+        if (properties.isPush()) {
             org.hl7.fhir.r4.model.Measure fhirMeasure = processFhirMeasure(properties);
             validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
         }

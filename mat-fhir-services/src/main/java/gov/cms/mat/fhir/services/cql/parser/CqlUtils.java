@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import mat.model.cql.CQLCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -534,12 +535,31 @@ public class CqlUtils {
         return comment.toString();
     }
 
+    public static String parseMatVersionFromCodeSystemUri(CQLCode c) {
+        String result = c.getCodeSystemVersionUri();
+        if (StringUtils.isNotBlank(result)) {
+            if (result.startsWith("http://snomed.info/")) {
+                String version = StringUtils.substringAfter(result, "/version/");
+                if (StringUtils.isEmpty(version)) {
+                    log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", result);
+                } else if (version.length() != 6) { //201907 YYYYMM
+                    log.warn("Version string length is not 6: {}", version);
+                } else {
+                    result = version.substring(0, 4) + "-" + version.substring(4);
+                }
+            }
+        }
+        return result;
+    }
+
     private static void prependCommentLine(StringBuilder comment, String line) {
         if (comment.length() > 0) {
             comment.insert(0, StringUtils.LF);
         }
         comment.insert(0, line);
     }
+
+
 
 
 }
