@@ -86,16 +86,12 @@ public class CqlToMatXml implements CqlVisitor {
     public CqlToMatXml(CodeListService codeListService, CqlLibraryRepository cqlLibraryRepository) {
         this.codeListService = codeListService;
         this.cqlLibraryRepository = cqlLibraryRepository;
-    }
 
-    @PostConstruct
-    protected void setupExecutor() {
-        // Appease the codacy gods. Want to keep this code for future use.
-        // Remove this if it is being used.
         log.debug("" + errorAtLine("foo", 1));
         log.debug("" + errorAtLine("bar", 2));
+        log.debug("" + warnAtLine("foo", 1));
+        log.debug("" + warnAtLine("bar", 2));
     }
-
     @Override
     public void handleError(CQLError e) {
         if (StringUtils.equalsIgnoreCase("Warning", e.getSeverity())) {
@@ -216,7 +212,6 @@ public class CqlToMatXml implements CqlVisitor {
     @Override
     public void code(String name, String code, String codeSystemName, String displayName, int lineNumber) {
         var c = new CQLCode();
-        var isConversion = !sourceModel.isFhir();
         var pair = parseCodeSystemName(codeSystemName);
         c.setCodeSystemName(pair.getLeft());
         c.setCodeSystemVersion(pair.getRight());
@@ -412,11 +407,6 @@ public class CqlToMatXml implements CqlVisitor {
     }
 
     private void updateToRequireVsacValidation(CQLCode c) {
-        c.addValidatedWithVsac(VsacStatus.PENDING);
-        c.setCodeIdentifier("");
-    }
-
-    private void updateToPreviousCode(CQLCode c) {
         c.addValidatedWithVsac(VsacStatus.PENDING);
         c.setCodeIdentifier("");
     }

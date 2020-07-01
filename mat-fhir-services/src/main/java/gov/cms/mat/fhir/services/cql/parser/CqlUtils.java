@@ -1,18 +1,16 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.UUID;
 
+import static gov.cms.mat.fhir.services.cql.parser.CqlToMatXml.SNOWMED_URL;
 import static java.lang.Integer.max;
 
 /**
@@ -538,7 +536,7 @@ public class CqlUtils {
     public static String parseMatVersionFromCodeSystemUri(CQLCode c) {
         String result = c.getCodeSystemVersionUri();
         if (StringUtils.isNotBlank(result)) {
-            if (result.startsWith("http://snomed.info/")) {
+            if (result.startsWith(SNOWMED_URL)) {
                 String version = StringUtils.substringAfter(result, "/version/");
                 if (StringUtils.isEmpty(version)) {
                     log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", result);

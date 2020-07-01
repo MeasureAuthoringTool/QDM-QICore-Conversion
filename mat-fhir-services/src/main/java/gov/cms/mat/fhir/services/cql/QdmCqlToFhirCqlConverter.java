@@ -144,12 +144,6 @@ public class QdmCqlToFhirCqlConverter {
         codeSystemProperties.setUrnOid(entry.getUrl());
     }
 
-    private String fixSnoMedVersion(String version, String url) {
-        String urlVersion = version.replace("-", "");
-
-        return url + "/" + urlVersion;
-    }
-
     private CodeSystemEntry findCodeSystemEntry(String urnOid) {
         return codeSystemMappings
                 .stream()

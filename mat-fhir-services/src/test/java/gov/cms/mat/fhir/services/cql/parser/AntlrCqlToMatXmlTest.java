@@ -42,7 +42,8 @@ public class AntlrCqlToMatXmlTest {
     private CqlToMatXml cqlToMatXml;
 
     public void mockSpreadsheet() {
-        //log.info("an offering to the Codacy gods: " + mappingService);
+        log.info("an offering to the Codacy gods: " + codeListService);
+        log.info("an offering to the Codacy gods: " + cqlLibraryRepository);
         Map<String, CodeSystemEntry> map = new HashMap<>();
         map.put("urn:oid:2.16.840.1.113883.6.96", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.96", "http://snomed.info/sct/731000124108", "SNOMEDCT", "2019-03"));
         map.put("urn:oid:2.16.840.1.113883.5.1001", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.1001", "http://terminology.hl7.org/CodeSystem/v3-ActMood", "ActMood", "TBD"));

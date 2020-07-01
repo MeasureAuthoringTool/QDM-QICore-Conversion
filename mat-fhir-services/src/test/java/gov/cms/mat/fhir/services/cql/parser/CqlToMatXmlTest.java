@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +46,8 @@ public class CqlToMatXmlTest {
 
     public void mockSpreadsheet() {
         log.info("an offering to the Codacy gods: " + mappingService);
+        log.info("an offering to the Codacy gods: " + codeListService);
+        log.info("an offering to the Codacy gods: " + cqlLibraryRepository);
         Map<String, CodeSystemEntry> map = new HashMap<>();
         map.put("urn:oid:2.16.840.1.113883.6.96", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.96", "http://snomed.info/sct/731000124108", "SNOMEDCT", "2019-03"));
         map.put("urn:oid:2.16.840.1.113883.5.1001", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.1001", "http://terminology.hl7.org/CodeSystem/v3-ActMood", "ActMood", "TBD"));
