@@ -87,6 +87,8 @@ public class LibraryTranslator extends TranslatorBase {
         result.setContained(processContained());
         result.setExtension(processExtension());
 
+        result.setMeta(createLibraryMeta());
+
         //Note: the following are contextual. Might need to be added in later:
         //result.setJurisdiction();
         //result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
@@ -95,6 +97,13 @@ public class LibraryTranslator extends TranslatorBase {
         //TO DO: figure out how to handle this with logging.
         //ConversionReporter.setLibraryValidationLink(result.getUrl(), CREATED, uuid);
         return result;
+    }
+
+    private Meta createLibraryMeta() {
+        return new Meta()
+                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/library-cqfm")
+                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm")
+                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
     }
 
     private List<Resource> processContained() {
