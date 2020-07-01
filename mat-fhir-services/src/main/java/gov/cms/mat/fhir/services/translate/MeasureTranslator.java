@@ -172,6 +172,8 @@ public class MeasureTranslator extends TranslatorBase {
 
         result.setEffectivePeriod(buildDefaultPeriod());
 
+        result.setMeta(createMeasureMeta(simpleXmlModel.getMeasScoring()));
+
 //        processMeta(result, simpleXmlModel);
         processExtension(result);
         processContained(result);
@@ -191,12 +193,39 @@ public class MeasureTranslator extends TranslatorBase {
         return result;
     }
 
-    private void processImprovementNotation(ManageCompositeMeasureDetailModel simpleXmlModel,Measure fhirMeasure) {
+    private Meta createMeasureMeta(String scoring) {
+        Meta meta = new Meta().addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/measure-cqfm");
+
+        if (StringUtils.isBlank(scoring)) {
+            log.error("Scoring type is null");
+        } else {
+            switch (scoring) {
+                case "Proportion":
+                    meta.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/proportion-measure-cqfm");
+                    break;
+                case "Cohort":
+                    meta.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cohort-measure-cqfm");
+                    break;
+                case "Continuous Variable":
+                    meta.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cv-measure-cqfm");
+                    break;
+                case "Ratio":
+                    meta.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/ratio-measure-cqfm");
+                    break;
+                default:
+                    log.error("Cannot find scoring type for scoring: {}", scoring);
+            }
+        }
+
+        return meta;
+    }
+
+    private void processImprovementNotation(ManageCompositeMeasureDetailModel simpleXmlModel, Measure fhirMeasure) {
         if (StringUtils.isBlank(simpleXmlModel.getImprovNotations())) {
             throw new CqlConversionException("simpleMeasureXml.getImprovementNotations() can not be blank.");
         }
-        if (!StringUtils.equals(simpleXmlModel.getImprovNotations(),"increase") &&
-                !StringUtils.equals(simpleXmlModel.getImprovNotations(),"decrease")) {
+        if (!StringUtils.equals(simpleXmlModel.getImprovNotations(), "increase") &&
+                !StringUtils.equals(simpleXmlModel.getImprovNotations(), "decrease")) {
             throw new CqlConversionException("invalid simpleMeasureXml.getImprovementNotations(), " +
                     simpleXmlModel.getImprovNotations() +
                     " must be either increase or decrease.");
@@ -218,6 +247,7 @@ public class MeasureTranslator extends TranslatorBase {
         Meta meta = new Meta();
         meta.setProfile(Collections.singletonList(new CanonicalType("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/device-softwaresystem-cqfm")));
         device.setMeta(meta);
+
         device.setId("cqf-tooling");
 
         Device.DeviceVersionComponent deviceVersionComponent = new Device.DeviceVersionComponent();
