@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
 import gov.cms.mat.fhir.services.components.validation.CodeSystemVsacAsync;
-import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
+import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -30,8 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,7 +39,6 @@ import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.chomp1;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.isQuoted;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.newGuid;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseCodeSystemName;
-import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseMatVersionFromCodeSystemUri;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseOid;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.validateValuesetUri;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.versionToVersionAndRevision;
@@ -66,6 +64,7 @@ public class CqlToMatXml implements CqlVisitor {
     public static final String LIB_VERSION_REGEX = "^(([1-9][0-9][0-9])|([1-9][0-9])|([0-9])).(([1-9][0-9][0-9])|([1-9][0-9])|([0-9])).[0-9][0-9][0-9]$";
     public static final Pattern LIBRARY_NAME_PATTERN = Pattern.compile(LIB_NAME_REGEX);
     public static final Pattern LIBRARY_VERSION_PATTERN = Pattern.compile(LIB_VERSION_REGEX);
+    public static final String SNOWMED_URL = "http://snomed.info/sct/731000124108";
 
     @Value("${mat.codesystem.valueset.simultaneous.validations}")
     private int simultaneousValidations;
@@ -79,7 +78,6 @@ public class CqlToMatXml implements CqlVisitor {
     private CQLModel sourceModel;
     private boolean isValidatingCodesystems = true;
     private boolean isValidatingValuesets = true;
-    private ExecutorService codeSystemValueSetExecutor;
     private String umlsToken;
 
     private final CqlLibraryRepository cqlLibraryRepository;
@@ -92,8 +90,6 @@ public class CqlToMatXml implements CqlVisitor {
 
     @PostConstruct
     protected void setupExecutor() {
-        codeSystemValueSetExecutor = Executors.newFixedThreadPool(simultaneousValidations);
-
         // Appease the codacy gods. Want to keep this code for future use.
         // Remove this if it is being used.
         log.debug("" + errorAtLine("foo", 1));
@@ -175,14 +171,16 @@ public class CqlToMatXml implements CqlVisitor {
         var isConversion = !sourceModel.isFhir();
         CQLCodeSystem cs = new CQLCodeSystem();
         cs.setId(newGuid());
-        cs.setCodeSystemName(parsedCodeSystemName.getLeft());
-        cs.setCodeSystemVersion(StringUtils.defaultString(parsedCodeSystemName.getRight()));
-        cs.setCodeSystem(uri);
         cs.setVersionUri(versionUri);
+        cs.setCodeSystemName(parsedCodeSystemName.getLeft());
+        cs.setCodeSystemVersion(parsedCodeSystemName.getRight());
+        cs.setCodeSystem(uri);
+
         if (isConversion) {
-            // In a conversion we have to tweak for SNOWMED.
-            handleSnowmedConversion(cs);
+            updateCodeSystemForConversion(cs);
         }
+        updateCodeSystemVersionFromVersionUri(cs);
+
         cs.setLineNumber(lineNumber);
         destinationModel.getCodeSystemList().add(cs);
     }
@@ -227,8 +225,8 @@ public class CqlToMatXml implements CqlVisitor {
         c.setCodeName(name);
         c.setId(newGuid());
         c.setLineNumber(lineNumber);
-        updateCodeSystemInfo(c);
-        updateCodeIdentifierAndVsacValidationFlag(c);
+        updateCodeSystemFields(c);
+        updateVsacValidation(c);
         destinationModel.getCodeList().add(c);
     }
 
@@ -308,35 +306,17 @@ public class CqlToMatXml implements CqlVisitor {
         return collection.stream().filter(filter).findFirst();
     }
 
-    private void updateCodeSystemInfo(CQLCode c) {
-        var currentCS = destinationModel.getCodeSystemList().stream().filter(cs ->
-                StringUtils.equals(cs.getCodeSystemName(), c.getCodeSystemName())).findFirst();
-        var previousCode = findExisting(sourceModel.getCodeList(),
-                ec -> StringUtils.equals(ec.getCodeName(), c.getCodeName()) &&
-                        StringUtils.equals(ec.getCodeSystemName(), c.getCodeSystemName()));
-        var isConversion = !sourceModel.isFhir();
+    private void updateCodeSystemFields(CQLCode c) {
+        var currentCS = getCodeSystemForCode(c);
 
         if (currentCS.isPresent()) {
             c.setCodeSystemName(currentCS.get().getCodeSystemName());
+            c.setCodeSystemVersion(currentCS.get().getCodeSystemVersion());
             c.setIsCodeSystemVersionIncluded(StringUtils.isNotBlank(currentCS.get().getVersionUri()));
-            c.setCodeSystemOID(currentCS.get().getCodeSystem());
-            if (isConversion) {
-                c.setCodeSystemVersion(previousCode.get().getCodeSystemVersion());
-            } else {
-                c.setCodeSystemVersion(currentCS.get().getCodeSystemVersion());
-            }
             c.setCodeSystemVersionUri(currentCS.get().getVersionUri());
+            c.setCodeSystemOID(currentCS.get().getCodeSystem());
 
-            if (c.isIsCodeSystemVersionIncluded()) {
-                c.setCodeSystemVersion(parseMatVersionFromCodeSystemUri(c));
-            }
-
-            // Check spread sheet existence.
-            var map = codeListService.getOidToVsacCodeSystemMap().values();
-            var vsacCodeSystem = map.stream().filter(
-                    v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).
-                    findFirst();
-            if (vsacCodeSystem.isEmpty()) {
+            if (!isInSpreadsheet(c)) {
                 handleError(severErrorAtLine("This code system uri is not permitted. " +
                                 "Please contact the MAT team if you feel this is in error.",
                         currentCS.get().getLineNumber()));
@@ -349,72 +329,96 @@ public class CqlToMatXml implements CqlVisitor {
         }
     }
 
-    private void updateCodeIdentifierAndVsacValidationFlag(CQLCode code) {
-        // Should always have a code system.
-        var codeSystemOpt = findExisting(destinationModel.getCodeSystemList(),
-                ecs -> StringUtils.equals(ecs.getCodeSystem(), code.getCodeSystemOID()));
+    private void updateVsacValidation(CQLCode c) {
+        // This method also updates code identifier (otherwise known as the VSAC code lookup url).
+        var currentCS = getCodeSystemForCode(c);
+        var previousCode = getPreviousCode(c);
+        var isConversion = !sourceModel.isFhir();
+        boolean isSpreadSheetRowInVsac = isCodeInVsac(c);
 
-        if (codeSystemOpt.isPresent()) {
-            //If we don't have a code system there was already a severe error and don't continue further.
-            var codeSystem = codeSystemOpt.get();
-
-            // Should always have a spreadsheet row here. Validated previously.
-            var spreadSheetRow = codeListService.getOidToVsacCodeSystemMap().values().stream().filter(
-                    v -> StringUtils.equals(v.getUrl(), code.getCodeSystemOID())).findFirst();
-
-            // May or may not have an existingCode.
-            var existingCode = findExisting(sourceModel.getCodeList(),
-                    ec -> StringUtils.equals(ec.getCodeName(), code.getCodeName()) &&
-                            StringUtils.startsWith(ec.getCodeSystemName(), code.getCodeSystemName()));
-            // May or may not have an existingCode.
-            var existingCodeSystem = findExisting(sourceModel.getCodeSystemList(),
-                    ecs -> StringUtils.equals(ecs.getCodeSystem(), code.getCodeSystemOID()));
-            var isSpreadSheetRowInVsac = false;
-            var existingCodeChanged = false;
-            var existingCodeSystemChanged = false;
-            var isConversion = !sourceModel.isFhir();
-
-            if (spreadSheetRow.isPresent()) {
-                isSpreadSheetRowInVsac = !StringUtils.contains(spreadSheetRow.get().getOid(),
-                        CodeSystemVsacAsync.NOT_IN_VSAC);
-            }
-            if (existingCode.isPresent()) {
-                CQLCode existing = existingCode.get();
-                existingCodeChanged = !StringUtils.equals(existing.getCodeName(), code.getCodeName()) ||
-                        !StringUtils.equals(existing.getCodeIdentifier(), code.getCodeIdentifier());
-            }
-            if (existingCodeSystem.isPresent()) {
-                if (isConversion) {
-                    existingCodeSystemChanged = true;
-                } else {
-                    CQLCodeSystem existing = existingCodeSystem.get();
-                    existingCodeSystemChanged = !StringUtils.equals(existing.getCodeSystem(), codeSystem.getCodeSystem()) ||
-                            !StringUtils.equals(existing.getVersionUri(), codeSystem.getVersionUri()) ||
-                            !StringUtils.equals(existing.getCodeSystemName(), codeSystem.getCodeSystemName());
-                }
-            }
-
-            if (existingCode.isEmpty() || existingCodeChanged || existingCodeSystemChanged) {
-                // If spread sheet row is a not in vsac row, it is automatically valid. Otherwise needs validation.
-                code.addValidatedWithVsac(isSpreadSheetRowInVsac ? VsacStatus.PENDING : VsacStatus.VALID);
+        if (isConversion) {
+            // If we found the previous code it is valid and CodeIdentifier is previous.
+            // If not found PENDING and code identifier is null.
+            previousCode.ifPresentOrElse(pc -> {
+                c.addValidatedWithVsac(VsacStatus.VALID);
+                c.setCodeIdentifier(pc.getCodeIdentifier());
+            }, () -> {
+                updateToRequireVsacValidation(c);
+            });
+        } else if (previousCode.isPresent()) {
+            if (!isSpreadSheetRowInVsac) {
+                //Always valid.
+                c.addValidatedWithVsac(VsacStatus.VALID);
+                c.setCodeIdentifier(previousCode.get().getCodeIdentifier());
             } else {
-                // It is the status of the existing code.
-                code.addValidatedWithVsac(existingCode.get().obtainValidatedWithVsac());
-            }
-
-            //If the code requires validation, setting the codeIndentifier (vsac url) is the responsibility of the
-            //code system validation piece.
-            if (isConversion) {
-                if (existingCode.isPresent()) {
-                    code.setCodeIdentifier(existingCode.get().getCodeIdentifier());
+                // If code system changed or code changed then its pending.
+                if (hasCodeOrCodeSystemChanged(currentCS, c, previousCode)) {
+                    updateToRequireVsacValidation(c);
                 } else {
-                    throw new CqlConversionException("Encountered a conversion and could not find the existing code! existing:\n" +
-                            existingCode + "\ncode:\n" + code);
+                    // If nothing changed it is the status of previous code.
+                    c.setValidatedWithVsac(previousCode.get().getValidatedWithVsac());
+                    c.setCodeIdentifier(previousCode.get().getCodeIdentifier());
                 }
-            } else if (code.obtainValidatedWithVsac() == VsacStatus.VALID) {
-                code.setCodeIdentifier(existingCode.get().getCodeIdentifier());
+            }
+        } else {
+            // A new code was added.
+            // If is in vsac needs validation, otherwise it is valid.
+            if (!isSpreadSheetRowInVsac) {
+                updateToRequireVsacValidation(c);
+            } else {
+                c.addValidatedWithVsac(VsacStatus.VALID);
+                c.setCodeIdentifier("");
             }
         }
+    }
+
+    private boolean hasCodeOrCodeSystemChanged(Optional<CQLCodeSystem> cs,
+                                               CQLCode currentCode,
+                                               Optional<CQLCode> previousCode) {
+        return cs.isEmpty() || previousCode.isEmpty() ||
+                !StringUtils.equals(currentCode.getCodeName(), previousCode.get().getCodeName()) ||
+                !StringUtils.equals(currentCode.getCodeOID(), previousCode.get().getCodeOID()) ||
+                !StringUtils.equals(currentCode.getCodeSystemVersionUri(), previousCode.get().getCodeSystemVersionUri()) ||
+                !StringUtils.equals(currentCode.getCodeSystemOID(), previousCode.get().getCodeSystemOID());
+    }
+
+    private boolean isCodeInVsac(CQLCode c) {
+        // If not in spreadsheet just return false.
+        AtomicBoolean result = new AtomicBoolean(false);
+        getSpreadsheetRow(c).ifPresent(cse ->
+                result.set(!StringUtils.contains(cse.getOid(), CodeSystemVsacAsync.NOT_IN_VSAC)));
+        return result.get();
+    }
+
+    private boolean isInSpreadsheet(CQLCode c) {
+        return getSpreadsheetRow(c).isPresent();
+    }
+
+    private Optional<CodeSystemEntry> getSpreadsheetRow(CQLCode c) {
+        return codeListService.getOidToVsacCodeSystemMap().values().stream().filter(
+                v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).findFirst();
+    }
+
+    private Optional<CQLCode> getPreviousCode(CQLCode c) {
+        return findExisting(sourceModel.getCodeList(),
+                ec -> StringUtils.equals(ec.getCodeName(), c.getCodeName()) &&
+                        StringUtils.equals(ec.getCodeSystemName(), c.getCodeSystemName()));
+    }
+
+    private Optional<CQLCodeSystem> getCodeSystemForCode(CQLCode c) {
+        // Lookup by code system name.
+        return destinationModel.getCodeSystemList().stream().filter(cs ->
+                StringUtils.equals(cs.getCodeSystemName(), c.getCodeSystemName())).findFirst();
+    }
+
+    private void updateToRequireVsacValidation(CQLCode c) {
+        c.addValidatedWithVsac(VsacStatus.PENDING);
+        c.setCodeIdentifier("");
+    }
+
+    private void updateToPreviousCode(CQLCode c) {
+        c.addValidatedWithVsac(VsacStatus.PENDING);
+        c.setCodeIdentifier("");
     }
 
     private CQLError severErrorAtLine(String msg, int lineNumber) {
@@ -440,13 +444,38 @@ public class CqlToMatXml implements CqlVisitor {
         return e;
     }
 
-    private void handleSnowmedConversion(CQLCodeSystem c) {
-        if (StringUtils.equals(c.getCodeSystemName(),"SNOMEDCT")) {
-            if (StringUtils.isNotBlank(c.getVersionUri())) {
-                String santiziedVersion = StringUtils.remove(c.getVersionUri(),"urn:hl7:version:");
-                c.setVersionUri("http://snomed.info/sct/731000124108/version/" +
-                        StringUtils.remove(santiziedVersion, '-'));
+    public static void updateCodeSystemForConversion(CQLCodeSystem cs) {
+        // On conversion urn:hl7:version: is still left in the version URI.
+        // This code fixes that.
+        if (StringUtils.isNotBlank(cs.getVersionUri())) {
+            String cleanedVersionUri = StringUtils.remove(cs.getVersionUri(), "urn:hl7:version:");
+            if (StringUtils.equals(SNOWMED_URL, cs.getCodeSystem())) {
+                String cleanedVersion = StringUtils.remove(cleanedVersionUri, '-');
+                cs.setVersionUri(SNOWMED_URL + "/version/" + cleanedVersion);
+            } else {
+                cs.setVersionUri(cleanedVersionUri);
             }
+        }
+    }
+
+    public static void updateCodeSystemVersionFromVersionUri(CQLCodeSystem cs) {
+        // CQLCodeSystem version is always driven off of versionUri.
+        String versionUri = cs.getVersionUri();
+        if (StringUtils.isNotBlank(versionUri)) {
+            if (cs.getCodeSystem().equals(SNOWMED_URL)) {
+                String version = StringUtils.substringAfter(versionUri, "/version/");
+                if (StringUtils.isEmpty(version)) {
+                    log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", versionUri);
+                } else if (version.length() != 6) { //201907 YYYYMM
+                    log.warn("Version string length is not 6: {}", version);
+                } else {
+                    cs.setCodeSystemVersion(version.substring(0, 4) + "-" + version.substring(4));
+                }
+            } else {
+                cs.setCodeSystemVersion(versionUri);
+            }
+        } else {
+            cs.setCodeSystemVersion(null);
         }
     }
 }
