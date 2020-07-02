@@ -15,7 +15,6 @@ import gov.cms.mat.fhir.services.translate.processor.RiskAdjustmentsDataProcesso
 import gov.cms.mat.fhir.services.translate.processor.SupplementalDataProcessor;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
-import mat.client.measure.PeriodModel;
 import mat.model.MeasureType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -40,17 +39,12 @@ import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.hl7.fhir.r4.model.UsageContext;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.INVALID_MEASURE_XML;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.CITATION;
 import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.DOCUMENTATION;
 import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.JUSTIFICATION;
@@ -59,10 +53,6 @@ import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.JUSTIFIC
 @Slf4j
 @Service
 public class MeasureTranslator extends TranslatorBase {
-    //this should be something that MAT provides but doesn't there are many possibilities
-    // TODO: close this issue.
-    //public static final String QI_CORE_MEASURE_PROFILE = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/proportion-measure-cqfm";
-    //public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
     public static final RelatedArtifact.RelatedArtifactType DEFAULT_ARTIFACT_TYPE = DOCUMENTATION;
     public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
 
@@ -147,9 +137,25 @@ public class MeasureTranslator extends TranslatorBase {
         result.setPurpose("Unknown");
         result.setCopyright(simpleXmlModel.getCopyright());
         result.setDisclaimer(simpleXmlModel.getDisclaimer());
-        result.setPurpose("Unknown");
+        result.setPurpose("Unknown"); // To do: ?
         result.setLibrary(Collections.singletonList(new CanonicalType("Library/" + cqlLib.getId())));
+        result.setContact(createContactDetailUrl());
+        result.setUseContext(createUsageContext());
+        result.setMeta(createMeasureMeta(simpleXmlModel.getMeasScoring()));
         processImprovementNotation(simpleXmlModel,result);
+        processExtension(result);
+        processContained(result);
+        processHumanReadable(id, result);
+        processIdentifiers(result, simpleXmlModel);
+        processStatus(result, simpleXmlModel);
+        processFinalizeDate(result, matMeasure);
+        processTypes(result, simpleXmlModel);
+        processJurisdiction(result);
+        processPeriod(result, matMeasure);
+        processRelatedArtifacts(result, matMeasure, simpleXmlModel);
+        processScoring(result, simpleXmlModel);
+        processXml(simpleXml, result);
+        return result;
 
         //Note:
         // These are contextual and we might need to add them in later on.
@@ -157,40 +163,6 @@ public class MeasureTranslator extends TranslatorBase {
         //result.setCompositeScoring();
         //result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
         //result.setTopic(createTopic());
-
-        //Note:
-        // result.setExtension(new ArrayList<>());
-        //  set Extensions if any known, QICore Extension below
-        //  QICore Not Done Extension
-        //  EncounterProcedureExtension
-        //  Military Service Extension
-        //  RAND Appropriateness Score Extension
-
-        result.setContact(createContactDetailUrl());
-
-        result.setUseContext(createUsageContext());
-
-        result.setEffectivePeriod(buildDefaultPeriod());
-
-        result.setMeta(createMeasureMeta(simpleXmlModel.getMeasScoring()));
-
-//        processMeta(result, simpleXmlModel);
-        processExtension(result);
-        processContained(result);
-        //TODO need to fix Improvment Notation on MAT side
-//        processImprovementNotation(result);
-        processHumanReadable(id, result);
-        processIdentifiers(result, simpleXmlModel);
-        processStatus(result, simpleXmlModel);
-        processFinalizeDate(result, simpleXmlModel);
-        processTypes(result, simpleXmlModel);
-        processJurisdiction(result);
-        processPeriod(result, simpleXmlModel);
-        processRelatedArtifacts(result, matMeasure, simpleXmlModel);
-        processScoring(result, simpleXmlModel);
-        processXml(simpleXml, result);
-
-        return result;
     }
 
     private Meta createMeasureMeta(String scoring) {
@@ -216,7 +188,6 @@ public class MeasureTranslator extends TranslatorBase {
                     log.error("Cannot find scoring type for scoring: {}", scoring);
             }
         }
-
         return meta;
     }
 
@@ -265,29 +236,16 @@ public class MeasureTranslator extends TranslatorBase {
         fhirMeasure.setContained(Collections.singletonList(device));
     }
 
-/*    private void processImprovementNotation(Measure fhirMeasure) {
-        CodeableConcept improvementNotation = buildCodeableConcept("increase",
-                "http://terminology.hl7.org/CodeSystem/measure-improvement-notation", "");
-        fhirMeasure.setImprovementNotation(improvementNotation);
-    }*/
-
     private void processXml(byte[] xmlBytes, org.hl7.fhir.r4.model.Measure fhirMeasure) {
         String xml = new String(xmlBytes);
-
         fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(xml));
-
         fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
-
-        //Test for all types.
         fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
     }
 
-
     public void processPeriod(Measure fhirMeasure,
-                              ManageCompositeMeasureDetailModel matModel) {
-        PeriodModel pModel = matModel.getPeriodModel();
-        Period effectivePeriod = buildPeriod(convertDateTimeString(pModel.getStartDate()),
-                convertDateTimeString(pModel.getStopDate()));
+                              gov.cms.mat.fhir.commons.model.Measure matModel) {
+        Period effectivePeriod = buildPeriodDayResolution(matModel.getMeasurementPeriodFrom(),matModel.getMeasurementPeriodTo());
         fhirMeasure.setEffectivePeriod(effectivePeriod);
     }
 
@@ -298,9 +256,9 @@ public class MeasureTranslator extends TranslatorBase {
     }
 
     public void processFinalizeDate(Measure fhirMeasure,
-                                    ManageCompositeMeasureDetailModel matModel) {
+                                    gov.cms.mat.fhir.commons.model.Measure matModel) {
         if (matModel.getFinalizedDate() != null) {
-            fhirMeasure.setApprovalDate(convertDateTimeString(matModel.getFinalizedDate()));
+            fhirMeasure.setApprovalDate(matModel.getFinalizedDate());
         } else {
             log.debug("No approval date");
         }
@@ -308,7 +266,6 @@ public class MeasureTranslator extends TranslatorBase {
 
     public void processStatus(Measure fhirMeasure,
                               ManageCompositeMeasureDetailModel matModel) {
-        //set measure status mat qdm does not have all status types
         if (matModel.isDraft()) {
             fhirMeasure.setStatus(Enumerations.PublicationStatus.DRAFT);
         } else if (matModel.isDeleted()) {
@@ -378,7 +335,6 @@ public class MeasureTranslator extends TranslatorBase {
     }
 
     public CodeableConcept buildTypeFromAbbreviation(String abbrName) {
-        //TO DO: Test Type.
         var optional = MatMeasureType.findByMatAbbreviation(abbrName);
 
         if (optional.isPresent()) {
@@ -387,14 +343,6 @@ public class MeasureTranslator extends TranslatorBase {
             return buildCodeableConcept("unknown", MEASURE_TYPE, "");
         }
     }
-
-    /*public void processMeta(Measure fhirMeasure, ManageCompositeMeasureDetailModel matModel) {
-        Meta measureMeta = new Meta();
-        measureMeta.addProfile(QI_CORE_MEASURE_PROFILE);
-        measureMeta.setVersionId(matModel.getVersionNumber());
-        measureMeta.setLastUpdated(new Date());
-        fhirMeasure.setMeta(measureMeta);
-    }*/
 
     public void processHumanReadable(String measureId, Measure measure) {
         var measureExpOpt = matMeasureExportRepo.findById(measureId);
@@ -444,23 +392,6 @@ public class MeasureTranslator extends TranslatorBase {
         return usageContextList;
     }
 
-
-    private Date convertDateTimeString(String dString) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            return sdf.parse(dString);
-        } catch (Exception ex) {
-            try {
-                SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd/yyyy HH:mm a");
-                return sdf2.parse(dString);
-            } catch (Exception ex2) {
-                LocalDate epoch = LocalDate.ofEpochDay(0L);
-                long epochLong = epoch.toEpochDay();
-                return new Date(epochLong);
-            }
-        }
-    }
-
     private RelatedArtifact.RelatedArtifactType mapReferenceType(MeasureReferenceType matReferenceType) {
         switch (matReferenceType) {
             case JUSTIFICATION:
@@ -489,13 +420,4 @@ public class MeasureTranslator extends TranslatorBase {
     private String createVersion(gov.cms.mat.fhir.commons.model.Measure matMeasure) {
         return createVersion(matMeasure.getVersion(), matMeasure.getRevisionNumber());
     }
-
-    private Period buildDefaultPeriod() {
-        LocalDate now = LocalDate.now();
-
-        return new Period()
-                .setStart(java.sql.Date.valueOf(now.with(firstDayOfYear())))
-                .setEnd(java.sql.Date.valueOf(now.with(lastDayOfYear())));
-    }
-
 }
