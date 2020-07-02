@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.rest.support;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.validation.ResultSeverityEnum;
 import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationOptions;
 import ca.uhn.fhir.validation.ValidationResult;
@@ -9,6 +10,7 @@ import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 
@@ -37,31 +39,26 @@ public interface FhirValidatorProcessor {
 
         ValidationOptions options = new ValidationOptions();
 
-
-        //if (resource instanceof Measure)
-        //   options.addProfile("http://build.fhir.org/ig/HL7/cqf-measures/branches/R4_Lift/StructureDefinition-measure-cqfm.json");
-
-        // if (resource instanceof Library)
-        //     options.addProfile("http://build.fhir.org/ig/HL7/cqf-measures/branches/R4_Lift/StructureDefinition-library-cqfm.json");
-
-
         ValidationResult validationResult = validator.validateWithResult(resource, options);
 
+        // Ignore anything below ERROR.
+        // Ignore Unable to locate profile errors.
         validationResult.getMessages()
-                .forEach(n -> fhirResourceValidationResult.getValidationErrorList().add(buildValidationError(n)));
+                .stream().filter(m -> m.getSeverity() != ResultSeverityEnum.ERROR &&
+                m.getSeverity() != ResultSeverityEnum.FATAL).
+                filter(m -> StringUtils.contains(m.getMessage(),"Unable to locate profile")).
+                forEach(m -> fhirResourceValidationResult.getValidationErrorList().add(buildValidationError(m)));
     }
 
     default FhirResourceValidationError buildValidationError(SingleValidationMessage next) {
         return new FhirResourceValidationError(next.getSeverity().name(), next.getLocationString(), next.getMessage());
     }
 
-
     default List<FhirValidationResult> buildResults(FhirResourceValidationResult response) {
         return response.getValidationErrorList().stream()
                 .map(this::buildFhirValidationResult)
                 .collect(Collectors.toList());
     }
-
 
     default FhirValidationResult buildFhirValidationResult(FhirResourceValidationError e) {
         return FhirValidationResult.builder()

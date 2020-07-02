@@ -48,7 +48,7 @@ public class CodeSystemValidator extends CqlValidatorHelper {
             LibraryErrors libraryErrors = buildLibraryErrors(cqlTextParser);
 
             List<CQLError> codeSystemErrors = failingCodes.stream()
-                    .filter(c -> c.getErrorCode() == null || !c.getErrorCode().equals(CODE_ERRORS))
+                    .filter(c -> c.getErrorCode() != null && !c.getErrorCode().equals(CODE_ERRORS))
                     .map(c -> createCodeSystemError(c, codeSystemList))
                     .collect(Collectors.toList());
             libraryErrors.getErrors().addAll(codeSystemErrors);
@@ -56,7 +56,7 @@ public class CodeSystemValidator extends CqlValidatorHelper {
             libraryErrors.getErrors().addAll(unReferencedCodeSystems);
 
             List<CQLError> codeErrors = failingCodes.stream()
-                    .filter(c -> c.getErrorCode() != null && c.getErrorCode().equals(CODE_ERRORS))
+                    .filter(c -> c.getErrorCode() == null || c.getErrorCode().equals(CODE_ERRORS))
                     .map(this::createCodeError)
                     .collect(Collectors.toList());
 
@@ -68,7 +68,7 @@ public class CodeSystemValidator extends CqlValidatorHelper {
 
     private List<CQLError> findUnreferencedCodeSystems(List<CQLCodeSystem> codeSystemList, List<CQLCode> codeList) {
         List<CQLCodeSystem> notReferences = codeSystemList.stream()
-                .filter(codeSystem -> codeSystemNotRefrenced(codeSystem, codeList))
+                .filter(codeSystem -> codeSystemNotReferenced(codeSystem, codeList))
                 .collect(Collectors.toList());
 
         if (notReferences.isEmpty()) {
@@ -81,7 +81,7 @@ public class CodeSystemValidator extends CqlValidatorHelper {
 
     }
 
-    private boolean codeSystemNotRefrenced(CQLCodeSystem cqlCodeSystem, List<CQLCode> codeList) {
+    private boolean codeSystemNotReferenced(CQLCodeSystem cqlCodeSystem, List<CQLCode> codeList) {
         return codeList.stream()
                 .noneMatch(cqlCode -> cqlCode.getCodeSystemName().equals(cqlCodeSystem.getCodeSystemName()));
     }

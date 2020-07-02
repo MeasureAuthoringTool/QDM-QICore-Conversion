@@ -58,7 +58,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
 
 
     boolean validate(OrchestrationProperties properties) {
-        convertQdmToFhir(properties.getMeasureLib(), properties.isShowWarnings(), properties.getIncludeStdLibs());
+        convertQdmToFhir(properties.getMeasureLib(), properties.isShowWarnings(), properties.isIncludeStdLibs());
         translateCqlMatLibsToFhir(properties);
         return validateLibs(properties);
     }

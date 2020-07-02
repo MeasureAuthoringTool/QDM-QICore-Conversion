@@ -19,34 +19,22 @@ import java.util.List;
 
 @Builder
 @Getter
+@Setter
 @Slf4j
 @ToString
 public class OrchestrationProperties {
-    final List<ValueSet> valueSets = new ArrayList<>();
-    @Setter
-    CqlLibrary measureLib;
-
-    final List<Library> fhirLibraries = new ArrayList<>();
-
-    ThreadSessionKey threadSessionKey;
-
-    @Setter
-    Measure matMeasure;
-
-    String vsacGrantingTicket;
-
-    boolean showWarnings;
-
-    Boolean includeStdLibs ;
-
-    @Setter
-    Boolean isPush;
-
-    @Setter
-    org.hl7.fhir.r4.model.Measure fhirMeasure;
-
-    ConversionType conversionType;
-    XmlSource xmlSource;
+    private final List<ValueSet> valueSets = new ArrayList<>();
+    private final List<Library> fhirLibraries = new ArrayList<>();
+    private CqlLibrary measureLib;
+    private ThreadSessionKey threadSessionKey;
+    private Measure matMeasure;
+    private String vsacGrantingTicket;
+    private boolean showWarnings;
+    private boolean includeStdLibs;
+    private boolean isPush;
+    private org.hl7.fhir.r4.model.Measure fhirMeasure;
+    private ConversionType conversionType;
+    private XmlSource xmlSource;
 
     public String getMeasureId() {
         if (matMeasure != null) {

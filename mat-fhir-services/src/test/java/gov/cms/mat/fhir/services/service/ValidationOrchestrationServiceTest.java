@@ -76,6 +76,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
     @Test
     void validateCqlAllValidationsNoValueSetsAndCodeSystems() {
         cqlModel.setCodeList(Collections.emptyList());
+        cqlModel.setCodeSystemList(Collections.emptyList());
         cqlModel.setValueSetList(Collections.emptyList());
 
         ValidationRequest validationRequest = getValidationRequest(true, true, false);

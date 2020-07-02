@@ -44,11 +44,16 @@ public class PushMeasureController implements FhirValidatorProcessor {
     public String pushMeasure(
             @RequestParam @Min(10) String id,
             @RequestParam(required = false, defaultValue = "PUSH-MEASURE-ORCHESTRATION") String batchId) {
+        try {
 
-        ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, batchId);
-        OrchestrationProperties orchestrationProperties = buildProperties(threadSessionKey);
+            ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, batchId);
+            OrchestrationProperties orchestrationProperties = buildProperties(threadSessionKey);
 
-        return pushMeasureService.convert(id, orchestrationProperties);
+            return pushMeasureService.convert(id, orchestrationProperties);
+        } catch (RuntimeException e) {
+            log.error("pushMeasure",e);
+            throw e;
+        }
     }
 
     private OrchestrationProperties buildProperties(ThreadSessionKey threadSessionKey) {

@@ -5,7 +5,6 @@ import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mat.DraftMeasureXmlProcessor;
 import gov.cms.mat.fhir.services.components.mat.MatXmlException;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.*;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
@@ -44,11 +43,12 @@ public class OrchestrationService {
         if (!processPrerequisitesFlag) {
             log.debug("Conversion Stopped due to Prerequisites failures measureId: {}", properties.getMeasureId());
             return false;
-        } else if (!processValidation(properties)) {
+        } else if (!processConversion(properties)) {
             log.debug("Conversion Stopped due to validation errors measureId: {}", properties.getMeasureId());
             return false;
         } else {
-            return processConversion(properties);
+            return properties.isPush() ?
+                    processPersistToHapiFhir(properties) : true;
         }
     }
 
@@ -95,7 +95,7 @@ public class OrchestrationService {
 
 
     /* Should be called only when validation has succeeded */
-    public boolean processConversion(OrchestrationProperties properties) {
+    public boolean processPersistToHapiFhir(OrchestrationProperties properties) {
         if (properties.getConversionType().equals(ConversionType.VALIDATION)) {
             log.debug("Conversion not requested for measureId: {}", properties.getMeasureId());
             return true;
@@ -115,7 +115,7 @@ public class OrchestrationService {
         }
     }
 
-    public boolean processValidation(OrchestrationProperties properties) {
+    public boolean processConversion(OrchestrationProperties properties) {
         log.debug("Validation has started for measureId: {}, xmlSource: {} and conversionType: {}",
                 properties.getMeasureId(), properties.getXmlSource(), properties.getConversionType());
 

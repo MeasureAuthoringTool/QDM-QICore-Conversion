@@ -63,7 +63,7 @@ class CodeSystemVsacAsyncTest {
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
         completableFuture.get();
 
-        assertEquals("Invalid code system uri", cqlCode.getErrorMessage());
+        assertEquals("Invalid code system uri.", cqlCode.getErrorMessage());
         verifyNoInteractions(vsacRestClient);
     }
 
@@ -74,7 +74,7 @@ class CodeSystemVsacAsyncTest {
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
         completableFuture.get();
 
-        assertEquals("Code system uri is required", cqlCode.getErrorMessage());
+        assertEquals("Code system uri is required.", cqlCode.getErrorMessage());
 
 
         verifyNoInteractions(vsacRestClient);
