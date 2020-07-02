@@ -308,13 +308,12 @@ public class CqlUtils {
         //urn:oid:2.16.840.1.113883.3.464.1004.1548
         //Should return 2.16.840.1.113883.3.464.1004.1548
         if (!uri.startsWith(OID_URL_TOKEN) &&
-                !uri.startsWith("http")){
+                !uri.startsWith("http")) {
             throw new IllegalArgumentException("Invalid uri: " + uri +
                     ". Should be in this format: urn:oid:2.16.840.1.113883.3.464.1004.1548 or this format " +
                     "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.17.4077.3.2011");
         }
     }
-
 
 
     public static String parseOid(String uri) {
@@ -323,7 +322,7 @@ public class CqlUtils {
         //Should return 2.16.840.1.113883.3.464.1004.1548
         if (uri.startsWith(OID_URL_TOKEN)) {
             result = uri.substring(OID_URL_TOKEN.length());
-        } else if (uri.startsWith("http")){
+        } else if (uri.startsWith("http")) {
             //It is everything after last /.
             int lastSlash = uri.lastIndexOf("/");
             if (lastSlash >= 0) {
@@ -427,15 +426,14 @@ public class CqlUtils {
 
     public static String parseMatVersionFromCodeSystemUri(CQLCode c) {
         String result = c.getCodeSystemVersionUri();
-        if (StringUtils.startsWith(result,SNOWMED_URL)) {
-                String version = StringUtils.substringAfter(result, "/version/");
-                if (StringUtils.isEmpty(version)) {
-                    log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", result);
-                } else if (version.length() != 6) { //201907 YYYYMM
-                    log.warn("Version string length is not 6: {}", version);
-                } else {
-                    result = version.substring(0, 4) + "-" + version.substring(4);
-                }
+        if (StringUtils.startsWith(result, SNOWMED_URL)) {
+            String version = StringUtils.substringAfter(result, "/version/");
+            if (StringUtils.isEmpty(version)) {
+                log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", result);
+            } else if (version.length() != 6) { //201907 YYYYMM
+                log.warn("Version string length is not 6: {}", version);
+            } else {
+                result = version.substring(0, 4) + "-" + version.substring(4);
             }
         }
         return result;
