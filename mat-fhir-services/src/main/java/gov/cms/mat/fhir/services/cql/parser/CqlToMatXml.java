@@ -18,6 +18,7 @@ import mat.model.cql.CQLParameter;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.model.cql.VsacStatus;
 import mat.shared.CQLError;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -25,7 +26,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +64,7 @@ public class CqlToMatXml implements CqlVisitor {
     public static final String LIB_VERSION_REGEX = "^(([1-9][0-9][0-9])|([1-9][0-9])|([0-9])).(([1-9][0-9][0-9])|([1-9][0-9])|([0-9])).[0-9][0-9][0-9]$";
     public static final Pattern LIBRARY_NAME_PATTERN = Pattern.compile(LIB_NAME_REGEX);
     public static final Pattern LIBRARY_VERSION_PATTERN = Pattern.compile(LIB_VERSION_REGEX);
-    public static final String SNOWMED_URL = "http://snomed.info/sct/731000124108";
+    public static final String SNOWMED_URL = "http://snomed.info/sct";
 
     @Value("${mat.codesystem.valueset.simultaneous.validations}")
     private int simultaneousValidations;
@@ -258,7 +258,7 @@ public class CqlToMatXml implements CqlVisitor {
     public void function(String name, List<FunctionArgument> args, String logic, String comment) {
         // Functions can be overloaded in FHIR
         var f = new CQLFunctions();
-        f.setId(newGuid());
+        f.setId(getFunctionId(name));
         f.setName(name);
         f.setLogic(logic);
         f.setCommentString(comment);
@@ -280,6 +280,38 @@ public class CqlToMatXml implements CqlVisitor {
         destinationModel.getCqlFunctions().add(f);
     }
 
+    private String getDefineId(String name) {
+        // Look for an existing one and use that if found. Otherwise generate a new one.
+        if (sourceModel != null) {
+            var matchingDefines = sourceModel.getDefinitionList().stream().
+                    filter(d -> StringUtils.equals(d.getName(),name)).
+                    collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(matchingDefines) && matchingDefines.size() == 1) {
+                return matchingDefines.get(0).getId();
+            } else {
+                return newGuid();
+            }
+        } else {
+            return newGuid();
+        }
+    }
+
+    private String getFunctionId(String name) {
+        // Look for an existing one and use that if found. Otherwise generate a new one.
+        if (sourceModel != null) {
+            var matchingFunctions = sourceModel.getCqlFunctions().stream().
+                    filter(d -> StringUtils.equals(d.getName(),name)).
+                    collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(matchingFunctions) && matchingFunctions.size() == 1) {
+                return matchingFunctions.get(0).getId();
+            } else {
+                return newGuid();
+            }
+        } else {
+            return newGuid();
+        }
+    }
+
     /**
      * @param title   The title.
      * @param logic   The logic.
@@ -288,7 +320,7 @@ public class CqlToMatXml implements CqlVisitor {
      */
     private CQLDefinition buildCQLDef(String title, String logic, String comment) {
         CQLDefinition result = new CQLDefinition();
-        result.setId(newGuid());
+        result.setId(getDefineId((title)));
         result.setName(title);
         result.setLogic(logic);
         result.setSupplDataElement(false);
@@ -337,9 +369,7 @@ public class CqlToMatXml implements CqlVisitor {
             previousCode.ifPresentOrElse(pc -> {
                 c.addValidatedWithVsac(VsacStatus.VALID);
                 c.setCodeIdentifier(pc.getCodeIdentifier());
-            }, () -> {
-                updateToRequireVsacValidation(c);
-            });
+            }, () -> updateToRequireVsacValidation(c));
         } else if (previousCode.isPresent()) {
             if (!isSpreadSheetRowInVsac) {
                 //Always valid.
