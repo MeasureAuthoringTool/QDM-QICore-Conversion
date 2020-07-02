@@ -2,7 +2,6 @@ package gov.cms.mat.fhir.services.components.validation;
 
 import gov.cms.mat.fhir.services.components.vsac.VsacResponse;
 import gov.cms.mat.fhir.services.components.vsac.VsacRestClient;
-import gov.cms.mat.fhir.services.cql.parser.CqlUtils;
 import gov.cms.mat.fhir.services.service.VsacService;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLCode;
