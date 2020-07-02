@@ -1,12 +1,14 @@
 package mat.model.cql;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import lombok.ToString;
 
 import java.util.Objects;
 
 /**
  * The Class CQLCode.
  */
+@ToString
 public class CQLCode implements CQLExpression, IsSerializable {
 
     /**

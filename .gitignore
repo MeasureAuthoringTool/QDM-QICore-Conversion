@@ -9,6 +9,8 @@
 *.zip
 *.tar.gz
 *.rar
+*.log
+*.gz
 docker-env.sh
 temp
 

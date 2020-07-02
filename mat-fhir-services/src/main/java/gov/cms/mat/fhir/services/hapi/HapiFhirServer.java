@@ -45,7 +45,6 @@ public class HapiFhirServer {
         log.info("Created hapi client for server: {} ", baseURL);
     }
 
-
     public Optional<ValueSet> fetchHapiValueSet(String oid) {
         return findResourceInBundle(getValueSetBundle(oid), ValueSet.class);
     }

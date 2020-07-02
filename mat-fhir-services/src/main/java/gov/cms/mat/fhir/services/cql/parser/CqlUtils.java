@@ -1,17 +1,16 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import lombok.extern.slf4j.Slf4j;
+import mat.model.cql.CQLCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.UUID;
 
+import static gov.cms.mat.fhir.services.cql.parser.CqlToMatXml.SNOWMED_URL;
 import static java.lang.Integer.max;
 
 /**
@@ -47,20 +46,6 @@ public class CqlUtils {
             last = i;
         }
         return result;
-    }
-
-    /**
-     * Same as areValidAscendingIndexes(int... indexes) except this one uses ParsedResult.endIndex for the indexes.
-     *
-     * @param indexes The indexes to check.
-     * @return Returns true if all the indexes are in ascending order and non negative.
-     */
-    public static boolean areValidAscendingIndexes(ParseResult... indexes) {
-        int[] intIndexes = new int[indexes.length];
-        for (int i = 0; i < indexes.length; i++) {
-            intIndexes[i] = indexes[i].getEndIndex();
-        }
-        return areValidAscendingIndexes(intIndexes);
     }
 
     /**
@@ -149,61 +134,6 @@ public class CqlUtils {
     }
 
     /**
-     * @param source     The string to search.
-     * @param indexStart The index to start at.
-     * @return Returns a ParseResult: string=nextNonWhitespaceCharFound endIndex=indexOfNonWhitespaceCharFound.
-     */
-    public static ParseResult nextNonWhitespace(String source,
-                                                int indexStart) {
-        int index = -1;
-        char c = 0;
-
-        for (int i = indexStart; i < source.length(); i++) {
-            c = source.charAt(i);
-            if (!Character.isWhitespace(c)) {
-                index = i;
-                break;
-            }
-        }
-        return new ParseResult("" + c, index);
-    }
-
-    /**
-     * @param source     The string to search.
-     * @param indexStart The index to start at.
-     * @return Returns a ParseResult: string=nextNonWhitespaceCharFound endIndex=indexOfNonWhitespaceCharFound.
-     */
-    public static ParseResult nextCharMatching(String source,
-                                               int indexStart,
-                                               char... matchingChars) {
-        int index = -1;
-        char c = 0;
-
-        for (int i = indexStart; i < source.length(); i++) {
-            if (contains(c = source.charAt(i), matchingChars)) {
-                index = i;
-                break;
-            }
-        }
-        return new ParseResult("" + c, index);
-    }
-
-    public static ParseResult nextCharNotMatching(String source,
-                                                  int indexStart,
-                                                  char... notMatchingChars) {
-        int index = -1;
-        char c = 0;
-
-        for (int i = indexStart; i < source.length(); i++) {
-            if (!contains(c = source.charAt(i), notMatchingChars)) {
-                index = i;
-                break;
-            }
-        }
-        return new ParseResult("" + c, index);
-    }
-
-    /**
      * @param c     The char.
      * @param chars The chars to check.
      * @return Returns true if c is in chars, otherwise false.
@@ -262,17 +192,6 @@ public class CqlUtils {
         }
         return result;
     }
-
-    /**
-     * Removes the urn:oid: from the specified code system name.
-     *
-     * @param codeSystemName The code system name.
-     * @return codeSystemName with urn:oid: removed.
-     */
-    public static String trimUrn(String codeSystemName) {
-        return StringUtils.removeStart(codeSystemName, "urn:oid:");
-    }
-
 
     /**
      * @return A new guid string.
@@ -389,13 +308,12 @@ public class CqlUtils {
         //urn:oid:2.16.840.1.113883.3.464.1004.1548
         //Should return 2.16.840.1.113883.3.464.1004.1548
         if (!uri.startsWith(OID_URL_TOKEN) &&
-                !uri.startsWith("http")){
+                !uri.startsWith("http")) {
             throw new IllegalArgumentException("Invalid uri: " + uri +
                     ". Should be in this format: urn:oid:2.16.840.1.113883.3.464.1004.1548 or this format " +
                     "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.17.4077.3.2011");
         }
     }
-
 
 
     public static String parseOid(String uri) {
@@ -404,7 +322,7 @@ public class CqlUtils {
         //Should return 2.16.840.1.113883.3.464.1004.1548
         if (uri.startsWith(OID_URL_TOKEN)) {
             result = uri.substring(OID_URL_TOKEN.length());
-        } else if (uri.startsWith("http")){
+        } else if (uri.startsWith("http")) {
             //It is everything after last /.
             int lastSlash = uri.lastIndexOf("/");
             if (lastSlash >= 0) {
@@ -426,36 +344,12 @@ public class CqlUtils {
                 codeSystemName.substring(i + 1)) : Pair.of(codeSystemName, null);
     }
 
-    public static boolean startsWith(String s, String... tokens) {
-        boolean result = false;
-        for (String tok : tokens) {
-            if (StringUtils.startsWith(s, tok)) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Parses the next line.
-     *
-     * @param cql   The cql.
-     * @param start The start index.
-     * @return The next line. endIndex is the index of the next \n or -1 if EOF.
-     */
-    public static ParseResult parseNextLine(String cql, int start) {
-        int nextNewline = indexOf(cql, '\n', start);
-        return nextNewline == -1 ? new ParseResult(StringUtils.substring(cql, start, cql.length()), -1) :
-                new ParseResult(StringUtils.substring(cql, start, nextNewline), nextNewline - 1);
-    }
-
     public static boolean isQuoted(String s) {
         return StringUtils.isNotBlank(s) && s.startsWith("\"") && s.endsWith("\"");
     }
 
     public static boolean isSingleQuoted(String s) {
-        return StringUtils.isNotBlank(s) && s.startsWith("\'") && s.endsWith("\'");
+        return StringUtils.isNotBlank(s) && s.startsWith("'") && s.endsWith("'");
     }
 
     public static String unquote(String fullText) {
@@ -464,10 +358,6 @@ public class CqlUtils {
 
     public static String parsePrecedingComment(String cql) {
         return parsePrecedingComment(cql, 0, cql.length());
-    }
-
-    public static String parsePrecedingComment(String cql, int end) {
-        return parsePrecedingComment(cql, 0, end);
     }
 
     /**
@@ -479,7 +369,7 @@ public class CqlUtils {
      * @param cql   - CQL content
      * @param start - search area start index
      * @param end   - search area end index
-     * @return
+     * @return the comment
      */
     public static String parsePrecedingComment(String cql, int start, int end) {
         StringBuilder comment = new StringBuilder();
@@ -534,12 +424,25 @@ public class CqlUtils {
         return comment.toString();
     }
 
+    public static String parseMatVersionFromCodeSystemUri(CQLCode c) {
+        String result = c.getCodeSystemVersionUri();
+        if (StringUtils.startsWith(result, SNOWMED_URL)) {
+            String version = StringUtils.substringAfter(result, "/version/");
+            if (StringUtils.isEmpty(version)) {
+                log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", result);
+            } else if (version.length() != 6) { //201907 YYYYMM
+                log.warn("Version string length is not 6: {}", version);
+            } else {
+                result = version.substring(0, 4) + "-" + version.substring(4);
+            }
+        }
+        return result;
+    }
+
     private static void prependCommentLine(StringBuilder comment, String line) {
         if (comment.length() > 0) {
             comment.insert(0, StringUtils.LF);
         }
         comment.insert(0, line);
     }
-
-
 }
