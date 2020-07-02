@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.translate.creators;
 
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
 import gov.cms.mat.cql.elements.LibraryProperties;
 import org.hl7.fhir.r4.model.*;
 
@@ -49,10 +50,10 @@ public interface FhirCreator {
                 .setDisplay(display);
     }
 
-    default Period buildPeriod(Date startDate, Date endDate) {
+    default Period buildPeriodDayResolution(Date startDate, Date endDate) {
         return new Period()
-                .setStart(startDate)
-                .setEnd(endDate);
+                .setStart(startDate, TemporalPrecisionEnum.DAY)
+                .setEnd(endDate, TemporalPrecisionEnum.DAY);
     }
 
     default String createLibraryUuid(LibraryProperties properties) {
