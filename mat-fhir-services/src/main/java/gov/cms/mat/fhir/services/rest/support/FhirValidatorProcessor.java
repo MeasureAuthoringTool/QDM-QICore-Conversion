@@ -12,6 +12,7 @@ import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.hapi.ctx.IValidationSupport;
 import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 
 import java.util.List;
@@ -32,12 +33,19 @@ public interface FhirValidatorProcessor {
                                   IBaseResource resource,
                                   FhirContext ctx) {
         ca.uhn.fhir.validation.FhirValidator validator = ctx.newValidator();
+        FhirInstanceValidator validator2 = new FhirInstanceValidator();
 
         FhirInstanceValidator instanceValidator = new FhirInstanceValidator();
-        validator.registerValidatorModule(instanceValidator);
+
+        IValidationSupport is = (IValidationSupport)ctx.getValidationSupport();
+        instanceValidator.setValidationSupport((IValidationSupport)ctx.getValidationSupport());
         instanceValidator.setNoTerminologyChecks(true);
+        validator.registerValidatorModule(instanceValidator);
 
         ValidationOptions options = new ValidationOptions();
+        options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
+        options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/library-cqfm");
+        options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
 
         ValidationResult validationResult = validator.validateWithResult(resource, options);
 
