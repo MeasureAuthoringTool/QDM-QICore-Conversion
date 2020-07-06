@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -340,7 +341,7 @@ public class LibraryTranslator extends TranslatorBase {
          * @return Returns true if the retrieve is a valueset retrieve.
          */
         private boolean matchesValuesetRetrieve(cqlParser.RetrieveContext ctx) {
-            return ctx.getChildCount() == 7 &&
+            return ctx.getChildCount() == 5 &&
                     ctx.getChild(0).getText().equals("[") &&
                     ctx.getChild(2).getText().equals(":") &&
                     ctx.getChild(4).getText().equals("]");
@@ -361,7 +362,7 @@ public class LibraryTranslator extends TranslatorBase {
          */
         private DataRequirement fromSimpleRetrieve(cqlParser.RetrieveContext ctx) {
             var result = new DataRequirement();
-            result.setType(trim1(ctx.getChild(1).getText()));
+            result.setType(trimQuotes(ctx.getChild(1).getText()));
             dataRequirements.add(result);
             return result;
         }
@@ -376,7 +377,7 @@ public class LibraryTranslator extends TranslatorBase {
 
             if (StringUtils.isNotBlank(valueSet)) {
                 var result = new DataRequirement();
-                result.setType(trim1(ctx.getChild(1).getText()));
+                result.setType(trimQuotes(ctx.getChild(1).getText()));
                 var filter = new DataRequirement.DataRequirementCodeFilterComponent();
                 filter.setPath(ctx.getChild(3).getText());
                 filter.setValueSet(valueSet);
@@ -387,19 +388,28 @@ public class LibraryTranslator extends TranslatorBase {
             }
         }
 
+        private String trimQuotes(String s) {
+            if (StringUtils.startsWith(s,"\"") && StringUtils.endsWith(s,"\"")) {
+                return trim1(s);
+            } else {
+                return s;
+            }
+        }
+
         /**
          * @param ctx The context.
          * @return Builds a DataRequirement from a valueset retrieve.
          */
         private DataRequirement fromValueSetRetrieve(cqlParser.RetrieveContext ctx) {
             var result = new DataRequirement();
-            result.setType(trim1(ctx.getChild(1).getText()));
+            result.setType(trimQuotes(ctx.getChild(1).getText()));
             var filter = new DataRequirement.DataRequirementCodeFilterComponent();
             String vsId = ctx.getChild(3).getText();
             filter.setValueSet(getValueSetUrl(vsId));
             result.setCodeFilter(Collections.singletonList(filter));
             return result;
         }
+
 
         /**
          * @param valueSetId The value set local id.
