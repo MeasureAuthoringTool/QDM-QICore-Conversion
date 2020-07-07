@@ -20,7 +20,7 @@
         <hapi.fhir.version>4.1.0</hapi.fhir.version>
         <swagger.version>1.4.1</swagger.version>
         <commons.collections.version>4.1</commons.collections.version>
-        <cqframework.version>1.4.9-SNAPSHOT</cqframework.version>
+        <cqframework.version>1.4.9</cqframework.version>
     </properties>
 
     <dependencies>
