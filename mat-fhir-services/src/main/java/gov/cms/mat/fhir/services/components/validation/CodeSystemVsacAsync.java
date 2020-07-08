@@ -84,6 +84,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
             if (vsacResponse.getStatus().equals("ok")) {
                 cqlCode.setErrorMessage(null);
                 cqlCode.setErrorCode(null);
+                cqlCode.setCodeIdentifier(url);
                 cqlCode.addValidatedWithVsac(VsacStatus.VALID);
             } else {
                 cqlCode.addValidatedWithVsac(VsacStatus.IN_VALID);

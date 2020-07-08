@@ -389,10 +389,10 @@ public class CqlToMatXml implements CqlVisitor {
             // A new code was added.
             // If is in vsac needs validation, otherwise it is valid.
             if (!isSpreadSheetRowInVsac) {
-                updateToRequireVsacValidation(c);
-            } else {
                 c.addValidatedWithVsac(VsacStatus.VALID);
                 c.setCodeIdentifier("");
+            } else {
+                updateToRequireVsacValidation(c);
             }
         }
     }
