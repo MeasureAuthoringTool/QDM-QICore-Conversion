@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 public class IncludeProperties extends BaseProperties {
     private static final String TEMPLATE = "include %s version '%s' %s";  // include myFunctions version '4.1.000' called Global
 
+    @Setter
     String name;
     @Setter
     String version;

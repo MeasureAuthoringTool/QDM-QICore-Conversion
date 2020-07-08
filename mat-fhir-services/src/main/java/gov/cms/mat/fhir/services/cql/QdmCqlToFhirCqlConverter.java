@@ -279,10 +279,12 @@ public class QdmCqlToFhirCqlConverter {
 
     private void processStandardLibrary(IncludeProperties includeProperties) {
 
-        String version = conversionLibLookupMap.get(includeProperties.getName());
+        String filteredName = StringUtils.remove(includeProperties.getName(),"_");
+        String version = conversionLibLookupMap.get(filteredName);
 
         if (version != null) {
             includeProperties.setVersion(version);
+            includeProperties.setName(filteredName);
         }
     }
 
