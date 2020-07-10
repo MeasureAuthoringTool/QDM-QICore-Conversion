@@ -28,7 +28,7 @@ export GOOGLE_DATA_TYPES_URL='https://spreadsheets.google.com/feeds/list/1uFtfWI
 export GOOGLE_REQUIRED_MEASURE_FIELDS_URL='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/opl7qh/public/values?alt=json'
 export GOOGLE_RESOURCE_DEFINITION_URL='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o1h1xy0/public/values?alt=json'
 
-export CODESYSTEM_SHEET_URL="https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json"
+export CODESYSTEM_SHEET_URL="https://spreadsheets.google.com/feeds/list/1_heoWR09X3UnyEvyyHLzVXT_D1Hhdt3OPztpgr1hW_k/od6/public/values?alt=json"
 
 export MAT_LOG_LEVEL='INFO'
 
