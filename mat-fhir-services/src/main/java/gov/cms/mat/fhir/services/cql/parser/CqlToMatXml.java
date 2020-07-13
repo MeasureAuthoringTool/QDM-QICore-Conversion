@@ -86,12 +86,8 @@ public class CqlToMatXml implements CqlVisitor {
     public CqlToMatXml(CodeListService codeListService, CqlLibraryRepository cqlLibraryRepository) {
         this.codeListService = codeListService;
         this.cqlLibraryRepository = cqlLibraryRepository;
-
-        log.debug("" + errorAtLine("foo", 1));
-        log.debug("" + errorAtLine("bar", 2));
-        log.debug("" + warnAtLine("foo", 1));
-        log.debug("" + warnAtLine("bar", 2));
     }
+
     @Override
     public void handleError(CQLError e) {
         if (StringUtils.equalsIgnoreCase("Warning", e.getSeverity())) {

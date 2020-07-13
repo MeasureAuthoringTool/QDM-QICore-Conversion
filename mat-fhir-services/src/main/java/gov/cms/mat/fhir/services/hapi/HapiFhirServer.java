@@ -293,6 +293,7 @@ public class HapiFhirServer {
 
     public String toJson(Resource resource) {
         return ctx.newJsonParser()
+                .setPrettyPrint(true)
                 .encodeResourceToString(resource);
     }
 

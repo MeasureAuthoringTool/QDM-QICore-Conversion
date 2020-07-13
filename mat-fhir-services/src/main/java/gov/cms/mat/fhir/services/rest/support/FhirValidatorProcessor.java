@@ -10,7 +10,7 @@ import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
-import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.Library;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.hapi.ctx.IValidationSupport;
 import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
@@ -33,32 +33,31 @@ public interface FhirValidatorProcessor {
                                   IBaseResource resource,
                                   FhirContext ctx) {
         ca.uhn.fhir.validation.FhirValidator validator = ctx.newValidator();
-        FhirInstanceValidator validator2 = new FhirInstanceValidator();
 
         FhirInstanceValidator instanceValidator = new FhirInstanceValidator();
 
-        IValidationSupport is = (IValidationSupport)ctx.getValidationSupport();
-        instanceValidator.setValidationSupport((IValidationSupport)ctx.getValidationSupport());
+        instanceValidator.setValidationSupport((IValidationSupport) ctx.getValidationSupport());
         instanceValidator.setNoTerminologyChecks(true);
         validator.registerValidatorModule(instanceValidator);
 
         ValidationOptions options = new ValidationOptions();
-        options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
-        options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/library-cqfm");
-        options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
+
+        if (resource instanceof Library) {
+            options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
+            options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/library-cqfm");
+            options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
+        }
 
         ValidationResult validationResult = validator.validateWithResult(resource, options);
 
         // Ignore anything below ERROR.
-        // Ignore Unable to locate profile errors.
         validationResult.getMessages()
-                .stream().filter(m -> m.getSeverity() != ResultSeverityEnum.ERROR &&
-                m.getSeverity() != ResultSeverityEnum.FATAL).
-                filter(m -> StringUtils.contains(m.getMessage(),"Unable to locate profile")).
-                forEach(m -> fhirResourceValidationResult.getValidationErrorList().add(buildValidationError(m)));
+                .stream()
+                .filter(m -> m.getSeverity() == ResultSeverityEnum.ERROR || m.getSeverity() == ResultSeverityEnum.FATAL)
+                .forEach(m -> fhirResourceValidationResult.getValidationErrorList().add(buildValidationError(m)));
     }
 
-    default FhirResourceValidationError buildValidationError(SingleValidationMessage next) {
+    private FhirResourceValidationError buildValidationError(SingleValidationMessage next) {
         return new FhirResourceValidationError(next.getSeverity().name(), next.getLocationString(), next.getMessage());
     }
 
@@ -68,7 +67,7 @@ public interface FhirValidatorProcessor {
                 .collect(Collectors.toList());
     }
 
-    default FhirValidationResult buildFhirValidationResult(FhirResourceValidationError e) {
+    private FhirValidationResult buildFhirValidationResult(FhirResourceValidationError e) {
         return FhirValidationResult.builder()
                 .severity(e.getSeverity())
                 .locationField(e.getLocationField())

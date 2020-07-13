@@ -132,17 +132,20 @@ public class MeasureTranslator extends TranslatorBase {
         result.setName(simpleXmlModel.getMeasureName());
         result.setTitle(simpleXmlModel.getShortName());  //measure title
         result.setExperimental(false); //Mat does not have concept experimental
-        result.setDescription(simpleXmlModel.getDescription());
-        result.setPublisher(simpleXmlModel.getStewardValue());
-        result.setPurpose("Unknown");
+        result.setDescription(StringUtils.isBlank(simpleXmlModel.getDescription()) ? FHIR_UNKNOWN  :
+                simpleXmlModel.getDescription());
+
+        result.setPublisher(StringUtils.isBlank(simpleXmlModel.getStewardValue()) ? FHIR_UNKNOWN  : simpleXmlModel.getStewardValue());
+
+        result.setPurpose(FHIR_UNKNOWN );
         result.setCopyright(simpleXmlModel.getCopyright());
         result.setDisclaimer(simpleXmlModel.getDisclaimer());
-        result.setPurpose("Unknown"); // To do: ?
+        result.setPurpose(FHIR_UNKNOWN );
         result.setLibrary(Collections.singletonList(new CanonicalType("Library/" + cqlLib.getId())));
         result.setContact(createContactDetailUrl());
         result.setUseContext(createUsageContext());
         result.setMeta(createMeasureMeta(simpleXmlModel.getMeasScoring()));
-        processImprovementNotation(simpleXmlModel,result);
+        processImprovementNotation(simpleXmlModel, result);
         processExtension(result);
         processContained(result);
         processHumanReadable(id, result);
@@ -166,7 +169,7 @@ public class MeasureTranslator extends TranslatorBase {
     }
 
     private Meta createMeasureMeta(String scoring) {
-        Meta meta = new Meta().addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/measure-cqfm");
+        Meta meta = new Meta(); //.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/measure-cqfm");
 
         if (StringUtils.isBlank(scoring)) {
             log.error("Scoring type is null");
@@ -221,6 +224,12 @@ public class MeasureTranslator extends TranslatorBase {
 
         device.setId("cqf-tooling");
 
+        //todo carson/stan what to place here
+        Device.DeviceDeviceNameComponent nameComponent = new Device.DeviceDeviceNameComponent();
+        nameComponent.setName("cqf-tooling");
+        nameComponent.setType(Device.DeviceNameType.MANUFACTURERNAME);
+        device.addDeviceName(nameComponent);
+
         Device.DeviceVersionComponent deviceVersionComponent = new Device.DeviceVersionComponent();
         deviceVersionComponent.setValue("1.1.0-SNAPSHOT");
         device.setVersion(Collections.singletonList(deviceVersionComponent));
@@ -245,7 +254,7 @@ public class MeasureTranslator extends TranslatorBase {
 
     public void processPeriod(Measure fhirMeasure,
                               gov.cms.mat.fhir.commons.model.Measure matModel) {
-        Period effectivePeriod = buildPeriodDayResolution(matModel.getMeasurementPeriodFrom(),matModel.getMeasurementPeriodTo());
+        Period effectivePeriod = buildPeriodDayResolution(matModel.getMeasurementPeriodFrom(), matModel.getMeasurementPeriodTo());
         fhirMeasure.setEffectivePeriod(effectivePeriod);
     }
 
@@ -297,8 +306,17 @@ public class MeasureTranslator extends TranslatorBase {
 
     public void processScoring(Measure fhirMeasure,
                                ManageCompositeMeasureDetailModel matModel) {
-        CodeableConcept scoringConcept = buildCodeableConcept(matModel.getMeasScoring(),
-                "http://hl7.org/fhir/measure-scoring", "");
+
+        String code = matModel.getMeasScoring().toLowerCase();
+
+        if (code.equals("continuous variable")) {
+            code = "continuous-variable";
+        }
+
+        String system = "http://terminology.hl7.org/CodeSystem/measure-scoring";
+        String display = matModel.getMeasScoring();
+
+        CodeableConcept scoringConcept = buildCodeableConcept(code, system, display);
         fhirMeasure.setScoring(scoringConcept);
     }
 
@@ -330,7 +348,8 @@ public class MeasureTranslator extends TranslatorBase {
             }
             fhirMeasure.setType(typeList);
         } else {
-            log.info("No Mat Measure Types Found");
+            fhirMeasure.setType(List.of(buildCodeableConcept(FHIR_UNKNOWN, MEASURE_TYPE, "")));
+            log.info("No Mat Measure Types Found set default to {}", FHIR_UNKNOWN);
         }
     }
 
@@ -340,7 +359,7 @@ public class MeasureTranslator extends TranslatorBase {
         if (optional.isPresent()) {
             return buildCodeableConcept(optional.get().fhirCode, MEASURE_TYPE, "");
         } else {
-            return buildCodeableConcept("unknown", MEASURE_TYPE, "");
+            return buildCodeableConcept(FHIR_UNKNOWN, MEASURE_TYPE, "");
         }
     }
 

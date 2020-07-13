@@ -89,10 +89,6 @@ public class PushMeasureService implements FhirCreator {
         return fhirMeasure.getUrl();
     }
 
-
-
-
-
     private void pushLibrary(CqlLibrary cqlLib, String id) {
         String cql = orchestrationService.processCqlLibrary(cqlLib, Boolean.FALSE);
 
@@ -111,8 +107,7 @@ public class PushMeasureService implements FhirCreator {
                 cql,
                 xml,
                 json);
+
         hapiFhirServer.persist(lib);
     }
-
-
 }

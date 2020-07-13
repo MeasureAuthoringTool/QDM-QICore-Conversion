@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.config;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.r4.hapi.ctx.DefaultProfileValidationSupport;
 import org.hl7.fhir.r4.hapi.validation.CachingValidationSupport;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@Slf4j
 public class HapiFhirConfig {
 
     public void setValidationSupportChain(FhirContext ctx) {
@@ -45,6 +47,7 @@ public class HapiFhirConfig {
         try {
             getResourceFiles("/fhir/structure-definition").forEach(r -> {
                 try {
+                    log.info("Loading StructureDefinition: {}", r);
                     String json = IOUtils.toString(getResourceAsStream(r));
                     StructureDefinition s = jsonParser.parseResource(StructureDefinition.class, json);
                     prePopulatedSupport.addStructureDefinition(s);
@@ -65,7 +68,6 @@ public class HapiFhirConfig {
         return result;
     }
 
-
     private List<String> getResourceFiles(String path) throws IOException {
         List<String> filenames = new ArrayList<>();
         try (
@@ -84,9 +86,5 @@ public class HapiFhirConfig {
         final InputStream in
                 = getClass().getClassLoader().getResourceAsStream(resource);
         return in == null ? getClass().getResourceAsStream(resource) : in;
-    }
-
-    private ClassLoader getContextClassLoader() {
-        return Thread.currentThread().getContextClassLoader();
     }
 }
