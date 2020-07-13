@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class TranslatorBase implements FhirCreator {
+    public static final String FHIR_UNKNOWN =  "Unknown";
+
     @Value("${fhir.r4.public-url}")
     protected String publicHapiFhirUrl;
 

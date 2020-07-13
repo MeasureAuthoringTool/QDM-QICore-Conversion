@@ -114,6 +114,7 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
                 break;
             default:
                 log.debug("Did not set type and display in switch");
+                break;
         }
 
         return component
