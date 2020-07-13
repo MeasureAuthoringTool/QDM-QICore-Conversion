@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -48,7 +47,7 @@ public class LibraryTranslator extends TranslatorBase {
     public static final String CQL_CONTENT_TYPE = "text/cql";
     public static final String JSON_ELM_CONTENT_TYPE = "application/elm+json";
     public static final String XML_ELM_CONTENT_TYPE = "application/elm+xml";
-    public static final String SYSTEM_TYPE = "http://hl7.org/fhir/codesystem-library-type.html";
+    public static final String SYSTEM_TYPE = "http://terminology.hl7.org/CodeSystem/library-type";
     public static final String SYSTEM_CODE = "logic-library";
 
     private final HapiFhirServer hapiServer;
@@ -85,8 +84,8 @@ public class LibraryTranslator extends TranslatorBase {
         result.setDataRequirement(distinctDataRequirements(visitor.getDataRequirements()));
         result.setRelatedArtifact(distinctArtifacts(visitor.getRelatedArtifacts()));
         result.setText(findHumanReadable(libId));
-        result.setContained(processContained());
-        result.setExtension(processExtension());
+        //   result.setContained(processContained());
+        //  result.setExtension(processExtension());
 
         result.setMeta(createLibraryMeta());
 
@@ -97,14 +96,47 @@ public class LibraryTranslator extends TranslatorBase {
 
         //TO DO: figure out how to handle this with logging.
         //ConversionReporter.setLibraryValidationLink(result.getUrl(), CREATED, uuid);
+
+        cleanUp(result);
+
         return result;
+    }
+
+
+    private void cleanUp(Library library) {
+        if (!library.hasPublisher()) {
+            library.setPublisher(FHIR_UNKNOWN);
+        }
+
+        if (!library.hasExperimental()) {
+            library.setExperimental(true);
+        }
+
+
+        if (!library.hasDescription()) {
+            library.setDescription(FHIR_UNKNOWN);
+        }
+
+        if (library.hasDataRequirement()) {
+            library.getDataRequirement().forEach(dataRequirement -> {
+                if (dataRequirement.hasCodeFilter()) {
+
+                    dataRequirement.getCodeFilter().forEach(codeFilterComponent -> {
+                        if (!codeFilterComponent.hasSearchParam()) {
+                            codeFilterComponent.setSearchParam(FHIR_UNKNOWN);
+                        }
+                    });
+
+                }
+            });
+        }
     }
 
     private Meta createLibraryMeta() {
         return new Meta()
-                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/library-cqfm")
-                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm")
-                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
+                // .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/library-cqfm")
+                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
+        // .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
     }
 
     private List<Resource> processContained() {
@@ -131,7 +163,8 @@ public class LibraryTranslator extends TranslatorBase {
 
     private List<Extension> processExtension() {
         List extensionList = new ArrayList<Extension>();
-        extensionList.add(new Extension(MeasureTranslator.EXTENSION_SOFTWARE_SYSTEM, new Reference("#cqf-tooling")));
+        extensionList.add(new Extension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-artifactComment",
+                new Reference("#cqf-tooling")));
         return extensionList;
     }
 

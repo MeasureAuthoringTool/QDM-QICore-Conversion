@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.rest.support;
 import ca.uhn.fhir.context.FhirContext;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
+import gov.cms.mat.fhir.services.config.HapiFhirConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.Meta;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 class FhirValidatorProcessorTest implements ResourceFileUtil {
@@ -18,8 +20,9 @@ class FhirValidatorProcessorTest implements ResourceFileUtil {
     @Test
     void validateResource() throws IOException {
 
-        FhirContext ctx = FhirContext.forR4();
-        String json = getStringFromResource("/libTranslator/library-FhirHelpers.json");
+        HapiFhirConfig hapiFhirConfig = new HapiFhirConfig();
+        FhirContext ctx = hapiFhirConfig.buildFhirContext();
+        String json = getStringFromResource("/libTranslator/library-TJCOverall.json");
         Library library = ctx.newJsonParser().parseResource(Library.class, json);
 
         Meta meta = new Meta();
@@ -37,8 +40,8 @@ class FhirValidatorProcessorTest implements ResourceFileUtil {
         FhirResourceValidationResult result = validatorProcessor.validateResource(library, ctx);
 
         assertNotNull(result);
-        // Check this once new profiles are added
-        // assertTrue(result.getValidationErrorList().isEmpty());
+
+        assertTrue(result.getValidationErrorList().isEmpty());
     }
 
     class FhirValidatorProcessorUnitTest implements FhirValidatorProcessor {

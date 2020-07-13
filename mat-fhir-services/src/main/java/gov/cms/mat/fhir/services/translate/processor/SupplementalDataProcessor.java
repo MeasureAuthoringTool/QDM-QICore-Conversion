@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gov.cms.mat.fhir.services.translate.TranslatorBase.FHIR_UNKNOWN;
+
 @Component
 public class SupplementalDataProcessor implements FhirCreator {
     public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
@@ -58,7 +60,7 @@ public class SupplementalDataProcessor implements FhirCreator {
 
     private String makeCodeFromName(String name) {
         if (StringUtils.isEmpty(name)) {
-            return "unknown";
+            return FHIR_UNKNOWN;
         } else {
             // Convert "SDE Race" to "sde-race"
             String code = name.toLowerCase().trim();
