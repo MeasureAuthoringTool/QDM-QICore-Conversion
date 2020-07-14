@@ -322,6 +322,11 @@ public class MeasureTranslator extends TranslatorBase {
 
     public void processIdentifiers(Measure fhirMeasure, ManageCompositeMeasureDetailModel matModel) {
         fhirMeasure.setIdentifier(new ArrayList<>());
+        if(matModel.getMeasureSetId() != null) {
+            fhirMeasure.getIdentifier()
+                    .add(createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/guid",
+                            matModel.getMeasureSetId()));
+        }
 
         if (matModel.geteMeasureId() != 0) {
             Identifier cms = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms",
