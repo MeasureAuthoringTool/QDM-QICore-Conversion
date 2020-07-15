@@ -134,3 +134,10 @@ define "Moderate or High PreTest Clinical Probability for Pulmonary Embolism Wit
       )
     return EDVisitMP
 
+  ["ServiceRequest": "Some Valueset"] Assess
+    where Assess.status = 'completed' and Assess.doNotPerform is true and
+      Assess.authoredOn during "Measurement Period"
+
+["Assessment, Not Ordered": "Some Valueset"] Assess
+  where Assess.status = 'completed' and Assess.doNotPerform is true
+  return { relevantPeriod: CharExp.cause }
