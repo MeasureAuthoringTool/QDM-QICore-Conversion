@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<measure>
+    <supplementalDataElements>
+        <cqldefinition displayName="SDE Ethnicity" uuid="d0288abe-a19a-4d8d-9da1-9ac2ef62425a"/>
+        <cqldefinition displayName="SDE Payer" uuid="b2e55c85-d89b-4de5-8cf5-3b81aeab0583"/>
+        <cqldefinition displayName="SDE Race" uuid="36672d75-61df-4a15-bff6-7af6baa3a8d1"/>
+        <cqldefinition displayName="SDE Sex" uuid="51f57dd7-aab0-4e72-8115-af64f7e40371"/>
+    </supplementalDataElements>
+    <riskAdjustmentVariables/>
+    <measureGrouping>
+        <group sequence="1">
+            <clause displayName="Initial Population 1" isInGrouping="true" type="initialPopulation"
+                    uuid="A6DEAF9D-1A7A-4D9C-A1CF-1E5C0CF38380">
+                <cqldefinition displayName="ip" uuid="c2cac5e3-e706-4b3d-b6a2-465e287e44b7"/>
+            </clause>
+            <clause displayName="Denominator 1" isInGrouping="true" type="denominator"
+                    uuid="FC82665F-BB72-4A3B-AAB7-1B9450ECBAA1">
+                <cqldefinition displayName="demomentor" uuid="ccc797c7-ade8-4ea6-a1d9-749cedee0f22"/>
+            </clause>
+            <clause displayName="Numerator 1" isInGrouping="true" type="numerator"
+                    uuid="7C9448CC-BECD-47D8-9576-8D232BA5DCC1">
+                <cqldefinition displayName="numerator" uuid="2b932abd-eef3-4eac-bdfc-1354951536d8"/>
+            </clause>
+            <clause displayName="denominatorExclusions" isInGrouping="false" type="denominatorExclusions"
+                    uuid="9b3cd356-a0ce-418a-9a26-9ae9ed7658ab"/>
+            <clause displayName="numeratorExclusions" isInGrouping="false" type="numeratorExclusions"
+                    uuid="4e674f7d-31ae-4872-a6c6-686f4bbefea6"/>
+            <clause displayName="denominatorExceptions" isInGrouping="false" type="denominatorExceptions"
+                    uuid="137d6e7b-f818-4be1-9901-9c30e8c48362"/>
+            <clause displayName="stratum" isInGrouping="false" type="stratum"
+                    uuid="528d7e03-7eba-4729-9427-b198516783b7"/>
+        </group>
+    </measureGrouping>
+    <elementLookUp vsacExpIdentifier="Most Recent Code System Versions in VSAC">
+        <qdm datatype="Transfer From" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="afff5e22-c8fa-44fb-8044-f977f3db646d" name="Acute Care or Inpatient Facility"
+             oid="2.16.840.1.113883.17.4077.3.2056" suppDataElement="false" taxonomy="Grouping"
+             uuid="afff5e22-c8fa-44fb-8044-f977f3db646d" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="16655050-3a3a-4100-8219-51a9c4cd02b9" name="Acute Gastrointestinal Hemorrhage"
+             oid="2.16.840.1.113883.17.4077.3.2051" suppDataElement="false" taxonomy="Grouping"
+             uuid="16655050-3a3a-4100-8219-51a9c4cd02b9" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="036788d8-cad9-4efb-b3f7-b15c930b2de9" name="Acute Hypotension" oid="2.16.840.1.113883.17.4077.3.2011"
+             suppDataElement="false" taxonomy="Grouping" uuid="036788d8-cad9-4efb-b3f7-b15c930b2de9" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="460e839e-f685-4b96-a5ab-51fa18565ac8" name="Acute Pulmonary Hemorrhage"
+             oid="2.16.840.1.113883.17.4077.3.2052" suppDataElement="false" taxonomy="Grouping"
+             uuid="460e839e-f685-4b96-a5ab-51fa18565ac8" version="1.0"/>
+        <qdm datatype="Patient Characteristic Birthdate" id="47b7e60f-1d14-4aac-9221-034bcbbf6e53" name="Birthdate"
+             oid="21112-8" suppDataElement="false" taxonomy="SNOMED-CT" uuid="47b7e60f-1d14-4aac-9221-034bcbbf6e53"
+             version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="754f6dd6-7417-41b9-bb33-1b16e57eb749" name="Second and Third Degree Burn"
+             oid="2.16.840.1.113883.17.4077.3.2053" suppDataElement="false" taxonomy="Grouping"
+             uuid="754f6dd6-7417-41b9-bb33-1b16e57eb749" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="f0919fab-a235-460a-9643-e4274bcf92a7" name="Cardiac Arrest" oid="2.16.840.1.113883.17.4077.3.2032"
+             suppDataElement="false" taxonomy="Grouping" uuid="f0919fab-a235-460a-9643-e4274bcf92a7" version="1.0"/>
+        <qdm datatype="Intervention, Performed" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="5dba6790-7f34-4b74-80ac-5858e044b92f" name="Comfort Measures" oid="1.3.6.1.4.1.33895.1.3.0.45"
+             suppDataElement="false" taxonomy="SNOMEDCT" uuid="5dba6790-7f34-4b74-80ac-5858e044b92f" version="1.0"/>
+        <qdm datatype="Intervention, Order" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="b7d40684-64b2-4cff-8dc5-243b65c4e0db" name="Comfort Measures" oid="1.3.6.1.4.1.33895.1.3.0.45"
+             suppDataElement="false" taxonomy="SNOMEDCT" uuid="b7d40684-64b2-4cff-8dc5-243b65c4e0db" version="1.0"/>
+        <qdm datatype="Communication: From Patient to Provider"
+             expansionIdentifier="Most Recent Code System Versions in VSAC" id="47ae3ddc-d142-40e6-8f01-98098eda6d07"
+             name="Declined Sepsis Care" oid="2.16.840.1.113883.17.4077.3.2047" suppDataElement="false"
+             taxonomy="Grouping" uuid="47ae3ddc-d142-40e6-8f01-98098eda6d07" version="1.0"/>
+        <qdm datatype="Encounter, Performed" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" name="Emergency Department Visit"
+             oid="2.16.840.1.113883.3.526.3.1520" suppDataElement="false" taxonomy="Grouping"
+             uuid="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" version="1.0"/>
+        <qdm datatype="Patient Characteristic Ethnicity" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="112b1d26-37b4-4c29-8b57-99251df16b96" name="Ethnicity" oid="2.16.840.1.114222.4.11.837"
+             suppDataElement="true" taxonomy="CDCREC" uuid="112b1d26-37b4-4c29-8b57-99251df16b96" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="286056e9-adf6-4276-8ea7-603b8cf54e34" name="Hemorrhagic Stroke" oid="2.16.840.1.113883.3.117.1.7.1.212"
+             suppDataElement="false" taxonomy="Grouping" uuid="286056e9-adf6-4276-8ea7-603b8cf54e34" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="abfd1963-ac50-4735-97d7-563161d6710e" name="Ischemic Stroke" oid="2.16.840.1.113883.3.117.1.7.1.247"
+             suppDataElement="false" taxonomy="Grouping" uuid="abfd1963-ac50-4735-97d7-563161d6710e" version="1.0"/>
+        <qdm datatype="Medication, Order" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="b2ee0641-780f-4018-9e6e-43413dd98b30" name="IV Antibiotics for Sepsis"
+             oid="2.16.840.1.113883.17.4077.3.2045" suppDataElement="false" taxonomy="Grouping"
+             uuid="b2ee0641-780f-4018-9e6e-43413dd98b30" version="1.0"/>
+        <qdm datatype="attribute" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="04efae35-9ed6-4684-8049-44d5793986e6" name="Left Before Treatment Completion"
+             oid="2.16.840.1.113883.17.4077.3.2049" suppDataElement="false" taxonomy="Grouping"
+             uuid="04efae35-9ed6-4684-8049-44d5793986e6" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="7aa3c4ff-2b08-445e-999c-ed7a2b0e2167" name="Myocardial Infarction" oid="2.16.840.1.113883.3.526.3.403"
+             suppDataElement="false" taxonomy="Grouping" uuid="7aa3c4ff-2b08-445e-999c-ed7a2b0e2167" version="1.0"/>
+        <qdm datatype="Patient Characteristic Sex" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="afd6ff97-62b9-4c5d-b218-21b8b9ae94ae" name="ONC Administrative Sex" oid="2.16.840.1.113762.1.4.1"
+             suppDataElement="true" taxonomy="AdministrativeGender" uuid="afd6ff97-62b9-4c5d-b218-21b8b9ae94ae"
+             version="1.0"/>
+        <qdm datatype="attribute" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="08a5f92e-ae3f-4ce6-b87e-1342531dbc22" name="Patient Expired" oid="2.16.840.1.113883.17.4077.3.2012"
+             suppDataElement="false" taxonomy="Grouping" uuid="08a5f92e-ae3f-4ce6-b87e-1342531dbc22" version="1.0"/>
+        <qdm datatype="Patient Characteristic Payer" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="97a2dc71-632b-4c35-9dee-2dc040c67bab" name="Payer" oid="2.16.840.1.114222.4.11.3591"
+             suppDataElement="true" taxonomy="SOP" uuid="97a2dc71-632b-4c35-9dee-2dc040c67bab" version="1.0"/>
+        <qdm datatype="Patient Characteristic Race" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="fddbb9dd-231b-4a0f-8a33-f81a2269cd2f" name="Race" oid="2.16.840.1.114222.4.11.836"
+             suppDataElement="true" taxonomy="CDCREC" uuid="fddbb9dd-231b-4a0f-8a33-f81a2269cd2f" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="4197e3e0-e452-443c-b960-1b0849f7700d" name="Seizure" oid="2.16.840.1.113883.17.4077.3.2015"
+             suppDataElement="false" taxonomy="Grouping" uuid="4197e3e0-e452-443c-b960-1b0849f7700d" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="31442a1d-c536-4dc6-b3df-825a367c5d77" name="Sepsis" oid="2.16.840.1.113883.17.4077.3.2033"
+             suppDataElement="false" taxonomy="Grouping" uuid="31442a1d-c536-4dc6-b3df-825a367c5d77" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="e5b7780a-c853-4e6d-937d-2c1d1c1c7df4" name="Septic Shock" oid="2.16.840.1.113883.17.4077.3.2046"
+             suppDataElement="false" taxonomy="Grouping" uuid="e5b7780a-c853-4e6d-937d-2c1d1c1c7df4" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="1c86de5c-8d4d-4ffb-906f-0f8634d02176" name="Toxicological Emergency"
+             oid="2.16.840.1.113883.17.4077.3.2055" suppDataElement="false" taxonomy="Grouping"
+             uuid="1c86de5c-8d4d-4ffb-906f-0f8634d02176" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="3e208ce6-4e0e-4c7f-ab06-e25cefea9f7e" name="Trauma" oid="2.16.840.1.113883.3.464.1003.113.12.1036"
+             suppDataElement="false" taxonomy="Grouping" uuid="3e208ce6-4e0e-4c7f-ab06-e25cefea9f7e" version="1.0"/>
+    </elementLookUp>
+    <cqlLookUp>
+        <library>SepsisAntibioticsOrdered</library>
+        <version>2.1.004</version>
+        <usingModel>FHIR</usingModel>
+        <usingModelVersion>4.0.1</usingModelVersion>
+        <cqlContext>Patient</cqlContext>
+        <parameters>
+            <parameter id="d7b9b1fc-e8e6-4fe3-af75-0699af6f700d" name="Measurement Period" readOnly="true">
+                <comment/>
+                <logic>Interval&lt;DateTime&gt;</logic>
+            </parameter>
+        </parameters>
+        <definitions>
+            <definition context="Patient" id="d0288abe-a19a-4d8d-9da1-9ac2ef62425a" name="SDE Ethnicity"
+                        popDefinition="false" supplDataElement="false">
+                <logic>SDE."SDE Ethnicity"</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="b2e55c85-d89b-4de5-8cf5-3b81aeab0583" name="SDE Payer"
+                        popDefinition="false" supplDataElement="false">
+                <logic>SDE."SDE Payer"</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="36672d75-61df-4a15-bff6-7af6baa3a8d1" name="SDE Race"
+                        popDefinition="false" supplDataElement="false">
+                <logic>SDE."SDE Race"</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="51f57dd7-aab0-4e72-8115-af64f7e40371" name="SDE Sex" popDefinition="false"
+                        supplDataElement="false">
+                <logic>SDE."SDE Sex"</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="2b932abd-eef3-4eac-bdfc-1354951536d8" name="numerator"
+                        popDefinition="false" supplDataElement="false">
+                <logic>1</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="ccc797c7-ade8-4ea6-a1d9-749cedee0f22" name="demomentor"
+                        popDefinition="false" supplDataElement="false">
+                <logic>1</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="c2cac5e3-e706-4b3d-b6a2-465e287e44b7" name="ip" popDefinition="false"
+                        supplDataElement="false">
+                <logic>2</logic>
+                <comment/>
+            </definition>
+        </definitions>
+        <includeLibrarys>
+            <includeLibrary cqlLibRefId="FHIRHelpers-4-0-001" cqlLibRefName="FHIRHelpers" cqlVersion="4.0.001"
+                            id="4f17ea12-15af-46bf-b55b-9774667225d4" name="FHIRHelpers" qdmVersion="4.0.1"/>
+            <includeLibrary cqlLibRefId="SupplementalDataElements-FHIR4-2-0-000"
+                            cqlLibRefName="SupplementalDataElements_FHIR4" cqlVersion="2.0.000"
+                            id="9e55177a-e318-4457-aee0-d2e1fe58f3f9" name="SDE" qdmVersion="4.0.1"/>
+            <includeLibrary cqlLibRefId="MATGlobalCommonFunctions-FHIR4-5-0-000"
+                            cqlLibRefName="MATGlobalCommonFunctions_FHIR4" cqlVersion="5.0.000"
+                            id="c7dec6ae-9ed9-466f-9663-a201b679c55f" name="Global" qdmVersion="4.0.1"/>
+        </includeLibrarys>
+    </cqlLookUp>
+    <measureDetails>
+        <uuid>40288c33-7257-4ef1-0172-577c7bd60010</uuid>
+        <cqlUUID>1BFF2C1D-020E-4CDF-B93C-680A53CDC1EE</cqlUUID>
+        <title>Sepsis Management: Septic Shock: Antibiotics Ordered</title>
+        <measureModel>FHIR</measureModel>
+        <shortTitle>ACEP27_SepsisAntibiotics</shortTitle>
+        <emeasureid>916</emeasureid>
+        <guid>50ad598c-8d65-4cc4-bb4e-2196a1ef29db</guid>
+        <version>2.1.004</version>
+        <nqfid root="2.16.840.1.113883.3.560.1"/>
+        <period calenderYear="true" uuid="fb2bb059-5917-4173-b1c6-9703dac8e6be">
+            <startDate>00000101</startDate>
+            <stopDate>00001231</stopDate>
+        </period>
+        <steward id="84">American College of Emergency Physicians (ACEP)</steward>
+        <developers>
+            <developer id="2.16.840.1.113883.17.4077">American College of Emergency Physicians (ACEP)</developer>
+        </developers>
+        <description>Percentage of emergency department visits resulting in hospital admission for patients aged 18
+            years and older with septic shock who had an order for antibiotics during the emergency department visit
+        </description>
+        <copyright>Copyright 2019 American College of Emergency Physicians. All Rights Reserved.</copyright>
+        <disclaimer>These performance measures are not clinical guidelines and do not establish a standard of medical
+            care, and have not been tested for all potential applications.
+
+            THE MEASURES AND SPECIFICATIONS ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+
+            Limited proprietary coding is contained in the Measure specifications for convenience. Users of the
+            proprietary code sets should obtain all necessary licenses from the owners of these code sets. The AMA, the
+            PCPI and its members disclaim all liability for use or accuracy of any Current Procedural Terminology
+            (CPT[R]) or other coding contained in the specifications.
+
+            CPT(R) contained in the Measure specifications is copyright 2004-2019 American Medical Association.
+
+            LOINC(R) copyright 2004-2019 Regenstrief Institute, Inc. This material contains SNOMED Clinical Terms(R)
+            (SNOMED CT[R]) copyright 2004-2019 International Health Terminology Standards Development Organisation.
+            ICD-10 is copyright 2019 World Health Organization. All rights reserved
+
+            Due to technical limitations, registered trademarks are indicated by (R) or [R].
+        </disclaimer>
+        <scoring id="PROPOR">Proportion</scoring>
+        <patientBasedIndicator>false</patientBasedIndicator>
+        <types>
+            <type id="PROCESS">Process</type>
+        </types>
+        <stratification>None</stratification>
+        <riskAdjustment>None</riskAdjustment>
+        <aggregation>None</aggregation>
+        <rationale>The emergency physician should order antibiotics for patients with septic shock in order to
+            ameliorate patient decline. Delay in delivery of antibiotics in the emergency department puts the patient at
+            high-risk for adverse outcomes such as drug reactions, increase length of hospital stay, and mortality.
+
+            Multiple studies demonstrate reduced mortality and improved outcomes for septic shock patients receiving
+            timely antibiotics in the emergency department. In addition, a delay in administration of antibiotics is
+            associated with higher mortality, higher cost, and increased length of in-patient hospital stay. Kumar et
+            al. found a 7.6% increase in mortality for every hour hypotensive patients with septic shock experienced a
+            delay of receiving antimicrobials in the Intensive Care Unit.
+
+            Clinically, an increase in the duration of hypotension and elevated lactate in the absence of antibiotics in
+            septic shock patients with gram-positive and gram-negative bacteremias has a demonstrated association with
+            poor outcomes and death. There is a mortality benefit with the delivery of anti-infective therapeutic drugs
+            that combat activity against all likely pathogens and presumed sources of septic shock.
+
+            Results from a multicenter observational study including 15,022 patients from 165 hospitals demonstrated
+            that patients with septic shock were given broad spectrum antibiotics 60.4% in the first quarter of the
+            study. At the final quarter, the increase of compliance on providing antibiotics only increased 7.5% to
+            67.9%. Clearly, the opportunity to provide comprehensive and timely care to septic shock patients exists.
+
+            A multi-center randomized controlled trial of early sepsis resuscitation found mortality was significantly
+            increased in patients who received initial antibiotics after septic shock recognition compared with before
+            septic shock recognition. Only 59% of patients received the initial dose of antibiotics after recognition of
+            septic shock. This demonstrates that delay to antibiotics is harmful and persists.
+        </rationale>
+        <recommendations>The following evidence statements are quoted verbatim from the referenced clinical guidelines
+            and other references:
+
+            Surviving Sepsis Campaign: International Guidelines for Management of Severe Sepsis and Septic Shock 2016
+            We recommend that administration of IV antimicrobials be initiated as soon as possible after recognition and
+            within one hour for both sepsis and septic shock (strong recommendation, moderate quality of evidence).
+
+            We recommend empiric broad-spectrum therapy with one or more antimicrobials for patients presenting with
+            sepsis or septic shock to cover all likely pathogens (including bacterial and potentially fungal or viral
+            coverage) (strong recommendation, moderate quality of evidence).
+
+            We recommend that antimicrobial therapy is narrowed once pathogen identification and sensitivities are
+            established and/or adequate clinical improvement is noted (BPS).
+        </recommendations>
+        <improvementNotations>Higher score indicates better quality</improvementNotations>
+        <references>
+            <reference xmlns:java="http://java.sun.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:type="java:mat.client.measure.ReferenceTextAndType">
+                <reference-type>UNKNOWN</reference-type>
+                <reference-text>Rhodes A1, Evans LE, Alhazzani W, et al. Surviving Sepsis Campaign: International
+                    Guidelines for Management of Sepsis and Septic Shock: 2016. Crit Care Med. 2017 Mar;45(3):486-552.
+                    doi: 10.1097/CCM.0000000000002255.
+                </reference-text>
+            </reference>
+            <reference xmlns:java="http://java.sun.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:type="java:mat.client.measure.ReferenceTextAndType">
+                <reference-type>UNKNOWN</reference-type>
+                <reference-text>Ferrer R, Martin-Loeches I, Phillips G, Osborn TM, Townsend S, Dellinger RP, Artigas A,
+                    Schorr C, Levy MM. Empiric antibiotic treatment reduces mortality in severe sepsis and septic shock
+                    from the first hour: results from a guideline-based performance improvement program. Crit Care Med.
+                    2014 Aug; 42(8):1749-55.
+                </reference-text>
+            </reference>
+            <reference xmlns:java="http://java.sun.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:type="java:mat.client.measure.ReferenceTextAndType">
+                <reference-type>UNKNOWN</reference-type>
+                <reference-text>Gaieski DF, Mikkelsen ME, Band RA, et al. Impact time to antibiotics on survival in
+                    patients with severe sepsis or septic shock in whom early goal directed therapy was initiated in the
+                    emergency department. Crit Care Med 2010; 38:1045-53.
+                </reference-text>
+            </reference>
+            <reference xmlns:java="http://java.sun.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:type="java:mat.client.measure.ReferenceTextAndType">
+                <reference-type>UNKNOWN</reference-type>
+                <reference-text>Ferrer R, Artigas A, et al. Improvement in Process of Care and Outcome After a
+                    Multicenter Severe Sepsis Education Program. JAMA 2008; 299 (19): 2294-2303.
+                </reference-text>
+            </reference>
+            <reference xmlns:java="http://java.sun.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:type="java:mat.client.measure.ReferenceTextAndType">
+                <reference-type>UNKNOWN</reference-type>
+                <reference-text>Kumar A, Roberts D, Wood KE, Light B, Parrillo JE, Sharma S, Suppes R, Feinstein D,
+                    Zanotti S, Taiberg L, Gurka D, Kumar A, Cheang M. Duration of hypotension before initiation of
+                    effective antimicrobial therapy is the critical determinant of survival in human septic shock. Crit
+                    Care Med. 2006 Jun;34(6):1589-96.
+                </reference-text>
+            </reference>
+            <reference xmlns:java="http://java.sun.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:type="java:mat.client.measure.ReferenceTextAndType">
+                <reference-type>UNKNOWN</reference-type>
+                <reference-text>Surviving Sepsis Campaign. 3-Hour Bundle. Revised April 2015. Available:
+                    http://www.survivingsepsis.org/SiteCollectionDocuments/Bundle-Three-Hour-SSC.pdf
+                </reference-text>
+            </reference>
+        </references>
+        <definitions>For purposes of this measure, patients with septic shock will be identified with any of the
+            following criteria:
+            - Diagnosis of septic shock
+            - Diagnosis of sepsis and hypotension
+            - Diagnosis of infection and hypotension
+        </definitions>
+        <guidance>The data element ["Medication, Order": "IV Antibiotics for Sepsis"] is intended to be limited to
+            instances where they are ordered by an emergency care provider to satisfy the measure and specifications''
+            intent. This level of attribution at the data element level to a provider''s specialty is not able to be
+            demonstrated in current eCQM standards and tools.
+        </guidance>
+        <transmissionFormat>TBD</transmissionFormat>
+        <initialPopDescription>All emergency department visits resulting in hospital admission for patients aged 18
+            years and older with septic shock
+        </initialPopDescription>
+        <denominatorDescription>Equals Initial Population</denominatorDescription>
+        <denominatorExclusionsDescription>Patients with any of the following:
+            - Transferred into the emergency department from another acute care facility or other in-patient hospital
+            setting
+            - Left before treatment was complete
+            - Died during the emergency department visit
+            - Cardiac arrest within the emergency department visit
+            - Patient or surrogate decision maker declined care
+            - Advanced directives present in patient medical record for comfort care
+            - Toxicological emergencies
+            - Burn
+            - Seizures
+            - Secondary diagnosis of:
+            - Gastrointestinal bleeding
+            - Stroke
+            - Acute myocardial infarction
+            - Acute trauma
+        </denominatorExclusionsDescription>
+        <numeratorDescription>Emergency department visits for patients who had an order for antibiotics during the
+            emergency department visit
+        </numeratorDescription>
+        <numeratorExclusionsDescription>Not Applicable</numeratorExclusionsDescription>
+        <denominatorExceptionsDescription>None</denominatorExceptionsDescription>
+        <measurePopulationExclusionsDescription/>
+        <supplementalData>For every patient evaluated by this measure also identify payer, race, ethnicity and sex.
+        </supplementalData>
+        <qualityMeasureSet>American College of Emergency Physicians (ACEP) Clinical Emergency Data Registry (CEDR)
+            Quality Measures
+        </qualityMeasureSet>
+    </measureDetails>
+</measure>

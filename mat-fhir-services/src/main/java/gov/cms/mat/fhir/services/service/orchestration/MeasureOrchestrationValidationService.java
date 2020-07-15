@@ -3,7 +3,6 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
@@ -11,6 +10,7 @@ import gov.cms.mat.fhir.services.summary.FhirMeasureResourceValidationResult;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.MeasureTranslator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,10 +35,7 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
 
     public boolean validate(OrchestrationProperties properties) {
         log.info("Validating measure hapi measureId: {}", properties.getMeasureId());
-        return validateMeasure(properties);
-    }
 
-    private boolean validateMeasure(OrchestrationProperties properties) {
         FhirMeasureResourceValidationResult response =
                 new FhirMeasureResourceValidationResult(properties.getMeasureId(), "Measure");
 
@@ -48,6 +45,11 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         }
 
         List<FhirValidationResult> list = buildResults(response);
+
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(validationResult -> log.debug("FhirValidationResult error: {}", validationResult));
+        }
+
         ConversionReporter.setFhirMeasureValidationResults(list);
 
         AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
@@ -61,16 +63,15 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
     }
 
     private org.hl7.fhir.r4.model.Measure processFhirMeasure(OrchestrationProperties properties) {
-        org.hl7.fhir.r4.model.Measure fhirMeasure = buildFhirMeasure(properties);
+        org.hl7.fhir.r4.model.Measure fhirMeasure = measureTranslator.translateToFhir(properties.getMeasureId());
 
         properties.setFhirMeasure(fhirMeasure);
         ConversionReporter.setMeasureValidationLink(null, NEW);
-        ConversionReporter.setFhirMeasureJson(hapiFhirServer.toJson(fhirMeasure));
+
+        String json = hapiFhirServer.toJson(fhirMeasure);
+        log.debug("Measure json: {}", json);
+        ConversionReporter.setFhirMeasureJson(json);
 
         return fhirMeasure;
-    }
-
-    private org.hl7.fhir.r4.model.Measure buildFhirMeasure(OrchestrationProperties properties) {
-        return measureTranslator.translateToFhir(properties.getMeasureId());
     }
 }

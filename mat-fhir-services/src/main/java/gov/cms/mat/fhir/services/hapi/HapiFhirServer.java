@@ -12,7 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.CodeSystem;
+import org.hl7.fhir.r4.model.Library;
+import org.hl7.fhir.r4.model.Measure;
+import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +30,9 @@ import java.util.concurrent.TimeUnit;
 public class HapiFhirServer {
     private static final String CACHE_HEADER_NAME = "Cache-Control";
     private static final String CACHE_HEADER_VALUE = "no-cache";
+
     @Getter
-    FhirContext ctx;
+    private final FhirContext ctx;
 
     @Getter
     IGenericClient hapiClient;
@@ -35,10 +41,12 @@ public class HapiFhirServer {
     @Value("${fhir.r4.baseurl}")
     private String baseURL;
 
+    public HapiFhirServer(FhirContext ctx) {
+        this.ctx = ctx;
+    }
+
     @PostConstruct
     public void setUp() {
-        ctx = FhirContext.forR4();
-
         hapiClient = ctx.newRestfulGenericClient(baseURL);
         hapiClient.registerInterceptor(createLoggingInterceptor());
 
@@ -285,6 +293,7 @@ public class HapiFhirServer {
 
     public String toJson(Resource resource) {
         return ctx.newJsonParser()
+                .setPrettyPrint(true)
                 .encodeResourceToString(resource);
     }
 

@@ -19,7 +19,6 @@ import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
@@ -53,6 +52,8 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
     }
 
     public String pushStandAlone(String libraryId, String xml) {
+        log.debug("StandAlone xml: {}", xml);
+
         DraftMeasureXmlProcessor.XmlKey xmlKey = getXmlKey(xml);
         Library library = buildLibraryFromXml(libraryId, xmlKey, xml, Boolean.FALSE);
         library.setId(libraryId);
@@ -61,14 +62,10 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         FhirResourceValidationResult result = validateResource(library, hapiFhirServer.getCtx());
 
         if (CollectionUtils.isNotEmpty(result.getValidationErrorList())) {
-            boolean hasErrors = result.getValidationErrorList().stream().
-                    anyMatch(ve -> !StringUtils.equals("WARNING",ve.getSeverity()) &&
-                            !StringUtils.equals("INFORMATION",ve.getSeverity()));
-            if (hasErrors) {
-                log.error("Validation errors encountered: " , result.getValidationErrorList());
-                throw new HapiResourceValidationException(libraryId, "Library");
-            }
+            log.error("Validation errors encountered: {} ", result.getValidationErrorList());
+            throw new HapiResourceValidationException(libraryId, "Library");
         }
+
         return hapiFhirServer.persist(library);
     }
 

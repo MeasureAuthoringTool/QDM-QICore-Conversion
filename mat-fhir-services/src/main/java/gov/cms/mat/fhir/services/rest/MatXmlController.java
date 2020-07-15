@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLModel;
 import mat.server.CQLUtilityClass;
@@ -48,6 +49,7 @@ public class MatXmlController {
     @Getter
     @Setter
     @NoArgsConstructor
+    @ToString
     public static class MatXmlResponse {
         @NotNull
         private List<LibraryErrors> errors = new ArrayList<>();
@@ -60,6 +62,7 @@ public class MatXmlController {
     @Getter
     @Setter
     @NoArgsConstructor
+    @ToString
     public static class MatCqlXmlReq extends MatXmlReq {
         @NotBlank
         private String cql;
@@ -69,6 +72,7 @@ public class MatXmlController {
     @Getter
     @Setter
     @NoArgsConstructor
+    @ToString
     public static class MatXmlReq {
         //Currently not functional.
         private boolean isLinting = true;
