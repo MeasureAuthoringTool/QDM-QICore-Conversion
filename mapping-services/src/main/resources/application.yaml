@@ -15,15 +15,16 @@ json:
     required-measure-fields-url: ${GOOGLE_REQUIRED_MEASURE_FIELDS_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/opl7qh/public/values?alt=json}
     resource-definition-url: ${GOOGLE_RESOURCE_DEFINITION_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json}
 
-
 springdoc:
   swagger-ui:
     path: /swagger
 
-
 swagger-server: ${MAPPING_SWAGGER_URL}
 
-
-
-
-
+logging:
+  level:
+    root: INFO
+  file:
+    name: mapping-service.log
+    clean-history-on-start: true
+    max-history: 1

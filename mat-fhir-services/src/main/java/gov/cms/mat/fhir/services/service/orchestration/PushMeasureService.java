@@ -65,13 +65,8 @@ public class PushMeasureService implements FhirCreator {
     }
 
     private String pushMeasure(String id, OrchestrationProperties orchestrationProperties) {
-        boolean validated = measureOrchestrationValidationService.validate(orchestrationProperties);
+        measureOrchestrationValidationService.verify(orchestrationProperties);
 
-        if (!validated) {
-            throw new HapiResourceValidationException(id, "Measure");
-        } else {
-            log.debug("Measure {} is valid", id);
-        }
 
         org.hl7.fhir.r4.model.Measure fhirMeasure = orchestrationProperties.getFhirMeasure();
         fhirMeasure.setId(id);

@@ -73,3 +73,21 @@ springdoc:
     path: /swagger
 
 swagger-server: ${MAT_FHIR_SWAGGER_URL}
+
+fhir-profiles:
+  profiles:
+    - /fhir/cohort-measure-cqfm.json
+    - /fhir/computable_library_cqfm.json
+    - /fhir/cqfm-aggregateMethod.json
+    - /fhir/cqfm-allocation.json
+    - /fhir/cqfm-criteriaReference.json
+    - /fhir/cqfm-populationBasis.json
+    - /fhir/cqfm-softwaresystem.json
+    - /fhir/cv-measure-cqfm.json
+    - /fhir/device-softwaresystem-cqfm.json
+    - /fhir/executable-library-cqfm.json
+    - /fhir/library-cqfm.json
+    - /fhir/measure-cqfm.json
+    - /fhir/proportion-measure-cqfm.json
+    - /fhir/qdm-artifact-comment.json
+    - /fhir/ratio-measure-cqfm.json

@@ -9,7 +9,7 @@
         <relativePath>..</relativePath>
     </parent>
     <artifactId>mat-fhir-services</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>mat-fhir-services</name>
     <description>Spring Boot MAT FHIR conversion services</description>
     <properties>

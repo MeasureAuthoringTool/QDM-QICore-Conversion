@@ -2,6 +2,8 @@ package gov.cms.mat.fhir.services.config;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.r4.hapi.ctx.DefaultProfileValidationSupport;
@@ -9,22 +11,22 @@ import org.hl7.fhir.r4.hapi.validation.CachingValidationSupport;
 import org.hl7.fhir.r4.hapi.validation.PrePopulatedValidationSupport;
 import org.hl7.fhir.r4.hapi.validation.ValidationSupportChain;
 import org.hl7.fhir.r4.model.StructureDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.BufferedReader;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 @Slf4j
 public class HapiFhirConfig {
-
-    public void setValidationSupportChain(FhirContext ctx) {
+    @Bean
+    public ValidationSupportChain buildValidationSupportChain(FhirContext ctx,FhirProfiles fhirProfiles) {
         // Create a chain that will hold our modules
         ValidationSupportChain chain = new ValidationSupportChain();
 
@@ -44,42 +46,25 @@ public class HapiFhirConfig {
         CachingValidationSupport cache = new CachingValidationSupport(chain);
 
         IParser jsonParser = ctx.newJsonParser();
-        try {
-            getResourceFiles("/fhir/structure-definition").forEach(r -> {
-                try {
-                    log.info("Loading StructureDefinition: {}", r);
-                    String json = IOUtils.toString(getResourceAsStream(r));
-                    StructureDefinition s = jsonParser.parseResource(StructureDefinition.class, json);
-                    prePopulatedSupport.addStructureDefinition(s);
-                } catch (IOException ioe) {
-                    throw new IOError(ioe);
-                }
-            });
-        } catch (IOException ioe) {
-            throw new IOError(ioe);
-        }
+        fhirProfiles.getProfiles().forEach(r -> {
+            try {
+                log.info("Loading StructureDefinition: {}", r);
+                String json = IOUtils.toString(getResourceAsStream(r));
+                StructureDefinition s = jsonParser.parseResource(StructureDefinition.class, json);
+                prePopulatedSupport.addStructureDefinition(s);
+            } catch (IOException ioe) {
+                throw new IOError(ioe);
+            }
+        });
         ctx.setValidationSupport(cache);
+        return chain;
     }
+
 
     @Bean
     public FhirContext buildFhirContext() {
-        FhirContext result = FhirContext.forR4();
-        setValidationSupportChain(result);
-        return result;
-    }
-
-    private List<String> getResourceFiles(String path) throws IOException {
-        List<String> filenames = new ArrayList<>();
-        try (
-                InputStream in = getResourceAsStream(path);
-                BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-            String resource;
-
-            while ((resource = br.readLine()) != null) {
-                filenames.add(path + "/" + resource);
-            }
-        }
-        return filenames;
+        FhirContext ctx = FhirContext.forR4();
+        return ctx;
     }
 
     private InputStream getResourceAsStream(String resource) {

@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
+import ca.uhn.fhir.context.FhirContext;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
@@ -9,6 +10,7 @@ import gov.cms.mat.fhir.services.config.HapiFhirConfig;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.MeasureTranslator;
+import org.hl7.fhir.r4.hapi.validation.ValidationSupportChain;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Instant;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -97,7 +102,9 @@ class MeasureOrchestrationValidationServiceTest {
 
     private OrchestrationProperties setUpPush() {
         HapiFhirConfig hapiFhirConfig = new HapiFhirConfig();
-        when(hapiFhirServer.getCtx()).thenReturn(hapiFhirConfig.buildFhirContext());
+        ReflectionTestUtils.setField(HapiFhirConfig.class,"profiles",new ArrayList<>());
+        FhirContext ctx =  hapiFhirConfig.buildFhirContext();
+        when(hapiFhirServer.getCtx()).thenReturn(ctx);
 
         return OrchestrationProperties.builder()
                 .matMeasure(matMeasure)
