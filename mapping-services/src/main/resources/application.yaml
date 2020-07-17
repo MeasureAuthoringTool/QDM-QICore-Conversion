@@ -18,15 +18,16 @@ json:
     attributes-url: https://spreadsheets.google.com/feeds/list/1lV1N4O7xmSxjRH6ghuCj3mYcntPsTz8qBcpQ6DO7Se4/2/public/values?alt=json
 
 
-
 springdoc:
   swagger-ui:
     path: /swagger
 
-
 swagger-server: ${MAPPING_SWAGGER_URL}
 
-
-
-
-
+logging:
+  level:
+    root: INFO
+  file:
+    name: mapping-service.log
+    clean-history-on-start: true
+    max-history: 1

@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
@@ -60,6 +61,38 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         }
 
         return atomicBoolean.get();
+    }
+
+    public void verify(OrchestrationProperties properties) {
+        log.info("Validating measure hapi measureId: {}", properties.getMeasureId());
+
+        FhirMeasureResourceValidationResult response =
+                new FhirMeasureResourceValidationResult(properties.getMeasureId(), "Measure");
+
+        if (properties.isPush()) {
+            org.hl7.fhir.r4.model.Measure fhirMeasure = processFhirMeasure(properties);
+            validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
+        }
+
+        List<FhirValidationResult> list = buildResults(response);
+
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(validationResult -> log.debug("FhirValidationResult error: {}", validationResult));
+        }
+
+        ConversionReporter.setFhirMeasureValidationResults(list);
+
+        AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
+        StringBuilder validationError = new StringBuilder();
+        list.forEach(v -> {
+            isValid(v, atomicBoolean);
+            validationError.append(v + "\n");
+        });
+
+        if (!atomicBoolean.get()) {
+            ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, MEASURE_VALIDATION_FAILED);
+            throw new HapiResourceValidationException("Validation failed for measure " + properties.getMeasureId() + " " + validationError);
+        }
     }
 
     private org.hl7.fhir.r4.model.Measure processFhirMeasure(OrchestrationProperties properties) {

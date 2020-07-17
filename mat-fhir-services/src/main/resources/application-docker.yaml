@@ -22,14 +22,16 @@ spring:
 
 logging:
   level:
-    root: ${MAT_LOG_LEVEL:WARN}
-    gov.cms.mat: ${MAT_LOG_LEVEL:WARN}
-    org.hl7.fhir.r4.hapi.ctx: ${MAT_LOG_LEVEL:WARN}
-    org.exolab: ${MAT_LOG_LEVEL:WARN}
-    org.springframework.data.mongodb.core.MongoTemplate: ${MAT_LOG_LEVEL:WARN}
-    org.hl7.fhir.r4.hapi.validation: WARN
+    root: INFO
+    gov.cms.mat: INFO
+    org.hl7.fhir.r4.hapi.ctx: INFO
+    org.exolab: WARN
+    org.springframework.data.mongodb.core.MongoTemplate: WARN
+    org.hl7.fhir.r4.hapi.validation: INFO
   file:
     name: mat-fhir-services.log
+    clean-history-on-start: true
+    max-history: 1
 
 fhir:
   r4:

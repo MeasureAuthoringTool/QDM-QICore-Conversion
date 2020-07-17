@@ -13,4 +13,9 @@ public class HapiResourceValidationException extends RuntimeException {
         super(String.format(ID_MESSAGE, type, id));
         log.warn(getMessage());
     }
+
+    public HapiResourceValidationException(String errorMessage) {
+        super(errorMessage);
+        log.warn(getMessage());
+    }
 }

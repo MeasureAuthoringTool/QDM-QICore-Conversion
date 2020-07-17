@@ -30,8 +30,6 @@ export GOOGLE_RESOURCE_DEFINITION_URL='https://spreadsheets.google.com/feeds/lis
 
 export CODESYSTEM_SHEET_URL="https://spreadsheets.google.com/feeds/list/1_heoWR09X3UnyEvyyHLzVXT_D1Hhdt3OPztpgr1hW_k/od6/public/values?alt=json"
 
-export MAT_LOG_LEVEL='INFO'
-
 export MAT_FHIR_SWAGGER_URL='http://host.docker.internal:9080'
 export MAPPING_SWAGGER_URL='http://host.docker.internal:9090'
 export CQL_ELM_SWAGGER_URL='http://host.docker.internal:7070'
