@@ -119,7 +119,7 @@ public class LibraryTranslator extends TranslatorBase {
 
         if (library.hasDataRequirement()) {
             library.getDataRequirement().forEach(dataRequirement -> {
-                if (dataRequirement.hasCodeFilter()) {
+                if (!dataRequirement.hasCodeFilter()) { // Either a path or a searchParam must be provided, but not both
 
                     dataRequirement.getCodeFilter().forEach(codeFilterComponent -> {
                         if (!codeFilterComponent.hasSearchParam()) {
