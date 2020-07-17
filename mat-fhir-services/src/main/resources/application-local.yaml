@@ -44,6 +44,7 @@ logging:
   file:
     name: mat-fhir-services.log
 
+
 fhir:
   r4:
     baseurl: ${HAPI_FHIR_URL:http://localhost:6060/hapi-fhir-jpaserver/fhir/}

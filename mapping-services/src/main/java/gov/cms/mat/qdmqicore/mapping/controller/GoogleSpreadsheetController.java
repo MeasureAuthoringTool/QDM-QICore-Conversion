@@ -1,5 +1,7 @@
 package gov.cms.mat.qdmqicore.mapping.controller;
 
+import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionAttributes;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionDataTypes;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.DataType;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToQicoreMapping;
@@ -46,5 +48,15 @@ public class GoogleSpreadsheetController {
     @GetMapping(path = "/resourceDefinition")
     public List<ResourceDefinition> resourceDefinition() {
         return spreadsheetService.getResourceDefinitions();
+    }
+
+    @GetMapping(path = "/conversionDataTypes")
+    public List<ConversionDataTypes> conversionDataTypes() {
+        return spreadsheetService.getConversionDataTypes();
+    }
+
+    @GetMapping(path = "/conversionAttributes")
+    public List<ConversionAttributes> conversionAttributes() {
+        return spreadsheetService.getConversionAttributes();
     }
 }
