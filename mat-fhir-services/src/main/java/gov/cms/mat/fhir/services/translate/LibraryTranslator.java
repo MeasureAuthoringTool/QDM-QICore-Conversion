@@ -77,6 +77,7 @@ public class LibraryTranslator extends TranslatorBase {
         result.setVersion(visitor.getVersion());
         result.setDate(new Date());
         result.setStatus(Enumerations.PublicationStatus.ACTIVE);
+        result.setExperimental(false);
         result.setContent(createContent(elmJson, cql, elmXml));
         result.setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
         result.setApprovalDate(new Date()); //TO DO: fix this.
@@ -107,11 +108,6 @@ public class LibraryTranslator extends TranslatorBase {
         if (!library.hasPublisher()) {
             library.setPublisher(FHIR_UNKNOWN);
         }
-
-        if (!library.hasExperimental()) {
-            library.setExperimental(true);
-        }
-
 
         if (!library.hasDescription()) {
             library.setDescription(FHIR_UNKNOWN);
