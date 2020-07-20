@@ -261,9 +261,10 @@ public class LibraryTranslator extends TranslatorBase {
                 dr = fromValueSetPathRetrieve(ctx);
             } else if (matchesValuesetRetrieve(ctx)) {
                 dr = fromValueSetRetrieve(ctx);
-            } else if (matchesSimpleRetrieve(ctx)) {
-                dr = fromSimpleRetrieve(ctx);
             }
+            // We do not handle non retrieves like this:
+            // define FirstInpatientEncounter:
+            //   First([Encounter] E where E.class = 'inpatient' sort by period.start desc)
             if (dr != null) {
                 dataRequirements.add(dr);
             }
@@ -299,26 +300,6 @@ public class LibraryTranslator extends TranslatorBase {
                     ctx.getChild(0).getText().equals("[") &&
                     ctx.getChild(2).getText().equals(":") &&
                     ctx.getChild(4).getText().equals("]");
-        }
-
-
-        /**
-         * @param ctx The context
-         * @return Returns true if the retrieve is a simple retrieve like "Test".
-         */
-        private boolean matchesSimpleRetrieve(cqlParser.RetrieveContext ctx) {
-            return ctx.getChildCount() == 3;
-        }
-
-        /**
-         * @param ctx The context.
-         * @return Builds a DataRequirement from a simple retrieve.
-         */
-        private DataRequirement fromSimpleRetrieve(cqlParser.RetrieveContext ctx) {
-            var result = new DataRequirement();
-            result.setType(trimQuotes(ctx.getChild(1).getText()));
-            dataRequirements.add(result);
-            return result;
         }
 
         /**
