@@ -119,10 +119,11 @@ public class LibraryTranslator extends TranslatorBase {
 
         if (library.hasDataRequirement()) {
             library.getDataRequirement().forEach(dataRequirement -> {
-                if (!dataRequirement.hasCodeFilter()) { // Either a path or a searchParam must be provided, but not both
+                if (dataRequirement.hasCodeFilter()) { // Either a path or a searchParam must be provided, but not both
 
                     dataRequirement.getCodeFilter().forEach(codeFilterComponent -> {
-                        if (!codeFilterComponent.hasSearchParam()) {
+
+                        if (!codeFilterComponent.hasSearchParam() && !codeFilterComponent.hasPath()) {
                             codeFilterComponent.setSearchParam(FHIR_UNKNOWN);
                         }
                     });
@@ -243,13 +244,13 @@ public class LibraryTranslator extends TranslatorBase {
         private final String publicFhirBase;
         private final HapiFhirServer hapiServer;
         private final CQLAntlrUtils cqlAntlrUtils;
-        private String name;
-        private String version;
         private final List<cqlParser.IncludeDefinitionContext> includes = new ArrayList<>();
         private final List<cqlParser.ValuesetDefinitionContext> valueSets = new ArrayList<>();
         private final List<DataRequirement> dataRequirements = new ArrayList<>();
         private final List<RelatedArtifact> relatedArtifacts = new ArrayList<>();
         private final List<Library> libs = new ArrayList<>();
+        private String name;
+        private String version;
 
         private LibCqlVisitor(String publicFhirBase,
                               HapiFhirServer hapiServer,
@@ -422,7 +423,7 @@ public class LibraryTranslator extends TranslatorBase {
         }
 
         private String trimQuotes(String s) {
-            if (StringUtils.startsWith(s,"\"") && StringUtils.endsWith(s,"\"")) {
+            if (StringUtils.startsWith(s, "\"") && StringUtils.endsWith(s, "\"")) {
                 return trim1(s);
             } else {
                 return s;
