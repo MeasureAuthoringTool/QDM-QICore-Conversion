@@ -199,8 +199,16 @@ public class CqlToMatXml implements CqlVisitor {
 
         var existingValueSet = findExisting(sourceModel.getValueSetList(),
                 evs -> StringUtils.equals(parseOid(evs.getOid()), parseOid(vs.getOid())));
-        existingValueSet.ifPresentOrElse(v -> vs.setValidatedWithVsac(v.isValidatedWithVsac()),
-                () -> vs.setValidatedWithVsac(VsacStatus.PENDING.name()));
+        existingValueSet.ifPresentOrElse(v -> {
+                    vs.setValidatedWithVsac(v.isValidatedWithVsac());
+                    // Default to "". If not here it NPEs in HR generation.
+                    vs.setVersion(StringUtils.defaultString(vs.getVersion()));
+                },
+                () -> {
+                    vs.setValidatedWithVsac(VsacStatus.PENDING.name());
+                    // Default to "". If not here it NPEs in HR generation.
+                    vs.setVersion("");
+                });
 
         destinationModel.getValueSetList().add(vs);
     }
@@ -280,7 +288,7 @@ public class CqlToMatXml implements CqlVisitor {
         // Look for an existing one and use that if found. Otherwise generate a new one.
         if (sourceModel != null) {
             var matchingDefines = sourceModel.getDefinitionList().stream().
-                    filter(d -> StringUtils.equals(d.getName(),name)).
+                    filter(d -> StringUtils.equals(d.getName(), name)).
                     collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(matchingDefines) && matchingDefines.size() == 1) {
                 return matchingDefines.get(0).getId();
@@ -296,7 +304,7 @@ public class CqlToMatXml implements CqlVisitor {
         // Look for an existing one and use that if found. Otherwise generate a new one.
         if (sourceModel != null) {
             var matchingFunctions = sourceModel.getCqlFunctions().stream().
-                    filter(d -> StringUtils.equals(d.getName(),name)).
+                    filter(d -> StringUtils.equals(d.getName(), name)).
                     collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(matchingFunctions) && matchingFunctions.size() == 1) {
                 return matchingFunctions.get(0).getId();

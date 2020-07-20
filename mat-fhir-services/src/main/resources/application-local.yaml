@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/MAT_APP_BLANK?serverTimezone=UTC&max_allowed_packet=16777216
+    url: jdbc:mysql://localhost:3306/local-prd-sbx-dump?serverTimezone=UTC&max_allowed_packet=16777216
     username: root
     password: password
   jpa:

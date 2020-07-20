@@ -15,19 +15,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.gen.cqlBaseVisitor;
 import org.cqframework.cql.gen.cqlParser;
 import org.hl7.fhir.r4.model.Attachment;
-import org.hl7.fhir.r4.model.CanonicalType;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DataRequirement;
-import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Narrative;
-import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.RelatedArtifact;
-import org.hl7.fhir.r4.model.Resource;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -77,6 +70,8 @@ public class LibraryTranslator extends TranslatorBase {
         result.setVersion(visitor.getVersion());
         result.setDate(new Date());
         result.setStatus(Enumerations.PublicationStatus.ACTIVE);
+        result.setPublisher(FHIR_UNKNOWN); // TO DO revisit this once we have the new fields in the MAT GUI.
+        result.setDescription(FHIR_UNKNOWN); // TO DO revisit this once we have the new fields in the MAT GUI.
         result.setExperimental(false);
         result.setContent(createContent(elmJson, cql, elmXml));
         result.setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
@@ -85,84 +80,13 @@ public class LibraryTranslator extends TranslatorBase {
         result.setDataRequirement(distinctDataRequirements(visitor.getDataRequirements()));
         result.setRelatedArtifact(distinctArtifacts(visitor.getRelatedArtifacts()));
         result.setText(findHumanReadable(libId));
-        //   result.setContained(processContained());
-        //  result.setExtension(processExtension());
-
         result.setMeta(createLibraryMeta());
-
-        //Note: the following are contextual. Might need to be added in later:
-        //result.setJurisdiction();
-        //result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
-        //result.setTopic(createTopic());
-
-        //TO DO: figure out how to handle this with logging.
-        //ConversionReporter.setLibraryValidationLink(result.getUrl(), CREATED, uuid);
-
-        cleanUp(result);
-
         return result;
-    }
-
-
-    private void cleanUp(Library library) {
-        if (!library.hasPublisher()) {
-            library.setPublisher(FHIR_UNKNOWN);
-        }
-
-        if (!library.hasDescription()) {
-            library.setDescription(FHIR_UNKNOWN);
-        }
-
-        if (library.hasDataRequirement()) {
-            library.getDataRequirement().forEach(dataRequirement -> {
-                if (dataRequirement.hasCodeFilter()) { // Either a path or a searchParam must be provided, but not both
-
-                    dataRequirement.getCodeFilter().forEach(codeFilterComponent -> {
-
-                        if (!codeFilterComponent.hasSearchParam() && !codeFilterComponent.hasPath()) {
-                            codeFilterComponent.setSearchParam(FHIR_UNKNOWN);
-                        }
-                    });
-
-                }
-            });
-        }
     }
 
     private Meta createLibraryMeta() {
         return new Meta()
-                // .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/library-cqfm")
                 .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
-        // .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
-    }
-
-    private List<Resource> processContained() {
-        Device device = new Device();
-        Meta meta = new Meta();
-        meta.setProfile(Collections.singletonList(new CanonicalType("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/device-softwaresystem-cqfm")));
-        device.setMeta(meta);
-        device.setId("cqf-tooling");
-
-        Device.DeviceVersionComponent deviceVersionComponent = new Device.DeviceVersionComponent();
-        deviceVersionComponent.setValue("1.1.0-SNAPSHOT");
-        device.setVersion(Collections.singletonList(deviceVersionComponent));
-
-        CodeableConcept codeableConcept = new CodeableConcept();
-        Coding coding = new Coding();
-        coding.setSystem("http://hl7.org/fhir/us/cqfmeasures/CodeSystem/software-system-type");
-        coding.setCode("tooling");
-        codeableConcept.setCoding(Collections.singletonList(coding));
-
-        device.setType(codeableConcept);
-
-        return Collections.singletonList(device);
-    }
-
-    private List<Extension> processExtension() {
-        List extensionList = new ArrayList<Extension>();
-        extensionList.add(new Extension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-artifactComment",
-                new Reference("#cqf-tooling")));
-        return extensionList;
     }
 
     /**
@@ -435,6 +359,7 @@ public class LibraryTranslator extends TranslatorBase {
             result.setType(trimQuotes(ctx.getChild(1).getText()));
             var filter = new DataRequirement.DataRequirementCodeFilterComponent();
             String vsId = ctx.getChild(3).getText();
+            filter.setPath("code");
             filter.setValueSet(getValueSetUrl(vsId));
             result.setCodeFilter(Collections.singletonList(filter));
             return result;
