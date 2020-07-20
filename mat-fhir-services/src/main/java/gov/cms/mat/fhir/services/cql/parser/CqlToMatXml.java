@@ -280,7 +280,7 @@ public class CqlToMatXml implements CqlVisitor {
         // Look for an existing one and use that if found. Otherwise generate a new one.
         if (sourceModel != null) {
             var matchingDefines = sourceModel.getDefinitionList().stream().
-                    filter(d -> StringUtils.equals(d.getName(),name)).
+                    filter(d -> StringUtils.equals(d.getName(), name)).
                     collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(matchingDefines) && matchingDefines.size() == 1) {
                 return matchingDefines.get(0).getId();
@@ -296,7 +296,7 @@ public class CqlToMatXml implements CqlVisitor {
         // Look for an existing one and use that if found. Otherwise generate a new one.
         if (sourceModel != null) {
             var matchingFunctions = sourceModel.getCqlFunctions().stream().
-                    filter(d -> StringUtils.equals(d.getName(),name)).
+                    filter(d -> StringUtils.equals(d.getName(), name)).
                     collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(matchingFunctions) && matchingFunctions.size() == 1) {
                 return matchingFunctions.get(0).getId();
