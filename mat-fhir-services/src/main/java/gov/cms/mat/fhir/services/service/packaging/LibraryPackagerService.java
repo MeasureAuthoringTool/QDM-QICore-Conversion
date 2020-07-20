@@ -121,7 +121,7 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
         var libContext = cqlAntlrUtils.getLibraryContextBytes(Base64.getDecoder().decode(measureLib.getContent().get(0).getData()));
         visitor.visit(libContext);
         result.getLibraryReferences().stream().forEach(l -> {
-            var c = cqlAntlrUtils.getLibraryContextBytes(Base64.getDecoder().decode(measureLib.getContent().get(0).getData()));
+            var c = cqlAntlrUtils.getLibraryContextBytes(Base64.getDecoder().decode(l.getLibrary().getContent().get(0).getData()));
             visitor.visit(c);
         });
 
