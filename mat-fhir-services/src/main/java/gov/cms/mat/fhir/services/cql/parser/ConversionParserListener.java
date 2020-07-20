@@ -128,6 +128,7 @@ public class ConversionParserListener extends cqlBaseListener {
             }
 
             log.debug(stringBuilder.toString());
+            log.debug("Errors: {}", errors);
         }
 
         private String handleIdentifier(Token token) {

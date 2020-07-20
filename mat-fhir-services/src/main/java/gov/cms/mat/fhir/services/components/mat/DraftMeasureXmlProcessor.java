@@ -62,7 +62,10 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         FhirResourceValidationResult result = validateResource(library, hapiFhirServer.getCtx());
 
         if (CollectionUtils.isNotEmpty(result.getValidationErrorList())) {
-            log.error("Validation errors encountered: {} ", result.getValidationErrorList());
+            log.error("Validation errors encountered {} errors ", result.getValidationErrorList().size());
+
+            result.getValidationErrorList().forEach(e -> log.error("Validation error: {}", e));
+
             throw new HapiResourceValidationException(libraryId, "Library");
         }
 
