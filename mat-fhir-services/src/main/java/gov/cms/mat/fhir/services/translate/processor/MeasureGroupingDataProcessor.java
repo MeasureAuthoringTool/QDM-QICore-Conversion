@@ -11,6 +11,7 @@ import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.Expression;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Measure;
+import org.hl7.fhir.r4.model.StringType;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -98,7 +99,7 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
 
                 Extension criteriaReferenceExtension = new Extension();
                 criteriaReferenceExtension.setUrl("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-criteriaReference");
-                criteriaReferenceExtension.setValue(new CodeType("criteriaReference"));
+                criteriaReferenceExtension.setValue(new StringType("criteriaReference"));
                 component.addExtension(criteriaReferenceExtension);
 
                 Extension aggregateMethodExtension = new Extension();
