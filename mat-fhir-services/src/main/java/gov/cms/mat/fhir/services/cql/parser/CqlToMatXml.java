@@ -199,16 +199,8 @@ public class CqlToMatXml implements CqlVisitor {
 
         var existingValueSet = findExisting(sourceModel.getValueSetList(),
                 evs -> StringUtils.equals(parseOid(evs.getOid()), parseOid(vs.getOid())));
-        existingValueSet.ifPresentOrElse(v -> {
-                    vs.setValidatedWithVsac(v.isValidatedWithVsac());
-                    // Default to "". If not here it NPEs in HR generation.
-                    vs.setVersion(StringUtils.defaultString(vs.getVersion()));
-                },
-                () -> {
-                    vs.setValidatedWithVsac(VsacStatus.PENDING.name());
-                    // Default to "". If not here it NPEs in HR generation.
-                    vs.setVersion("");
-                });
+        existingValueSet.ifPresentOrElse(v -> vs.setValidatedWithVsac(v.isValidatedWithVsac()),
+                () -> vs.setValidatedWithVsac(VsacStatus.PENDING.name()));
 
         destinationModel.getValueSetList().add(vs);
     }
