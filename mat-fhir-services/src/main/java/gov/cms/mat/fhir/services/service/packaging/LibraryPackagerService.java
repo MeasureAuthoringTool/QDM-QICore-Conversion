@@ -159,7 +159,6 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
                         .getRequest()
                         .setUrl("Library/" + getFhirId(library))
                         .setMethod(Bundle.HTTPVerb.PUT);
-                ;
             }
         } else {
             String missing = String.join(", ", missingLibs);

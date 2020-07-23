@@ -4,7 +4,6 @@ import gov.cms.mat.fhir.commons.model.HumanReadableArtifacts;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.gen.cqlParser;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 @Service

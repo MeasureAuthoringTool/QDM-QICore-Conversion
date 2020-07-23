@@ -106,7 +106,7 @@ public class LibraryTranslator extends TranslatorBase {
      * @param elmXml  elmXml String
      * @return The content element.
      */
-    List<Attachment> createContent(String elmJson, String cql, String elmXml) {
+    private List<Attachment> createContent(String elmJson, String cql, String elmXml) {
         List<Attachment> attachments = new ArrayList<>(2);
         attachments.add(createAttachment(CQL_CONTENT_TYPE, cql.getBytes()));
         attachments.add(createAttachment(XML_ELM_CONTENT_TYPE, elmXml.getBytes()));
