@@ -83,7 +83,8 @@ public class CqlToMatXml implements CqlVisitor {
     private final CqlLibraryRepository cqlLibraryRepository;
     private final CodeListService codeListService;
 
-    public CqlToMatXml(CodeListService codeListService, CqlLibraryRepository cqlLibraryRepository) {
+    public CqlToMatXml(CodeListService codeListService,
+                       CqlLibraryRepository cqlLibraryRepository) {
         this.codeListService = codeListService;
         this.cqlLibraryRepository = cqlLibraryRepository;
     }

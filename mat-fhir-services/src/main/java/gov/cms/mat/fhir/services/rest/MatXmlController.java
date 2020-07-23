@@ -5,6 +5,7 @@ import gov.cms.mat.fhir.commons.model.MeasureXml;
 import gov.cms.mat.fhir.services.cql.parser.CqlParser;
 import gov.cms.mat.fhir.services.cql.parser.CqlToMatXml;
 import gov.cms.mat.fhir.services.cql.parser.CqlVisitorFactory;
+import gov.cms.mat.fhir.services.repository.CqlLibraryAssociationRepository;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureXmlRepository;
 import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
@@ -16,11 +17,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import mat.model.cql.CQLCodeSystem;
 import mat.model.cql.CQLModel;
+import mat.model.cql.CQLQualityDataSetDTO;
 import mat.server.CQLUtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -82,17 +86,20 @@ public class MatXmlController {
 
     private final MeasureXmlRepository measureXmlRepo;
     private final CqlLibraryRepository cqlLibRepo;
+    private final CqlLibraryAssociationRepository cqlLibAssocRepo;
     private final CqlVisitorFactory visitorFactory;
     private final CqlParser cqlParser;
     private final ValidationOrchestrationService validationOrchestrationService;
 
     public MatXmlController(MeasureXmlRepository measureXmlRepo,
                             CqlLibraryRepository cqlLibRepo,
+                            CqlLibraryAssociationRepository cqlLibAssocRepo,
                             CqlVisitorFactory visitorFactory,
                             CqlParser cqlParser,
                             ValidationOrchestrationService validationOrchestrationService) {
         this.measureXmlRepo = measureXmlRepo;
         this.cqlLibRepo = cqlLibRepo;
+        this.cqlLibAssocRepo = cqlLibAssocRepo;
         this.visitorFactory = visitorFactory;
         this.cqlParser = cqlParser;
         this.validationOrchestrationService = validationOrchestrationService;

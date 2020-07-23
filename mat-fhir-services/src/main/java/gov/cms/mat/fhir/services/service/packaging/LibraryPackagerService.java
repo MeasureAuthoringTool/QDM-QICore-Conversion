@@ -1,10 +1,13 @@
 package gov.cms.mat.fhir.services.service.packaging;
 
+import gov.cms.mat.fhir.commons.model.HumanReadableArtifacts;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
 import gov.cms.mat.fhir.services.cql.CQLAntlrUtils;
+import gov.cms.mat.fhir.services.cql.LibraryCqlVisitor;
+import gov.cms.mat.fhir.services.cql.LibraryCqlVisitorFactory;
 import gov.cms.mat.fhir.services.exceptions.FhirIncludeLibrariesNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
@@ -15,30 +18,20 @@ import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorService;
 import gov.cms.mat.fhir.services.service.packaging.dto.LibraryPackageFullHapi;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cqframework.cql.gen.cqlBaseVisitor;
-import org.cqframework.cql.gen.cqlParser;
-import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeSystem;
-import org.hl7.fhir.r4.model.DataRequirement;
 import org.hl7.fhir.r4.model.Library;
-import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,15 +41,18 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
     private final FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor;
     private final FhirValidatorService fhirValidatorService;
     private final CQLAntlrUtils cqlAntlrUtils;
+    private final LibraryCqlVisitorFactory libVisitorFactory;
 
     public LibraryPackagerService(HapiFhirServer hapiFhirServer,
                                   FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor,
                                   FhirValidatorService fhirValidatorService,
-                                  CQLAntlrUtils cqlAntlrUtils) {
+                                  CQLAntlrUtils cqlAntlrUtils,
+                                  LibraryCqlVisitorFactory libVisitorFactory) {
         this.hapiFhirServer = hapiFhirServer;
         this.fhirIncludeLibraryProcessor = fhirIncludeLibraryProcessor;
         this.fhirValidatorService = fhirValidatorService;
         this.cqlAntlrUtils = cqlAntlrUtils;
+        this.libVisitorFactory = libVisitorFactory;
     }
 
     public Library packageMinimum(String id) {
@@ -66,10 +62,10 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
 
         if (CollectionUtils.isNotEmpty(result.getValidationErrorList())) {
             boolean hasErrors = result.getValidationErrorList().stream().
-                    anyMatch(ve -> !StringUtils.equals("WARNING",ve.getSeverity()) &&
-                            !StringUtils.equals("INFORMATION",ve.getSeverity()));
+                    anyMatch(ve -> !StringUtils.equals("WARNING", ve.getSeverity()) &&
+                            !StringUtils.equals("INFORMATION", ve.getSeverity()));
             if (hasErrors) {
-                log.error("Validation errors encountered: " , result.getValidationErrorList());
+                log.error("Validation errors encountered: ", result.getValidationErrorList());
                 throw new HapiResourceValidationException(id, "Library");
             }
         }
@@ -106,40 +102,37 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
     }
 
     Bundle buildIncludeBundle(Library measureLib, String id) {
-        Bundle includedLibraryBundle = new Bundle();
+        Bundle result = new Bundle();
         // Using Bryns connecthathon examples use Transactions so they work with hapi-fhir.
-        includedLibraryBundle.setType(Bundle.BundleType.TRANSACTION);
+        result.setType(Bundle.BundleType.TRANSACTION);
 
-        includedLibraryBundle.addEntry().setResource(measureLib).getRequest()
-                        .setUrl("Library/" + getFhirId(measureLib))
-                        .setMethod(Bundle.HTTPVerb.PUT);
+        result.addEntry().setResource(measureLib).getRequest()
+                .setUrl("Library/" + getFhirId(measureLib))
+                .setMethod(Bundle.HTTPVerb.PUT);
 
-        FhirIncludeLibraryResult result = findIncludedFhirLibraries(measureLib);
-        processIncludedLibraries(includedLibraryBundle, result, id);
+        addIncludedLibraries(result, findIncludedFhirLibraries(measureLib), id);
 
-        var visitor = new ValueSetCodeSystemVisitor();
-        var libContext = cqlAntlrUtils.getLibraryContextBytes(Base64.getDecoder().decode(measureLib.getContent().get(0).getData()));
-        visitor.visit(libContext);
+        var cql = cqlAntlrUtils.getCql(measureLib);
+        var pair = libVisitorFactory.visitAndCollateHumanReadable(cql);
 
-        var measureLibCql = cqlAntlrUtils.getLibraryContextBytes(Base64.getDecoder().decode(measureLib.getContent().get(0).getData()));
-        visitor.visit(measureLibCql);
+        addCodeSystems(result, pair);
+        addValueSetsystems(result, pair);
 
-        result.getLibraryReferences().stream().forEach(l -> {
-            var c = cqlAntlrUtils.getLibraryContextBytes(Base64.getDecoder().decode(l.getLibrary().getContent().get(0).getData()));
-            visitor.visit(c);
-        });
+        return result;
+    }
 
-        //This is wrong but we don't have direction on how to do this correctly yet.
-        visitor.getCodeSystems().forEach(cs -> {
-            includedLibraryBundle.addEntry().setResource(cs);
-        });
-        //This is wrong but we don't have direction on how to do this correctly yet.
-        visitor.getValueSets().forEach(vs -> {
-            includedLibraryBundle.addEntry().setResource(vs);
-        });
+    private void addCodeSystems(Bundle bundle, Pair<LibraryCqlVisitor, HumanReadableArtifacts> pair) {
+        Set<String> uniqueCodeSystemsUrls = new HashSet<>();
+        pair.getRight().getTerminologyCodeModels().forEach(cm -> uniqueCodeSystemsUrls.add(cm.getOid()));
+        uniqueCodeSystemsUrls.forEach(url ->
+                bundle.addEntry().setResource(new CodeSystem().setUrl(url)));
+    }
 
-        //Include code systems (This will be done once we figure out which url to use.)
-        return includedLibraryBundle;
+    private void addValueSetsystems(Bundle bundle, Pair<LibraryCqlVisitor, HumanReadableArtifacts> pair) {
+        Set<String> uniqueValueSetUrls = new HashSet<>();
+        pair.getRight().getTerminologyValueSetModels().forEach(vsm -> uniqueValueSetUrls.add(vsm.getOid()));
+        uniqueValueSetUrls.forEach(url ->
+                bundle.addEntry().setResource(new ValueSet().setUrl(url)));
     }
 
     private FhirIncludeLibraryResult findIncludedFhirLibraries(Library library) {
@@ -150,8 +143,7 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
         }
     }
 
-
-    private void processIncludedLibraries(Bundle libraryBundle, FhirIncludeLibraryResult fhirIncludeLibraryResult, String id) {
+    private void addIncludedLibraries(Bundle libraryBundle, FhirIncludeLibraryResult fhirIncludeLibraryResult, String id) {
         List<FhirIncludeLibraryReferences> libraryReferences = fhirIncludeLibraryResult.getLibraryReferences();
 
         List<String> missingLibs = libraryReferences.stream()
@@ -166,7 +158,8 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
                 libraryBundle.addEntry().setResource(library)
                         .getRequest()
                         .setUrl("Library/" + getFhirId(library))
-                        .setMethod(Bundle.HTTPVerb.PUT);;
+                        .setMethod(Bundle.HTTPVerb.PUT);
+                ;
             }
         } else {
             String missing = String.join(", ", missingLibs);
@@ -182,44 +175,5 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
         }
         int startIndex = id.lastIndexOf('/') + 1;
         return id.substring(startIndex);
-    }
-
-    @Getter
-    @Slf4j
-    private static class ValueSetCodeSystemVisitor extends cqlBaseVisitor<String> {
-        List<ValueSet> valueSets = new ArrayList<>();
-        List<CodeSystem> codeSystems = new ArrayList<>();;
-
-        private ValueSetCodeSystemVisitor() {
-        }
-
-        /**
-         * Stores off valueSets ,they are used later when looking up retrieves.
-         *
-         * @param ctx The context.
-         * @return Always null.
-         */
-        @Override
-        public String visitValuesetDefinition(cqlParser.ValuesetDefinitionContext ctx) {
-            String url = ctx.valuesetId().getText();
-            var existingVs = valueSets.stream().filter(vs -> StringUtils.equals(vs.getUrl(),url)).findFirst();
-            if (existingVs.isEmpty()) {
-                ValueSet valueSet = new ValueSet();
-                valueSet.setUrl(url);
-                valueSets.add(valueSet);
-            }
-            return null;
-        }
-
-        public String visitCodesystemDefinition(cqlParser.CodesystemDefinitionContext ctx) {
-            String url = ctx.codesystemId().getText();
-            var existingCs = codeSystems.stream().filter(cs -> StringUtils.equals(cs.getUrl(),url)).findFirst();
-            if (existingCs.isEmpty()) {
-                CodeSystem codeSystem = new CodeSystem();
-                codeSystem.setUrl(url);
-                codeSystems.add(codeSystem);
-            }
-            return null;
-        }
     }
 }

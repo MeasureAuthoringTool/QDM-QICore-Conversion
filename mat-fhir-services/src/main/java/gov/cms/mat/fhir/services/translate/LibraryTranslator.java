@@ -2,18 +2,15 @@ package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.cql.CQLAntlrUtils;
+import gov.cms.mat.fhir.services.cql.LibraryCqlVisitorFactory;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.cqframework.cql.gen.cqlBaseVisitor;
-import org.cqframework.cql.gen.cqlParser;
 import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.DataRequirement;
 import org.hl7.fhir.r4.model.Enumerations;
@@ -23,14 +20,10 @@ import org.hl7.fhir.r4.model.Narrative;
 import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Getter
@@ -43,26 +36,29 @@ public class LibraryTranslator extends TranslatorBase {
     public static final String SYSTEM_TYPE = "http://terminology.hl7.org/CodeSystem/library-type";
     public static final String SYSTEM_CODE = "logic-library";
 
+
     private final HapiFhirServer hapiServer;
     private final CQLAntlrUtils cqlAntlrUtils;
     private final MeasureExportRepository measureExportRepo;
     private final CqlLibraryRepository libRepo;
+    private final LibraryCqlVisitorFactory libCqlVisitorFactory;
 
 
     public LibraryTranslator(HapiFhirServer hapiServer,
                              CQLAntlrUtils cqlAntlrUtils,
                              CqlLibraryRepository libRepo,
-                             MeasureExportRepository measureExportRepo) {
+                             MeasureExportRepository measureExportRepo,
+                             LibraryCqlVisitorFactory libCqlVisitorFactory) {
         this.hapiServer = hapiServer;
         this.cqlAntlrUtils = cqlAntlrUtils;
         this.libRepo = libRepo;
         this.measureExportRepo = measureExportRepo;
+        this.libCqlVisitorFactory = libCqlVisitorFactory;
     }
 
     public Library translateToFhir(String libId, String cql, String elmXml, String elmJson) {
         //Used to parse the CQL and get various values.
-        LibCqlVisitor visitor = buildVisitor(cql);
-
+        var visitor = libCqlVisitorFactory.visit(cql);
         Library result = new Library();
         result.setId(libId);
         result.setLanguage("en");
@@ -87,19 +83,6 @@ public class LibraryTranslator extends TranslatorBase {
     private Meta createLibraryMeta() {
         return new Meta()
                 .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
-    }
-
-    /**
-     * Creates a CqlVisitor and visits the cql.
-     *
-     * @param cql The cql.
-     * @return The visitor.
-     */
-    private LibCqlVisitor buildVisitor(String cql) {
-        LibCqlVisitor visitor = new LibCqlVisitor(publicHapiFhirUrl, hapiServer, cqlAntlrUtils);
-        cqlParser.LibraryContext ctx = cqlAntlrUtils.getLibraryContext(cql);
-        visitor.visit(ctx);
-        return visitor;
     }
 
     private Narrative findHumanReadable(String libId) {
@@ -156,285 +139,5 @@ public class LibraryTranslator extends TranslatorBase {
             }
         });
         return result;
-    }
-
-    @Getter
-    @Slf4j
-    private static class LibCqlVisitor extends cqlBaseVisitor<String> {
-        private final String publicFhirBase;
-        private final HapiFhirServer hapiServer;
-        private final CQLAntlrUtils cqlAntlrUtils;
-        private final List<cqlParser.IncludeDefinitionContext> includes = new ArrayList<>();
-        private final List<cqlParser.ValuesetDefinitionContext> valueSets = new ArrayList<>();
-        private final List<DataRequirement> dataRequirements = new ArrayList<>();
-        private final List<RelatedArtifact> relatedArtifacts = new ArrayList<>();
-        private final List<Library> libs = new ArrayList<>();
-        private String name;
-        private String version;
-
-        private LibCqlVisitor(String publicFhirBase,
-                              HapiFhirServer hapiServer,
-                              CQLAntlrUtils cqlAntlrUtils) {
-            this.publicFhirBase = publicFhirBase;
-            this.hapiServer = hapiServer;
-            this.cqlAntlrUtils = cqlAntlrUtils;
-        }
-
-        /**
-         * Stores off lib name and version.
-         *
-         * @param ctx The context.
-         * @return Always null.
-         */
-        @Override
-        public String visitLibraryDefinition(cqlParser.LibraryDefinitionContext ctx) {
-            name = ctx.qualifiedIdentifier().getText();
-            version = trim1(ctx.versionSpecifier().getText());
-            return null;
-        }
-
-        /**
-         * Stores off valueSets ,they are used later when looking up retrieves.
-         *
-         * @param ctx The context.
-         * @return Always null.
-         */
-        @Override
-        public String visitValuesetDefinition(cqlParser.ValuesetDefinitionContext ctx) {
-            valueSets.add(ctx);
-            return null;
-        }
-
-        /**
-         * Stores off all includes ,they are used later when looking for retrieves,
-         * and builds relatedArtifacts for them
-         *
-         * @param ctx The context.
-         * @return Always null.
-         */
-        @Override
-        public String visitIncludeDefinition(cqlParser.IncludeDefinitionContext ctx) {
-            if (ctx.getChildCount() >= 4 &&
-                    StringUtils.equals(ctx.getChild(0).getText(), "include") &&
-                    StringUtils.equals(ctx.getChild(2).getText(), "version")) {
-                RelatedArtifact relatedArtifact = new RelatedArtifact();
-                relatedArtifact.setType(RelatedArtifact.RelatedArtifactType.DEPENDSON);
-                var nameVersion = getNameVersionFromInclude(ctx);
-                Optional<Library> lib = hapiServer.fetchHapiLibrary(nameVersion.getLeft(),
-                        nameVersion.getRight());
-                if (lib.isPresent()) {
-                    relatedArtifact.setUrl(publicFhirBase + "Library/" + getId(lib.get()));
-                    libs.add(lib.get());
-                    relatedArtifacts.add(relatedArtifact);
-                } else {
-                    log.warn("Could not find hapi fhir lib: " + name + "|" + version);
-                }
-                includes.add(ctx);
-            }
-            return null;
-        }
-
-        private String getId(Library lib) {
-            String id = lib.getId();
-            int endIndex = id.indexOf("/_history");
-            if (endIndex >= 0) {
-                id = id.substring(0, endIndex);
-            }
-            int startIndex = id.lastIndexOf('/') + 1;
-            return id.substring(startIndex);
-        }
-
-        private Pair<String, String> getNameVersionFromInclude(cqlParser.IncludeDefinitionContext ctx) {
-            return Pair.of(ctx.getChild(1).getText(), trim1(ctx.getChild(3).getText()));
-        }
-
-        /**
-         * Handles building the dataRequirements from retrieves.
-         *
-         * @param ctx The context.
-         * @return Always null.
-         */
-        @Override
-        public String visitRetrieve(cqlParser.RetrieveContext ctx) {
-            DataRequirement dr = null;
-            if (matchesValuesetPathRetrieve(ctx)) {
-                dr = fromValueSetPathRetrieve(ctx);
-            } else if (matchesValuesetRetrieve(ctx)) {
-                dr = fromValueSetRetrieve(ctx);
-            }
-            // We do not handle non retrieves like this:
-            // define FirstInpatientEncounter:
-            //   First([Encounter] E where E.class = 'inpatient' sort by period.start desc)
-            if (dr != null) {
-                dataRequirements.add(dr);
-            }
-            return null;
-        }
-
-        /**
-         * @return Has to be something so always null.
-         */
-        @Override
-        protected String defaultResult() {
-            return null;
-        }
-
-        /**
-         * @param ctx the retrieve.
-         * @return Returns true if the retrieve is a valueset retrieve.
-         */
-        private boolean matchesValuesetPathRetrieve(cqlParser.RetrieveContext ctx) {
-            return ctx.getChildCount() == 7 &&
-                    ctx.getChild(0).getText().equals("[") &&
-                    ctx.getChild(2).getText().equals(":") &&
-                    ctx.getChild(4).getText().equals("in") &&
-                    ctx.getChild(6).getText().equals("]");
-        }
-
-        /**
-         * @param ctx the retrieve.
-         * @return Returns true if the retrieve is a valueset retrieve.
-         */
-        private boolean matchesValuesetRetrieve(cqlParser.RetrieveContext ctx) {
-            return ctx.getChildCount() == 5 &&
-                    ctx.getChild(0).getText().equals("[") &&
-                    ctx.getChild(2).getText().equals(":") &&
-                    ctx.getChild(4).getText().equals("]");
-        }
-
-        /**
-         * @param ctx The context.
-         * @return Builds a DataRequirement from a valueset retrieve.
-         */
-        private DataRequirement fromValueSetPathRetrieve(cqlParser.RetrieveContext ctx) {
-            String vsId = ctx.getChild(5).getText();
-            String valueSet = getValueSetUrl(vsId);
-
-            if (StringUtils.isNotBlank(valueSet)) {
-                var result = new DataRequirement();
-                result.setType(trimQuotes(ctx.getChild(1).getText()));
-                var filter = new DataRequirement.DataRequirementCodeFilterComponent();
-                filter.setPath(ctx.getChild(3).getText());
-                filter.setValueSet(valueSet);
-                result.setCodeFilter(Collections.singletonList(filter));
-                return result;
-            } else {
-                return null;
-            }
-        }
-
-        private String trimQuotes(String s) {
-            if (StringUtils.startsWith(s, "\"") && StringUtils.endsWith(s, "\"")) {
-                return trim1(s);
-            } else {
-                return s;
-            }
-        }
-
-        /**
-         * @param ctx The context.
-         * @return Builds a DataRequirement from a valueset retrieve.
-         */
-        private DataRequirement fromValueSetRetrieve(cqlParser.RetrieveContext ctx) {
-            var result = new DataRequirement();
-            result.setType(trimQuotes(ctx.getChild(1).getText()));
-            var filter = new DataRequirement.DataRequirementCodeFilterComponent();
-            String vsId = ctx.getChild(3).getText();
-            filter.setPath("code");
-            filter.setValueSet(getValueSetUrl(vsId));
-            result.setCodeFilter(Collections.singletonList(filter));
-            return result;
-        }
-
-
-        /**
-         * @param valueSetId The value set local id.
-         * @return Returns true if the valueSetId is in this library.
-         * False if it is an included library of this one.
-         */
-        private boolean isInIncludeLib(String valueSetId) {
-            return !valueSetId.contains(".");
-        }
-
-
-        /**
-         * Handles the valueset URL lookup for the specified valueSet id.
-         * This is tricky because it might be an included lib.
-         *
-         * @param vsId The value set local id.
-         * @return The value set url.
-         */
-        private String getValueSetUrl(String vsId) {
-            String result = null;
-            if (isInIncludeLib(vsId)) {
-                var optionalVs = valueSets.stream().filter(
-                        vs -> StringUtils.equals(vs.identifier().getText(), vsId)).findFirst();
-                if (optionalVs.isPresent()) {
-                    result = optionalVs.get().valuesetId().getText();
-                } else {
-                    log.info("Could not find vs for local id " + vsId);
-                }
-            } else {
-                String[] vsIdSplit = vsId.split("\\.");
-                String libId = vsIdSplit[0];
-                String splitVs = vsIdSplit[1];
-
-                var foundInclude = includes.stream().filter(
-                        i -> StringUtils.equals(defaultText(i.localIdentifier()), libId)).findFirst();
-                if (foundInclude.isPresent()) {
-                    var foundLib = libs.stream().filter(l -> matches(foundInclude.get(), l)).findFirst();
-                    if (foundLib.isPresent()) {
-                        result = getValueSetUrl(splitVs, foundLib.get());
-                    } else {
-                        log.info("Could not find value set for " + vsId);
-                    }
-                } else {
-                    log.info("Could not find lib for " + vsId);
-                }
-            }
-            return result;
-        }
-
-        private boolean matches(cqlParser.IncludeDefinitionContext ctx, Library lib) {
-            var nameVersion = getNameVersionFromInclude(ctx);
-            return StringUtils.equals(lib.getName(), nameVersion.getLeft()) &&
-                    StringUtils.equals(lib.getVersion(), nameVersion.getRight());
-        }
-
-        /**
-         * @param name localName
-         * @param lib  Fhir Lib
-         * @return Returns the valueset url of a valueset in a given library with the specified local name.
-         */
-        private String getValueSetUrl(String name, Library lib) {
-            Optional<Attachment> a = lib.getContent().stream().filter(
-                    c -> c.getContentType().equals(CQL_CONTENT_TYPE)).findFirst();
-            if (a.isPresent()) {
-                String cql = new String(Base64.getDecoder().decode(a.get().getData()), StandardCharsets.UTF_8);
-                cqlParser.LibraryContext library = cqlAntlrUtils.getLibraryContext(cql);
-                var optionalVs = library.valuesetDefinition().stream().filter(
-                        vs -> StringUtils.equals(vs.identifier().getText(), name)).findFirst();
-                if (optionalVs.isPresent()) {
-                    return optionalVs.get().valuesetId().getText();
-                } else {
-                    throw new IllegalStateException("Could not find value set " + name +
-                            " in lib " + lib.getName() + "|" + lib.getVersion());
-                }
-            } else {
-                throw new IllegalStateException("Could not find text/cql for lib: " + lib.getId());
-            }
-        }
-
-        private String trim1(String s) {
-            if (StringUtils.isNotBlank(s) && s.length() > 2) {
-                return s.substring(1, s.length() - 1);
-            } else {
-                return s;
-            }
-        }
-
-        private String defaultText(ParserRuleContext c) {
-            return c == null ? null : c.getText();
-        }
     }
 }
