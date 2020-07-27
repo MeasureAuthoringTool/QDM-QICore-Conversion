@@ -117,7 +117,7 @@ public class LibraryTranslator extends TranslatorBase {
     private List<RelatedArtifact> distinctArtifacts(List<RelatedArtifact> artifacts) {
         List<RelatedArtifact> result = new ArrayList<>(artifacts.size());
         //Remove duplicates. I wish HapiFhir implemented equals. Today it is SadFhir for me.
-        artifacts.forEach(a -> {
+        artifacts.stream().forEach(a -> {
             if (result.stream().noneMatch(ar -> Objects.deepEquals(a, ar))) {
                 result.add(a);
             }

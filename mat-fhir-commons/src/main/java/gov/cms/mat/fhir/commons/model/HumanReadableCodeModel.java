@@ -1,19 +1,20 @@
 package gov.cms.mat.fhir.commons.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class HumanReadableCodeModel {
 	private String name;
 	private String oid;
+	private String codeSystemOid;
 	private String codesystemName;
 	private String codesystemVersion;
 	private boolean isCodesystemVersionIncluded;

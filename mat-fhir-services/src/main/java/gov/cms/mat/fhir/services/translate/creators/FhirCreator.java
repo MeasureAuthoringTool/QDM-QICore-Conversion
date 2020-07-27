@@ -70,7 +70,7 @@ public interface FhirCreator {
         if (parts.length != 2) {
             throw new IllegalArgumentException("Cannot parse version: " + version);
         } else {
-            return parts[0] + '.' + revision + '.' + parts[1];
+            return parts[0] + '.' + parts[1] + '.' + revision;
         }
     }
 }

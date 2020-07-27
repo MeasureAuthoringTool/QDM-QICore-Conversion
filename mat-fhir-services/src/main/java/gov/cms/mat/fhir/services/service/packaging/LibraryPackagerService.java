@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.service.packaging;
 
+import com.sun.istack.NotNull;
 import gov.cms.mat.fhir.commons.model.HumanReadableArtifacts;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
@@ -65,7 +66,7 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
                     anyMatch(ve -> !StringUtils.equals("WARNING", ve.getSeverity()) &&
                             !StringUtils.equals("INFORMATION", ve.getSeverity()));
             if (hasErrors) {
-                log.error("Validation errors encountered: ", result.getValidationErrorList());
+                log.error("Validation errors encountered: {}", result.getValidationErrorList());
                 throw new HapiResourceValidationException(id, "Library");
             }
         }
@@ -122,16 +123,17 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
     }
 
     private void addCodeSystems(Bundle bundle, Pair<LibraryCqlVisitor, HumanReadableArtifacts> pair) {
-        Set<String> uniqueCodeSystemsUrls = new HashSet<>();
-        pair.getRight().getTerminologyCodeModels().forEach(cm -> uniqueCodeSystemsUrls.add(cm.getOid()));
-        uniqueCodeSystemsUrls.forEach(url ->
-                bundle.addEntry().setResource(new CodeSystem().setUrl(url)));
+        Set<String> uniqueCSUris = new HashSet<>();
+        pair.getRight().getTerminologyCodeModels().forEach(cm -> uniqueCSUris.add(cm.getCodeSystemOid()));
+        uniqueCSUris.stream().
+                sorted().
+                forEach(uri -> bundle.addEntry().setResource(new CodeSystem().setUrl(uri)));
     }
 
     private void addValueSetsystems(Bundle bundle, Pair<LibraryCqlVisitor, HumanReadableArtifacts> pair) {
         Set<String> uniqueValueSetUrls = new HashSet<>();
         pair.getRight().getTerminologyValueSetModels().forEach(vsm -> uniqueValueSetUrls.add(vsm.getOid()));
-        uniqueValueSetUrls.forEach(url ->
+        uniqueValueSetUrls.stream().sorted().forEach(url ->
                 bundle.addEntry().setResource(new ValueSet().setUrl(url)));
     }
 
@@ -167,6 +169,11 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
     }
 
     private String getFhirId(Resource r) {
+        return getString(r);
+    }
+
+    @NotNull
+    public static String getString(Resource r) {
         String id = r.getId();
         int endIndex = id.indexOf("/_history");
         if (endIndex >= 0) {
