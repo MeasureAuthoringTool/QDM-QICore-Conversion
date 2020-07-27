@@ -28,7 +28,7 @@ public class HumanReadableCodeModel {
 
 		if (!name.equals(that.name)) return false;
 		if (!oid.equals(that.oid)) return false;
-		if (!codesystemName.equals(that.codesystemName)) return false;
+		if (codesystemVersion != null && !codesystemName.equals(that.codesystemName)) return false;
 		return codesystemVersion.equals(that.codesystemVersion);
 	}
 
