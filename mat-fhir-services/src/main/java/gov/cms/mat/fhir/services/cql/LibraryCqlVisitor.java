@@ -287,7 +287,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
         } else {
             HumanReadableCodeModel hrCode = getCode(valueSetOrCodeName);
             if (hrCode != null) {
-                filter.setCode(Collections.singletonList(new Coding()));
+                filter.setCode(Collections.singletonList(new Coding(hrCode.getCodeSystemOid(),hrCode.getOid(),hrCode.getName())));
                 humanReadableArtifacts.getDataReqCodes().add(HumanReadableCodeModel.builder()
                         .name(hrCode.getName())
                         .oid(hrCode.getOid())
