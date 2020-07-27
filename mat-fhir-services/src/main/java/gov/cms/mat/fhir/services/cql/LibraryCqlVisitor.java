@@ -4,7 +4,6 @@ import gov.cms.mat.fhir.commons.model.HumanReadableArtifacts;
 import gov.cms.mat.fhir.commons.model.HumanReadableCodeModel;
 import gov.cms.mat.fhir.commons.model.HumanReadableValuesetModel;
 import gov.cms.mat.fhir.services.cql.parser.CqlUtils;
-import gov.cms.mat.fhir.services.exceptions.CqlParseException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +17,6 @@ import org.hl7.fhir.r4.model.DataRequirement;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,10 +31,6 @@ import java.util.Optional;
 @Getter
 @Slf4j
 public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
-
-    @Value("${fhir.r4.public-url}")
-    private String publicHapiFhirUrl;
-
     private final HapiFhirServer hapiServer;
     private final CQLAntlrUtils cqlAntlrUtils;
     private final LibraryCqlVisitorFactory factory;
@@ -110,11 +102,10 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
             Optional<Library> lib = hapiServer.fetchHapiLibrary(nameVersion.getLeft(),
                     nameVersion.getRight());
             if (lib.isPresent()) {
-                relatedArtifact.setUrl(publicHapiFhirUrl + "Library/" + getId(lib.get()));
+                relatedArtifact.setUrl("Library/" + getId(lib.get()));
                 String identifier = ctx.localIdentifier().getText();
                 Library childLib = lib.get();
                 String cql = cqlAntlrUtils.getCql(childLib);
-                cqlParser.LibraryContext library = cqlAntlrUtils.getLibraryContext(cql);
                 LibraryCqlVisitor visitor = factory.visit(cql);
                 libMap.put(identifier, Pair.of(childLib, visitor));
                 relatedArtifacts.add(relatedArtifact);
@@ -143,13 +134,17 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                 .filter(cs -> StringUtils.equals(getUnquotedFullText(cs.identifier()), codeSystemName))
                 .findFirst().ifPresentOrElse(cs -> {
             String csName = getUnquotedFullText(cs.identifier());
+            String csUri = getUnquotedFullText(cs.codesystemId());
             String csVersionUri = getUnquotedFullText(cs.versionSpecifier());
-            humanReadableArtifacts.getTerminologyCodeModels().add(new HumanReadableCodeModel(name,
-                    code,
-                    csName,
-                    csVersionUri,
-                    csVersionUri != null,
-                    null));
+            humanReadableArtifacts.getTerminologyCodeModels().add(HumanReadableCodeModel.builder()
+                    .name(name)
+                    .oid(code)
+                    .codeSystemOid(csUri)
+                    .codesystemName(csName)
+                    .codesystemVersion(csVersionUri)
+                    .isCodesystemVersionIncluded(csVersionUri != null)
+                    .datatype(null).
+                    build());
         }, () -> log.error("Invalid code " + ctx.getText() + ". Could not find code system name " + codeSystemName));
         return null;
     }
@@ -216,7 +211,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                 log.info("Could not find valueset with name " + valueSetName);
             }
         } else {
-            // Check to see if its a value set lib reference like TJC."value set id"
+            // Check to see if its a lib reference like TJC."value set id"
             int periodIndex = valueSetName.indexOf(".");
             if (periodIndex != -1) {
                 String alias = valueSetName.substring(0, periodIndex);
@@ -243,7 +238,6 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
     private Pair<String, String> getNameVersionFromInclude(cqlParser.IncludeDefinitionContext ctx) {
         return Pair.of(ctx.getChild(1).getText(), trim1(ctx.getChild(3).getText()));
     }
-
 
     /**
      * @return Has to be something so always null.
@@ -294,12 +288,15 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
             HumanReadableCodeModel hrCode = getCode(valueSetOrCodeName);
             if (hrCode != null) {
                 filter.setCode(Collections.singletonList(new Coding()));
-                humanReadableArtifacts.getDataReqCodes().add(new HumanReadableCodeModel(hrCode.getName(),
-                        hrCode.getOid(),
-                        hrCode.getCodesystemName(),
-                        hrCode.getCodesystemVersion(),
-                        hrCode.isCodesystemVersionIncluded(),
-                        type));
+                humanReadableArtifacts.getDataReqCodes().add(HumanReadableCodeModel.builder()
+                        .name(hrCode.getName())
+                        .oid(hrCode.getOid())
+                        .codeSystemOid(hrCode.getCodeSystemOid())
+                        .codesystemName(hrCode.getCodesystemName())
+                        .codesystemVersion(hrCode.getCodesystemVersion())
+                        .isCodesystemVersionIncluded(hrCode.isCodesystemVersionIncluded())
+                        .datatype(null).
+                         build());
             } else {
                 log.warn("Could not find a value set or code matching name " + valueSetOrCodeName + ". " +
                         "This is likely a FHIR type with attribute and we don't know how to handle those yet :(.");
