@@ -26,20 +26,16 @@ public class HumanReadableCodeModel {
 
 		HumanReadableCodeModel that = (HumanReadableCodeModel) o;
 
-		if (!name.equals(that.name)) return false;
 		if (!oid.equals(that.oid)) return false;
 		if (!codesystemName.equals(that.codesystemName)) return false;
-		return codesystemVersion.equals(that.codesystemVersion);
+		return codesystemVersion != null ? codesystemVersion.equals(that.codesystemVersion) : that.codesystemVersion == null;
 	}
 
 	@Override
 	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + oid.hashCode();
+		int result = oid.hashCode();
 		result = 31 * result + codesystemName.hashCode();
-		if (codesystemVersion != null) {
-			result = 31 * result + codesystemVersion.hashCode();
-		}
+		result = 31 * result + (codesystemVersion != null ? codesystemVersion.hashCode() : 0);
 		return result;
 	}
 }
