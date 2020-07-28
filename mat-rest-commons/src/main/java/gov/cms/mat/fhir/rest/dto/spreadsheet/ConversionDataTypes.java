@@ -13,5 +13,6 @@ public class ConversionDataTypes {
     private String qdmType;
     private String fhirType;
     private String whereAdjustment;
+    private String comment;
 }
 

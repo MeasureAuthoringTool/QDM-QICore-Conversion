@@ -15,4 +15,6 @@ public class GoogleConversionDataTypes {
     Cell fhirType;
     @JsonProperty("gsx$whereadjustment")
     Cell whereAdjustment;
+    @JsonProperty("gsx$comment")
+    Cell comment;
 }

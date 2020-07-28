@@ -171,6 +171,7 @@ public class GoogleSpreadsheetService {
                 r.setFhirType(getData(e.getFhirType()));
                 r.setQdmType(getData(e.getQdmType()));
                 r.setWhereAdjustment(getData(e.getWhereAdjustment()));
+                r.setComment(getData(e.getComment()));
                 return r;
             }).collect(Collectors.toList());
         } else {
@@ -191,6 +192,7 @@ public class GoogleSpreadsheetService {
                 r.setQdmType(getData(e.getQdmType()));
                 r.setFhirAttribute(getData(e.getFhirAttribute()));
                 r.setQdmAttribute(getData(e.getQdmAttribute()));
+                r.setComment(getData(e.getComment()));
                 return r;
             }).collect(Collectors.toList());
         } else {

@@ -17,4 +17,6 @@ public class GoogleConversionAttributes {
     Cell fhirType;
     @JsonProperty("gsx$fhirattrib")
     Cell fhirAttribute;
+    @JsonProperty("gsx$comment")
+    Cell comment;
 }

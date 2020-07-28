@@ -10,4 +10,9 @@ public class TokenException extends RuntimeException {
         super(String.format(MESSAGE, index, expectedType, tokenType));
         log.error(this.getMessage(), this);
     }
+
+    public TokenException(String message) {
+        super(message);
+        log.error(this.getMessage(), this);
+    }
 }

@@ -1,7 +1,14 @@
 package gov.cms.mat.fhir.services.cql;
 
 import gov.cms.mat.cql.CqlTextParser;
-import gov.cms.mat.cql.elements.*;
+import gov.cms.mat.cql.elements.BaseProperties;
+import gov.cms.mat.cql.elements.CodeSystemProperties;
+import gov.cms.mat.cql.elements.DefineProperties;
+import gov.cms.mat.cql.elements.IncludeProperties;
+import gov.cms.mat.cql.elements.SymbolicProperty;
+import gov.cms.mat.cql.elements.UnionProperties;
+import gov.cms.mat.cql.elements.UsingProperties;
+import gov.cms.mat.cql.elements.ValueSetProperties;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CodeSystemOidNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -41,7 +48,7 @@ public class QdmCqlToFhirCqlConverter {
     private final List<CodeSystemEntry> codeSystemMappings;
     private final HapiFhirServer hapiFhirServer;
 
- private  final boolean includeStdLibraries;
+    private final boolean includeStdLibraries;
 
     List<IncludeProperties> includeProperties;
     List<IncludeProperties> standardIncludeProperties;
@@ -91,7 +98,7 @@ public class QdmCqlToFhirCqlConverter {
         convertLibrary();
         convertUsing();
         convertIncludes();
-        convertDefines();
+        // convertDefines();
         convertValueSets();
 
         convertCodeSystems();
@@ -189,7 +196,7 @@ public class QdmCqlToFhirCqlConverter {
     private String addDefaultFhirLibraries() {
         String cqlUsingLine = usingProperties.createCql();
 
-        if( includeStdLibraries) {
+        if (includeStdLibraries) {
             String cqlReplacement = cqlUsingLine + createStandardIncludesCql();
 
             String cql = cqlTextParser.getCql()
@@ -279,7 +286,7 @@ public class QdmCqlToFhirCqlConverter {
 
     private void processStandardLibrary(IncludeProperties includeProperties) {
 
-        String filteredName = StringUtils.remove(includeProperties.getName(),"_");
+        String filteredName = StringUtils.remove(includeProperties.getName(), "_");
         String version = conversionLibLookupMap.get(filteredName);
 
         if (version != null) {
