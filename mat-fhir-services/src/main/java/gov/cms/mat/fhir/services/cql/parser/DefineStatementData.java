@@ -15,22 +15,22 @@ import java.util.Set;
 @EqualsAndHashCode
 public class DefineStatementData {
 
-    String qdmType;
-    String fhirType;
-    String code;
-    String alias;
-    String whereAdjustment;
+    private final String qdmType;
+    private final String fhirType;
+    private final String code;
+    private final String alias;
+    private final String whereAdjustment;
 
     @Setter
-    Boolean hasWhereClause;
+    private Boolean hasWhereClause;
 
-    Set<UnionData> unions;
+    private Set<UnionData> unions;
 
-    boolean isNegation() {
+    public boolean isNegation() {
         return StringUtils.contains(qdmType, " Not ");
     }
 
-    void createUnionDataSet(Collection<DefineStatementData> defineStatementDataUnions) {
+    public void createUnionDataSet(Collection<DefineStatementData> defineStatementDataUnions) {
         unions = new HashSet<>();
 
         defineStatementDataUnions.stream()

@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GoogleConversionDataTypesData {
-    GoogleConversionDataTypesFeed feed;
+    private GoogleConversionDataTypesFeed feed;
 }

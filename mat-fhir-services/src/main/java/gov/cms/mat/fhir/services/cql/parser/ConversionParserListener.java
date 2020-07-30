@@ -42,7 +42,7 @@ import static org.cqframework.cql.gen.cqlLexer.WS;
 @Component
 /**
  * https://docs.google.com/spreadsheets/d/1lV1N4O7xmSxjRH6ghuCj3mYcntPsTz8qBcpQ6DO7Se4/edit#gid=1682709111
- */
+ **/
 public class ConversionParserListener extends cqlBaseListener {
     private static final int COLON = 11;
     private static final int DOT = 17;
@@ -96,17 +96,17 @@ public class ConversionParserListener extends cqlBaseListener {
     @Builder
     @Getter
     static class ConversionResultsData {
-        String original;
-        String converted;
+        private final String original;
+        private final String converted;
     }
 
     @Builder
     @Getter
     static class ErrorData {
-        String message;
-        int count;
+        private final String message;
+        private int count;
 
-        void incrementCount() {
+        public void incrementCount() {
             count++;
         }
     }
@@ -115,8 +115,8 @@ public class ConversionParserListener extends cqlBaseListener {
     @Getter
     @EqualsAndHashCode
     static class UnionResultsData {
-        String fhirType;
-        String qdmType;
+        private final String fhirType;
+        private final String qdmType;
     }
 
     class ConversionParser extends cqlBaseListener {
@@ -128,7 +128,7 @@ public class ConversionParserListener extends cqlBaseListener {
 
         private static final String UNION_ISSUE = " //Unable to convert %s for mixed types.";
 
-        final List<ConversionResultsData> conversionResults = new ArrayList<>();
+        private final List<ConversionResultsData> conversionResults = new ArrayList<>();
         private final CommonTokenStream tokens;
         private final List<DefineStatementData> statementList = new ArrayList<>();
         private final List<String> errors = new ArrayList<>();
@@ -137,7 +137,7 @@ public class ConversionParserListener extends cqlBaseListener {
 
         private final Map<String, ErrorData> errorMap = new HashMap<>();
 
-        String originalCql;
+        private String originalCql;
         private String removal = "";
         private ConversionResultsData change;
 
@@ -160,7 +160,7 @@ public class ConversionParserListener extends cqlBaseListener {
 
             if (convertedCql.length() > 0) {
 
-                boolean haveError = statementList.stream().anyMatch(s -> BooleanUtils.isFalse(s.hasWhereClause));
+                boolean haveError = statementList.stream().anyMatch(s -> BooleanUtils.isFalse(s.getHasWhereClause()));
 
                 if (haveError) {
                     convertedCql = originalCql;
@@ -195,11 +195,12 @@ public class ConversionParserListener extends cqlBaseListener {
         }
 
 
-        private String processWhereAdjustments(String convertedCql) {
+        private String processWhereAdjustments(String convertedCqlIn) {
+            String convertedCql = convertedCqlIn;
             final String whereTag = "where";
 
             for (DefineStatementData data : statementList) {
-                if (StringUtils.isNotBlank(data.whereAdjustment)) {
+                if (StringUtils.isNotBlank(data.getWhereAdjustment())) {
 
                     List<String> lines = getLines(convertedCql);
 
@@ -209,7 +210,7 @@ public class ConversionParserListener extends cqlBaseListener {
                             int start = line.indexOf(whereTag) + whereTag.length();
                             String oldLogic = line.substring(start);
 
-                            String whereLine = data.whereAdjustment.replace("alias.", data.getAlias() + ".");
+                            String whereLine = data.getWhereAdjustment().replace("alias.", data.getAlias() + ".");
 
                             convertedCql = convertedCql.replace(oldLogic,
                                     " " + whereLine + " and\n" + "      " + oldLogic + "\n");
@@ -223,7 +224,9 @@ public class ConversionParserListener extends cqlBaseListener {
             return convertedCql;
         }
 
-        public void createResults(String convertedCql) {
+        public void createResults(String convertedCqlIn) {
+            String convertedCql = convertedCqlIn;
+
             if (!errors.isEmpty()) {
                 for (String e : errors) {
                     convertedCql = "// Conversion Error: " + e + "\n" + convertedCql;
@@ -377,7 +380,6 @@ public class ConversionParserListener extends cqlBaseListener {
                     return token.getText();
                 }
 
-
                 return processIdentifier(token);
             } catch (TokenException e) {
                 return token.getText();
@@ -385,11 +387,10 @@ public class ConversionParserListener extends cqlBaseListener {
 
         }
 
-        Optional<DefineStatementData> findDefineStatementData(String alias) {
+        private Optional<DefineStatementData> findDefineStatementData(String alias) {
             return statementList.stream()
                     .filter(d -> d.getAlias().equals(alias))
                     .findFirst();
-
         }
 
         private String processIdentifier(Token attributeToken) {
@@ -433,15 +434,14 @@ public class ConversionParserListener extends cqlBaseListener {
             } else {
                 DefineStatementData defineStatementData = defineStatementDataOptional.get();
 
-                if (CollectionUtils.isNotEmpty(defineStatementData.getUnions())) {
-                    if (!checkUnion(defineStatementData, qdmAttribute)) {
-                        String type = aliasToken.getText() + '.' + qdmAttribute;
-                        String message = String.format(UNION_ISSUE, qdmAttribute);
+                if (CollectionUtils.isNotEmpty(defineStatementData.getUnions()) && !checkUnion(defineStatementData, qdmAttribute)) {
+                    String type = aliasToken.getText() + '.' + qdmAttribute;
+                    String message = String.format(UNION_ISSUE, qdmAttribute);
 
-                        addError(type, message);
+                    addError(type, message);
 
-                        return attributeToken.getText();
-                    }
+                    return attributeToken.getText();
+
                 }
 
                 if (StringUtils.isNotBlank(ofType)) {
@@ -613,18 +613,17 @@ public class ConversionParserListener extends cqlBaseListener {
                             .whereAdjustment(whereAdjustment)
                             .build();
 
-                    if (containsTokenType(qdmTypeToken.getTokenIndex() + 4, WS) && containsTokenType(qdmTypeToken.getTokenIndex() + 5, UNION)) {
+                    if (containsTokenType(qdmTypeToken.getTokenIndex() + 4, WS)
+                            && containsTokenType(qdmTypeToken.getTokenIndex() + 5, UNION)) {
                         unionList.add(defineStatementData);
                     }
 
-                    if (defineStatementData.isNegation()) {
-                        if (!containsTokenType(qdmTypeToken.getTokenIndex() + 5, WHERE)) {
-                            addError(fhirType, MISSING_WHERE_CLAUSE);
-                            defineStatementData.setHasWhereClause(Boolean.FALSE);
-                            throw new WhereClauseException(MISSING_WHERE_CLAUSE);
-                        }
+                    if (defineStatementData.isNegation()
+                            && !containsTokenType(qdmTypeToken.getTokenIndex() + 5, WHERE)) {
+                        addError(fhirType, MISSING_WHERE_CLAUSE);
+                        defineStatementData.setHasWhereClause(Boolean.FALSE);
+                        throw new WhereClauseException(MISSING_WHERE_CLAUSE);
                     }
-
                 }
 
                 return fhirType;
@@ -678,7 +677,6 @@ public class ConversionParserListener extends cqlBaseListener {
             return false;
         }
 
-
         private boolean checkTokenType(int index, int expectedType) {
             return tokens.get(index).getType() == expectedType;
         }
@@ -698,5 +696,4 @@ public class ConversionParserListener extends cqlBaseListener {
             unionList.clear();
         }
     }
-
 }

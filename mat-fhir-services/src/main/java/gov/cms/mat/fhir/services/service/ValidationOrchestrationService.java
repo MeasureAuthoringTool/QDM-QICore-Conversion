@@ -45,7 +45,7 @@ public class ValidationOrchestrationService {
 
         if (validationRequest.isValidateCqlToElm()) {
             CompletableFuture<List<LibraryErrors>> f = validationService.validateCql(cql);
-            f.orTimeout(validationTimeout, TimeUnit.SECONDS);
+            f.orTimeout(validationTimeout, TimeUnit.MINUTES);
             futures.add(f);
         }
 

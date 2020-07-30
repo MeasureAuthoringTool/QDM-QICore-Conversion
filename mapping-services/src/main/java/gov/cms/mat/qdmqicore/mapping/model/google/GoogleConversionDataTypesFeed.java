@@ -10,5 +10,5 @@ import java.util.List;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GoogleConversionDataTypesFeed {
-    List<GoogleConversionDataTypes> entry;
+    private List<GoogleConversionDataTypes> entry;
 }

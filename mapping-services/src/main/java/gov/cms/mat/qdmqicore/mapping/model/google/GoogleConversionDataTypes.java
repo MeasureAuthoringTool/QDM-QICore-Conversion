@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GoogleConversionDataTypes {
     @JsonProperty("gsx$qdmtype")
-    Cell qdmType;
+    private Cell qdmType;
     @JsonProperty("gsx$fhirtype")
-    Cell fhirType;
+    private Cell fhirType;
     @JsonProperty("gsx$whereadjustment")
-    Cell whereAdjustment;
+    private Cell whereAdjustment;
     @JsonProperty("gsx$comment")
-    Cell comment;
+    private Cell comment;
 }

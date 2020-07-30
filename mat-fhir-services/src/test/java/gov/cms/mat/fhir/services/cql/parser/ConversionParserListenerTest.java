@@ -11,10 +11,13 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled // Integration test with mapping services
+// Integration test with mapping services
+@Disabled
 class ConversionParserListenerTest implements ResourceFileUtil {
 
-    String expectedResults[] = {
+    private String noChanges = "\"A define that does a retrieve\" Encounter\n" +
+            "     where Encounter.relevantPeriod during \"Measurement Period\"";
+    private String expectedResults[] = {
             "[\"Encounter\": \"Inpatient\"] Encounter\n" +
                     "    where Encounter.period during \"Measurement Period\"",
 
@@ -60,9 +63,6 @@ class ConversionParserListenerTest implements ResourceFileUtil {
                     "  [\"Encounter\"]"
     };
 
-    String noChanges = "\"A define that does a retrieve\" Encounter\n" +
-            "     where Encounter.relevantPeriod during \"Measurement Period\"";
-
     @Test
     void parse() {
         String cql = getStringFromResource("/conversion_antlr.cql");
@@ -77,7 +77,7 @@ class ConversionParserListenerTest implements ResourceFileUtil {
 
         String results = parserListener.convert(cql);
 
-        System.out.println(results);
+        //System.out.println(results);
 
         Arrays.stream(expectedResults)
                 //.peek(e -> System.out.println("Expected->" + e))
@@ -86,4 +86,22 @@ class ConversionParserListenerTest implements ResourceFileUtil {
         assertTrue(results.contains(noChanges));
     }
 
+    @Test
+    void parse2() {
+        String cql = getStringFromResource("/SepsisLactateClearanceRate_1.0.001.cql");
+
+        RestTemplate restTemplate = new RestTemplate();
+        MappingSpreadsheetService mappingSpreadsheetService = new MappingSpreadsheetService(restTemplate);
+
+        ReflectionTestUtils.setField(mappingSpreadsheetService, "conversionUrl", "http://lappy.local:9090");
+        ConversionDataComponent conversionDataComponent = new ConversionDataComponent(mappingSpreadsheetService);
+
+        ConversionParserListener parserListener = new ConversionParserListener(conversionDataComponent);
+
+        String results = parserListener.convert(cql);
+
+        System.out.println(results);
+
+        assertTrue(results.contains("( [\"Encounter\": \"Emergency Department Visit\"]"));
+    }
 }

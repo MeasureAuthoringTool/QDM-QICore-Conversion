@@ -9,7 +9,6 @@ import gov.cms.mat.fhir.rest.dto.spreadsheet.RequiredMeasureField;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ResourceDefinition;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleConversionAttributesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleConversionDataTypesData;
-import gov.cms.mat.qdmqicore.mapping.model.google.GoogleConversionDataTypesFeed;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleDataTypesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleMatAttributesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleQdmToQicoreMappingData;
@@ -31,28 +30,23 @@ import static gov.cms.mat.qdmqicore.mapping.utils.SpreadSheetUtils.getData;
 @Service
 @Slf4j
 public class GoogleSpreadsheetService {
-    @Value("${json.data.mat-attributes-url}")
-    private String matAttributesUrl;
-
-    @Value("${json.data.qdm-qi-core-mapping-url}")
-    private String qdmQiCoreMappingUrl;
-
-    @Value("${json.data.data-types-url}")
-    private String dataTypesUrl;
-
-    @Value("${json.data.required-measure-fields-url}")
-    private String requiredMeasureFieldsUrl;
-
-    @Value("${json.data.resource-definition-url}")
-    private String resourceDefinitionUrl;
-
-    @Value("${json.data.conversion-data-types-url}")
-    private String conversionDataTypesUrl;
-
-    @Value("${json.data.attributes-url}")
-    private String attributesUrl;
+    private static final String LOG_MESSAGE = "Received {} records from the spreadsheet's JSON, URL: {}";
 
     private final RestTemplate restTemplate;
+    @Value("${json.data.mat-attributes-url}")
+    private String matAttributesUrl;
+    @Value("${json.data.qdm-qi-core-mapping-url}")
+    private String qdmQiCoreMappingUrl;
+    @Value("${json.data.data-types-url}")
+    private String dataTypesUrl;
+    @Value("${json.data.required-measure-fields-url}")
+    private String requiredMeasureFieldsUrl;
+    @Value("${json.data.resource-definition-url}")
+    private String resourceDefinitionUrl;
+    @Value("${json.data.conversion-data-types-url}")
+    private String conversionDataTypesUrl;
+    @Value("${json.data.attributes-url}")
+    private String attributesUrl;
 
     public GoogleSpreadsheetService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -63,7 +57,7 @@ public class GoogleSpreadsheetService {
         GoogleMatAttributesData data = restTemplate.getForObject(matAttributesUrl, GoogleMatAttributesData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
-            log.info("Received {} records from the spreadsheet's JSON, URL: {}", data.getFeed().getEntry().size(), matAttributesUrl);
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), matAttributesUrl);
             return data.getFeed().getEntry().stream().map(e -> {
                 var m = new MatAttribute();
                 m.setDataTypeDescription(getData(e.getMatDataTypeDescription()));
@@ -86,7 +80,7 @@ public class GoogleSpreadsheetService {
         GoogleQdmToQicoreMappingData data = restTemplate.getForObject(qdmQiCoreMappingUrl, GoogleQdmToQicoreMappingData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
-            log.info("Received {} records from the spreadsheet's JSON, URL: {}", data.getFeed().getEntry().size(), matAttributesUrl);
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), matAttributesUrl);
             return data.getFeed().getEntry().stream().map(e -> {
                 var q = new QdmToQicoreMapping();
                 q.setFhirQICoreMapping(getData(e.getFhir4QiCoreMapping()));
@@ -107,7 +101,7 @@ public class GoogleSpreadsheetService {
         GoogleDataTypesData data = restTemplate.getForObject(dataTypesUrl, GoogleDataTypesData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
-            log.info("Received {} records from the spreadsheet's JSON, URL: {}", data.getFeed().getEntry().size(), matAttributesUrl);
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), matAttributesUrl);
             return data.getFeed().getEntry().stream().map(e -> {
                 var d = new DataType();
                 d.setDataType(getData(e.getDataType()));
@@ -126,7 +120,7 @@ public class GoogleSpreadsheetService {
         GoogleRequiredFieldsData data = restTemplate.getForObject(requiredMeasureFieldsUrl, GoogleRequiredFieldsData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
-            log.info("Received {} records from the spreadsheet's JSON, URL: {}", data.getFeed().getEntry().size(), matAttributesUrl);
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), matAttributesUrl);
             return data.getFeed().getEntry().stream().map(e -> {
                 var r = new RequiredMeasureField();
                 r.setField(getData(e.getField()));
@@ -143,7 +137,7 @@ public class GoogleSpreadsheetService {
         GoogleResourceDefinitionData data = restTemplate.getForObject(resourceDefinitionUrl, GoogleResourceDefinitionData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
-            log.info("Received {} records from the spreadsheet's JSON, URL: {}", data.getFeed().getEntry().size(), matAttributesUrl);
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), matAttributesUrl);
             return data.getFeed().getEntry().stream().map(e -> {
                 var r = new ResourceDefinition();
                 r.setCardinality(getData(e.getCardinality()));
@@ -162,10 +156,10 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("conversionDataTypes")
     public List<ConversionDataTypes> getConversionDataTypes() {
-        GoogleConversionDataTypesData data = restTemplate.getForObject(conversionDataTypesUrl,   GoogleConversionDataTypesData.class);
+        GoogleConversionDataTypesData data = restTemplate.getForObject(conversionDataTypesUrl, GoogleConversionDataTypesData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
-            log.info("Received {} records from the spreadsheet's JSON, URL: {}", data.getFeed().getEntry().size(), conversionDataTypesUrl);
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), conversionDataTypesUrl);
             return data.getFeed().getEntry().stream().map(e -> {
                 var r = new ConversionDataTypes();
                 r.setFhirType(getData(e.getFhirType()));
@@ -185,7 +179,7 @@ public class GoogleSpreadsheetService {
         GoogleConversionAttributesData data = restTemplate.getForObject(attributesUrl, GoogleConversionAttributesData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
-            log.info("Received {} records from the spreadsheet's JSON, URL: {}", data.getFeed().getEntry().size(), attributesUrl);
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), attributesUrl);
             return data.getFeed().getEntry().stream().map(e -> {
                 var r = new ConversionAttributes();
                 r.setFhirType(getData(e.getFhirType()));
