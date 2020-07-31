@@ -43,9 +43,9 @@ public interface FhirValidatorProcessor {
         ValidationOptions options = new ValidationOptions();
 
         if (resource instanceof Library) {
-            options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
+           // options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
             options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/library-cqfm");
-            options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
+           // options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
         }
 
         ValidationResult validationResult = validator.validateWithResult(resource, options);

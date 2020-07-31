@@ -98,7 +98,7 @@ public class QdmCqlToFhirCqlConverter {
         convertLibrary();
         convertUsing();
         convertIncludes();
-        convertDefines();
+        // convertDefines();
         convertValueSets();
 
         convertCodeSystems();

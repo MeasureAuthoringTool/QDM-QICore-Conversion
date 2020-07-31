@@ -5,6 +5,7 @@ import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
 import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
 import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
 import gov.cms.mat.fhir.services.cql.QdmCqlToFhirCqlConverter;
+import gov.cms.mat.fhir.services.cql.parser.ConversionParserListener;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.CodeSystemConversionDataService;
@@ -18,14 +19,18 @@ public class CqlLibraryConverter {
     private final CodeSystemConversionDataService codeSystemConversionDataService;
     private final HapiFhirServer hapiFhirServer;
 
+    private final ConversionParserListener conversionParserListener;
+
     public CqlLibraryConverter(QdmQiCoreDataService qdmQiCoreDataService,
                                ConversionLibraryLookup conversionLibraryLookup,
                                CodeSystemConversionDataService codeSystemConversionDataService,
-                               HapiFhirServer hapiFhirServer) {
+                               HapiFhirServer hapiFhirServer,
+                               ConversionParserListener conversionParserListener) {
         this.qdmQiCoreDataService = qdmQiCoreDataService;
         this.conversionLibraryLookup = conversionLibraryLookup;
         this.codeSystemConversionDataService = codeSystemConversionDataService;
         this.hapiFhirServer = hapiFhirServer;
+        this.conversionParserListener = conversionParserListener;
     }
 
     public String convert(String cqlText, boolean includeStdLibraries) {
@@ -37,7 +42,10 @@ public class CqlLibraryConverter {
                     codeSystemConversionDataService.getCodeSystemMappings(),
                     hapiFhirServer);
 
-            return qdmCqlToFhirCql.convert(null);
+           String cql =  qdmCqlToFhirCql.convert(null);
+
+           return conversionParserListener.convert(cql);
+
         } catch (QdmMappingException e) {
             ConversionReporter.setTerminalMessage(e.getMessage(), ConversionOutcome.QDM_MAPPING_ERROR);
             throw e;

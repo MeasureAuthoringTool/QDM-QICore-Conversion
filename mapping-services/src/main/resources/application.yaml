@@ -14,6 +14,9 @@ json:
     data-types-url: ${GOOGLE_DATA_TYPES_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/ox8mj1u/public/values?alt=json}
     required-measure-fields-url: ${GOOGLE_REQUIRED_MEASURE_FIELDS_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/opl7qh/public/values?alt=json}
     resource-definition-url: ${GOOGLE_RESOURCE_DEFINITION_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json}
+    conversion-data-types-url: https://spreadsheets.google.com/feeds/list/1lV1N4O7xmSxjRH6ghuCj3mYcntPsTz8qBcpQ6DO7Se4/1/public/values?alt=json
+    attributes-url: https://spreadsheets.google.com/feeds/list/1lV1N4O7xmSxjRH6ghuCj3mYcntPsTz8qBcpQ6DO7Se4/2/public/values?alt=json
+
 
 springdoc:
   swagger-ui:

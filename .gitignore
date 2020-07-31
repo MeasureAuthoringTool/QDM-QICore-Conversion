@@ -37,3 +37,4 @@ hs_err_pid*
 /mat-rest-commons/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
 /hapi-fhir-jpaserver/overlays/
 /docker-env-mike.sh
+/mat-fhir-services/src/main/resources/application-mike.yaml
