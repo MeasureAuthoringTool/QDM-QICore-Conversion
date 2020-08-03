@@ -55,6 +55,17 @@ public class CqlLibrary implements Serializable {
     @Column(name = "LAST_MODIFIED_ON")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedOn;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
+
+    @Column(name = "EXPERIMENTAL")
+    private boolean experimental;
+
+    @JoinColumn(name = "LIBRARY_STEWARD_ID", referencedColumnName = "ORG_ID")
+    @ManyToOne
+    private Organization stewardId;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cqlLibraryId")
     private Collection<CqlLibraryShare> cqlLibraryShareCollection;
     @JoinColumn(name = "OWNER_ID", referencedColumnName = "USER_ID")
@@ -289,6 +300,30 @@ public class CqlLibrary implements Serializable {
         }
         CqlLibrary other = (CqlLibrary) object;
         return (this.id != null || other.id == null) && (this.id == null || this.id.equals(other.id));
+    }
+
+    public Organization getSteward() {
+        return stewardId;
+    }
+
+    public void setSteward(Organization stewardId) {
+        this.stewardId = stewardId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isExperimental() {
+        return experimental;
+    }
+
+    public void setExperimental(boolean experimental) {
+        this.experimental = experimental;
     }
 
     @Override

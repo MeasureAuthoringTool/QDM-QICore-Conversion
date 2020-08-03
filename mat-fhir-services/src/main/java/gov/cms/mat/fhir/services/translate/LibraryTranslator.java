@@ -58,6 +58,8 @@ public class LibraryTranslator extends TranslatorBase {
 
     public Library translateToFhir(String libId, String cql, String elmXml, String elmJson) {
         //Used to parse the CQL and get various values.
+        CqlLibrary lib = libRepo.getCqlLibraryById(libId);
+
         var visitor = libCqlVisitorFactory.visit(cql);
         Library result = new Library();
         result.setId(libId);
@@ -66,16 +68,18 @@ public class LibraryTranslator extends TranslatorBase {
         result.setVersion(visitor.getVersion());
         result.setDate(new Date());
         result.setStatus(Enumerations.PublicationStatus.ACTIVE);
-        result.setPublisher(FHIR_UNKNOWN); // TO DO revisit this once we have the new fields in the MAT GUI.
-        result.setDescription(FHIR_UNKNOWN); // TO DO revisit this once we have the new fields in the MAT GUI.
-        result.setExperimental(false);
+        result.setPublisher(lib.getSteward() != null && StringUtils.isNotBlank(lib.getSteward().getOrgName()) ?
+                lib.getSteward().getOrgName() :
+                "UNKNOWN");
+        result.setDescription(StringUtils.defaultString(lib.getDescription(), "UNKNOWN"));
+        result.setExperimental(lib.isExperimental());
         result.setContent(createContent(elmJson, cql, elmXml));
         result.setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
         result.setApprovalDate(new Date()); //TO DO: fix this.
         result.setUrl(publicHapiFhirUrl + "Library/" + libId);
         result.setDataRequirement(distinctDataRequirements(visitor.getDataRequirements()));
         result.setRelatedArtifact(distinctArtifacts(visitor.getRelatedArtifacts()));
-        result.setText(findHumanReadable(libId));
+        result.setText(findHumanReadable(lib));
         result.setMeta(createLibraryMeta());
         return result;
     }
@@ -85,9 +89,9 @@ public class LibraryTranslator extends TranslatorBase {
                 .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
     }
 
-    private Narrative findHumanReadable(String libId) {
+    private Narrative findHumanReadable(CqlLibrary lib) {
         Narrative result = null;
-        CqlLibrary lib = libRepo.getCqlLibraryById(libId);
+
         if (lib != null && StringUtils.isNotBlank(lib.getMeasureId())) {
             var exportOpt = measureExportRepo.findByMeasureId(lib.getMeasureId());
             if (exportOpt.isPresent()) {
@@ -117,7 +121,7 @@ public class LibraryTranslator extends TranslatorBase {
     private List<RelatedArtifact> distinctArtifacts(List<RelatedArtifact> artifacts) {
         List<RelatedArtifact> result = new ArrayList<>(artifacts.size());
         //Remove duplicates. I wish HapiFhir implemented equals. Today it is SadFhir for me.
-        artifacts.stream().forEach(a -> {
+        artifacts.forEach(a -> {
             if (result.stream().noneMatch(ar -> Objects.deepEquals(a, ar))) {
                 result.add(a);
             }
