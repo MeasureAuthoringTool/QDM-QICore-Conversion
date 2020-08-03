@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.services.components.reporting;
 
 import lombok.Builder;
 import lombok.Getter;

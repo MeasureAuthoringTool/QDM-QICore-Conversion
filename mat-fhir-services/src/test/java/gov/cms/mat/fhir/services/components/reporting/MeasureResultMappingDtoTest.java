@@ -1,5 +1,5 @@
 
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.services.components.reporting;
 
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;

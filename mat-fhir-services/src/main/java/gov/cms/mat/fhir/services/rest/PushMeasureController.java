@@ -1,9 +1,9 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.orchestration.PushMeasureService;

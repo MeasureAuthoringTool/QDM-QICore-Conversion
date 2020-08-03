@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.model.MeasureType;

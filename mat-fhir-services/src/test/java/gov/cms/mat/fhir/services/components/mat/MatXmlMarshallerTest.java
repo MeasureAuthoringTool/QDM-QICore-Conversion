@@ -2,8 +2,8 @@ package gov.cms.mat.fhir.services.components.mat;
 
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
 import mat.client.measure.ManageCompositeMeasureDetailModel;

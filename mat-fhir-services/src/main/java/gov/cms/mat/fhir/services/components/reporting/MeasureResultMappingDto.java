@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.services.components.reporting;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;

@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.services.components.reporting;
 
 import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
@@ -13,50 +13,21 @@ import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class ConversionResultsService {
-    private final ConversionResultRepository conversionResultRepository;
+    private static final ThreadLocal<ConversionResult> threadLocal = new ThreadLocal<>();
     private final LibraryDataService libraryDataService;
 
-    public ConversionResultsService(ConversionResultRepository conversionResultRepository,
-                                    LibraryDataService libraryDataService) {
-        this.conversionResultRepository = conversionResultRepository;
+    public ConversionResultsService(LibraryDataService libraryDataService) {
         this.libraryDataService = libraryDataService;
-    }
-
-    public Optional<ConversionResult> findTopValueSetConversion() {
-        return conversionResultRepository.findTop1ByValueSetsProcessedIsNullAndFinishedIsNullOrderByCreated();
-    }
-
-    public boolean checkBatchIdNotUsed(String batchId) {
-        return conversionResultRepository.countByBatchId(batchId) == 0;
-    }
-
-    public boolean checkBatchIdUsed(String batchId) {
-        return conversionResultRepository.countByBatchId(batchId) > 0;
-    }
-
-    public List<ConversionResult> findByBatchId(String batchId) {
-        return conversionResultRepository.findByBatchId(batchId);
-    }
-
-    public Set<String> findBatchIds() {
-        List<ConversionResult> conversionResults = conversionResultRepository.findAllBatchIds();
-
-        return conversionResults.stream()
-                .map(ConversionResult::getBatchId)
-                .collect(Collectors.toSet());
     }
 
     void addValueSetResult(ThreadSessionKey key,
@@ -70,47 +41,23 @@ public class ConversionResultsService {
         valueSetConversionResults.setSuccess(success);
         valueSetConversionResults.setReason(reason);
         valueSetConversionResults.setLink(link);
-
-
-        save(conversionResult);
     }
 
     void addMeasureResult(ThreadSessionKey key, FieldConversionResult result) {
         ConversionResult conversionResult = findOrCreate(key);
 
         findOrCreateMeasureConversionResults(conversionResult).getMeasureResults().add(result);
-
-        save(conversionResult);
     }
-
 
     public Optional<ConversionResult> findByThreadSessionKey(ThreadSessionKey key) {
-        return conversionResultRepository.findBySourceMeasureIdAndStart(key.getMeasureId(), key.getStart());
-    }
+        ConversionResult result = threadLocal.get();
 
-    public List<ConversionResult> findAllBySourceMeasureId(String measureId) {
-        return conversionResultRepository.findBySourceMeasureId(measureId);
-    }
-
-    public Optional<ConversionResult> findTopBySourceMeasureId(String measureId) {
-        return conversionResultRepository.findTopBySourceMeasureIdOrderByCreatedDesc(measureId);
-    }
-
-    public List<ConversionResult> findAll() {
-        return conversionResultRepository.findAll(Sort.by(Sort.Direction.DESC, "modified"));
-    }
-
-    private ConversionResult findOrCreate(ThreadSessionKey key) {
-        Optional<ConversionResult> optional = findByThreadSessionKey(key);
-
-        if (optional.isPresent()) {
-            return optional.get();
-        } else {
-            ConversionResult conversionResult = new ConversionResult();
-            conversionResult.setSourceMeasureId(key.getMeasureId());
-            conversionResult.setStart(key.getStart());
-            return conversionResult;
+        if (result == null) {
+            log.error("Cannot find thread local value with key: {}", key);
+            return Optional.empty();
         }
+
+        return Optional.of(result);
     }
 
     public ConversionResult findConversionResult(ThreadSessionKey key) {
@@ -125,8 +72,6 @@ public class ConversionResultsService {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.TRUE);
-
-        save(conversionResult);
     }
 
     public void addCqlConversionErrorMessage(ThreadSessionKey key, String error, String matLibraryId) {
@@ -135,8 +80,6 @@ public class ConversionResultsService {
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
         libraryConversionResults.getCqlConversionResult().getErrors().add(error);
-
-        save(conversionResult);
     }
 
 
@@ -146,10 +89,8 @@ public class ConversionResultsService {
 
         libraryConversionResults.setName(name);
         libraryConversionResults.setVersion(version);
-        save(conversionResult);
 
         addLibraryData(key, cql, matLibraryId, LibraryType.QDM_CQL);
-
     }
 
     public void addFhirCql(ThreadSessionKey key, String cql, String matLibraryId) {
@@ -168,7 +109,6 @@ public class ConversionResultsService {
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.setExternalErrors(map);
-        save(conversionResult);
     }
 
     public void addFhirLibraryId(ThreadSessionKey key, String fhirLibraryId, String matLibraryId) {
@@ -177,8 +117,6 @@ public class ConversionResultsService {
         libraryConversionResults.setFhirLibraryId(fhirLibraryId);
 
         conversionResult.getLibraryMappings().put(matLibraryId, fhirLibraryId);
-
-        save(conversionResult);
     }
 
     public Optional<String> findFhirLibraryIdInMap(ThreadSessionKey key, String matLibraryId) {
@@ -197,13 +135,11 @@ public class ConversionResultsService {
     private void addLibraryData(ThreadSessionKey key, String data, String matLibraryId, LibraryType type) {
         ConversionResult conversionResult = findOrCreate(key);
 
-        libraryDataService.findOrCreate(conversionResult.getId(),
+        libraryDataService.findOrCreate(
                 conversionResult.getSourceMeasureId(),
                 matLibraryId,
                 type,
                 data);
-
-        save(conversionResult);
     }
 
     public String getCql(ThreadSessionKey key, String matLibraryId) {
@@ -229,10 +165,7 @@ public class ConversionResultsService {
     private String getLibraryData(ThreadSessionKey key, String matLibraryId, LibraryType type) {
         ConversionResult conversionResult = findOrCreate(key);
 
-        var optional = libraryDataService.findByIndex(conversionResult.getId(),
-                conversionResult.getSourceMeasureId(),
-                matLibraryId,
-                type);
+        var optional = libraryDataService.findByIndex(conversionResult.getSourceMeasureId(), matLibraryId, type);
 
         return optional.map(LibraryData::getData).orElse(StringUtils.EMPTY);
     }
@@ -246,8 +179,6 @@ public class ConversionResultsService {
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
         libraryConversionResults.getCqlConversionResult().getCqlConversionErrors().addAll(errors);
-
-        save(conversionResult);
     }
 
     public void addFhirCqlConversionErrors(ThreadSessionKey key, List<CqlConversionError> errors, String matLibraryId) {
@@ -255,8 +186,6 @@ public class ConversionResultsService {
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
         libraryConversionResults.getCqlConversionResult().getFhirCqlConversionErrors().addAll(errors);
-
-        save(conversionResult);
     }
 
     public void addMatCqlConversionErrors(ThreadSessionKey key, List<MatCqlConversionException> errors, String matLibraryId) {
@@ -265,7 +194,6 @@ public class ConversionResultsService {
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
         libraryConversionResults.getCqlConversionResult().getMatCqlConversionErrors().addAll(errors);
 
-        save(conversionResult);
     }
 
     public void addFhirMatCqlConversionErrors(ThreadSessionKey key, List<MatCqlConversionException> errors, String matLibraryId) {
@@ -273,8 +201,6 @@ public class ConversionResultsService {
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
         libraryConversionResults.getCqlConversionResult().setResult(Boolean.FALSE);
         libraryConversionResults.getCqlConversionResult().getFhirMatCqlConversionErrors().addAll(errors);
-
-        save(conversionResult);
     }
 
     public void addFhirMeasureValidationResults(ThreadSessionKey key,
@@ -282,20 +208,15 @@ public class ConversionResultsService {
         ConversionResult conversionResult = findOrCreate(key);
 
         findOrCreateMeasureConversionResults(conversionResult).setMeasureFhirValidationResults(list);
-
-        save(conversionResult);
     }
 
     public void addLibraryValidationResults(ThreadSessionKey key,
                                             List<FhirValidationResult> list,
                                             String matLibraryId) {
-
         ConversionResult conversionResult = findOrCreate(key);
         LibraryConversionResults libraryConversionResults = conversionResult.findOrCreateLibraryConversionResults(matLibraryId);
 
         libraryConversionResults.getLibraryFhirValidationResults().addAll(list);
-
-        save(conversionResult);
     }
 
     public void addValueSetJson(ThreadSessionKey key, String oid, String json) {
@@ -303,7 +224,6 @@ public class ConversionResultsService {
 
         ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
         valueSetConversionResults.setJson(json);
-        save(conversionResult);
     }
 
     public void addValueSetValidationResults(ThreadSessionKey key,
@@ -312,8 +232,6 @@ public class ConversionResultsService {
         ConversionResult conversionResult = findOrCreate(key);
         ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
         valueSetConversionResults.getValueSetFhirValidationResults().addAll(list);
-
-        save(conversionResult);
     }
 
 
@@ -328,34 +246,24 @@ public class ConversionResultsService {
         libraryConversionResults.setLink(link);
         libraryConversionResults.setReason(message);
         libraryConversionResults.setSuccess(success);
-
-        save(conversionResult);
-    }
-
-    public void save(ConversionResult conversionResult) {
-        conversionResultRepository.save(conversionResult);
     }
 
     public void addErrorMessage(ThreadSessionKey key, String message, ConversionOutcome outcome) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setErrorReason(message);
         conversionResult.setOutcome(outcome);
-        save(conversionResult);
     }
 
     public void addValueSetProcessingMemo(ThreadSessionKey key, String memo) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setValueSetProcessingMemo(memo);
         conversionResult.setValueSetsProcessed(Instant.now());
-        save(conversionResult);
     }
 
     public void addFhirMeasureJson(ThreadSessionKey key, String json) {
         ConversionResult conversionResult = findOrCreate(key);
 
         findOrCreateMeasureConversionResults(conversionResult).setFhirMeasureJson(json);
-
-        save(conversionResult);
     }
 
     private MeasureConversionResults findOrCreateMeasureConversionResults(ConversionResult conversionResult) {
@@ -378,49 +286,53 @@ public class ConversionResultsService {
         measureConversionResults.setLink(link);
         measureConversionResults.setReason(reason);
         measureConversionResults.setSuccess(success);
-
-        save(conversionResult);
     }
 
     public void complete(ThreadSessionKey key) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setFinished(Instant.now());
-        save(conversionResult);
     }
 
     public void addConversionType(ThreadSessionKey key, ConversionType conversionType) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setConversionType(conversionType);
-        save(conversionResult);
     }
 
     public void addBatchId(ThreadSessionKey key, String batchId) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setBatchId(batchId);
-        save(conversionResult);
     }
 
     public void addXmlSource(ThreadSessionKey key, XmlSource xmlSource) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setXmlSource(xmlSource);
-        save(conversionResult);
     }
 
     public void addMeasureLibraryId(ThreadSessionKey key, String id) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setFhirMeasureId(id);
-        save(conversionResult);
     }
 
     public void addShowWarnings(ThreadSessionKey key, boolean flag) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setShowWarnings(flag);
-        save(conversionResult);
     }
 
     public void addVsacGrantingTicket(ThreadSessionKey key, String vsacGrantingTicket) {
         ConversionResult conversionResult = findOrCreate(key);
         conversionResult.setVsacGrantingTicket(vsacGrantingTicket);
-        save(conversionResult);
+    }
+
+    private ConversionResult findOrCreate(ThreadSessionKey key) {
+        ConversionResult result = threadLocal.get();
+
+        if (result == null) {
+            result = new ConversionResult();
+            result.setSourceMeasureId(key.getMeasureId());
+            result.setStart(key.getStart());
+            threadLocal.set(result);
+        }
+
+        return result;
     }
 }

@@ -2,7 +2,7 @@ package gov.cms.mat.fhir.services.service.support;
 
 import gov.cms.mat.fhir.rest.dto.CqlConversionError;
 import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResult;
 import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -17,8 +17,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_CONVERSION_FAILED;
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.CREATED;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.EXISTS;
 
 @Component
 @Slf4j

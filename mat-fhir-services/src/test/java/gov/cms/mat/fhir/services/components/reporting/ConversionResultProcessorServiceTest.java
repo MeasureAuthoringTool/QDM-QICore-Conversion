@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.services.components.reporting;
 
 import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
@@ -21,7 +21,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ConversionResultProcessorServiceTest {
     private static final String MEASURE_ID = "measure_id";
-    private static final String BATCH_ID = "batch_id";
 
     private ThreadSessionKey threadSessionKey;
 
@@ -47,31 +46,6 @@ class ConversionResultProcessorServiceTest {
                 null);
     }
 
-    @Test
-    void processAll_HappyPath() {
-        when(conversionResultsService.checkBatchIdUsed(BATCH_ID)).thenReturn(Boolean.TRUE);
-        when(conversionResultsService.findByBatchId(BATCH_ID))
-                .thenReturn(Collections.singletonList(createConversionResult(true)));
-
-        List<ConversionResultDto> conversionResults = conversionResultProcessorService.processAllForBatch(BATCH_ID);
-        ConversionResultDto dto = verifyResults(conversionResults);
-
-        verify(conversionResultsService).findByBatchId(BATCH_ID);
-    }
-
-    @Test
-    void findMissingValueSets() {
-        when(conversionResultsService.checkBatchIdUsed(BATCH_ID)).thenReturn(Boolean.TRUE);
-        when(conversionResultsService.findByBatchId(BATCH_ID))
-                .thenReturn(Collections.singletonList(createConversionResult(false)));
-
-        Set<String> set = conversionResultProcessorService.findMissingValueSets(BATCH_ID);
-
-        assertEquals(1, set.size());
-
-        verify(conversionResultsService).checkBatchIdUsed(BATCH_ID);
-        verify(conversionResultsService).findByBatchId(BATCH_ID);
-    }
 
     @Test
     void processSearchData_NotFound() {
@@ -93,8 +67,6 @@ class ConversionResultProcessorServiceTest {
 
         ConversionResultDto dto = conversionResultProcessorService.process(threadSessionKey);
         verifyResult(dto);
-        // dto.getMeasureResults().forEach(r -> assertNull(r.getErrorMessage()));
-
         verify(conversionResultsService).findByThreadSessionKey(threadSessionKey);
 
     }

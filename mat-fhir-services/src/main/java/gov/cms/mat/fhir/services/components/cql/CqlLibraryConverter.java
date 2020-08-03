@@ -2,7 +2,7 @@ package gov.cms.mat.fhir.services.components.cql;
 
 import gov.cms.mat.cql.exceptions.QdmMappingException;
 import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
 import gov.cms.mat.fhir.services.cql.QdmCqlToFhirCqlConverter;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;

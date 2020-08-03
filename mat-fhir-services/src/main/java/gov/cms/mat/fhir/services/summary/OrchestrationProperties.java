@@ -3,7 +3,7 @@ package gov.cms.mat.fhir.services.summary;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
+import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundException;
 import lombok.Builder;

@@ -9,7 +9,7 @@ import gov.cms.mat.cql.elements.SymbolicProperty;
 import gov.cms.mat.cql.elements.UnionProperties;
 import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.cql.elements.ValueSetProperties;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CodeSystemOidNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
