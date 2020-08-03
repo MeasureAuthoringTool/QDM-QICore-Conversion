@@ -11,7 +11,7 @@ public class LibraryDataService {
 
     private static final ThreadLocal<List<LibraryData>> threadLocal = new ThreadLocal<>();
 
-    void findOrCreate(
+    public void findOrCreate(
             String measureId,
             String matLibraryId,
             LibraryType libraryType,
@@ -39,9 +39,9 @@ public class LibraryDataService {
         return libraryData;
     }
 
-    Optional<LibraryData> findByIndex(String measureId,
-                                      String matLibraryId,
-                                      LibraryType libraryType) {
+    public Optional<LibraryData> findByIndex(String measureId,
+                                             String matLibraryId,
+                                             LibraryType libraryType) {
         List<LibraryData> libraryDataList = threadLocal.get();
 
         if (libraryDataList == null) {
@@ -49,13 +49,13 @@ public class LibraryDataService {
             return Optional.empty();
         } else {
             return libraryDataList.stream()
-                    .filter(d -> isSame(d,  measureId, matLibraryId, libraryType))
+                    .filter(d -> isSame(d, measureId, matLibraryId, libraryType))
                     .findFirst();
         }
     }
 
     private boolean isSame(LibraryData data,
-                          String measureId, String matLibraryId, LibraryType libraryType) {
+                           String measureId, String matLibraryId, LibraryType libraryType) {
 
         return data.getMeasureId().equals(measureId) &&
                 data.getMatLibraryId().equals(matLibraryId) &&

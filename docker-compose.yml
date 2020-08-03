@@ -15,13 +15,6 @@ services:
     volumes:
       - hapi-fhir-mysql:/var/lib/mysql
 
-  mongo:
-    image: mongo
-    container_name: mongo
-    restart: always
-    ports:
-      - 27018:27017
-
   hapi-fhir-jpaserver:
     image: greenemcg/hapi-fhir-jpaserver
     container_name: hapi-fhir-jpaserver
