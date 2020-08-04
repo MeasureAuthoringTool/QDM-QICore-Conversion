@@ -131,7 +131,7 @@ public class MeasureTranslator extends TranslatorBase {
         result.setVersion(createVersion(matMeasure));
         result.setName(simpleXmlModel.getMeasureName());
         result.setTitle(simpleXmlModel.getShortName());  //measure title
-        result.setExperimental(false); //Mat does not have concept experimental
+        result.setExperimental(simpleXmlModel.isExperimental());
         result.setDescription(StringUtils.isBlank(simpleXmlModel.getDescription()) ? FHIR_UNKNOWN  :
                 simpleXmlModel.getDescription());
 
