@@ -20,6 +20,7 @@ import org.cqframework.cql.cql2elm.CqlTranslatorException;
 import org.cqframework.cql.cql2elm.CqlTranslatorOptions;
 import org.cqframework.cql.cql2elm.DefaultLibrarySourceProvider;
 import org.cqframework.cql.cql2elm.LibraryManager;
+import org.cqframework.cql.cql2elm.LibrarySourceProvider;
 import org.cqframework.cql.cql2elm.ModelManager;
 import org.cqframework.cql.cql2elm.model.TranslatedLibrary;
 import org.cqframework.cql.elm.tracking.TrackBack;
@@ -52,11 +53,7 @@ public class CQLtoELM {
      */
     private String parentCQLLibraryString;
 
-    /**
-     * The cql library mapping. It should follow the format <String, String>, where the key is in the format
-     * LibraryName-x.x.xxx and the value should be the cql library.
-     */
-    private Map<String, String> cqlLibraryMapping;
+    private LibrarySourceProvider libSourceProvider;
 
     /**
      * The parent library cql file
@@ -114,31 +111,20 @@ public class CQLtoELM {
     private CqlTranslator translator;
 
     private LibraryManager libraryManager;
-    
-    private Map<String, TranslatedLibrary> translatedLibraries = new HashMap<>(); 
+
+    private Map<String, TranslatedLibrary> translatedLibraries = new HashMap<>();
 
 
     /**
      * CQL to ELM constructor from strings.
      * @param parentCQLLibraryString the parent cql library string
-     * @param cqlLibraryMapping the cql library mapping. It should follow the format <String, String> where the key is
-     *                          in the format LibraryName-x.x.xxx and the value should be the cql library string.
      */
-    public CQLtoELM(String parentCQLLibraryString, Map<String, String> cqlLibraryMapping) {
+    public CQLtoELM(String parentCQLLibraryString, LibrarySourceProvider libSourceProvider) {
         this.parentCQLLibraryString = parentCQLLibraryString;
-        this.cqlLibraryMapping = cqlLibraryMapping;
+        this.libSourceProvider = libSourceProvider;
         this.parentCQLLibraryFile = null;
     }
 
-    /**
-     * CQL to ELM constructor from files
-     * @param parentCQLLibraryFile the parent cql library file
-     */
-    public CQLtoELM(File parentCQLLibraryFile) {
-        this.parentCQLLibraryFile = parentCQLLibraryFile;
-        this.parentCQLLibraryString = null;
-        this.cqlLibraryMapping = null;
-    }
 
     /**
      * The basic do translation method
@@ -147,29 +133,29 @@ public class CQLtoELM {
     public void doTranslation(boolean validationOnly) {
 
         // MAT-8665
-            // list path traversal should be 'on'
-            // method style invocation should be 'off'
-            // list demotion should be 'off'
+        // list path traversal should be 'on'
+        // method style invocation should be 'off'
+        // list demotion should be 'off'
 
-            // annotations should be 'on'
-            // locators should be 'on'
-            // result types should be 'off'
-            // detailed errors should be 'off'
+        // annotations should be 'on'
+        // locators should be 'on'
+        // result types should be 'off'
+        // detailed errors should be 'off'
 
         // MAT-8702
-            // messages should not come out in the ELM, therefore we will have our error level as 'Error'
+        // messages should not come out in the ELM, therefore we will have our error level as 'Error'
 
         // MAT-9295
-            // list demotion should be disabled
-            // list promotion should be disabled
-            // interval demotion should be disabled
-            // interval promotion should be disabled
+        // list demotion should be disabled
+        // list promotion should be disabled
+        // interval demotion should be disabled
+        // interval promotion should be disabled
 
         // by default MAT will produce both
         List<String> formats = new ArrayList<>();
         formats.add("XML");
         formats.add("JSON");
-        doTranslation(false, true, true, false, false, false,
+        doTranslation(false, true, true, true, false, false,
                 true, true, false, false,
                 true, true, CqlTranslatorException.ErrorSeverity.Error, validationOnly, formats);
     }
@@ -183,7 +169,7 @@ public class CQLtoELM {
 
         List<String> formats = new ArrayList<>();
         formats.add(format);
-        doTranslation(false, true, true, false, false, false,
+        doTranslation(false, true, true, true, false, false,
                 true, true, false, false,
                 true, true, CqlTranslatorException.ErrorSeverity.Error, validationOnly, formats);
     }
@@ -261,6 +247,7 @@ public class CQLtoELM {
 
         // parse from string
         ModelManager modelManager = new ModelManager();
+        modelManager.resolveModel("FHIR", "4.0.1");
         libraryManager = new LibraryManager(modelManager);
         UcumService ucumService = null;
         if (validateUnits) {
@@ -274,8 +261,7 @@ public class CQLtoELM {
 
 
         if(parentCQLLibraryString != null && parentCQLLibraryFile == null) {
-            libraryManager.getLibrarySourceLoader().registerProvider(
-                    new StringLibrarySourceProvider(this.cqlLibraryMapping));
+            libraryManager.getLibrarySourceLoader().registerProvider(libSourceProvider);
             writeToELM(options.toArray(new CqlTranslator.Options[options.size()]), errorSeverity, formats, modelManager, libraryManager, ucumService);
         }
 
@@ -310,7 +296,7 @@ public class CQLtoELM {
                 e.printStackTrace();
             }
         }
-        
+
         // the parent library is the one that is returned from the parent translator
         fetchTranslatedLibraries(translator.getTranslatedLibrary());
         this.parentLibrary = translator.getTranslatedLibrary().getLibrary();
@@ -321,18 +307,18 @@ public class CQLtoELM {
         this.warnings = translator.getWarnings();
         this.errors = translator.getErrors();
 
-       this.trackBackMap.putAll(getTrackBack());
-       
-       // TODO going to need to write a custom visitor to get the expressions     
+        this.trackBackMap.putAll(getTrackBack());
+
+        // TODO going to need to write a custom visitor to get the expressions
         // output the elm strings
         if(formats.contains("XML")) {
             this.parentElmString = translator.toXml();
             for(TranslatedLibrary library : translatedLibraries.values()) {
                 try {
-					this.elmStrings.add(translator.convertToXml(library.getLibrary()));
-				} catch (JAXBException e) {
-					e.printStackTrace();
-				}
+                    this.elmStrings.add(translator.convertToXml(library.getLibrary()));
+                } catch (JAXBException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -341,55 +327,55 @@ public class CQLtoELM {
             this.parentJsonString = translator.toJson();
             for(TranslatedLibrary library : translatedLibraries.values()) {
                 try {
-					this.jsonStrings.add(translator.convertToJson(library.getLibrary()));
-				} catch (JAXBException e) {
-					e.printStackTrace();
-				}
+                    this.jsonStrings.add(translator.convertToJson(library.getLibrary()));
+                } catch (JAXBException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
-    
+
     private void fetchTranslatedLibraries(TranslatedLibrary parentLibrary) throws CqlTranslatorException{
-    	this.translatedLibraries.put(parentLibrary.getIdentifier().getId() + "-" + parentLibrary.getIdentifier().getVersion(), parentLibrary);
-    	
-    	if(parentLibrary.getLibrary().getIncludes() != null) {
-    		for(IncludeDef include : parentLibrary.getLibrary().getIncludes().getDef()) {
-        		VersionedIdentifier identifier = new VersionedIdentifier();
-        		identifier.setId(include.getPath());
-        		identifier.setVersion(include.getVersion());
-        		try {
-        			TranslatedLibrary childLibrary = libraryManager.resolveLibrary(identifier,
+        this.translatedLibraries.put(parentLibrary.getIdentifier().getId() + "-" + parentLibrary.getIdentifier().getVersion(), parentLibrary);
+
+        if(parentLibrary.getLibrary().getIncludes() != null) {
+            for(IncludeDef include : parentLibrary.getLibrary().getIncludes().getDef()) {
+                VersionedIdentifier identifier = new VersionedIdentifier();
+                identifier.setId(include.getPath());
+                identifier.setVersion(include.getVersion());
+                try {
+                    TranslatedLibrary childLibrary = libraryManager.resolveLibrary(identifier,
                             new CqlTranslatorOptions(),
                             new ArrayList<>());
-        			fetchTranslatedLibraries(childLibrary);
-        		} catch (Exception e) {
-        			System.out.println(e.getMessage());
-        		}
-    		}
-    	}
+                    fetchTranslatedLibraries(childLibrary);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
     }
-    
+
     private Map<String, TrackBack> getTrackBack() {
-		try {
-			Reader reader = null; 
-			if(this.parentCQLLibraryString != null) {
-				reader = new StringReader(this.parentCQLLibraryString);
-			} else {
-				reader = new FileReader(this.parentCQLLibraryFile);
-			}
-			
-			cqlLexer lexer = new cqlLexer(new ANTLRInputStream(reader));
-			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			cqlParser parser = new cqlParser(tokens);
-			cqlParser.LibraryContext tree = parser.library();
-			TrackbackListener listener = new TrackbackListener(this.translator.getTranslatedLibrary().getIdentifier());
-			ParseTreeWalker walker = new ParseTreeWalker();
-			walker.walk(listener, tree);
-			return listener.getTrackbackMap();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+        try {
+            Reader reader = null;
+            if(this.parentCQLLibraryString != null) {
+                reader = new StringReader(this.parentCQLLibraryString);
+            } else {
+                reader = new FileReader(this.parentCQLLibraryFile);
+            }
+
+            cqlLexer lexer = new cqlLexer(new ANTLRInputStream(reader));
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            cqlParser parser = new cqlParser(tokens);
+            cqlParser.LibraryContext tree = parser.library();
+            TrackbackListener listener = new TrackbackListener(this.translator.getTranslatedLibrary().getIdentifier());
+            ParseTreeWalker walker = new ParseTreeWalker();
+            walker.walk(listener, tree);
+            return listener.getTrackbackMap();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -479,13 +465,13 @@ public class CQLtoELM {
      */
     public Element getExpression(String name) {
         List<ExpressionDef> expressions = this.parentLibrary.getStatements().getDef();
-       
+
         for(ExpressionDef expression : expressions) {
             if(expression.getName().equalsIgnoreCase(name)) {
                 return expression;
             }
         }
-        
+
         return null;
     }
 
@@ -513,23 +499,23 @@ public class CQLtoELM {
      * @return the return type as a string
      */
     public String getExpressionReturnType(String name) {
-    	
-    	if(this.parentLibrary.getStatements() != null) {
+
+        if(this.parentLibrary.getStatements() != null) {
             List<ExpressionDef> expressions = this.parentLibrary.getStatements().getDef();
             for(ExpressionDef expression : expressions) {
                 if(expression.getName().equalsIgnoreCase(name)) {
                     return expression.getResultType().toString();
                 }
             }
-    	}
+        }
 
-    	if(this.parentLibrary.getParameters() != null) {
+        if(this.parentLibrary.getParameters() != null) {
             List<ParameterDef> parameters = this.parentLibrary.getParameters().getDef();
             for(ParameterDef parameter : parameters) {
                 return parameter.getResultType().toString();
             }
-            
-    	}
+
+        }
 
         return null;
     }
@@ -569,9 +555,6 @@ public class CQLtoELM {
     }
 
 
-    public Map<String, String> getCqlLibraryMapping() {
-        return cqlLibraryMapping;
-    }
 
 
     /**
@@ -632,16 +615,6 @@ public class CQLtoELM {
         return trackBackMap;
     }
 
-    public static void main(String[] args) throws Exception {
-        File file = new File("C:\\Users\\jmeyer\\git\\test-cql\\test-0.0.000.cql");
-        CQLtoELM cqLtoELM = new CQLtoELM(file);
-        cqLtoELM.doTranslation(true, "XML");
-        CQLFormatter formatter = new CQLFormatter(true);
-        formatter.format(file);
-        
-        System.out.println(cqLtoELM.getTranslator().toXml());
-        outputExceptions(cqLtoELM.getErrors());
-    }
 
     /**
      * Prints the output error map to the console

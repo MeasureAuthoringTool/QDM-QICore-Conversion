@@ -7,6 +7,7 @@ import gov.cms.mat.fhir.services.cql.parser.CqlToMatXml;
 import gov.cms.mat.fhir.services.cql.parser.CqlVisitorFactory;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureXmlRepository;
+import gov.cms.mat.fhir.services.rest.dto.CQLObject;
 import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
 import gov.cms.mat.fhir.services.rest.dto.ValidationRequest;
 import gov.cms.mat.fhir.services.service.ValidationOrchestrationService;
@@ -57,6 +58,8 @@ public class MatXmlController {
         private CQLModel cqlModel;
         @NotBlank
         private String cql;
+        @NotNull
+        private CQLObject cqlObject;
     }
 
     @Getter
@@ -239,6 +242,10 @@ public class MatXmlController {
                             Collections.singletonList(preexistingErrors),
                             req.getValidationRequest());
             matXmlResponse.setErrors(libraryErrors);
+
+            if (req.getValidationRequest().isValidateReturnType()) {
+                matXmlResponse.setCqlObject(validationOrchestrationService.buildCqlObject(sourceModel));
+            }
         }
         return matXmlResponse;
     }

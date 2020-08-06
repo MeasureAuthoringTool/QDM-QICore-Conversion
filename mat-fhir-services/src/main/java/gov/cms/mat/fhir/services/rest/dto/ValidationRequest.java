@@ -14,4 +14,5 @@ public class ValidationRequest {
     private boolean validateCodeSystems = true;
     private boolean validateSyntax = true;
     private boolean validateCqlToElm = true;
+    private boolean validateReturnType = false;
 }

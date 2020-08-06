@@ -454,7 +454,7 @@ public class MATCQLFilter {
         return expressionNameToCodeDataTypeMap;
     }
 
-    public static void main(String[] args) throws IOException {
+    /*public static void main(String[] args) throws IOException {
         File file = new File("C:\\Users\\jmeyer\\git\\test-cql\\test-0.0.000.cql");
         String cqlString = cqlFileToString(file);
         // you could also create a string like String cqlString = <cql library string here>
@@ -473,7 +473,7 @@ public class MATCQLFilter {
         MATCQLFilter filter = new MATCQLFilter(cqlString, cqLtoELM.getCqlLibraryMapping(), parentExpressions, cqLtoELM.getTranslator(), cqLtoELM.getTranslatedLibraries());
         filter.filter();
         System.out.println(filter);
-    }
+    }*/
 
     @Override
     public String toString() {

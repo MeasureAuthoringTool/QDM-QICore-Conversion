@@ -1,12 +1,22 @@
 package gov.cms.mat.fhir.services.service;
 
+import gov.cms.mat.fhir.services.components.cql.FhirLibrarySourceProvider;
 import gov.cms.mat.fhir.services.components.validation.CodeSystemValidator;
 import gov.cms.mat.fhir.services.components.validation.ValueSetValidator;
+import gov.cms.mat.fhir.services.rest.dto.CQLExpressionObject;
+import gov.cms.mat.fhir.services.rest.dto.CQLObject;
 import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
 import gov.cms.mat.fhir.services.rest.dto.ValidationRequest;
 import lombok.extern.slf4j.Slf4j;
+import mat.CQLtoELM;
+import mat.model.cql.CQLDefinition;
+import mat.model.cql.CQLFunctions;
 import mat.model.cql.CQLModel;
+import mat.model.cql.CQLParameter;
+import mat.server.CQLUtilityClass;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hl7.cql.model.DataType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +32,11 @@ import java.util.stream.Collectors;
 public class ValidationOrchestrationService {
     @Value("${validation-pool-timeout}")
     int validationPoolTimeOut;
+
+    @Autowired
+    FhirLibrarySourceProvider fhirLibrarySourceProvider;
+
+    private CQLObject cqlObject = new CQLObject();
 
     private final ValidationService validationService;
     private final ValueSetValidator valueSetValidator;
@@ -133,5 +148,38 @@ public class ValidationOrchestrationService {
             log.warn("Future DId not complete", e);
             return Collections.emptyList();
         }
+    }
+
+    public CQLObject buildCqlObject(CQLModel sourceModel) {
+        String parentCQLString = CQLUtilityClass.getCqlString(sourceModel, "").getLeft();
+
+        CQLtoELM cqlToELM = new CQLtoELM(parentCQLString, fhirLibrarySourceProvider);
+        cqlToELM.doTranslation(true);
+
+        for (CQLDefinition definition : sourceModel.getDefinitionList()) {
+            String definitionName = definition.getName();
+            CQLExpressionObject expression = new CQLExpressionObject("Definition", definitionName);
+            DataType result = cqlToELM.getExpression(definitionName).getResultType();
+            if (result != null) {
+                expression.setReturnType(cqlToELM.getExpression(definitionName).getResultType().toString());
+            }
+            cqlObject.getCqlDefinitionObjectList().add(expression);
+        }
+
+        for (CQLFunctions function : sourceModel.getCqlFunctions()) {
+            String functionName = function.getName();
+            CQLExpressionObject expression = new CQLExpressionObject("Function", functionName);
+            expression.setReturnType(cqlToELM.getExpressionReturnType(functionName));
+
+            cqlObject.getCqlFunctionObjectList().add(expression);
+        }
+
+        for (CQLParameter parameter : sourceModel.getCqlParameters()) {
+            String parameterName = parameter.getName();
+            CQLExpressionObject expression = new CQLExpressionObject("Parameter", parameterName);
+            cqlObject.getCqlParameterObjectList().add(expression);
+        }
+
+        return cqlObject;
     }
 }
