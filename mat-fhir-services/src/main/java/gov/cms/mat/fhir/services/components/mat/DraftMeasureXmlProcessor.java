@@ -4,7 +4,7 @@ import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
@@ -62,7 +62,10 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         FhirResourceValidationResult result = validateResource(library, hapiFhirServer.getCtx());
 
         if (CollectionUtils.isNotEmpty(result.getValidationErrorList())) {
-            log.error("Validation errors encountered: {} ", result.getValidationErrorList());
+            log.error("Validation errors encountered {} errors ", result.getValidationErrorList().size());
+
+            result.getValidationErrorList().forEach(e -> log.error("Validation error: {}", e));
+
             throw new HapiResourceValidationException(libraryId, "Library");
         }
 

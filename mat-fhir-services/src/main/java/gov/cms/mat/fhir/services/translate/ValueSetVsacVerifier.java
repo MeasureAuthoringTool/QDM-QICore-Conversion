@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.translate;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;
 import gov.cms.mat.fhir.services.service.VsacService;

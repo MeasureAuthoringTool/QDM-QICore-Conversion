@@ -3,7 +3,11 @@ package gov.cms.mat.fhir.services.rest;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mongo.*;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResult;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResultProcessorService;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.MeasureReleaseVersionInvalidException;
@@ -23,7 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.Min;
 import java.time.Instant;
 
-import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.*;
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_NOT_FOUND;
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSION_INVALID;
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.SUCCESS;
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.SUCCESS_WITH_ERROR;
 
 @RestController
 @RequestMapping(path = "/orchestration/vsac")

@@ -50,7 +50,6 @@ public class ValueSetValidator extends CqlValidatorHelper {
         int lineIndex = -1;
         int lineLength = -1;
 
-        //filter by comment & todo antlr
 
         for (String cqlLine : lines) {
             if (cqlLine.contains(oid)) {

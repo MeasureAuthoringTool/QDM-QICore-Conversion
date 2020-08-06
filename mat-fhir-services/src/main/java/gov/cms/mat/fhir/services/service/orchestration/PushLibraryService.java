@@ -3,7 +3,7 @@ package gov.cms.mat.fhir.services.service.orchestration;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.services.components.mat.DraftMeasureXmlProcessor;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultProcessorService;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResultProcessorService;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;

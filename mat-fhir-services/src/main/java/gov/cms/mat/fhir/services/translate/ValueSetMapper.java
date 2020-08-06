@@ -12,7 +12,7 @@ import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Component;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.ValueSetValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -24,8 +24,8 @@ import mat.model.VSACValueSetWrapper;
 import mat.model.cql.CQLQualityDataModelWrapper;
 import mat.model.cql.CQLQualityDataSetDTO;
 
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.NEW;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.EXISTS;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.NEW;
 
 @Component
 @Slf4j

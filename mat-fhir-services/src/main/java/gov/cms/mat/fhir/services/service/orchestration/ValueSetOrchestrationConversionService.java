@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState;
 import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.CREATED;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.EXISTS;
 
 @Component
 @Slf4j

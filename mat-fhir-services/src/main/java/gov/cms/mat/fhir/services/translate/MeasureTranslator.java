@@ -3,7 +3,7 @@ package gov.cms.mat.fhir.services.translate;
 import gov.cms.mat.fhir.commons.model.MeasureDetails;
 import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
 import gov.cms.mat.fhir.commons.model.MeasureReferenceType;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureDetailsReferenceRepository;

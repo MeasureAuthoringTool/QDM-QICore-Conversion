@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.translate.processor;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import mat.model.cql.CQLDefinition;
 import mat.model.cql.CQLDefinitionsWrapper;
