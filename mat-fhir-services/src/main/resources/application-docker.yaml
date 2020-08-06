@@ -28,6 +28,9 @@ logging:
     org.exolab: WARN
     org.springframework.data.mongodb.core.MongoTemplate: WARN
     org.hl7.fhir.r4.hapi.validation: INFO
+  pattern:
+    console: "%-4r [%t] %5p %c %x - %m%n"
+    file: "%-4r [%t] %5p %c %x - %m%n"
   file:
     name: mat-fhir-services.log
     clean-history-on-start: true

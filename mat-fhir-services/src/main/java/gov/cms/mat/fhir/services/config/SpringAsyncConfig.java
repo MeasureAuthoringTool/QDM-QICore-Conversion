@@ -43,6 +43,7 @@ public class SpringAsyncConfig {
         executor.setQueueCapacity(configuration.getQueueCapacity());
         executor.setThreadNamePrefix(prefix);
 
+        executor.setTaskDecorator(new MdcTaskDecorator());
         executor.initialize();
 
         return executor;
