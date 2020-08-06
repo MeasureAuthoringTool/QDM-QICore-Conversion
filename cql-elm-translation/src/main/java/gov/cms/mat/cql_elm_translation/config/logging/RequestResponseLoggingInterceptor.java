@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.config.logging;
+package gov.cms.mat.cql_elm_translation.config.logging;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
@@ -27,7 +27,7 @@ public abstract class RequestResponseLoggingInterceptor implements ClientHttpReq
         return response;
     }
 
-    protected abstract void processHeaders(HttpRequest request);
+    abstract protected void processHeaders(HttpRequest request);
 
 
     private void logResponse(ClientHttpResponse response, long start) throws IOException {

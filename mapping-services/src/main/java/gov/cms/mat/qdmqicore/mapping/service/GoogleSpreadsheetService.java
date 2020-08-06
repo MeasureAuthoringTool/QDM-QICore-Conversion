@@ -15,6 +15,7 @@ import gov.cms.mat.qdmqicore.mapping.model.google.GoogleQdmToQicoreMappingData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleRequiredFieldsData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleResourceDefinitionData;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,9 @@ import static gov.cms.mat.qdmqicore.mapping.utils.SpreadSheetUtils.getData;
 public class GoogleSpreadsheetService {
     private static final String LOG_MESSAGE = "Received {} records from the spreadsheet's JSON, URL: {}";
 
+    @Qualifier("externalRestTemplate")
     private final RestTemplate restTemplate;
+
     @Value("${json.data.mat-attributes-url}")
     private String matAttributesUrl;
     @Value("${json.data.qdm-qi-core-mapping-url}")

@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.config.logging;
+package gov.cms.mat.qdmqicore.mapping.config.logging;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
