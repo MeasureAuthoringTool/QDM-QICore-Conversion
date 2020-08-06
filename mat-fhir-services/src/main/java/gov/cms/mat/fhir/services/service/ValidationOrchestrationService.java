@@ -34,7 +34,7 @@ public class ValidationOrchestrationService {
     int validationPoolTimeOut;
 
     @Autowired
-    FhirLibrarySourceProvider fhirLibrarySourceProvider;
+    private FhirLibrarySourceProvider fhirLibrarySourceProvider;
 
     private CQLObject cqlObject = new CQLObject();
 

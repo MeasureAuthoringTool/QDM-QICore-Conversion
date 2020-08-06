@@ -32,8 +32,4 @@ public class FhirLibrarySourceProvider implements LibrarySourceProvider {
             throw new RuntimeException("Could not find lib " + versionedIdentifier.getId()  + "V" + versionedIdentifier.getVersion());
         }
     }
-
-    private static String createKey(String name, String qdmVersion, String version) {
-        return name + "-" + qdmVersion + "-" + version;
-    }
 }

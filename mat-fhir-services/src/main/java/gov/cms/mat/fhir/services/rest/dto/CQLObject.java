@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class CQLObject {
-    List<CQLExpressionObject> cqlDefinitionObjectList = new ArrayList<>();
-    List<CQLExpressionObject> cqlFunctionObjectList = new ArrayList<>();
-    List<CQLExpressionObject> cqlParameterObjectList = new ArrayList<>();
+    private List<CQLExpressionObject> cqlDefinitionObjectList = new ArrayList<>();
+    private List<CQLExpressionObject> cqlFunctionObjectList = new ArrayList<>();
+    private List<CQLExpressionObject> cqlParameterObjectList = new ArrayList<>();
 }
