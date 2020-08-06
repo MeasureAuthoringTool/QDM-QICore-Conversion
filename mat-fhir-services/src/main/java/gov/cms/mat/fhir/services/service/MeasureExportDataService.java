@@ -2,7 +2,7 @@ package gov.cms.mat.fhir.services.service;
 
 
 import gov.cms.mat.fhir.commons.model.MeasureExport;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.MeasureExportNotFoundException;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.summary.MeasureVersionExportId;

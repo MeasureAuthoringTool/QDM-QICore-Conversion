@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.components.fhir;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ValueSetValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;

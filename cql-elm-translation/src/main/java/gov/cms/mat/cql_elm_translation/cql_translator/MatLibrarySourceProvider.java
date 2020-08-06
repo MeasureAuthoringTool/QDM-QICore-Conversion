@@ -8,9 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.cqframework.cql.cql2elm.LibrarySourceProvider;
 import org.hl7.elm.r1.VersionedIdentifier;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -76,10 +75,6 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
     }
 
     public InputStream getInputStream(String cql) {
-        try {
-            return IOUtils.toInputStream(cql, "utf-8");
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        return IOUtils.toInputStream(cql, StandardCharsets.UTF_8);
     }
 }

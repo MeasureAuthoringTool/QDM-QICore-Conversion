@@ -2,8 +2,8 @@ package gov.cms.mat.fhir.services.components.fhir;
 
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResult;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ValueSetValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;

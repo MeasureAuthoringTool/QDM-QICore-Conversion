@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.rest;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.service.orchestration.PushMeasureService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -2,7 +2,7 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_VALIDATION_FAILED;
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.NEW;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.NEW;
 
 @Component
 @Slf4j

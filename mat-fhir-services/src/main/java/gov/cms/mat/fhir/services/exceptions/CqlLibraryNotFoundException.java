@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.exceptions;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

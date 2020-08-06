@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.components.mongo;
+package gov.cms.mat.fhir.services.components.reporting;
 
 public enum HapiResourcePersistedState {
     NEW("New"), // if new not persisted

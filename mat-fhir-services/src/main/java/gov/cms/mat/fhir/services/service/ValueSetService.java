@@ -3,7 +3,7 @@ package gov.cms.mat.fhir.services.service;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ValueSetConversionException;

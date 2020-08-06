@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -37,8 +36,6 @@ public class ValidationService {
         List<LibraryErrors> libraryErrors = new ArrayList<>();
 
         cqlConversionErrors.forEach(c -> process(c, libraryErrors));
-
-        Map<String, List<CqlConversionError>> map = extractor.parseForExternalErrors();
 
         return CompletableFuture.completedFuture(libraryErrors);
     }

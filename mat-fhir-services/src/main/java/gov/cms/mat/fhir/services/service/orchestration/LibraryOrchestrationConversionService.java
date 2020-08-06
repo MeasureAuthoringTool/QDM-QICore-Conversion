@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundInMapException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;

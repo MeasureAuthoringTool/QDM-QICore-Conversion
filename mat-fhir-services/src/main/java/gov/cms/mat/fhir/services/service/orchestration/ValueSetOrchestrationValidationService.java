@@ -2,8 +2,8 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.fhir.ValueSetFhirValidationResults;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResult;
 import gov.cms.mat.fhir.services.service.ValueSetService;
 import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;

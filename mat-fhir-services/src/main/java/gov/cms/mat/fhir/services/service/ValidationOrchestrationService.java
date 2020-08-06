@@ -126,9 +126,9 @@ public class ValidationOrchestrationService {
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find Error"));  // should not happen
     }
 
-    private List<LibraryErrors> getFromFuture(CompletableFuture<List<LibraryErrors>> l) {
+    private List<LibraryErrors> getFromFuture(CompletableFuture<List<LibraryErrors>> listCompletableFuture) {
         try {
-            return l.get();
+            return listCompletableFuture.get();
         } catch (Exception e) {
             log.warn("Future DId not complete", e);
             return Collections.emptyList();

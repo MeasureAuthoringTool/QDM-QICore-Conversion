@@ -1,9 +1,9 @@
-package gov.cms.mat.fhir.services.components.mongo.helpers;
+package gov.cms.mat.fhir.services.components.reporting.helpers;
 
 import gov.cms.mat.fhir.rest.dto.MeasureConversionResults;
 import org.apache.commons.lang3.StringUtils;
 
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.EXISTS;
 
 public interface MeasureResultsHelper {
     MeasureConversionResults getMeasureConversionResults();
