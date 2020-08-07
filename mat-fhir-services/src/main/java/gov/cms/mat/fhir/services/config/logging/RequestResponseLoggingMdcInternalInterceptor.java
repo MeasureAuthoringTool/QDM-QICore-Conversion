@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.config.logging;
 
 import gov.cms.mat.config.logging.MdcHeaderString;
+import gov.cms.mat.config.logging.MdcPairParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
 
@@ -20,6 +21,8 @@ public class RequestResponseLoggingMdcInternalInterceptor extends RequestRespons
             log.debug("MDCParamString: {}", paramString);
             request.getHeaders().add(MDC_PARAMS_ID, paramString);
         }
+
+        MdcPairParser.addMissingDefaultParamsToMDC();
     }
 }
 

@@ -6,5 +6,13 @@ json:
     required-measure-fields-url: ${GOOGLE_REQUIRED_MEASURE_FIELDS_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/opl7qh/public/values?alt=json}
     resource-definition-url: ${GOOGLE_RESOURCE_DEFINITION_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o1h1xy0/public/values?alt=json}
 
+logging:
+  level:
+    root: INFO
+  file:
+    name: mapping-service.log
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
+    file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %mdc %logger{36}.%M - %msg%n"
 
 swagger-server:

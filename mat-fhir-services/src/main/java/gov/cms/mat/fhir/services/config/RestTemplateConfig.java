@@ -34,5 +34,4 @@ public class RestTemplateConfig {
                 .setInterceptors(List.of(new RequestResponseLoggingExternalInterceptor()));
         return restTemplate;
     }
-
 }

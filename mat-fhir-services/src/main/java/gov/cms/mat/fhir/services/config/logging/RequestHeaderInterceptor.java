@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.config.logging;
 
 import gov.cms.mat.config.logging.MdcPairParser;
+import gov.cms.mat.config.logging.ServletLogging;
 import gov.cms.mat.config.logging.ThreadLocalBody;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -61,19 +62,18 @@ public class RequestHeaderInterceptor extends HandlerInterceptorAdapter {
             String body = "";
 
             try {
-                body = IOUtils.toString( request.getInputStream(), StandardCharsets.UTF_8);
+                body = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 log.error("Cannot find body", e);
             }
+            String headers = processRequestHeaders(request);
 
-            String builder = "\n" + "=======================incoming request begin=============================================\n" +
-                    "URI          : " + request.getRequestURI() + "\n" +
-                    "QueryString  : " + request.getQueryString() + "\n" +
-                    "Method       : " + request.getMethod() + "\n" +
-                    "Headers      : " + processRequestHeaders(request) + "\n" +
-                    "Request body : " + body + "\n" +
-                    "==========================incoming request end================================================\n";
-            log.info(builder);
+            ServletLogging.logIncomingRequest(request.getRequestURI(),
+                    request.getQueryString(),
+                    request.getMethod(),
+                    headers,
+                    body);
+
         }
     }
 
@@ -92,21 +92,14 @@ public class RequestHeaderInterceptor extends HandlerInterceptorAdapter {
 
     private void logResponse(HttpServletResponse response, long executionTime) {
         if (log.isInfoEnabled()) {
-
             HttpStatus httpStatus = HttpStatus.resolve(response.getStatus());
-
             String statusText = httpStatus == null ? "" : httpStatus.getReasonPhrase();
+            String status = response.getStatus() + " " + statusText;
 
+            String headers = processResponseHeadersForLog(response);
             String body = ThreadLocalBody.getBody();
 
-            String builder = "\n" + "============================incoming response begin==========================================\n" +
-                    "Status code   : " + response.getStatus() + " " + statusText + "\n" +
-                    "Exec Time ms  : " + executionTime + "\n" +
-                    "Headers       : " + processResponseHeadersForLog(response) + "\n" +
-                    "Response body : " + body + "\n" +
-                    "=======================incoming response end=================================================\n";
-
-            log.info(builder);
+            ServletLogging.logIncomingResponse(status, executionTime, headers, body);
         }
     }
 

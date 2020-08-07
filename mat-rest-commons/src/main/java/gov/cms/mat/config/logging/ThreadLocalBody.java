@@ -7,7 +7,11 @@ public final class ThreadLocalBody {
     private static final ThreadLocal<String> threadLocalValue = new ThreadLocal<>();
 
     public static String getBody() {
-        return threadLocalValue.get();
+      try {
+          return threadLocalValue.get();
+      } finally {
+          threadLocalValue.remove();
+      }
     }
 
     public static void setBody(Object body) {

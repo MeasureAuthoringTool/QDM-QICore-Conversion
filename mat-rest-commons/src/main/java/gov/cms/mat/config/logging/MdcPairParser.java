@@ -6,11 +6,12 @@ import org.slf4j.MDC;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
 public final class MdcPairParser {
-   public static void parseAndSetInMdc(String params) {
+    public static void parseAndSetInMdc(String params) {
         if (StringUtils.isBlank(params)) {
             log.warn("Params string is blank");
         } else {
@@ -22,6 +23,21 @@ public final class MdcPairParser {
                     .collect(Collectors.toList());
 
             nameValuePairs.forEach(n -> MDC.put(n.getName(), n.getValue()));
+        }
+
+        addMissingDefaultParamsToMDC();
+    }
+
+    public static void addMissingDefaultParamsToMDC() {
+        addIfMissing("transactionId");
+        addIfMissing("requestId");
+    }
+
+    private static void addIfMissing(String key) {
+        if (MDC.get(key) == null) {
+            String uuid = UUID.randomUUID().toString();
+            log.info("Adding default UUID: {} for MDC key: {}", uuid, key);
+            MDC.put(key, uuid);
         }
     }
 
@@ -45,8 +61,8 @@ public final class MdcPairParser {
         String[] paramsArray = param.split("=");
 
         return MdcPair.builder()
-                .name(paramsArray[0])
-                .value(paramsArray[1])
+                .name(paramsArray[0].trim())
+                .value(paramsArray[1].trim())
                 .build();
     }
 
