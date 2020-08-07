@@ -11,6 +11,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -60,7 +61,7 @@ public class RequestHeaderInterceptor extends HandlerInterceptorAdapter {
             String body = "";
 
             try {
-                body = IOUtils.toString(request.getReader());
+                body = IOUtils.toString( request.getInputStream(), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 log.error("Cannot find body", e);
             }
