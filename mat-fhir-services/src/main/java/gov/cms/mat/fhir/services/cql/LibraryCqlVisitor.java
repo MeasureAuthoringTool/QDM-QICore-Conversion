@@ -16,7 +16,6 @@ import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DataRequirement;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.RelatedArtifact;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,15 +41,18 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
     private final List<DataRequirement> dataRequirements = new ArrayList<>();
     private final List<RelatedArtifact> relatedArtifacts = new ArrayList<>();
     private final Map<String, Pair<Library, LibraryCqlVisitor>> libMap = new HashMap<>();
+    private final String matFhirBaseUrl;
     private String name;
     private String version;
 
     public LibraryCqlVisitor(HapiFhirServer hapiServer,
                              CQLAntlrUtils cqlAntlrUtils,
-                             LibraryCqlVisitorFactory factory) {
+                             LibraryCqlVisitorFactory factory,
+                             String matFhirBaseUrl) {
         this.hapiServer = hapiServer;
         this.cqlAntlrUtils = cqlAntlrUtils;
         this.factory = factory;
+        this.matFhirBaseUrl = matFhirBaseUrl;
     }
 
     /**
@@ -81,6 +83,12 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                 uri,
                 null,
                 null));
+
+        RelatedArtifact relatedArtifact = new RelatedArtifact();
+        relatedArtifact.setType(RelatedArtifact.RelatedArtifactType.DEPENDSON);
+        relatedArtifact.setUrl(uri);
+        relatedArtifacts.add(relatedArtifact);
+
         return null;
     }
 
@@ -102,9 +110,10 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
             Optional<Library> lib = hapiServer.fetchHapiLibrary(nameVersion.getLeft(),
                     nameVersion.getRight());
             if (lib.isPresent()) {
-                relatedArtifact.setUrl("Library/" + getId(lib.get()));
                 String identifier = ctx.localIdentifier().getText();
                 Library childLib = lib.get();
+                relatedArtifact.setUrl(matFhirBaseUrl + "/Library/" + nameVersion.getLeft());
+
                 String cql = cqlAntlrUtils.getCql(childLib);
                 LibraryCqlVisitor visitor = factory.visit(cql);
                 libMap.put(identifier, Pair.of(childLib, visitor));
@@ -120,6 +129,11 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
     @Override
     public String visitCodesystemDefinition(cqlParser.CodesystemDefinitionContext ctx) {
         codeSystems.add(ctx);
+        RelatedArtifact relatedArtifact = new RelatedArtifact();
+        relatedArtifact.setType(RelatedArtifact.RelatedArtifactType.DEPENDSON);
+        relatedArtifact.setUrl(getUnquotedFullText(ctx.codesystemId()) +
+                (ctx.versionSpecifier() != null ? "|" + getUnquotedFullText(ctx.versionSpecifier()) : ""));
+        relatedArtifacts.add(relatedArtifact);
         return null;
     }
 
@@ -144,7 +158,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                     .codesystemVersion(csVersionUri)
                     .isCodesystemVersionIncluded(csVersionUri != null)
                     .datatype(null).
-                    build());
+                            build());
         }, () -> log.error("Invalid code " + ctx.getText() + ". Could not find code system name " + codeSystemName));
         return null;
     }
@@ -215,7 +229,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
             int periodIndex = valueSetName.indexOf(".");
             if (periodIndex != -1) {
                 String alias = valueSetName.substring(0, periodIndex);
-                String remaining = valueSetName.substring(periodIndex + 1);
+                String remaining = trimQuotes(valueSetName.substring(periodIndex + 1));
                 var childLib = libMap.get(alias);
                 if (childLib != null) {
                     result = childLib.getRight().getValueSetUrl(remaining);
@@ -223,16 +237,6 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
             }
         }
         return result;
-    }
-
-    private String getId(Library lib) {
-        String id = lib.getId();
-        int endIndex = id.indexOf("/_history");
-        if (endIndex >= 0) {
-            id = id.substring(0, endIndex);
-        }
-        int startIndex = id.lastIndexOf('/') + 1;
-        return id.substring(startIndex);
     }
 
     private Pair<String, String> getNameVersionFromInclude(cqlParser.IncludeDefinitionContext ctx) {
@@ -287,7 +291,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
         } else {
             HumanReadableCodeModel hrCode = getCode(valueSetOrCodeName);
             if (hrCode != null) {
-                filter.setCode(Collections.singletonList(new Coding(hrCode.getCodeSystemOid(),hrCode.getOid(),hrCode.getName())));
+                filter.setCode(Collections.singletonList(new Coding(hrCode.getCodeSystemOid(), hrCode.getOid(), hrCode.getName())));
                 humanReadableArtifacts.getDataReqCodes().add(HumanReadableCodeModel.builder()
                         .name(hrCode.getName())
                         .oid(hrCode.getOid())
@@ -296,7 +300,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                         .codesystemVersion(hrCode.getCodesystemVersion())
                         .isCodesystemVersionIncluded(hrCode.isCodesystemVersionIncluded())
                         .datatype(null).
-                         build());
+                                build());
             } else {
                 log.warn("Could not find a value set or code matching name " + valueSetOrCodeName + ". " +
                         "This is likely a FHIR type with attribute and we don't know how to handle those yet :(.");

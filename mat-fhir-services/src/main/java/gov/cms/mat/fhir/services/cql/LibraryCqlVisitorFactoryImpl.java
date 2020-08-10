@@ -4,12 +4,16 @@ import gov.cms.mat.fhir.commons.model.HumanReadableArtifacts;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.gen.cqlParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LibraryCqlVisitorFactoryImpl implements LibraryCqlVisitorFactory {
     private final CQLAntlrUtils cqlAntlrUtils;
     private final HapiFhirServer hapiServier;
+
+    @Value("${mat-fhir-base}")
+    private String matFhirBaseUrl;
 
     public LibraryCqlVisitorFactoryImpl(CQLAntlrUtils cqlAntlrUtils,
                                         HapiFhirServer hapiServier) {
@@ -18,7 +22,10 @@ public class LibraryCqlVisitorFactoryImpl implements LibraryCqlVisitorFactory {
     }
 
     public LibraryCqlVisitor getLibraryCqlVisitor() {
-        return new LibraryCqlVisitor(hapiServier, cqlAntlrUtils, this);
+        return new LibraryCqlVisitor(hapiServier,
+                cqlAntlrUtils,
+                this,
+                matFhirBaseUrl);
     }
 
     public LibraryCqlVisitor visit(String cql) {

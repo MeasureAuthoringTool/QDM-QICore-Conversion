@@ -18,6 +18,7 @@ import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Narrative;
 import org.hl7.fhir.r4.model.RelatedArtifact;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ public class LibraryTranslator extends TranslatorBase {
     public static final String SYSTEM_TYPE = "http://terminology.hl7.org/CodeSystem/library-type";
     public static final String SYSTEM_CODE = "logic-library";
 
+    @Value("${mat-fhir-base}")
+    private String matFhirBaseUrl;
 
     private final HapiFhirServer hapiServer;
     private final CQLAntlrUtils cqlAntlrUtils;
@@ -75,29 +78,33 @@ public class LibraryTranslator extends TranslatorBase {
         result.setExperimental(lib.isExperimental());
         result.setContent(createContent(elmJson, cql, elmXml));
         result.setType(createType(SYSTEM_TYPE, SYSTEM_CODE));
-        result.setApprovalDate(new Date()); //TO DO: fix this.
-        result.setUrl(publicHapiFhirUrl + "Library/" + libId);
+        result.setUrl(matFhirBaseUrl + "/Library/" + lib.getCqlName());
         result.setDataRequirement(distinctDataRequirements(visitor.getDataRequirements()));
         result.setRelatedArtifact(distinctArtifacts(visitor.getRelatedArtifacts()));
-        result.setText(findHumanReadable(lib));
+        result.setText(findHumanReadable(lib.getMeasureId())); //Eventually this will be changed to liquid scripts.
         result.setMeta(createLibraryMeta());
+
+        //When we get to publishable profile we will need to add in these:
+        //result.setApprovalDate(new Date()); //TO DO: fix this.
+
         return result;
     }
 
     private Meta createLibraryMeta() {
         return new Meta()
+                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm")
                 .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
     }
 
-    private Narrative findHumanReadable(CqlLibrary lib) {
+    private Narrative findHumanReadable(String measureId) {
         Narrative result = null;
 
-        if (lib != null && StringUtils.isNotBlank(lib.getMeasureId())) {
-            var exportOpt = measureExportRepo.findByMeasureId(lib.getMeasureId());
+        if (StringUtils.isNotBlank(measureId)) {
+            var exportOpt = measureExportRepo.findByMeasureId(measureId);
             if (exportOpt.isPresent()) {
                 var export = exportOpt.get();
                 if (export.getHumanReadable() != null) {
-                    result = createNarrative(lib.getMeasureId(), export.getHumanReadable());
+                    result = createNarrative(measureId, export.getHumanReadable());
                 }
             }
         }
@@ -126,6 +133,7 @@ public class LibraryTranslator extends TranslatorBase {
                 result.add(a);
             }
         });
+        result.sort((ra1,ra2) -> ra1.getUrl().compareTo(ra2.getUrl()));
         return result;
     }
 

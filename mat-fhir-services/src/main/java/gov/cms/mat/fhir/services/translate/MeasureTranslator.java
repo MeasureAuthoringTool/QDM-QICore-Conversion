@@ -33,15 +33,18 @@ import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Measure;
 import org.hl7.fhir.r4.model.Meta;
+import org.hl7.fhir.r4.model.Narrative;
 import org.hl7.fhir.r4.model.Period;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.hl7.fhir.r4.model.UsageContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.INVALID_MEASURE_XML;
@@ -68,6 +71,11 @@ public class MeasureTranslator extends TranslatorBase {
     private final MeasureGroupingDataProcessor measureGroupingDataProcessor;
     private final CqlLibraryRepository cqlLibRepo;
     private final ManageMeasureDetailMapper measureDetailMapper;
+
+
+    @Value("${mat-fhir-base}")
+    private String matFhirBaseUrl;
+
 
 
     public MeasureTranslator(MeasureRepository matMeasureRepo,
@@ -124,7 +132,7 @@ public class MeasureTranslator extends TranslatorBase {
 
         result.setId(id);
         result.setLanguage("en");
-        result.setUrl(publicHapiFhirUrl + "Measure/" + id);
+        result.setUrl(matFhirBaseUrl + "/Measure/" + matMeasure.getCqlName());
         result.setRationale(simpleXmlModel.getRationale());
         result.setClinicalRecommendationStatement(simpleXmlModel.getClinicalRecomms());
         result.setGuidance(simpleXmlModel.getGuidance());
@@ -140,36 +148,37 @@ public class MeasureTranslator extends TranslatorBase {
         result.setPurpose(FHIR_UNKNOWN );
         result.setCopyright(simpleXmlModel.getCopyright());
         result.setDisclaimer(simpleXmlModel.getDisclaimer());
-        result.setPurpose(FHIR_UNKNOWN );
-        result.setLibrary(Collections.singletonList(new CanonicalType("Library/" + cqlLib.getId())));
+        result.setLibrary(Collections.singletonList(new CanonicalType(matFhirBaseUrl + "/Library/" + matMeasure.getCqlName())));
         result.setContact(createContactDetailUrl());
-        result.setUseContext(createUsageContext());
         result.setMeta(createMeasureMeta(simpleXmlModel.getMeasScoring()));
         processImprovementNotation(simpleXmlModel, result);
         processExtension(result);
-        processContained(result);
         processHumanReadable(id, result);
         processIdentifiers(result, simpleXmlModel);
         processStatus(result, simpleXmlModel);
-        processFinalizeDate(result, matMeasure);
         processTypes(result, simpleXmlModel);
-        processJurisdiction(result);
         processPeriod(result, matMeasure);
         processRelatedArtifacts(result, matMeasure, simpleXmlModel);
         processScoring(result, simpleXmlModel);
         processXml(simpleXml, result);
         return result;
 
-        //Note:
-        // These are contextual and we might need to add them in later on.
+        //Added in in a coming story:
+        //result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
+
+        //When we get to publishable profile we will need to add in these:
+        //processContained(result);
+        //result.setUseContext(createUsageContext());
+        //result.setApprovalDate();
         //result.setJurisdiction();
         //result.setCompositeScoring();
-        //result.setSubject(createType("http://hl7.org/fhir/resource-types","Patient"));
         //result.setTopic(createTopic());
     }
 
     private Meta createMeasureMeta(String scoring) {
-        Meta meta = new Meta(); //.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/measure-cqfm");
+        Meta meta = new Meta();
+        // Once we are publishable add this profile.
+        // http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/publishable-measure-cqfm
 
         if (StringUtils.isBlank(scoring)) {
             log.error("Scoring type is null");
@@ -212,37 +221,8 @@ public class MeasureTranslator extends TranslatorBase {
 
     private void processExtension(Measure fhirMeasure) {
         fhirMeasure.setExtension(new ArrayList<>());
+         // TO DO: Set this to the population basis once it is added to the MAT gui.
         fhirMeasure.getExtension().add(new Extension(EXTENSION_POPULATION_BASIS, new CodeType("boolean")));
-        fhirMeasure.getExtension().add(new Extension(EXTENSION_SOFTWARE_SYSTEM, new Reference("#cqf-tooling")));
-    }
-
-    private void processContained(Measure fhirMeasure) {
-        Device device = new Device();
-        Meta meta = new Meta();
-        meta.setProfile(Collections.singletonList(new CanonicalType("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/device-softwaresystem-cqfm")));
-        device.setMeta(meta);
-
-        device.setId("cqf-tooling");
-
-        //todo carson/stan what to place here
-        Device.DeviceDeviceNameComponent nameComponent = new Device.DeviceDeviceNameComponent();
-        nameComponent.setName("cqf-tooling");
-        nameComponent.setType(Device.DeviceNameType.MANUFACTURERNAME);
-        device.addDeviceName(nameComponent);
-
-        Device.DeviceVersionComponent deviceVersionComponent = new Device.DeviceVersionComponent();
-        deviceVersionComponent.setValue("1.1.0-SNAPSHOT");
-        device.setVersion(Collections.singletonList(deviceVersionComponent));
-
-        CodeableConcept codeableConcept = new CodeableConcept();
-        Coding coding = new Coding();
-        coding.setSystem("http://hl7.org/fhir/us/cqfmeasures/CodeSystem/software-system-type");
-        coding.setCode("tooling");
-        codeableConcept.setCoding(Collections.singletonList(coding));
-
-        device.setType(codeableConcept);
-
-        fhirMeasure.setContained(Collections.singletonList(device));
     }
 
     private void processXml(byte[] xmlBytes, org.hl7.fhir.r4.model.Measure fhirMeasure) {
@@ -254,23 +234,10 @@ public class MeasureTranslator extends TranslatorBase {
 
     public void processPeriod(Measure fhirMeasure,
                               gov.cms.mat.fhir.commons.model.Measure matModel) {
-        Period effectivePeriod = buildPeriodDayResolution(matModel.getMeasurementPeriodFrom(), matModel.getMeasurementPeriodTo());
+        Date date = new Date();
+        Period effectivePeriod = buildPeriodDayResolution(matModel.getMeasurementPeriodFrom(),
+                matModel.getMeasurementPeriodTo());
         fhirMeasure.setEffectivePeriod(effectivePeriod);
-    }
-
-    public void processJurisdiction(Measure fhirMeasure) {
-        fhirMeasure.setJurisdiction(new ArrayList<>());
-        fhirMeasure.getJurisdiction()
-                .add(buildCodeableConcept("US", "urn:iso:std:iso:3166", ""));
-    }
-
-    public void processFinalizeDate(Measure fhirMeasure,
-                                    gov.cms.mat.fhir.commons.model.Measure matModel) {
-        if (matModel.getFinalizedDate() != null) {
-            fhirMeasure.setApprovalDate(matModel.getFinalizedDate());
-        } else {
-            log.debug("No approval date");
-        }
     }
 
     public void processStatus(Measure fhirMeasure,
@@ -369,8 +336,9 @@ public class MeasureTranslator extends TranslatorBase {
     }
 
     public void processHumanReadable(String measureId, Measure measure) {
-        var measureExpOpt = matMeasureExportRepo.findById(measureId);
-        if (measureExpOpt.isPresent() && measureExpOpt.get().getHumanReadable() != null) {
+        var measureExpOpt = matMeasureExportRepo.findByMeasureId(measureId);
+        if (measureExpOpt.isPresent() &&
+                measureExpOpt.get().getHumanReadable() != null) {
             measure.setText(createNarrative(measureId, measureExpOpt.get().getHumanReadable()));
         }
     }
@@ -400,22 +368,6 @@ public class MeasureTranslator extends TranslatorBase {
                 .setSystem(ContactPointSystem.URL);
     }
 
-    private List<UsageContext> createUsageContext() {
-        UsageContext usageContext = new UsageContext();
-        Coding coding = new Coding();
-        coding.setCode("program");
-        usageContext.setCode(coding);
-
-        CodeableConcept cc = new CodeableConcept();
-        cc.setText("eligible-provider");
-        usageContext.setValue(cc);
-
-        List<UsageContext> usageContextList = new ArrayList<>();
-        usageContextList.add(usageContext);
-
-        return usageContextList;
-    }
-
     private RelatedArtifact.RelatedArtifactType mapReferenceType(MeasureReferenceType matReferenceType) {
         switch (matReferenceType) {
             case JUSTIFICATION:
@@ -443,5 +395,20 @@ public class MeasureTranslator extends TranslatorBase {
 
     private String createVersion(gov.cms.mat.fhir.commons.model.Measure matMeasure) {
         return createVersion(matMeasure.getVersion(), matMeasure.getRevisionNumber());
+    }
+
+    private Narrative findHumanReadable(String measureId) {
+        Narrative result = null;
+
+        if (StringUtils.isNotBlank(measureId)) {
+            var exportOpt = matMeasureExportRepo.findByMeasureId(measureId);
+            if (exportOpt.isPresent()) {
+                var export = exportOpt.get();
+                if (export.getHumanReadable() != null) {
+                    result = createNarrative(measureId, export.getHumanReadable());
+                }
+            }
+        }
+        return result;
     }
 }
