@@ -298,7 +298,10 @@ public class CqlUtils {
     public static Pair<Double, Integer> versionToVersionAndRevision(String version) {
         if (isValidVersion(version)) {
             String[] sp = version.split("\\.");
-            return Pair.of(Double.parseDouble(sp[0] + "." + sp[1]), Integer.parseInt(sp[BLK_SEP_LENGTH]));
+            // 9.1.100 = version 9.001 revision 100.
+            // Old legacy annoyance we have to deal with.
+            return Pair.of(Double.parseDouble(sp[0] + "." + StringUtils.leftPad(sp[1],3,'0'))
+                    , Integer.parseInt(sp[BLK_SEP_LENGTH]));
         } else {
             throw new IllegalArgumentException("Invalid version: " + version);
         }
