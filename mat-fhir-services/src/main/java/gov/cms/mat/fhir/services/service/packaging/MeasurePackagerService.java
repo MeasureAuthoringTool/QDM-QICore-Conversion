@@ -74,10 +74,8 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
 
         //Can't use the url, it is just a canonical. Have to check the Mat DB.
         CqlLibrary lib = cqlLibRepository.getCqlLibraryByMeasureId(parseMeasureIdFromHapiUrl(measure.getId()));
-        if (lib == null) {
-            if (CollectionUtils.isEmpty(measure.getLibrary())) {
-                throw new FhirLibraryNotFoundException(measure.getId());
-            }
+        if (lib == null || CollectionUtils.isEmpty(measure.getLibrary())) {
+            throw new FhirLibraryNotFoundException(measure.getId());
         }
         return "Library/" + lib.getId();
     }
@@ -87,9 +85,9 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
         String result = null;
         int measureIndex = url.indexOf(MEASURE_URL_TOKEN);
         if (measureIndex != -1) {
-            int nextSlash = url.indexOf('/',measureIndex + MEASURE_URL_TOKEN.length());
+            int nextSlash = url.indexOf('/', measureIndex + MEASURE_URL_TOKEN.length());
             if (nextSlash != -1) {
-                result = url.substring(measureIndex + MEASURE_URL_TOKEN.length(),nextSlash);
+                result = url.substring(measureIndex + MEASURE_URL_TOKEN.length(), nextSlash);
             }
         }
         return result;

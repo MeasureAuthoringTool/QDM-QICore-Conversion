@@ -22,29 +22,23 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.CanonicalType;
 import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ContactDetail;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
-import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Identifier.IdentifierUse;
 import org.hl7.fhir.r4.model.Measure;
 import org.hl7.fhir.r4.model.Meta;
-import org.hl7.fhir.r4.model.Narrative;
 import org.hl7.fhir.r4.model.Period;
-import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.RelatedArtifact;
-import org.hl7.fhir.r4.model.UsageContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.INVALID_MEASURE_XML;
@@ -234,7 +228,6 @@ public class MeasureTranslator extends TranslatorBase {
 
     public void processPeriod(Measure fhirMeasure,
                               gov.cms.mat.fhir.commons.model.Measure matModel) {
-        Date date = new Date();
         Period effectivePeriod = buildPeriodDayResolution(matModel.getMeasurementPeriodFrom(),
                 matModel.getMeasurementPeriodTo());
         fhirMeasure.setEffectivePeriod(effectivePeriod);
@@ -395,20 +388,5 @@ public class MeasureTranslator extends TranslatorBase {
 
     private String createVersion(gov.cms.mat.fhir.commons.model.Measure matMeasure) {
         return createVersion(matMeasure.getVersion(), matMeasure.getRevisionNumber());
-    }
-
-    private Narrative findHumanReadable(String measureId) {
-        Narrative result = null;
-
-        if (StringUtils.isNotBlank(measureId)) {
-            var exportOpt = matMeasureExportRepo.findByMeasureId(measureId);
-            if (exportOpt.isPresent()) {
-                var export = exportOpt.get();
-                if (export.getHumanReadable() != null) {
-                    result = createNarrative(measureId, export.getHumanReadable());
-                }
-            }
-        }
-        return result;
     }
 }
