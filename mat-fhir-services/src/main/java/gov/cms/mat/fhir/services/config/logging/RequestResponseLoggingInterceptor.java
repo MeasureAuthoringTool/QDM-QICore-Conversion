@@ -30,7 +30,6 @@ public abstract class RequestResponseLoggingInterceptor implements ClientHttpReq
 
     protected abstract void processHeaders(HttpRequest request);
 
-
     private void logResponse(ClientHttpResponse response, long start) throws IOException {
         if (log.isInfoEnabled()) {
             long executionTime = System.currentTimeMillis() - start;

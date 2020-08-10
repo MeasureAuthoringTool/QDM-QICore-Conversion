@@ -6,6 +6,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class MdcPair {
-    private String name;
-    private String value;
+    private final String name;
+    private final String value;
 }

@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public final class MdcPairParser {
+    private MdcPairParser() {
+        //util class
+    }
+
     public static void parseAndSetInMdc(String params) {
         if (StringUtils.isBlank(params)) {
             log.warn("Params string is blank");
@@ -25,12 +29,15 @@ public final class MdcPairParser {
             nameValuePairs.forEach(n -> MDC.put(n.getName(), n.getValue()));
         }
 
+        String uuid = UUID.randomUUID().toString();
+        log.info("Adding requestId UUID: {}", uuid);
+        MDC.put("requestId", uuid);
+
         addMissingDefaultParamsToMDC();
     }
 
     public static void addMissingDefaultParamsToMDC() {
         addIfMissing("transactionId");
-        addIfMissing("requestId");
     }
 
     private static void addIfMissing(String key) {
@@ -65,6 +72,4 @@ public final class MdcPairParser {
                 .value(paramsArray[1].trim())
                 .build();
     }
-
-
 }
