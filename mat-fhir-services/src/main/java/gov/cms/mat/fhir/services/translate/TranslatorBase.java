@@ -4,6 +4,8 @@ import gov.cms.mat.fhir.services.exceptions.HumanReadableInvalidException;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Narrative;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.charset.StandardCharsets;
@@ -12,9 +14,6 @@ import java.util.List;
 
 public abstract class TranslatorBase implements FhirCreator {
     public static final String FHIR_UNKNOWN =  "Unknown";
-
-    @Value("${fhir.r4.public-url}")
-    protected String publicHapiFhirUrl;
 
     @Value("${fhir.r4.baseurl}")
     protected String internalHapiFhirUrl;
@@ -38,14 +37,17 @@ public abstract class TranslatorBase implements FhirCreator {
     }
 
     protected  Narrative createNarrative(String id, byte[] humanReadableBytes) {
+        Document doc = Jsoup.parse(new String(humanReadableBytes, StandardCharsets.UTF_8));
+        doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+        doc.outputSettings().escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml);
+        String divContent = "<div>" + doc.select("body").html() + "</div>";
         try {
             Narrative narrative = new Narrative();
             narrative.setStatusAsString("generated");
-            String humanReadable = new String(humanReadableBytes, StandardCharsets.UTF_8);
-            narrative.setDivAsString(buildHumanReadableDiv(humanReadable));
+            narrative.setDivAsString(divContent);
             return narrative;
         } catch (Exception e) {
-            throw new HumanReadableInvalidException(id, new String(humanReadableBytes, StandardCharsets.UTF_8), e);
+            throw new HumanReadableInvalidException(id, divContent, e);
         }
     }
 

@@ -10,7 +10,7 @@ import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
-import org.hl7.fhir.Library;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.hapi.ctx.IValidationSupport;
 import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
@@ -42,18 +42,14 @@ public interface FhirValidatorProcessor {
 
         ValidationOptions options = new ValidationOptions();
 
-        if (resource instanceof Library) {
-           // options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
-            options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/library-cqfm");
-           // options.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
-        }
-
         ValidationResult validationResult = validator.validateWithResult(resource, options);
 
         // Ignore anything below ERROR.
         validationResult.getMessages()
                 .stream()
                 .filter(m -> m.getSeverity() == ResultSeverityEnum.ERROR || m.getSeverity() == ResultSeverityEnum.FATAL)
+                // Here xhtml is validated with some old spec and it fails. This removes those errors.
+                .filter(m -> !StringUtils.equals(m.getLocationString(),"Measure.text.div"))
                 .forEach(m -> fhirResourceValidationResult.getValidationErrorList().add(buildValidationError(m)));
     }
 

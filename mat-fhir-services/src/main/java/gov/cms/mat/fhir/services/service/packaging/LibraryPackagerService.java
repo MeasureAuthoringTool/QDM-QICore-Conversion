@@ -1,13 +1,11 @@
 package gov.cms.mat.fhir.services.service.packaging;
 
 import com.sun.istack.NotNull;
-import gov.cms.mat.fhir.commons.model.HumanReadableArtifacts;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
 import gov.cms.mat.fhir.services.cql.CQLAntlrUtils;
-import gov.cms.mat.fhir.services.cql.LibraryCqlVisitor;
 import gov.cms.mat.fhir.services.cql.LibraryCqlVisitorFactory;
 import gov.cms.mat.fhir.services.exceptions.FhirIncludeLibrariesNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
@@ -22,17 +20,12 @@ import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.CodeSystem;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -116,25 +109,7 @@ public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibra
         var cql = cqlAntlrUtils.getCql(measureLib);
         var pair = libVisitorFactory.visitAndCollateHumanReadable(cql);
 
-        addCodeSystems(result, pair);
-        addValueSetsystems(result, pair);
-
         return result;
-    }
-
-    private void addCodeSystems(Bundle bundle, Pair<LibraryCqlVisitor, HumanReadableArtifacts> pair) {
-        Set<String> uniqueCSUris = new HashSet<>();
-        pair.getRight().getTerminologyCodeModels().forEach(cm -> uniqueCSUris.add(cm.getCodeSystemOid()));
-        uniqueCSUris.stream().
-                sorted().
-                forEach(uri -> bundle.addEntry().setResource(new CodeSystem().setUrl(uri)));
-    }
-
-    private void addValueSetsystems(Bundle bundle, Pair<LibraryCqlVisitor, HumanReadableArtifacts> pair) {
-        Set<String> uniqueValueSetUrls = new HashSet<>();
-        pair.getRight().getTerminologyValueSetModels().forEach(vsm -> uniqueValueSetUrls.add(vsm.getOid()));
-        uniqueValueSetUrls.stream().sorted().forEach(url ->
-                bundle.addEntry().setResource(new ValueSet().setUrl(url)));
     }
 
     private FhirIncludeLibraryResult findIncludedFhirLibraries(Library library) {

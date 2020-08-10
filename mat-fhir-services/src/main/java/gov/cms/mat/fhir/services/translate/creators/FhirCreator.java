@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.translate.creators;
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
 import gov.cms.mat.cql.elements.LibraryProperties;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.*;
 
 import java.math.BigDecimal;
@@ -70,7 +71,10 @@ public interface FhirCreator {
         if (parts.length != 2) {
             throw new IllegalArgumentException("Cannot parse version: " + version);
         } else {
-            return parts[0] + '.' + parts[1] + '.' + revision;
+
+            return parts[0] + '.' +
+                    Integer.parseInt(parts[1]) + '.' + //Remove leading zeros here.
+                    StringUtils.leftPad(revision.toString(),3,'0'); //Force leading 0s on revision.
         }
     }
 }

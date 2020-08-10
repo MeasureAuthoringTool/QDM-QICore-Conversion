@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 public class TestLibraryTranslator {
-    private static final String HAPI_BASE="FOOBAR://";
+    private static final String HAPI_BASE = "http://ecqi.healthit.gov/ecqms";
     private CQLAntlrUtils cqlAntlrUtils = new CQLAntlrUtils();
 
     @Mock
@@ -66,10 +66,11 @@ public class TestLibraryTranslator {
     public void before() {
         jsonParser = ctx.newJsonParser();
         FhirContext ctx = FhirContext.forR4();
-        libTranslator = new LibraryTranslator(hapiFhirServer,cqlAntlrUtils,libRepo,measureExportRepo,libCqlVisitorFactory);
+        libTranslator = new LibraryTranslator(hapiFhirServer, cqlAntlrUtils, libRepo, measureExportRepo, libCqlVisitorFactory);
+        ReflectionTestUtils.setField(libTranslator,"matFhirBaseUrl","http://ecqi.healthit.gov/ecqms");
     }
 
-    public String loadCqlResource(String cqlResource)  {
+    public String loadCqlResource(String cqlResource) {
         try (InputStream i = TestLibraryTranslator.class.getResourceAsStream(cqlResource)) {
             return IOUtils.toString(i);
         } catch (IOException ioe) {
@@ -79,24 +80,25 @@ public class TestLibraryTranslator {
 
     @Test
     public void testRetrieveAndRelatedArtifacts() throws IOException {
-        Library fhirHelpers = jsonParser.parseResource(Library.class,fhirHelpersJson);
-        Library matGlobalCommonFunctions = jsonParser.parseResource(Library.class,matGlobalJson);
-        Library suppData = jsonParser.parseResource(Library.class,suppJson);
-        Library tjc = jsonParser.parseResource(Library.class,tjcJson);
+        Library fhirHelpers = jsonParser.parseResource(Library.class, fhirHelpersJson);
+        Library matGlobalCommonFunctions = jsonParser.parseResource(Library.class, matGlobalJson);
+        Library suppData = jsonParser.parseResource(Library.class, suppJson);
+        Library tjc = jsonParser.parseResource(Library.class, tjcJson);
 
         CqlLibrary cqlLib = new CqlLibrary();
         cqlLib.setMeasureId("m12345");
+        cqlLib.setCqlName("EXM104");
 
         MeasureExport mExport = new MeasureExport();
         mExport.setHumanReadable("<html><body>READABLE THAT IS HUAMN</body></html>".getBytes());
 
-        when(hapiFhirServer.fetchHapiLibrary(eq("FHIRHelpers"),eq("4.0.001"))).
+        when(hapiFhirServer.fetchHapiLibrary(eq("FHIRHelpers"), eq("4.0.001"))).
                 thenReturn(Optional.of(fhirHelpers));
-        when(hapiFhirServer.fetchHapiLibrary(eq("MATGlobalCommonFunctions_FHIR4"),eq("5.0.000"))).
+        when(hapiFhirServer.fetchHapiLibrary(eq("MATGlobalCommonFunctions_FHIR4"), eq("5.0.000"))).
                 thenReturn(Optional.of(matGlobalCommonFunctions));
-        when(hapiFhirServer.fetchHapiLibrary(eq("SupplementalDataElements_FHIR4"),eq("2.0.0"))).
+        when(hapiFhirServer.fetchHapiLibrary(eq("SupplementalDataElements_FHIR4"), eq("2.0.0"))).
                 thenReturn(Optional.of(suppData));
-        when(hapiFhirServer.fetchHapiLibrary(eq("TJCOverall_FHIR4"),eq("5.0.000"))).
+        when(hapiFhirServer.fetchHapiLibrary(eq("TJCOverall_FHIR4"), eq("5.0.000"))).
                 thenReturn(Optional.of(tjc));
         when(libRepo.getCqlLibraryById(eq("uuid"))).thenReturn(cqlLib);
         when(measureExportRepo.findByMeasureId(eq("m12345"))).thenReturn(Optional.of(mExport));
@@ -106,38 +108,35 @@ public class TestLibraryTranslator {
         when(libCqlVisitor.getVersion()).thenReturn("9.1.000");
 
 
-        ReflectionTestUtils.setField(libTranslator,"internalHapiFhirUrl",HAPI_BASE);
-        ReflectionTestUtils.setField(libTranslator,"publicHapiFhirUrl",HAPI_BASE);
-
-        Library lib = libTranslator.translateToFhir("uuid",retrieveJson,
-                "<elm></elm>","{elm:\"json\"}");
+        Library lib = libTranslator.translateToFhir("uuid", retrieveJson,
+                "<elm></elm>", "{elm:\"json\"}");
 
         IParser jsonParser = ctx.newJsonParser();
 
-        CodeableConcept expectedType =  new CodeableConcept()
+        CodeableConcept expectedType = new CodeableConcept()
                 .setCoding(Collections.singletonList(new Coding(LibraryTranslator.SYSTEM_TYPE, LibraryTranslator.SYSTEM_CODE, null)));
 
-        assertEquals("uuid",lib.getId());
-        assertEquals("EXM104",lib.getName());
-        assertEquals("9.1.000",lib.getVersion());
-        assertEquals(Enumerations.PublicationStatus.ACTIVE,lib.getStatus());
-        assertEquals(LibraryTranslator.CQL_CONTENT_TYPE,lib.getContent().get(0).getContentType());
-        assertEquals(LibraryTranslator.XML_ELM_CONTENT_TYPE,lib.getContent().get(1).getContentType());
-        assertEquals(LibraryTranslator.JSON_ELM_CONTENT_TYPE,lib.getContent().get(2).getContentType());
-        assertArrayEquals(Base64.getEncoder().encode(retrieveJson.getBytes()),lib.getContent().get(0).getData());
-        assertArrayEquals(Base64.getEncoder().encode("<elm></elm>".getBytes()),lib.getContent().get(1).getData());
+        assertEquals("uuid", lib.getId());
+        assertEquals("EXM104", lib.getName());
+        assertEquals("9.1.000", lib.getVersion());
+        assertEquals(Enumerations.PublicationStatus.ACTIVE, lib.getStatus());
+        assertEquals(LibraryTranslator.CQL_CONTENT_TYPE, lib.getContent().get(0).getContentType());
+        assertEquals(LibraryTranslator.XML_ELM_CONTENT_TYPE, lib.getContent().get(1).getContentType());
+        assertEquals(LibraryTranslator.JSON_ELM_CONTENT_TYPE, lib.getContent().get(2).getContentType());
+        assertArrayEquals(Base64.getEncoder().encode(retrieveJson.getBytes()), lib.getContent().get(0).getData());
+        assertArrayEquals(Base64.getEncoder().encode("<elm></elm>".getBytes()), lib.getContent().get(1).getData());
         assertArrayEquals(Base64.getEncoder().encode("{elm:\"json\"}".getBytes()), lib.getContent().get(2).getData());
-        assertEquals(HAPI_BASE + "Library/uuid",lib.getUrl());
-        assertEquals(expectedType.getCoding().size(),lib.getType().getCoding().size());
-        assertEquals(expectedType.getCoding().get(0).getSystem(),lib.getType().getCoding().get(0).getSystem());
-        assertEquals(expectedType.getCoding().get(0).getCode(),lib.getType().getCoding().get(0).getCode());
-        assertEquals(expectedType.getCoding().get(0).getDisplay(),lib.getType().getCoding().get(0).getDisplay());
-        assertEquals(HAPI_BASE + "Library/uuid",lib.getUrl());
+        assertEquals(HAPI_BASE + "/Library/" + lib.getName(), lib.getUrl());
+        assertEquals(expectedType.getCoding().size(), lib.getType().getCoding().size());
+        assertEquals(expectedType.getCoding().get(0).getSystem(), lib.getType().getCoding().get(0).getSystem());
+        assertEquals(expectedType.getCoding().get(0).getCode(), lib.getType().getCoding().get(0).getCode());
+        assertEquals(expectedType.getCoding().get(0).getDisplay(), lib.getType().getCoding().get(0).getDisplay());
+        assertEquals(HAPI_BASE + "/Library/" + lib.getName(), lib.getUrl());
 
-        assertEquals("generated",lib.getText().getStatusAsString());
+        assertEquals("generated", lib.getText().getStatusAsString());
         XhtmlNode expectedDiv = new XhtmlNode(NodeType.Element, "div");
         expectedDiv.setValueAsString("READABLE THAT IS HUAMN");
-        assertEquals(expectedDiv.getValue(), StringUtils.remove(lib.getText().getDiv().getValue(),'\n'));
+        assertEquals(expectedDiv.getValue(), StringUtils.remove(lib.getText().getDiv().getValue(), '\n'));
 //        assertEquals(4,lib.getRelatedArtifact().size());
 //        assertEquals(RelatedArtifact.RelatedArtifactType.DEPENDSON,lib.getRelatedArtifact().get(0).getType());
 //        assertEquals(RelatedArtifact.RelatedArtifactType.DEPENDSON,lib.getRelatedArtifact().get(1).getType());

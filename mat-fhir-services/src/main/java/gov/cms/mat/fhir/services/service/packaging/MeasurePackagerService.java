@@ -1,10 +1,12 @@
 package gov.cms.mat.fhir.services.service.packaging;
 
+import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.packaging.dto.MeasurePackageFullHapi;
 import lombok.extern.slf4j.Slf4j;
@@ -17,16 +19,20 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class MeasurePackagerService implements FhirValidatorProcessor {
+    private static final String MEASURE_URL_TOKEN = "/Measure/";
     private final HapiFhirServer hapiFhirServer;
     private final HapiFhirLinkProcessor hapiFhirLinkProcessor;
     private final LibraryPackagerService libraryPackagerService;
+    private final CqlLibraryRepository cqlLibRepository;
 
     public MeasurePackagerService(HapiFhirServer hapiFhirServer,
                                   HapiFhirLinkProcessor hapiFhirLinkProcessor,
-                                  LibraryPackagerService libraryPackagerService) {
+                                  LibraryPackagerService libraryPackagerService,
+                                  CqlLibraryRepository cqlLibRepository) {
         this.hapiFhirServer = hapiFhirServer;
         this.hapiFhirLinkProcessor = hapiFhirLinkProcessor;
         this.libraryPackagerService = libraryPackagerService;
+        this.cqlLibRepository = cqlLibRepository;
     }
 
     public MeasurePackageFullHapi packageFull(String id) {
@@ -66,7 +72,25 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
                     measure.getLibrary().size());
         }
 
-        return measure.getLibrary().get(0).asStringValue();
+        //Can't use the url, it is just a canonical. Have to check the Mat DB.
+        CqlLibrary lib = cqlLibRepository.getCqlLibraryByMeasureId(parseMeasureIdFromHapiUrl(measure.getId()));
+        if (lib == null || CollectionUtils.isEmpty(measure.getLibrary())) {
+            throw new FhirLibraryNotFoundException(measure.getId());
+        }
+        return "Library/" + lib.getId();
+    }
+
+    private String parseMeasureIdFromHapiUrl(String url) {
+        //http://hapi-fhir-jpaserver:6060/hapi-fhir-jpaserver/fhir/Measure/8a788f25739040ca0173904280310007/_history/31
+        String result = null;
+        int measureIndex = url.indexOf(MEASURE_URL_TOKEN);
+        if (measureIndex != -1) {
+            int nextSlash = url.indexOf('/', measureIndex + MEASURE_URL_TOKEN.length());
+            if (nextSlash != -1) {
+                result = url.substring(measureIndex + MEASURE_URL_TOKEN.length(), nextSlash);
+            }
+        }
+        return result;
     }
 
     private Measure fetchMeasureFromHapi(String id) {

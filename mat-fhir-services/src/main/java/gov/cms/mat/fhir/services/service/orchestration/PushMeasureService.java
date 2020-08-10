@@ -14,7 +14,6 @@ import gov.cms.mat.fhir.services.translate.LibraryTranslator;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
-import org.hl7.fhir.r4.model.Narrative;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -69,10 +68,6 @@ public class PushMeasureService implements FhirCreator {
 
 
         org.hl7.fhir.r4.model.Measure fhirMeasure = orchestrationProperties.getFhirMeasure();
-        fhirMeasure.setId(id);
-        Narrative humanReadable = new Narrative();
-        humanReadable.setStatusAsString("generated");
-        fhirMeasure.setText(humanReadable);
         boolean persisted = measureOrchestrationConversionService.convert(orchestrationProperties);
 
         if (!persisted) {

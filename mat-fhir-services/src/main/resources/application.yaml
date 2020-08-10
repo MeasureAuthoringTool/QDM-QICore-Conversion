@@ -52,6 +52,8 @@ validation-pool-timeout: 31
 valueset-validation-pool-timeout: 30
 code-system-validation-pool-timeout: 30
 
+mat-fhir-base: http://ecqi.healthit.gov/ecqms
+
 mat-fhir:
   thread-pool-configurations:
     - name: threadPoolValidation
