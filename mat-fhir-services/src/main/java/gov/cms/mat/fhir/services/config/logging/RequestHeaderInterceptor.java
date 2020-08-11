@@ -33,11 +33,9 @@ public class RequestHeaderInterceptor extends HandlerInterceptorAdapter {
                              HttpServletResponse response, /* not used */
                              Object object /* not used */) {
         request.setAttribute(MDC_START_KEY, System.currentTimeMillis());
-        logRequest(request);
         String params = request.getHeader(MDC_PARAMS_ID);
-
         MdcPairParser.parseAndSetInMdc(params);
-
+        logRequest(request);
         return true;
     }
 
@@ -58,6 +56,7 @@ public class RequestHeaderInterceptor extends HandlerInterceptorAdapter {
     }
 
     public void logRequest(HttpServletRequest request) {
+
         if (log.isInfoEnabled()) {
             String body = "";
 
