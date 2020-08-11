@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,8 @@ public class VsacRestClient {
     private static final String GRANTING_TICKET_REQUEST_TEMPLATE = "username=%s&password=%s";
     private static final String SINGLE_USE_TICKET_REQUEST = "service=http://umlsks.nlm.nih.gov";
     private static final String TICKET_PATH = "/vsac/ws/Ticket";
+
+    @Qualifier("externalRestTemplate")
     private final RestTemplate restTemplate;
     private final VsacConfig vsacConfig;
 

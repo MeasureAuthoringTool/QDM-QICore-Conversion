@@ -2,8 +2,6 @@ package gov.cms.mat.fhir.services.config;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.r4.hapi.ctx.DefaultProfileValidationSupport;
@@ -11,22 +9,18 @@ import org.hl7.fhir.r4.hapi.validation.CachingValidationSupport;
 import org.hl7.fhir.r4.hapi.validation.PrePopulatedValidationSupport;
 import org.hl7.fhir.r4.hapi.validation.ValidationSupportChain;
 import org.hl7.fhir.r4.model.StructureDefinition;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 @Configuration
 @Slf4j
 public class HapiFhirConfig {
     @Bean
-    public ValidationSupportChain buildValidationSupportChain(FhirContext ctx,FhirProfiles fhirProfiles) {
+    public ValidationSupportChain buildValidationSupportChain(FhirContext ctx, FhirProfiles fhirProfiles) {
         // Create a chain that will hold our modules
         ValidationSupportChain chain = new ValidationSupportChain();
 
@@ -63,8 +57,7 @@ public class HapiFhirConfig {
 
     @Bean
     public FhirContext buildFhirContext() {
-        FhirContext ctx = FhirContext.forR4();
-        return ctx;
+        return FhirContext.forR4();
     }
 
     private InputStream getResourceAsStream(String resource) {
