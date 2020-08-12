@@ -3,6 +3,24 @@
         "http://castor.org/mapping.dtd">
 
 <mapping>
+    <class name="mat.client.measurepackage.AggregateFunction">
+        <field name="display" type="java.lang.String">
+            <bind-xml name="displayName" node="attribute"/>
+        </field>
+        <field name="cqlFunction" type="mat.client.measurepackage.CQLFunction">
+                <bind-xml name="cqlfunction" node="element"/>
+        </field>
+    </class>
+    <class name="mat.client.measurepackage.CQLDefinition">
+        <field name="display" type="java.lang.String">
+            <bind-xml name="displayName" node="attribute"/>
+        </field>
+    </class>
+    <class name="mat.client.measurepackage.CQLFunction">
+        <field name="display" type="java.lang.String">
+            <bind-xml name="displayName" node="attribute"/>
+        </field>
+    </class>
     <class name="mat.client.measurepackage.MeasurePackageDetail">
 
         <field name="sequence" type="java.lang.String">
@@ -26,6 +44,12 @@
                     <field name="type" type="java.lang.String">
                         <bind-xml name="type" node="attribute"/>
                     </field>
+                    <field name="aggregateFunction" type="mat.client.measurepackage.AggregateFunction">
+                        <bind-xml name="cqlaggfunction" node="element"/>
+                    </field>
+                    <field name="cqlDefinition" type="mat.client.measurepackage.CQLDefinition">
+                        <bind-xml name="cqldefinition" node="element"/>
+                    </field>
 
                     <field name="associatedPopulationUUID" type="java.lang.String">
                         <bind-xml name="associatedPopulationUUID" node="attribute"/>
@@ -38,29 +62,6 @@
                     <field name="displayName" type="java.lang.String">
                         <bind-xml name="displayName" node="attribute"/>
                     </field>
-
-                    <!-- 					<field name="itemCountList" type="mat.model.QualityDataSetDTO" -->
-                    <!-- 						collection="arraylist"> -->
-                    <!-- 						<bind-xml name="elementRef" location="itemCount"> -->
-                    <!-- 							<class name="mat.model.QualityDataSetDTO"> -->
-                    <!-- 								<field name="uuid" type="java.lang.String"> -->
-                    <!-- 									<bind-xml name="id" node="attribute" /> -->
-                    <!-- 								</field> -->
-                    <!-- 								<field name="codeListName" type="java.lang.String"> -->
-                    <!-- 									<bind-xml name="name" node="attribute" /> -->
-                    <!-- 								</field> -->
-                    <!-- 								<field name="dataType" type="java.lang.String"> -->
-                    <!-- 									<bind-xml name="dataType" node="attribute" /> -->
-                    <!-- 								</field> -->
-                    <!-- 								<field name="occurrenceText" type="java.lang.String"> -->
-                    <!-- 									<bind-xml name="instance" node="attribute" /> -->
-                    <!-- 								</field> -->
-                    <!-- 								<field name="oid" type="java.lang.String"> -->
-                    <!-- 									<bind-xml name="oid" node="attribute" /> -->
-                    <!-- 								</field> -->
-                    <!-- 							</class> -->
-                    <!-- 						</bind-xml> -->
-                    <!-- 					</field> -->
                 </class>
             </bind-xml>
         </field>
