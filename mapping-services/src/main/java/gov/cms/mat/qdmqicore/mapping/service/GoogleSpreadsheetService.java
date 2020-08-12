@@ -3,6 +3,7 @@ package gov.cms.mat.qdmqicore.mapping.service;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionAttributes;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionDataTypes;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.DataType;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.FhirLightBoxDatatypeAttributeAssociations;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToQicoreMapping;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.RequiredMeasureField;
@@ -10,11 +11,14 @@ import gov.cms.mat.fhir.rest.dto.spreadsheet.ResourceDefinition;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleConversionAttributesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleConversionDataTypesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleDataTypesData;
+import gov.cms.mat.qdmqicore.mapping.model.google.GoogleFhirLightBoxDataTypesForFunctionArgsData;
+import gov.cms.mat.qdmqicore.mapping.model.google.GoogleFhirLightBoxDatatypeAttributeAssociationData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleMatAttributesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleQdmToQicoreMappingData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleRequiredFieldsData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleResourceDefinitionData;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -50,6 +54,11 @@ public class GoogleSpreadsheetService {
     private String conversionDataTypesUrl;
     @Value("${json.data.attributes-url}")
     private String attributesUrl;
+    @Value("${json.data.fhir-lightbox-datatype_attribute_association-url}")
+    private String fhirLightboxDatatypeAttributeAssociationUrl;
+    @Value("${json.data.fhir-lightbox-datatype_for_function_args-url}")
+    private String fhirLightboxDataTypesForFunctionArgsUrl;
+
 
     public GoogleSpreadsheetService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -192,6 +201,48 @@ public class GoogleSpreadsheetService {
                 r.setComment(getData(e.getComment()));
                 return r;
             }).collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<FhirLightBoxDatatypeAttributeAssociations> getFhirLightBoxDatatypeAttributeAssociation() {
+        GoogleFhirLightBoxDatatypeAttributeAssociationData
+                data = restTemplate.getForObject(fhirLightboxDatatypeAttributeAssociationUrl, GoogleFhirLightBoxDatatypeAttributeAssociationData.class);
+
+        if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), attributesUrl);
+            return data.getFeed().getEntry().stream().map(e -> {
+                var r = new FhirLightBoxDatatypeAttributeAssociations();
+                r.setDatatype(getData(e.getDatatype()));
+                r.setAttribute(getData(e.getAttribute()));
+                r.setAttributeType(getData(e.getAttributeType()));
+
+                String hasBinding = getData(e.getHasBinding());
+
+                if (StringUtils.isNotBlank(hasBinding)) {
+                    r.setHasBinding(Boolean.parseBoolean(hasBinding));
+                }
+
+                return r;
+            }).sorted().collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Cacheable("fhirLightboxDataTypesForFunctionArgs")
+    public List<String> getFhirLightboxDataTypesForFunctionArgs() {
+        GoogleFhirLightBoxDataTypesForFunctionArgsData
+                data = restTemplate.getForObject(fhirLightboxDataTypesForFunctionArgsUrl, GoogleFhirLightBoxDataTypesForFunctionArgsData.class);
+
+        if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), fhirLightboxDatatypeAttributeAssociationUrl);
+
+            return data.getFeed().getEntry().stream()
+                    .map(e -> getData(e.getDatatype()))
+                    .sorted()
+                    .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
