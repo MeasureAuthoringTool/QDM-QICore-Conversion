@@ -5,6 +5,7 @@ import gov.cms.mat.config.logging.ServletLogging;
 import gov.cms.mat.config.logging.ThreadLocalBody;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -53,6 +54,7 @@ public class RequestHeaderInterceptor extends HandlerInterceptorAdapter {
         }
 
         logResponse(response, executionTime);
+        MDC.clear();
     }
 
     public void logRequest(HttpServletRequest request) {

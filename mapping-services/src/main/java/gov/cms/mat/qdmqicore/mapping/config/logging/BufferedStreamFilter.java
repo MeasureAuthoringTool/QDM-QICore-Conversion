@@ -84,7 +84,6 @@ public class BufferedStreamFilter implements Filter {
         public BufferedReader getReader()  {
             return new BufferedReader(new InputStreamReader(getInputStream()));
         }
-
     }
 
     @Override
