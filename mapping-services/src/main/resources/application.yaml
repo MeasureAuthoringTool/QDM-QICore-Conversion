@@ -16,6 +16,8 @@ json:
     resource-definition-url: ${GOOGLE_RESOURCE_DEFINITION_URL:https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json}
     conversion-data-types-url: https://spreadsheets.google.com/feeds/list/1lV1N4O7xmSxjRH6ghuCj3mYcntPsTz8qBcpQ6DO7Se4/1/public/values?alt=json
     attributes-url: https://spreadsheets.google.com/feeds/list/1lV1N4O7xmSxjRH6ghuCj3mYcntPsTz8qBcpQ6DO7Se4/2/public/values?alt=json
+    fhir-lightbox-datatype_attribute_association-url: https://spreadsheets.google.com/feeds/list/1ecwDn7YfmqYhXJqtAFwayyAXFQ4EZ2sEeyKT5TBtttc/3/public/values?alt=json
+    fhir-lightbox-datatype_for_function_args-url: https://spreadsheets.google.com/feeds/list/1ecwDn7YfmqYhXJqtAFwayyAXFQ4EZ2sEeyKT5TBtttc/2/public/values?alt=json
 
 
 springdoc:

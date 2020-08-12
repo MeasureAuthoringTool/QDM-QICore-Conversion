@@ -3,6 +3,7 @@ package gov.cms.mat.qdmqicore.mapping.controller;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionAttributes;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionDataTypes;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.DataType;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.FhirLightBoxDatatypeAttributeAssociations;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToQicoreMapping;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.RequiredMeasureField;
@@ -58,5 +59,15 @@ public class GoogleSpreadsheetController {
     @GetMapping(path = "/conversionAttributes")
     public List<ConversionAttributes> conversionAttributes() {
         return spreadsheetService.getConversionAttributes();
+    }
+
+    @GetMapping(path = "/fhirLightBoxDatatypeAttributeAssociation")
+    public List<FhirLightBoxDatatypeAttributeAssociations> fhirLightBoxDatatypeAttributeAssociation() {
+        return spreadsheetService.getFhirLightBoxDatatypeAttributeAssociation();
+    }
+
+    @GetMapping(path = "/fhirLightboxDataTypesForFunctionArgs")
+    public List<String> fhirLightboxDataTypesForFunctionArgs() {
+        return spreadsheetService.getFhirLightboxDataTypesForFunctionArgs();
     }
 }
