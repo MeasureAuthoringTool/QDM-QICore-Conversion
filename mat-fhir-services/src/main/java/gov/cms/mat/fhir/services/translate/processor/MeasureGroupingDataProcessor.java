@@ -116,11 +116,8 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
                 type = "measure-observation";
                 display = "Measure Observation";
 
-                //The value for this is definitely wrong.
-                // Need to figure that out some day.
-                // We have no way to set this in MAT atm.
                 component.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-criteriaReference"
-                        ,new StringType("criteriaReference"));
+                        ,new StringType("measure-population-identifier"));
 
                 component.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-aggregateMethod",
                         new CodeType(StringUtils.lowerCase(clauseDetail.getAggregateFunction().getDisplay())));
