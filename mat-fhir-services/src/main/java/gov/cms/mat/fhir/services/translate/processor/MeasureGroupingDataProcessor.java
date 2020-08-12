@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.translate.processor;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import gov.cms.mat.fhir.services.exceptions.CqlParseException;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measurepackage.MeasurePackageClauseDetail;
@@ -66,68 +67,77 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
     private Measure.MeasureGroupPopulationComponent createPopulation(MeasurePackageClauseDetail clauseDetail) {
         Measure.MeasureGroupPopulationComponent component = new Measure.MeasureGroupPopulationComponent();
 
-
-        String type = clauseDetail.getType();
-        String display = StringUtils.capitalize(clauseDetail.getType());
-
+        String type;
+        String display;
+        String mappedType;
 
         switch (clauseDetail.getType()) {
             case "initialPopulation":
                 type = "initial-population";
                 display = "Initial Population";
+                mappedType = clauseDetail.getCqlDefinition().getDisplay();
                 break;
-
-            case "denominatorExclusion":
+            case "denominator":
+                type = "denominator";
+                display = "Denominator";
+                mappedType = clauseDetail.getCqlDefinition().getDisplay();
+                break;
+            case "denominatorExclusions":
                 type = "denominator-exclusion";
                 display = "Denominator Exclusion";
+                mappedType = clauseDetail.getCqlDefinition().getDisplay();
                 break;
-
-            case "numeratorExclusion":
+            case "denominatorExceptions":
+                type = "denominator-exception";
+                display = "Denominator Exception";
+                mappedType =clauseDetail.getCqlDefinition().getDisplay();
+                break;
+            case "numerator":
+                type = "numerator";
+                display = "Numerator";
+                mappedType = clauseDetail.getCqlDefinition().getDisplay();
+                break;
+            case "numeratorExclusions":
                 type = "numerator-exclusion";
                 display = "Numerator Exclusion";
+                mappedType = clauseDetail.getCqlDefinition().getDisplay();
                 break;
-
             case "measurePopulation":
                 type = "measure-population";
                 display = "Measure Population";
+                mappedType = clauseDetail.getCqlDefinition().getDisplay();
                 break;
-
+            case "measurePopulationExclusions":
+                type = "measure-population-exclusion";
+                display = "Measure Population Exclusion";
+                mappedType = clauseDetail.getCqlDefinition().getDisplay();
+                break;
             case "measureObservation":
                 type = "measure-observation";
                 display = "Measure Observation";
 
+                //The value for this is definitely wrong.
+                // Need to figure that out some day.
+                // We have no way to set this in MAT atm.
+                component.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-criteriaReference"
+                        ,new StringType("criteriaReference"));
 
-                Extension criteriaReferenceExtension = new Extension();
-                criteriaReferenceExtension.setUrl("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-criteriaReference");
-                criteriaReferenceExtension.setValue(new StringType("criteriaReference"));
-                component.addExtension(criteriaReferenceExtension);
+                component.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-aggregateMethod",
+                        new CodeType(StringUtils.lowerCase(clauseDetail.getAggregateFunction().getDisplay())));
 
-                Extension aggregateMethodExtension = new Extension();
-                aggregateMethodExtension.setUrl("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-aggregateMethod");
-                aggregateMethodExtension.setValue(new CodeType("aggregateMethod"));
-                component.addExtension(aggregateMethodExtension);
-
-                break;
-
-            case "denominatorException":
-                type = "denominatorException";
-                display = "Denominator Exception";
+                mappedType = clauseDetail.getAggregateFunction().getCqlFunction().getDisplay();
                 break;
             default:
-                log.debug("Did not set type and display in switch");
-                break;
+                log.debug("Invalid MeasurePackageClauseDetail: " +
+                        "could not map type: " + clauseDetail.getType());
+                throw new CqlParseException("Invalid MeasurePackageClauseDetail: " +
+                        "could not map type: " + clauseDetail.getType());
         }
 
         return component
-                .setCriteria(buildExpression(clauseDetail.getDisplayName()))
+                .setCriteria(new Expression()
+                        .setLanguage("text/cql.identifier")
+                        .setExpression(mappedType))
                 .setCode(buildCodeableConcept(type, SYSTEM, display));
-
-
-    }
-
-    private Expression buildExpression(String displayName) {
-        return new Expression()
-                .setLanguage("text/cql.identifier")
-                .setExpression(displayName);
     }
 }

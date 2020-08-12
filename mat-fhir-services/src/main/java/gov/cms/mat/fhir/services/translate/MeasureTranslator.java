@@ -36,6 +36,7 @@ import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +51,7 @@ import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.JUSTIFIC
 @Slf4j
 @Service
 public class MeasureTranslator extends TranslatorBase {
-    public static final RelatedArtifact.RelatedArtifactType DEFAULT_ARTIFACT_TYPE = DOCUMENTATION;
+    public static final RelatedArtifact.RelatedArtifactType DEFAULT_ARTIFACT_TYPE = CITATION;
     public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
 
     public static final String EXTENSION_POPULATION_BASIS = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-populationBasis";
@@ -117,9 +118,10 @@ public class MeasureTranslator extends TranslatorBase {
             throw new RuntimeException("Can not find measure lib for measure id " + measureId + " in the MAT DB.");
         }
         var matMeasure = matMeasureOpt.get();
-        var simpleXml = matExportOpt.get().getSimpleXml();
+        var simpleXmlBytes = matExportOpt.get().getSimpleXml();
+        String simpleXml = new String(simpleXmlBytes, Charset.forName("UTF-8"));
 
-        ManageCompositeMeasureDetailModel simpleXmlModel = buildModel(simpleXml, matMeasure);
+        ManageCompositeMeasureDetailModel simpleXmlModel = buildModel(simpleXmlBytes, matMeasure);
 
         Measure result = new Measure();
         String id = matMeasure.getId();
@@ -145,6 +147,9 @@ public class MeasureTranslator extends TranslatorBase {
         result.setLibrary(Collections.singletonList(new CanonicalType(matFhirBaseUrl + "/Library/" + matMeasure.getCqlName())));
         result.setContact(createContactDetailUrl());
         result.setMeta(createMeasureMeta(simpleXmlModel.getMeasScoring()));
+        result.setSupplementalData(supplementalDataProcessor.processXml(simpleXml));
+        result.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(simpleXml));
+        result.setGroup(measureGroupingDataProcessor.processXml(simpleXml));
         processImprovementNotation(simpleXmlModel, result);
         processExtension(result);
         processHumanReadable(id, result);
@@ -154,7 +159,7 @@ public class MeasureTranslator extends TranslatorBase {
         processPeriod(result, matMeasure);
         processRelatedArtifacts(result, matMeasure, simpleXmlModel);
         processScoring(result, simpleXmlModel);
-        processXml(simpleXml, result);
+
         return result;
 
         //Added in in a coming story:
@@ -219,12 +224,6 @@ public class MeasureTranslator extends TranslatorBase {
         fhirMeasure.getExtension().add(new Extension(EXTENSION_POPULATION_BASIS, new CodeType("boolean")));
     }
 
-    private void processXml(byte[] xmlBytes, org.hl7.fhir.r4.model.Measure fhirMeasure) {
-        String xml = new String(xmlBytes);
-        fhirMeasure.setSupplementalData(supplementalDataProcessor.processXml(xml));
-        fhirMeasure.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(xml));
-        fhirMeasure.setGroup(measureGroupingDataProcessor.processXml(xml));
-    }
 
     public void processPeriod(Measure fhirMeasure,
                               gov.cms.mat.fhir.commons.model.Measure matModel) {

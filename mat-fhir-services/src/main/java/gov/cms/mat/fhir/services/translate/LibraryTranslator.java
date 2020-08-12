@@ -92,10 +92,10 @@ public class LibraryTranslator extends TranslatorBase {
 
     private Meta createLibraryMeta() {
         //Currently only one profile is allowed, but Bryn is under the impression multiples should work.
-        //For now it is just exectauble until we resolve this.
+        //For now it is just computable until we resolve this.
         return new Meta()
-                //.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm")
-                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
+                .addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-library-cqfm");
+                //.addProfile("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/executable-library-cqfm");
     }
 
     private Narrative findHumanReadable(String measureId) {

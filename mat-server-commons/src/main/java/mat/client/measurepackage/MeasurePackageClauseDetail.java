@@ -44,6 +44,10 @@ public class MeasurePackageClauseDetail implements IsSerializable, Comparable<Me
 
 	private String displayName;
 
+	private AggregateFunction aggregateFunction;
+
+	private CQLDefinition cqlDefinition;
+
 	/**
 	 * Gets the id.
 	 *
@@ -182,7 +186,6 @@ public class MeasurePackageClauseDetail implements IsSerializable, Comparable<Me
 		} else { // otherwise sort by the population type
 			return groupingOrder.compareTo(otherGroupingOrder);
 		}
-
 	}
 
 	public boolean isInGrouping() {
@@ -195,5 +198,21 @@ public class MeasurePackageClauseDetail implements IsSerializable, Comparable<Me
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
+	}
+
+	public AggregateFunction getAggregateFunction() {
+		return aggregateFunction;
+	}
+
+	public void setAggregateFunction(AggregateFunction aggregateFunction) {
+		this.aggregateFunction = aggregateFunction;
+	}
+
+	public CQLDefinition getCqlDefinition() {
+		return cqlDefinition;
+	}
+
+	public void setCqlDefinition(CQLDefinition cqlDefinition) {
+		this.cqlDefinition = cqlDefinition;
 	}
 }
