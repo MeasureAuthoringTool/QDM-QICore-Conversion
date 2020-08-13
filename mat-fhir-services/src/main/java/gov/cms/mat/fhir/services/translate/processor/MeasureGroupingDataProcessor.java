@@ -67,6 +67,7 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
     private List<Measure.MeasureGroupStratifierComponent> createStratifications(List<MeasurePackageClauseDetail> packageClauses) {
         return packageClauses.stream()
                 .filter(d -> StringUtils.equals(d.getType(), "stratum"))
+                .filter(d -> d.getCqlDefinition() != null) //Needed because isInGrouping is not created corretly for Stratifiers spanning multiple groups.
                 .map(this::createStratifier)
                 .collect(Collectors.toList());
     }
