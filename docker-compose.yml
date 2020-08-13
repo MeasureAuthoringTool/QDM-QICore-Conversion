@@ -54,28 +54,28 @@ services:
     ports:
       - 9090:9090
 
-#  mat-fhir-services:
-#    image: mat-fhir-services
-#    container_name: mat-fhir-services
-#    build:
-#      context: mat-fhir-services
-#      dockerfile: Dockerfile
-#    environment:
-#      VSAC_VASE_URL: ${VSAC_VASE_URL}
-#      VSAC_SERVICE_URL: ${VSAC_SERVICE_URL}
-#      MAT_DB_URL: ${MAT_DB_URL}
-#      MAT_DB_PASS: ${MAT_DB_PASS}
-#      MAT_DB_USER: ${MAT_DB_USER}
-#      MONGO_DB_URL: ${MONGO_DB_URL}
-#      HAPI_FHIR_URL: ${HAPI_FHIR_URL}
-#      QDM_QICORE_URL: ${QDM_QICORE_URL}
-#      CQL_CONVERSION_URL: ${CQL_CONVERSION_URL}
-#      FHIR_SERVICES_URL: ${FHIR_SERVICES_URL}
-#      CODESYSTEM_SHEET_URL: ${CODESYSTEM_SHEET_URL}
-#      HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
-#      MAT_FHIR_SWAGGER_URL: ${MAT_FHIR_SWAGGER_URL}
-#    ports:
-#      - 9080:9080
+  mat-fhir-services:
+    image: mat-fhir-services
+    container_name: mat-fhir-services
+    build:
+      context: mat-fhir-services
+      dockerfile: Dockerfile
+    environment:
+      VSAC_VASE_URL: ${VSAC_VASE_URL}
+      VSAC_SERVICE_URL: ${VSAC_SERVICE_URL}
+      MAT_DB_URL: ${MAT_DB_URL}
+      MAT_DB_PASS: ${MAT_DB_PASS}
+      MAT_DB_USER: ${MAT_DB_USER}
+      MONGO_DB_URL: ${MONGO_DB_URL}
+      HAPI_FHIR_URL: ${HAPI_FHIR_URL}
+      QDM_QICORE_URL: ${QDM_QICORE_URL}
+      CQL_CONVERSION_URL: ${CQL_CONVERSION_URL}
+      FHIR_SERVICES_URL: ${FHIR_SERVICES_URL}
+      CODESYSTEM_SHEET_URL: ${CODESYSTEM_SHEET_URL}
+      HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
+      MAT_FHIR_SWAGGER_URL: ${MAT_FHIR_SWAGGER_URL}
+    ports:
+      - 9080:9080
 
 volumes:
   hapi-fhir-mysql:
