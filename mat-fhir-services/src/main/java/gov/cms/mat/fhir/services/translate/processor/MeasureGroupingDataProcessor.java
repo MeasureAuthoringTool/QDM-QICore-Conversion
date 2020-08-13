@@ -9,8 +9,8 @@ import mat.client.measurepackage.MeasurePackageDetail;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.CodeType;
+import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Expression;
-import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Measure;
 import org.hl7.fhir.r4.model.StringType;
 import org.springframework.stereotype.Component;
@@ -52,8 +52,8 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
 
         if (CollectionUtils.isNotEmpty(measurePackageDetail.getPackageClauses())) {
             component.setPopulation(createPopulations(measurePackageDetail.getPackageClauses()));
+            component.setStratifier(createStratifications(measurePackageDetail.getPackageClauses()));
         }
-
         return component;
     }
 
@@ -62,6 +62,31 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
                 .filter(MeasurePackageClauseDetail::isInGrouping)
                 .map(this::createPopulation)
                 .collect(Collectors.toList());
+    }
+
+    private List<Measure.MeasureGroupStratifierComponent> createStratifications(List<MeasurePackageClauseDetail> packageClauses) {
+        return packageClauses.stream()
+                .filter(d -> StringUtils.equals(d.getType(), "stratum"))
+                .filter(d -> d.getCqlDefinition() != null) //Needed because isInGrouping is not created corretly for Stratifiers spanning multiple groups.
+                .map(this::createStratifier)
+                .collect(Collectors.toList());
+    }
+
+    private Measure.MeasureGroupStratifierComponent createStratifier(MeasurePackageClauseDetail clauseDetail) {
+        // Stratification examples.
+        //   <clause displayName="Stratum 1" type="stratum" uuid="CEDF5772-8333-4C51-95CE-CAD31EE256D4">
+        //        <cqldefinition displayName="mp" uuid="5c4b748d-1a29-4ce3-ad6b-1c93542952c9"/>
+        //   </clause>
+        //   <clause displayName="Stratum 2" type="stratum" uuid="F0E88BA0-97EA-4507-B910-FE54A27B0988">
+        //        <cqldefinition displayName="ip" uuid="c7aaec57-309b-491e-a39c-ddcf2374c5f1"/>
+        //   </clause>
+
+        Measure.MeasureGroupStratifierComponent result = new Measure.MeasureGroupStratifierComponent();
+        result.setCode(new CodeableConcept().setText(clauseDetail.getDisplayName()));
+        result.setCriteria(new Expression()
+                .setLanguage("text/cql.identifier")
+                .setExpression(clauseDetail.getCqlDefinition().getDisplay()));
+        return result;
     }
 
     private Measure.MeasureGroupPopulationComponent createPopulation(MeasurePackageClauseDetail clauseDetail) {
@@ -90,7 +115,7 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
             case "denominatorExceptions":
                 type = "denominator-exception";
                 display = "Denominator Exception";
-                mappedType =clauseDetail.getCqlDefinition().getDisplay();
+                mappedType = clauseDetail.getCqlDefinition().getDisplay();
                 break;
             case "numerator":
                 type = "numerator";
@@ -117,7 +142,7 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
                 display = "Measure Observation";
 
                 component.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-criteriaReference"
-                        ,new StringType("measure-population-identifier"));
+                        , new StringType("measure-population-identifier"));
 
                 component.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-aggregateMethod",
                         new CodeType(StringUtils.lowerCase(clauseDetail.getAggregateFunction().getDisplay())));
