@@ -18,6 +18,7 @@ json:
     attributes-url: https://spreadsheets.google.com/feeds/list/1lV1N4O7xmSxjRH6ghuCj3mYcntPsTz8qBcpQ6DO7Se4/2/public/values?alt=json
     fhir-lightbox-datatype_attribute_association-url: https://spreadsheets.google.com/feeds/list/1ecwDn7YfmqYhXJqtAFwayyAXFQ4EZ2sEeyKT5TBtttc/3/public/values?alt=json
     fhir-lightbox-datatype_for_function_args-url: https://spreadsheets.google.com/feeds/list/1ecwDn7YfmqYhXJqtAFwayyAXFQ4EZ2sEeyKT5TBtttc/2/public/values?alt=json
+    population-basis-valid-values: https://spreadsheets.google.com/feeds/list/1ecwDn7YfmqYhXJqtAFwayyAXFQ4EZ2sEeyKT5TBtttc/4/public/values?alt=json
 
 
 springdoc:

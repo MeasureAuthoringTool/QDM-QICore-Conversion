@@ -19,8 +19,8 @@ public class FhirLightBoxDatatypeAttributeAssociations  implements Comparable<Fh
 
     @Override
     public int compareTo(FhirLightBoxDatatypeAttributeAssociations rhs) {
-        int last = this.datatype.compareTo(rhs.datatype);
-        return last == 0 ? this.attribute.compareTo(rhs.attribute) : last;
+        int last = this.datatype.compareToIgnoreCase(rhs.datatype);
+        return last == 0 ? this.attribute.compareToIgnoreCase(rhs.attribute) : last;
     }
 }
 
