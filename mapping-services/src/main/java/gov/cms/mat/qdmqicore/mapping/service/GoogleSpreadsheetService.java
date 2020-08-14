@@ -14,6 +14,7 @@ import gov.cms.mat.qdmqicore.mapping.model.google.GoogleDataTypesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleFhirLightBoxDataTypesForFunctionArgsData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleFhirLightBoxDatatypeAttributeAssociationData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleMatAttributesData;
+import gov.cms.mat.qdmqicore.mapping.model.google.GooglePopulationBasisValidValuesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleQdmToQicoreMappingData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleRequiredFieldsData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleResourceDefinitionData;
@@ -25,7 +26,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +61,8 @@ public class GoogleSpreadsheetService {
     private String fhirLightboxDatatypeAttributeAssociationUrl;
     @Value("${json.data.fhir-lightbox-datatype_for_function_args-url}")
     private String fhirLightboxDataTypesForFunctionArgsUrl;
+    @Value("${json.data.population-basis-valid-values}")
+    private String populationBasisValidValuesUrl;
 
 
     public GoogleSpreadsheetService(RestTemplate restTemplate) {
@@ -241,8 +246,25 @@ public class GoogleSpreadsheetService {
 
             return data.getFeed().getEntry().stream()
                     .map(e -> getData(e.getDatatype()))
-                    .sorted()
+                    .sorted(String::compareToIgnoreCase)
                     .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Cacheable("populationBasisValidValues")
+    public Collection<String> getPopulationBasisValidValues() {
+        GooglePopulationBasisValidValuesData
+                data = restTemplate.getForObject(populationBasisValidValuesUrl, GooglePopulationBasisValidValuesData.class);
+
+        if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), fhirLightboxDatatypeAttributeAssociationUrl);
+
+            return data.getFeed().getEntry().stream()
+                    .map(e -> getData(e.getBaseResource()))
+                    .sorted(String::compareToIgnoreCase)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         } else {
             return Collections.emptyList();
         }
