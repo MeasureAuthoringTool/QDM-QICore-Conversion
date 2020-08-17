@@ -1,22 +1,8 @@
 version: '3.6'
 
 services:
-  hapi-fhir-mysql:
-    image: mysql:latest
-    container_name: hapi-fhir-mysql
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'hapi'
-      MYSQL_USER: 'admin'
-      MYSQL_PASSWORD: 'admin'
-      MYSQL_ROOT_PASSWORD: 'admin'
-    ports:
-      - 3307:3306
-    volumes:
-      - hapi-fhir-mysql:/var/lib/mysql
-
   hapi-fhir-jpaserver:
-    image: greenemcg/hapi-fhir-jpaserver
+    image: hapi-fhir-jpaserver
     container_name: hapi-fhir-jpaserver
     environment:
       HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}

@@ -53,31 +53,6 @@ class HapiFhirServerTest {
     }
 
     @Test
-    void createBundle() {
-        Bundle bundleToReturn = new Bundle();
-
-        when(hapiClient.transaction()).thenReturn(iTransaction);
-        when(iTransaction.withBundle(any(Bundle.class))).thenReturn(bundleITransactionTyped);
-        when(bundleITransactionTyped.execute()).thenReturn(bundleToReturn);
-
-        Bundle bundleReturned = hapiFhirServer.createAndExecuteBundle(new ValueSet());
-        assertEquals(bundleToReturn, bundleReturned);
-
-        verify(hapiClient).transaction();
-        verify(iTransaction).withBundle(any(Bundle.class));
-        verify(bundleITransactionTyped).execute();
-    }
-
-    @Test
-    void buildBundle() {
-        ValueSet resource = new ValueSet();
-        Bundle bundle = hapiFhirServer.buildBundle(resource);
-        assertEquals(1, bundle.getEntry().size());
-
-        assertEquals(Bundle.BundleType.TRANSACTION, bundle.getType());
-    }
-
-    @Test
     void delete() {
         ValueSet resource = new ValueSet();
         IDelete iDelete = mock(IDelete.class);
