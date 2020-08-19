@@ -36,8 +36,6 @@ public class ValidationOrchestrationService {
     @Autowired
     private FhirLibrarySourceProvider fhirLibrarySourceProvider;
 
-    private CQLObject cqlObject = new CQLObject();
-
     private final ValidationService validationService;
     private final ValueSetValidator valueSetValidator;
     private final CodeSystemValidator codeSystemValidator;
@@ -151,6 +149,8 @@ public class ValidationOrchestrationService {
     }
 
     public CQLObject buildCqlObject(CQLModel sourceModel) {
+        CQLObject cqlObject = new CQLObject();
+
         String parentCQLString = CQLUtilityClass.getCqlString(sourceModel, "").getLeft();
 
         CQLtoELM cqlToELM = new CQLtoELM(parentCQLString, fhirLibrarySourceProvider);
