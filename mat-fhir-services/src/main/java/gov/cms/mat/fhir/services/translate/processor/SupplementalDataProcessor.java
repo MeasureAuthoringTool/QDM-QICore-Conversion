@@ -22,7 +22,7 @@ import static gov.cms.mat.fhir.services.translate.TranslatorBase.FHIR_UNKNOWN;
 
 @Component
 public class SupplementalDataProcessor implements FhirCreator {
-    public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
+    public static final String MEASURE_DATA_USAGE = "http://terminology.hl7.org/CodeSystem/measure-data-usage";
 
     private final MatXmlConverter matXmlConverter;
 
