@@ -13,8 +13,8 @@ export HAPI_DB_PASS=changeme
 
 export MONGO_DB_URL='mongodb://host.docker.internal:27017'
 
-export HAPI_FHIR_URL_PUBLIC='http://localhost:6060/hapi-fhir-jpaserver/fhir'
-export HAPI_FHIR_URL='http://hapi-fhir-jpaserver:6060/hapi-fhir-jpaserver/fhir/'
+export HAPI_FHIR_URL_PUBLIC='http://localhost:6060/fhir'
+export HAPI_FHIR_URL='http://hapi-fhir-jpaserver:6060/fhir/'
 export FHIR_SERVICES_URL='http://host.docker.internal:9080'
 export QDM_QICORE_URL='http://host.docker.internal:9090'
 export CQL_CONVERSION_URL='http://host.docker.internal:7070'
