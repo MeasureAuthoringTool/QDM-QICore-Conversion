@@ -65,6 +65,3 @@ services:
       MAT_FHIR_SWAGGER_URL: ${MAT_FHIR_SWAGGER_URL}
     ports:
       - 9080:9080
-
-volumes:
-  hapi-fhir-mysql:
