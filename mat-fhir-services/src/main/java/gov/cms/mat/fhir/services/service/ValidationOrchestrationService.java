@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.services.components.cql.FhirLibrarySourceProvider;
 import gov.cms.mat.fhir.services.components.validation.CodeSystemValidator;
 import gov.cms.mat.fhir.services.components.validation.ValueSetValidator;
 import gov.cms.mat.fhir.services.rest.dto.CQLExpressionObject;
+import gov.cms.mat.fhir.services.rest.dto.CQLExpressionOprandObject;
 import gov.cms.mat.fhir.services.rest.dto.CQLObject;
 import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
 import gov.cms.mat.fhir.services.rest.dto.ValidationRequest;
@@ -170,7 +171,7 @@ public class ValidationOrchestrationService {
             String functionName = function.getName();
             CQLExpressionObject expression = new CQLExpressionObject("Function", functionName);
             expression.setReturnType(cqlToELM.getExpressionReturnType(functionName));
-
+            expression.setOprandList(convert(function));
             cqlObject.getCqlFunctionObjectList().add(expression);
         }
 
@@ -181,5 +182,14 @@ public class ValidationOrchestrationService {
         }
 
         return cqlObject;
+    }
+
+    private List<CQLExpressionOprandObject> convert(CQLFunctions function) {
+        return function.getArgumentList().stream().map(a -> {
+            var operand = new CQLExpressionOprandObject();
+            operand.setName(a.getArgumentName());
+            operand.setReturnType(a.getQdmDataType());
+            return operand;
+        }).collect(Collectors.toList());
     }
 }
