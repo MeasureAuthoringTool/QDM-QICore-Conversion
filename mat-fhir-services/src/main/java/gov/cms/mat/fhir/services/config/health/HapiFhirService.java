@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Optional;
 
@@ -34,10 +35,14 @@ public class HapiFhirService extends HealthCheckerBase {
     }
 
     private Status checkHapiFhirServer() {
-        String bundleUrl = baseURL + "Measure";
+        String bundleUrl = baseURL + "/" + "Library";
         Optional<Bundle> optionalBundle = hapiFhirLinkProcessor.fetchBundleByUrl(bundleUrl);
 
         if (optionalBundle.isPresent()) {
+            if (CollectionUtils.isEmpty(optionalBundle.get().getEntry())) {
+                log.warn("No Libraries were found in hapi, please load the HapiGlobalCommonLibs");
+            }
+
             return Status.UP;
         } else {
             return Status.DOWN;

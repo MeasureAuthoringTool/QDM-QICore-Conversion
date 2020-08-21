@@ -12,4 +12,4 @@ services:
       HAPI_DB_PASS: ${HAPI_DB_PASS}
       HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
     ports:
-      - 6066:6066
+      - 6060:6060

@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/MAT_APP_BLANK?serverTimezone=UTC&max_allowed_packet=16777216
+    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
     username: root
     password: password
   jpa:
@@ -17,10 +17,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
     generate-ddl: false
     show-sql: false
-  data:
-    mongodb:
-      database: mat_conversion_results
-      uri: ${MONGO_DB_URL:mongodb://localhost:27018}
 
 vsac-client:
   server: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac/ws/Ticket
@@ -50,8 +46,8 @@ logging:
 
 fhir:
   r4:
-    baseurl: ${HAPI_FHIR_URL:http://localhost:6060/hapi-fhir-jpaserver/fhir/}
-    public-url: ${HAPI_FHIR_URL_PUBLIC:http://localhost:6060/hapi-fhir-jpaserver/fhir/}
+    baseurl: http://localhost:6060/fhir/
+    public-url: http://localhost:6060/fhir/
 
 qdmqicore:
   conversion:

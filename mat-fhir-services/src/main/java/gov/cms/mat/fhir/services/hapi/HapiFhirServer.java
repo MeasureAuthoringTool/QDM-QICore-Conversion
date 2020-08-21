@@ -1,15 +1,15 @@
 package gov.cms.mat.fhir.services.hapi;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
-import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
 import gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
@@ -19,11 +19,23 @@ import org.hl7.fhir.r4.model.Measure;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -41,8 +53,11 @@ public class HapiFhirServer {
     @Value("${fhir.r4.baseurl}")
     private String baseURL;
 
-    public HapiFhirServer(FhirContext ctx) {
+    private final RestTemplate restTemplate;
+
+    public HapiFhirServer(FhirContext ctx, RestTemplate restTemplate) {
         this.ctx = ctx;
+        this.restTemplate = restTemplate;
     }
 
     @PostConstruct
@@ -117,18 +132,13 @@ public class HapiFhirServer {
         log.debug("Persisting resource {} with id {}",
                 resource.getResourceType() != null ? resource.getResourceType().name() : "null",
                 resource.getId());
-        Bundle bundle = createAndExecuteBundle(resource);
 
-        validatePersistedBundle(resource, bundle);
-
-        //todo this is wrong without it we cannot find object after we create
-        try {
-            TimeUnit.MILLISECONDS.sleep(500);
-        } catch (InterruptedException e) {
-            log.debug("InterruptedException", e);
-        }
-
-        return buildResourceUrl(resource);
+        HttpHeaders map = new HttpHeaders();
+        map.put("Content-type", List.of("application/json"));
+        HttpEntity<String> request = new HttpEntity<>(toJson(resource),map);
+        String url = baseURL + "/" + resource.getResourceType().name() + "/" + resource.getId();
+        restTemplate.put(url,request,new HashMap<>());
+        return url;
     }
 
     public String buildResourceUrl(Resource resource) {
@@ -143,49 +153,51 @@ public class HapiFhirServer {
                 .toString();
     }
 
-    private void validatePersistedBundle(Resource resource, Bundle bundle) {
-        if (CollectionUtils.isEmpty(bundle.getEntry()) || bundle.getEntry().size() > 1) {
-            log.error("Bundle size is invalid: {}", bundle.getEntry() != null ? bundle.getEntry().size() : null);
-            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
-        }
-
-        Bundle.BundleEntryComponent bundleEntryComponent = bundle.getEntry().get(0);
-
-        if (!bundleEntryComponent.hasResponse()) {
-            log.error("Bundle does not contain a response");
-            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
-        }
-
-        if (bundleEntryComponent.getResponse().getStatus() != null &&
-                bundleEntryComponent.getResponse().getStatus().startsWith("20")) {
-            log.debug("Successfully (OK) Persisted resource {} with id {}",
-                    resource.getResourceType() != null ? resource.getResourceType().name() : "null",
-                    resource.getId());
-        } else {
-            log.error("FAILED Persisted resource: {} with id: {} status:{}",
-                    resource.getResourceType().name(), resource.getId(),
-                    bundleEntryComponent.getResponse().getStatus());
-            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
-        }
+    private void validate(MethodOutcome outcome) {
+        var l = outcome.getResource();
+//        outcome.getResource().
+//        if (CollectionUtils.isEmpty(bundle.getEntry()) || bundle.getEntry().size() > 1) {
+//            log.error("Bundle size is invalid: {}", bundle.getEntry() != null ? bundle.getEntry().size() : null);
+//            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
+//        }
+//
+//        Bundle.BundleEntryComponent bundleEntryComponent = bundle.getEntry().get(0);
+//
+//        if (!bundleEntryComponent.hasResponse()) {
+//            log.error("Bundle does not contain a response");
+//            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
+//        }
+//
+//        if (bundleEntryComponent.getResponse().getStatus() != null &&
+//                bundleEntryComponent.getResponse().getStatus().startsWith("20")) {
+//            log.debug("Successfully (OK) Persisted resource {} with id {}",
+//                    resource.getResourceType() != null ? resource.getResourceType().name() : "null",
+//                    resource.getId());
+//        } else {
+//            log.error("FAILED Persisted resource: {} with id: {} status:{}",
+//                    resource.getResourceType().name(), resource.getId(),
+//                    bundleEntryComponent.getResponse().getStatus());
+//            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
+//        }
     }
 
-    public Bundle createAndExecuteBundle(Resource resource) {
-        Bundle bundle = buildBundle(resource);
+//    public Bundle createAndExecuteBundle(Resource resource) {
+//        Bundle bundle = buildBundle(resource);
+//
+//        return hapiClient.transaction()
+//                .withBundle(bundle)
+//                .execute();
+//    }
 
-        return hapiClient.transaction()
-                .withBundle(bundle)
-                .execute();
-    }
-
-    Bundle buildBundle(Resource resource) {
-        Bundle bundle = new Bundle();
-        bundle.setType(Bundle.BundleType.TRANSACTION);
-        bundle.addEntry().setResource(resource)
-                .getRequest()
-                .setUrl(baseURL + resource.getResourceType().name() + "/" + resource.getId())
-                .setMethod(Bundle.HTTPVerb.PUT);
-        return bundle;
-    }
+//    Bundle buildBundle(Resource resource) {
+//        Bundle bundle = new Bundle();
+//        bundle.setType(Bundle.BundleType.TRANSACTION);
+//        bundle.addEntry().setResource(resource)
+//                .getRequest()
+//                .setUrl(baseURL + resource.getResourceType().name() + "/" + resource.getId())
+//                .setMethod(Bundle.HTTPVerb.PUT);
+//        return bundle;
+//    }
 
     private LoggingInterceptor createLoggingInterceptor() {
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();

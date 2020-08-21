@@ -8,7 +8,7 @@ spring:
     password: ${HAPI_DB_PASS}
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate.jdbc.batch_size: 20
       hibernate.cache.use_query_cache: false
@@ -20,7 +20,7 @@ spring:
       hibernate.search.lucene_version: LUCENE_CURRENT
       hibernate.search.model_mapping: ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: false
 hapi:
   fhir:
@@ -36,8 +36,8 @@ hapi:
       e-tag-support: enabled
       default-pretty-print: true
     validation:
-      enabled: true
-      request-only: true
+      enabled: false
+      request-only: false
     jpa:
       scheduling-disabled: true
       subscription-enabled: false
