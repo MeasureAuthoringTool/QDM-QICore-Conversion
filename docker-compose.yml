@@ -2,13 +2,16 @@ version: '3.6'
 
 services:
   hapi-fhir-jpaserver:
-    image: hapi-fhir-jpaserver
-    container_name: hapi-fhir-jpaserver
+    image: hapi-fhir-jpaserver_spring_boot
+    container_name: hapi-fhir-jpaserver_spring_boot
+    build:
+      context: hapi-fhir-jpaserver
+      dockerfile: Dockerfile
     environment:
       HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
       HAPI_DB_URL: ${HAPI_DB_URL}
       HAPI_DB_USER: ${HAPI_DB_USER}
-      HAPI_DB_PASS: ${HAPI_DB_PASS}
+      HAPI_DB_PASS: ${HAPI_DB_USER}
     ports:
       - 6060:6060
 
@@ -62,6 +65,3 @@ services:
       MAT_FHIR_SWAGGER_URL: ${MAT_FHIR_SWAGGER_URL}
     ports:
       - 9080:9080
-
-volumes:
-  hapi-fhir-mysql:
