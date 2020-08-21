@@ -1,10 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
-import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.MeasureDetails;
-import gov.cms.mat.fhir.commons.model.MeasureDetailsReference;
-import gov.cms.mat.fhir.commons.model.MeasureExport;
-import gov.cms.mat.fhir.commons.model.MeasureReferenceType;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.mat.MatXmlMarshaller;
 import gov.cms.mat.fhir.services.components.mat.MatXpath;
@@ -14,16 +10,12 @@ import gov.cms.mat.fhir.services.repository.MeasureDetailsRepository;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.translate.processor.MeasureGroupingDataProcessor;
-import gov.cms.mat.fhir.services.translate.processor.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.translate.processor.SupplementalDataProcessor;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measure.PeriodModel;
 import org.apache.commons.io.IOUtils;
-import org.hl7.fhir.r4.model.Measure;
-import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,16 +25,8 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 /**
  * TO DO fix test cases.
@@ -68,7 +52,6 @@ class MeasureTranslatorTest implements IdGenerator {
     private final MatXmlMarshaller matXmlMarshaller = new MatXmlMarshaller();
     private final MatXmlConverter matXmlConverter = new MatXmlConverter(matXpath, matXmlMarshaller);
     private final SupplementalDataProcessor supplementalDataProcessor = new SupplementalDataProcessor(matXmlConverter);
-    private final RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor = new RiskAdjustmentsDataProcessor(matXmlConverter);
     private final MeasureGroupingDataProcessor measureGroupingDataProcessor = new MeasureGroupingDataProcessor(matXmlConverter);
 
     private gov.cms.mat.fhir.commons.model.Measure matMeasure;
@@ -150,7 +133,6 @@ class MeasureTranslatorTest implements IdGenerator {
                 matMeasureExportRepo,
                 cqlLibRepo,
                 supplementalDataProcessor,
-                riskAdjustmentsDataProcessor,
                 measureGroupingDataProcessor,
                 matMeasureDetailMapper);
 
