@@ -81,6 +81,7 @@ public class ManageMeasureDetailModel implements IsSerializable, BaseModel {
 	private String qdmVersion;
 	private String formattedVersion;
 	private boolean experimental;
+	private String populationBasis;
 	
 	public ManageMeasureDetailModel() {
 		
@@ -1184,4 +1185,12 @@ public class ManageMeasureDetailModel implements IsSerializable, BaseModel {
 	public void setExperimental(Boolean experimental) {
 		this.experimental = experimental == null ? false : experimental;
 	}
+
+    public String getPopulationBasis() {
+        return populationBasis;
+    }
+
+    public void setPopulationBasis(String populationBasis) {
+        this.populationBasis = populationBasis;
+    }
 }

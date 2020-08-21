@@ -151,7 +151,7 @@ public class MeasureTranslator extends TranslatorBase {
         result.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(simpleXml));
         result.setGroup(measureGroupingDataProcessor.processXml(simpleXml));
         processImprovementNotation(simpleXmlModel, result);
-        processExtension(result);
+        processExtension(result, simpleXmlModel);
         processHumanReadable(id, result);
         processIdentifiers(result, simpleXmlModel);
         processStatus(result, simpleXmlModel);
@@ -218,10 +218,10 @@ public class MeasureTranslator extends TranslatorBase {
                 null));
     }
 
-    private void processExtension(Measure fhirMeasure) {
+    private void processExtension(Measure fhirMeasure, ManageCompositeMeasureDetailModel simpleXmlModel) {
         fhirMeasure.setExtension(new ArrayList<>());
-         // TO DO: Set this to the population basis once it is added to the MAT gui.
-        fhirMeasure.getExtension().add(new Extension(EXTENSION_POPULATION_BASIS, new CodeType("boolean")));
+        String populationBasis = "Boolean".equalsIgnoreCase(simpleXmlModel.getPopulationBasis()) ? "boolean" : simpleXmlModel.getPopulationBasis();
+        fhirMeasure.getExtension().add(new Extension(EXTENSION_POPULATION_BASIS, new CodeType(populationBasis)));
     }
 
 

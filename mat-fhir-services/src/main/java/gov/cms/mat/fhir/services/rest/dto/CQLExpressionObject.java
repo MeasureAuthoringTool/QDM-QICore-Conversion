@@ -38,6 +38,8 @@ public class CQLExpressionObject {
 
     private Map<String, List<String>> valueSetDataTypeMap = new HashMap<>();
 
+    private List<CQLExpressionOprandObject> oprandList = new ArrayList<CQLExpressionOprandObject>();
+
     private Map<String, List<String>> codeDataTypeMap = new HashMap<>();
 
     public CQLExpressionObject(String type, String name) {
