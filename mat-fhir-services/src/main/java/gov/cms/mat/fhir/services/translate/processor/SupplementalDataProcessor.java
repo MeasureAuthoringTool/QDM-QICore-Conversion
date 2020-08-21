@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.translate.processor;
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
+import mat.model.RiskAdjustmentDTO;
 import mat.model.cql.CQLDefinition;
 import mat.model.cql.CQLDefinitionsWrapper;
 import org.hl7.fhir.r4.model.CodeableConcept;
@@ -11,18 +12,14 @@ import org.hl7.fhir.r4.model.Expression;
 import org.hl7.fhir.r4.model.Measure;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gov.cms.mat.fhir.services.translate.TranslatorBase.FHIR_UNKNOWN;
-
 @Component
 public class SupplementalDataProcessor implements FhirCreator {
-    public static final String MEASURE_DATA_USAGE = "http://hl7.org/fhir/measure-data-usage";
+    public static final String MEASURE_DATA_USAGE = "http://terminology.hl7.org/CodeSystem/measure-data-usage";
 
     private final MatXmlConverter matXmlConverter;
 
@@ -31,44 +28,58 @@ public class SupplementalDataProcessor implements FhirCreator {
     }
 
     public List<Measure.MeasureSupplementalDataComponent> processXml(String xml) {
-        CQLDefinitionsWrapper cqlDefinitionsWrapper = matXmlConverter.toCQLDefinitionsSupplementalData(xml);
+        List<Measure.MeasureSupplementalDataComponent> result = new ArrayList<>();
+        CQLDefinitionsWrapper supplementals = matXmlConverter.toCQLDefinitionsSupplementalData(xml);
+        CQLDefinitionsWrapper riskAdjs =matXmlConverter.toCQLDefinitionsRiskAdjustments(xml);
 
-        if (CollectionUtils.isEmpty(cqlDefinitionsWrapper.getCqlDefinitions())) {
+        if (CollectionUtils.isEmpty(supplementals.getCqlDefinitions())) {
             ConversionReporter.setMeasureResult("MAT.supplementalData",
                     "Measure.supplementalData",
                     "No SupplementalData");
-            return Collections.emptyList();
         } else {
-            return processWrapper(cqlDefinitionsWrapper.getCqlDefinitions());
+            result.addAll(processSupplementalWrapper(supplementals.getCqlDefinitions()));
         }
+
+        if (CollectionUtils.isEmpty(riskAdjs.getRiskAdjVarDTOList())) {
+            ConversionReporter.setMeasureResult("MAT.riskAdjustments",
+                    "Measure.riskAdjustments",
+                    "No Risk Adjustments");
+        } else {
+            result.addAll(processRiskAdjWrapper(riskAdjs.getRiskAdjVarDTOList()));
+        }
+
+        return result;
     }
 
-    private List<Measure.MeasureSupplementalDataComponent> processWrapper(List<CQLDefinition> definitions) {
+    private List<Measure.MeasureSupplementalDataComponent> processSupplementalWrapper(List<CQLDefinition> definitions) {
         return definitions.stream()
-                .map(this::convert)
+                .map(this::convertSupplemental)
                 .collect(Collectors.toList());
     }
 
-    private Measure.MeasureSupplementalDataComponent convert(CQLDefinition cqlDefinition) {
+    private List<Measure.MeasureSupplementalDataComponent> processRiskAdjWrapper(List<RiskAdjustmentDTO> riskAdjs) {
+        return riskAdjs.stream()
+                .map(this::convertRiskAdj)
+                .collect(Collectors.toList());
+    }
+
+    private Measure.MeasureSupplementalDataComponent convertSupplemental(CQLDefinition cqlDefinition) {
         Measure.MeasureSupplementalDataComponent supplementalData = new Measure.MeasureSupplementalDataComponent();
-
+        supplementalData.setId(cqlDefinition.getId());
         return supplementalData
-                .setCode(new CodeableConcept().setText(makeCodeFromName(cqlDefinition.getName())))
-                .setUsage(processSupplementalDataUsage())
-                .setCriteria(processSupplementalDataCriteria(cqlDefinition.getName()));
+                .setUsage(supplementalDataUsage())
+                .setCriteria(criteriaExpression(cqlDefinition.getName()));
     }
 
-    private String makeCodeFromName(String name) {
-        if (StringUtils.isEmpty(name)) {
-            return FHIR_UNKNOWN;
-        } else {
-            // Convert "SDE Race" to "sde-race"
-            String code = name.toLowerCase().trim();
-            return code.replace(' ', '-');
-        }
+    private Measure.MeasureSupplementalDataComponent convertRiskAdj(RiskAdjustmentDTO riskAdj) {
+        Measure.MeasureSupplementalDataComponent supplementalData = new Measure.MeasureSupplementalDataComponent();
+        supplementalData.setId(riskAdj.getUuid());
+        return supplementalData
+                .setUsage(riskAdjUsage())
+                .setCriteria(criteriaExpression(riskAdj.getName()));
     }
 
-    private List<CodeableConcept> processSupplementalDataUsage() {
+    private List<CodeableConcept> supplementalDataUsage() {
         Coding coding = new Coding()
                 .setSystem(MEASURE_DATA_USAGE)
                 .setCode("supplemental-data");
@@ -78,7 +89,17 @@ public class SupplementalDataProcessor implements FhirCreator {
         return mList;
     }
 
-    private Expression processSupplementalDataCriteria(String expression) {
+    private List<CodeableConcept> riskAdjUsage() {
+        Coding coding = new Coding()
+                .setSystem(MEASURE_DATA_USAGE)
+                .setCode("risk-adjustment-factor");
+
+        List<CodeableConcept> mList = new ArrayList<>(1);
+        mList.add(new CodeableConcept().addCoding(coding));
+        return mList;
+    }
+
+    private Expression criteriaExpression(String expression) {
         return new Expression()
                 .setLanguage("text/cql")
                 .setExpression(expression);

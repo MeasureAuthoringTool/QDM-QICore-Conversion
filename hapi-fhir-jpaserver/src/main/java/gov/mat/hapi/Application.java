@@ -5,6 +5,7 @@ import ca.uhn.fhir.to.FhirTesterMvcConfig;
 import ca.uhn.fhir.to.TesterConfig;
 import ca.uhn.fhir.to.mvc.AnnotationMethodHandlerAdapterConfigurer;
 import ca.uhn.fhir.to.util.WebUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,8 +20,12 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @SpringBootApplication
 @Configuration
+@Slf4j
 @ComponentScan(basePackages={"ca.uhn.fhir.to"}, excludeFilters={
         @ComponentScan.Filter(type= FilterType.ASSIGNABLE_TYPE, value= FhirTesterMvcConfig.class)})
 public class Application {
@@ -30,6 +35,15 @@ public class Application {
 
     @Value("${hapi.fhir.server.url}")
     private String hapiFhirUrl;
+
+    /**
+     *  Force UTC timezone locally.
+     */
+    @PostConstruct
+    public void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        log.info("Set timezone to UTC.");
+    }
 
     @Bean
     public TesterConfig testerConfig() {
