@@ -116,6 +116,8 @@ public class Measure implements Serializable {
     @Column(name = "SOURCE_MEASURE_ID")
     private String sourceMeasureId;
 
+    @Column(name = "POPULATION_BASIS")
+    private String populationBasis;
 
     @JoinColumn(name = "LOCKED_USER_ID", referencedColumnName = "USER_ID")
     @ManyToOne
@@ -610,5 +612,12 @@ public class Measure implements Serializable {
 
 
     }
-    
+
+    public String getPopulationBasis() {
+        return populationBasis;
+    }
+
+    public void setPopulationBasis(String populationBasis) {
+        this.populationBasis = populationBasis;
+    }
 }
