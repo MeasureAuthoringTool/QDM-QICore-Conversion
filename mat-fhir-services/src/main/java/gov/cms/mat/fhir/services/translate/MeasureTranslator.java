@@ -11,7 +11,6 @@ import gov.cms.mat.fhir.services.repository.MeasureDetailsRepository;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.translate.processor.MeasureGroupingDataProcessor;
-import gov.cms.mat.fhir.services.translate.processor.RiskAdjustmentsDataProcessor;
 import gov.cms.mat.fhir.services.translate.processor.SupplementalDataProcessor;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
@@ -36,7 +35,7 @@ import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,7 +61,6 @@ public class MeasureTranslator extends TranslatorBase {
     private final MeasureDetailsReferenceRepository matMeasureDetailsRefRepo;
     private final MeasureExportRepository matMeasureExportRepo;
     private final SupplementalDataProcessor supplementalDataProcessor;
-    private final RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor;
     private final MeasureGroupingDataProcessor measureGroupingDataProcessor;
     private final CqlLibraryRepository cqlLibRepo;
     private final ManageMeasureDetailMapper measureDetailMapper;
@@ -72,14 +70,12 @@ public class MeasureTranslator extends TranslatorBase {
     private String matFhirBaseUrl;
 
 
-
     public MeasureTranslator(MeasureRepository matMeasureRepo,
                              MeasureDetailsRepository matMeasureDetailsRepo,
                              MeasureDetailsReferenceRepository matMeasureDetailsRefRepo,
                              MeasureExportRepository matMeasureExportRepo,
                              CqlLibraryRepository cqlLibRepo,
                              SupplementalDataProcessor supplementalDataProcessor,
-                             RiskAdjustmentsDataProcessor riskAdjustmentsDataProcessor,
                              MeasureGroupingDataProcessor measureGroupingDataProcessor,
                              ManageMeasureDetailMapper measureDetailMapper) {
         this.matMeasureRepo = matMeasureRepo;
@@ -88,7 +84,6 @@ public class MeasureTranslator extends TranslatorBase {
         this.matMeasureExportRepo = matMeasureExportRepo;
         this.cqlLibRepo = cqlLibRepo;
         this.supplementalDataProcessor = supplementalDataProcessor;
-        this.riskAdjustmentsDataProcessor = riskAdjustmentsDataProcessor;
         this.measureGroupingDataProcessor = measureGroupingDataProcessor;
         this.measureDetailMapper = measureDetailMapper;
     }
@@ -119,7 +114,7 @@ public class MeasureTranslator extends TranslatorBase {
         }
         var matMeasure = matMeasureOpt.get();
         var simpleXmlBytes = matExportOpt.get().getSimpleXml();
-        String simpleXml = new String(simpleXmlBytes, Charset.forName("UTF-8"));
+        String simpleXml = new String(simpleXmlBytes, StandardCharsets.UTF_8);
 
         ManageCompositeMeasureDetailModel simpleXmlModel = buildModel(simpleXmlBytes, matMeasure);
 
@@ -148,7 +143,6 @@ public class MeasureTranslator extends TranslatorBase {
         result.setContact(createContactDetailUrl());
         result.setMeta(createMeasureMeta(simpleXmlModel.getMeasScoring()));
         result.setSupplementalData(supplementalDataProcessor.processXml(simpleXml));
-        result.setRiskAdjustment(riskAdjustmentsDataProcessor.processXml(simpleXml));
         result.setGroup(measureGroupingDataProcessor.processXml(simpleXml));
         processImprovementNotation(simpleXmlModel, result);
         processExtension(result, simpleXmlModel);

@@ -17,12 +17,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class MeasureGroupingDataProcessor implements FhirCreator {
-    private static final String SYSTEM = "http://terminology.hl7.org/CodeSystem/measure-population";
+    private static final String MEASURE_POPULATION_CODE_SYSTEM = "http://terminology.hl7.org/CodeSystem/measure-population";
     private final MatXmlConverter matXmlConverter;
 
     public MeasureGroupingDataProcessor(MatXmlConverter matXmlConverter) {
@@ -58,10 +59,12 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
     }
 
     private List<Measure.MeasureGroupPopulationComponent> createPopulations(List<MeasurePackageClauseDetail> packageClauses) {
-        return packageClauses.stream()
+        List<Measure.MeasureGroupPopulationComponent> result =  packageClauses.stream()
                 .filter(MeasurePackageClauseDetail::isInGrouping)
                 .map(this::createPopulation)
                 .collect(Collectors.toList());
+        updateObservationPopulationId(result);
+        return result;
     }
 
     private List<Measure.MeasureGroupStratifierComponent> createStratifications(List<MeasurePackageClauseDetail> packageClauses) {
@@ -82,6 +85,7 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
         //   </clause>
 
         Measure.MeasureGroupStratifierComponent result = new Measure.MeasureGroupStratifierComponent();
+        result.setId(clauseDetail.getId());
         result.setCode(new CodeableConcept().setText(clauseDetail.getDisplayName()));
         result.setCriteria(new Expression()
                 .setLanguage("text/cql")
@@ -89,8 +93,25 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
         return result;
     }
 
+    private void updateObservationPopulationId( List<Measure.MeasureGroupPopulationComponent> group) {
+        Optional<Measure.MeasureGroupPopulationComponent> measurePopulation = group.stream().
+                filter(c -> !c.getCode().isEmpty() &&
+                        !c.getCode().getCoding().isEmpty() &&
+                        c.getCode().hasCoding(MEASURE_POPULATION_CODE_SYSTEM,"measure-population")).findFirst();
+
+        if (measurePopulation.isPresent()) {
+            Optional<Measure.MeasureGroupPopulationComponent> measureObservation = group.stream().
+                    filter(c -> !c.getCode().isEmpty() &&
+                            !c.getCode().getCoding().isEmpty() &&
+                            c.getCode().hasCoding(MEASURE_POPULATION_CODE_SYSTEM,"measure-observation")).findFirst();
+            measureObservation.ifPresent(measureGroupPopulationComponent -> measureGroupPopulationComponent.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-criteriaReference"
+                    , new StringType(measurePopulation.get().getId())));
+        }
+    }
+
     private Measure.MeasureGroupPopulationComponent createPopulation(MeasurePackageClauseDetail clauseDetail) {
         Measure.MeasureGroupPopulationComponent component = new Measure.MeasureGroupPopulationComponent();
+        component.setId(clauseDetail.getId());
 
         String type;
         String display;
@@ -141,9 +162,7 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
                 type = "measure-observation";
                 display = "Measure Observation";
 
-                component.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-criteriaReference"
-                        , new StringType("measure-population-identifier"));
-
+                //criteriaReference is added in updateObservationPopulationId with the population.
                 component.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-aggregateMethod",
                         new CodeType(StringUtils.lowerCase(clauseDetail.getAggregateFunction().getDisplay())));
 
@@ -160,6 +179,6 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
                 .setCriteria(new Expression()
                         .setLanguage("text/cql")
                         .setExpression(mappedType))
-                .setCode(buildCodeableConcept(type, SYSTEM, display));
+                .setCode(buildCodeableConcept(type, MEASURE_POPULATION_CODE_SYSTEM, display));
     }
 }
