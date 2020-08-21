@@ -11,7 +11,7 @@ services:
       HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
       HAPI_DB_URL: ${HAPI_DB_URL}
       HAPI_DB_USER: ${HAPI_DB_USER}
-      HAPI_DB_PASS: ${HAPI_DB_USER}
+      HAPI_DB_PASS: ${HAPI_DB_PASS}
     ports:
       - 6060:6060
 
