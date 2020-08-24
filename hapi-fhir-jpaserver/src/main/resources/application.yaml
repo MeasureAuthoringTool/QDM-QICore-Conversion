@@ -6,9 +6,21 @@ spring:
     url: ${HAPI_DB_URL}
     username: ${HAPI_DB_USER}
     password: ${HAPI_DB_PASS}
+    pring:
+      jpa:
+        hibernate:
+          naming:
+            physical-strategy=org:
+              hibernate:
+                boot:
+                  model:
+                    naming:
+                      PhysicalNamingStrategyStandardImpl:
   jpa:
     hibernate:
       ddl-auto: update
+      naming:
+        physical-strategy: gov.mat.hapi.MySqlLowerCaseTableNameStrategy
     properties:
       hibernate.jdbc.batch_size: 20
       hibernate.cache.use_query_cache: false
@@ -21,7 +33,7 @@ spring:
       hibernate.search.model_mapping: ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-    show-sql: false
+    show-sql: true
 hapi:
   fhir:
     version: r4
