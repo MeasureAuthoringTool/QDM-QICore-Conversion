@@ -110,31 +110,42 @@ public class CqlToMatXml implements CqlVisitor {
 
     @Override
     public void libraryTag(String libraryName, String version, @Nullable String libraryComment, int lineNumber) {
-        if (!LIBRARY_NAME_PATTERN.matcher(libraryName).matches()) {
-            handleError(severErrorAtLine("Library name must follow this regex: " + LIB_NAME_REGEX +
+        if (StringUtils.isBlank(libraryName)) {
+            handleError(severErrorAtLine("library must have a name.", lineNumber));
+        } else if (StringUtils.isBlank(version)) {
+            handleError(severErrorAtLine("library must have a version.", lineNumber));
+        } else if (!LIBRARY_NAME_PATTERN.matcher(libraryName).matches()) {
+            handleError(severErrorAtLine("library name must follow this regex: " + LIB_NAME_REGEX +
                     ". You are only allowed to change this in General Information. It is called CQL Library name.", lineNumber));
+        } else if (!LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
+            handleError(severErrorAtLine("library version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
+        } else {
+            destinationModel.setLibraryName(libraryName);
+            destinationModel.setVersionUsed(version);
+            destinationModel.setLibraryComment(libraryComment);
         }
-        if (!LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
-            handleError(severErrorAtLine("Library version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
-        }
-
-        destinationModel.setLibraryName(libraryName);
-        destinationModel.setVersionUsed(version);
-        destinationModel.setLibraryComment(libraryComment);
     }
 
     @Override
-    public void usingModelVersionTag(String model, String modelVersion) {
-        destinationModel.setUsingModelVersion(modelVersion);
-        destinationModel.setUsingModel(model);
+    public void usingModelVersionTag(String model, String modelVersion, int lineNumber) {
+        if (StringUtils.isBlank(model)) {
+            handleError(severErrorAtLine("using must have a model.", lineNumber));
+        } else if (StringUtils.isBlank(modelVersion)) {
+            handleError(severErrorAtLine("using must have a version.", lineNumber));
+        } else {
+            destinationModel.setUsingModelVersion(modelVersion);
+            destinationModel.setUsingModel(model);
+        }
     }
 
     @Override
     public void includeLib(String libName, String version, String alias, String model, String modelVersion, int lineNumber) {
-        if (!LIBRARY_NAME_PATTERN.matcher(libName).matches()) {
-            handleError(severErrorAtLine("Library name must follow this regex: " + LIB_NAME_REGEX, lineNumber));
-        } else if (!LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
-            handleError(severErrorAtLine("Library version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
+        if (StringUtils.isBlank(libName) || !LIBRARY_NAME_PATTERN.matcher(libName).matches()) {
+            handleError(severErrorAtLine("include name must follow this regex: " + LIB_NAME_REGEX, lineNumber));
+        } else if (StringUtils.isBlank(version) || !LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
+            handleError(severErrorAtLine("include version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
+        } else if (StringUtils.isBlank(alias)) {
+            handleError(severErrorAtLine("include must have an alias.", lineNumber));
         } else {
             CQLIncludeLibrary lib = new CQLIncludeLibrary();
             lib.setId(newGuid());
@@ -160,121 +171,165 @@ public class CqlToMatXml implements CqlVisitor {
 
     @Override
     public void codeSystem(String name, String uri, String versionUri, int lineNumber) {
-        var parsedCodeSystemName = parseCodeSystemName(name);
-        var isConversion = !sourceModel.isFhir();
-        CQLCodeSystem cs = new CQLCodeSystem();
-        cs.setId(newGuid());
-        cs.setVersionUri(versionUri);
-        cs.setCodeSystemName(parsedCodeSystemName.getLeft());
-        cs.setCodeSystemVersion(parsedCodeSystemName.getRight());
-        cs.setCodeSystem(uri);
+        if (StringUtils.isBlank(name)) {
+            handleError(severErrorAtLine("codesystem must have a name.", lineNumber));
+        } else if (StringUtils.isBlank(uri)) {
+            handleError(severErrorAtLine("codesystem must have a uri.", lineNumber));
+        } else {
+            var parsedCodeSystemName = parseCodeSystemName(name);
+            var isConversion = !sourceModel.isFhir();
+            CQLCodeSystem cs = new CQLCodeSystem();
+            cs.setId(newGuid());
+            cs.setVersionUri(versionUri);
+            cs.setCodeSystemName(parsedCodeSystemName.getLeft());
+            cs.setCodeSystemVersion(parsedCodeSystemName.getRight());
+            cs.setCodeSystem(uri);
 
-        if (isConversion) {
-            updateCodeSystemForConversion(cs);
+            if (isConversion) {
+                updateCodeSystemForConversion(cs);
+            }
+            updateCodeSystemVersionFromVersionUri(cs);
+
+            cs.setLineNumber(lineNumber);
+            destinationModel.getCodeSystemList().add(cs);
         }
-        updateCodeSystemVersionFromVersionUri(cs);
-
-        cs.setLineNumber(lineNumber);
-        destinationModel.getCodeSystemList().add(cs);
     }
 
     @Override
     public void valueSet(String name, String uri, int lineNumber) {
-        try {
-            validateValuesetUri(uri);
-        } catch (IllegalArgumentException e) {
-            handleError(severErrorAtLine("Invalid valueset URI: " + uri, lineNumber));
+        if (StringUtils.isBlank(name)) {
+            handleError(severErrorAtLine("valueset must have a name.", lineNumber));
+        } else if (StringUtils.isBlank(uri)) {
+            handleError(severErrorAtLine("valueset must have a uri.", lineNumber));
+        } else {
+            try {
+                validateValuesetUri(uri);
+            } catch (IllegalArgumentException e) {
+                handleError(severErrorAtLine("Invalid valueset URI: " + uri, lineNumber));
+            }
+
+            var vs = new CQLQualityDataSetDTO();
+            vs.setId(newGuid());
+            vs.setName(name);
+            vs.setUuid(newGuid());
+            vs.setOid(uri);
+
+            // Nonsensical legacy stuff that has to be here for the gwt part to function at the moment.
+            vs.setOriginalCodeListName(name);
+            vs.setSuppDataElement(false);
+            vs.setTaxonomy("Grouping");
+            vs.setType("Grouping");
+
+            var existingValueSet = findExisting(sourceModel.getValueSetList(),
+                    evs -> StringUtils.equals(parseOid(evs.getOid()), parseOid(vs.getOid())));
+            existingValueSet.ifPresentOrElse(v -> vs.setValidatedWithVsac(v.isValidatedWithVsac()),
+                    () -> vs.setValidatedWithVsac(VsacStatus.PENDING.name()));
+
+            destinationModel.getValueSetList().add(vs);
         }
-
-        var vs = new CQLQualityDataSetDTO();
-        vs.setId(newGuid());
-        vs.setName(name);
-        vs.setUuid(newGuid());
-        vs.setOid(uri);
-
-        // Nonsensical legacy stuff that has to be here for the gwt part to function at the moment.
-        vs.setOriginalCodeListName(name);
-        vs.setSuppDataElement(false);
-        vs.setTaxonomy("Grouping");
-        vs.setType("Grouping");
-
-        var existingValueSet = findExisting(sourceModel.getValueSetList(),
-                evs -> StringUtils.equals(parseOid(evs.getOid()), parseOid(vs.getOid())));
-        existingValueSet.ifPresentOrElse(v -> vs.setValidatedWithVsac(v.isValidatedWithVsac()),
-                () -> vs.setValidatedWithVsac(VsacStatus.PENDING.name()));
-
-        destinationModel.getValueSetList().add(vs);
     }
 
     @Override
     public void code(String name, String code, String codeSystemName, String displayName, int lineNumber) {
-        var c = new CQLCode();
-        var pair = parseCodeSystemName(codeSystemName);
-        c.setCodeSystemName(pair.getLeft());
-        c.setCodeSystemVersion(pair.getRight());
-        c.setCodeOID(code);
-        c.setDisplayName(StringUtils.isEmpty(displayName) ? name : displayName);
-        c.setCodeName(name);
-        c.setId(newGuid());
-        c.setLineNumber(lineNumber);
-        updateCodeSystemFields(c);
-        updateVsacValidation(c);
-        destinationModel.getCodeList().add(c);
-    }
-
-    @Override
-    public void parameter(String name, String logic, String comment) {
-        var existingParam = findExisting(sourceModel.getCqlParameters(),
-                p -> StringUtils.equals(p.getName(), name));
-
-        CQLParameter p = new CQLParameter();
-        p.setId(newGuid());
-        p.setName(name);
-        p.setParameterLogic(logic);
-        p.setCommentString(comment);
-        if (existingParam.isPresent()) {
-            p.setReadOnly(existingParam.get().isReadOnly());
+        if (StringUtils.isBlank(name)) {
+            handleError(severErrorAtLine("code must have a name.", lineNumber));
+        } else if (StringUtils.isBlank(code)) {
+            handleError(severErrorAtLine("code must have a code.", lineNumber));
+        } else if (StringUtils.isBlank(codeSystemName)) {
+            handleError(severErrorAtLine("code must have a codeSystemName.", lineNumber));
+        } else if (StringUtils.isBlank(code)) {
+            handleError(severErrorAtLine("code must have a displayName.", lineNumber));
         } else {
-            p.setReadOnly(false);
+            var c = new CQLCode();
+            var pair = parseCodeSystemName(codeSystemName);
+            c.setCodeSystemName(pair.getLeft());
+            c.setCodeSystemVersion(pair.getRight());
+            c.setCodeOID(code);
+            c.setDisplayName(StringUtils.isEmpty(displayName) ? name : displayName);
+            c.setCodeName(name);
+            c.setId(newGuid());
+            c.setLineNumber(lineNumber);
+            updateCodeSystemFields(c);
+            updateVsacValidation(c);
+            destinationModel.getCodeList().add(c);
         }
-
-        destinationModel.getCqlParameters().add(p);
     }
 
     @Override
-    public void context(String context) {
-        destinationModel.setContext(context);
-    }
+    public void parameter(String name, String logic, String comment, int lineNumber) {
+        if (StringUtils.isBlank(name)) {
+            handleError(severErrorAtLine("parameter must have a name.", lineNumber));
+        } else {
+            var existingParam = findExisting(sourceModel.getCqlParameters(),
+                    p -> StringUtils.equals(p.getName(), name));
 
-    @Override
-    public void definition(String name, String logic, String comment) {
-        destinationModel.getDefinitionList().add(buildCQLDef(name, logic, comment));
-    }
-
-    @Override
-    public void function(String name, List<FunctionArgument> args, String logic, String comment) {
-        // Functions can be overloaded in FHIR
-        var f = new CQLFunctions();
-        f.setId(getFunctionId(name));
-        f.setName(name);
-        f.setLogic(logic);
-        f.setCommentString(comment);
-        f.setArgumentList(args.stream().map(a -> {
-            CQLFunctionArgument argument = new CQLFunctionArgument();
-            argument.setId(newGuid());
-            argument.setArgumentName(a.getName());
-            if (isQuoted(a.getType())) {
-                //In conversions we will still have quoted strings here for QDM type.
-                argument.setQdmDataType(chomp1(a.getType()));
-                argument.setArgumentType("QDM Datatype");
+            CQLParameter p = new CQLParameter();
+            p.setId(newGuid());
+            p.setName(name);
+            p.setParameterLogic(logic);
+            p.setCommentString(comment);
+            if (existingParam.isPresent()) {
+                p.setReadOnly(existingParam.get().isReadOnly());
             } else {
-                argument.setQdmDataType(a.getType());
-                argument.setArgumentType("FHIR Datatype");
+                p.setReadOnly(false);
             }
-            return argument;
-        }).collect(Collectors.toList()));
-        f.setContext(destinationModel.getContext());
-        destinationModel.getCqlFunctions().add(f);
+
+            destinationModel.getCqlParameters().add(p);
+        }
+    }
+
+    @Override
+    public void context(String context, int lineNumber) {
+        if (StringUtils.isBlank(context)) {
+            handleError(severErrorAtLine("String must have a name.", lineNumber));
+        } else {
+            destinationModel.setContext(context);
+        }
+    }
+
+    @Override
+    public void definition(String name, String logic, String comment, int lineNumber) {
+        if (StringUtils.isBlank(name)) {
+            handleError(severErrorAtLine("define must have a name", lineNumber));
+        } else if (StringUtils.isBlank(logic)) {
+            handleError(severErrorAtLine("define must have logic", lineNumber));
+        } else {
+            destinationModel.getDefinitionList().add(buildCQLDef(name, logic, comment));
+        }
+    }
+
+    @Override
+    public void function(String name, List<FunctionArgument> args, String logic, String comment, int lineNumber) {
+        if (StringUtils.isBlank(name)) {
+            handleError(severErrorAtLine("define function must have a name", lineNumber));
+        } else if (CollectionUtils.isEmpty(args)) {
+            handleError(severErrorAtLine("define function must have arguments", lineNumber));
+        } else if (StringUtils.isBlank(logic)) {
+            handleError(severErrorAtLine("define function must have logic", lineNumber));
+        } else {
+            // Functions can be overloaded in FHIR
+            var f = new CQLFunctions();
+            f.setId(getFunctionId(name));
+            f.setName(name);
+            f.setLogic(logic);
+            f.setCommentString(comment);
+            f.setArgumentList(args.stream().map(a -> {
+                CQLFunctionArgument argument = new CQLFunctionArgument();
+                argument.setId(newGuid());
+                argument.setArgumentName(a.getName());
+                if (isQuoted(a.getType())) {
+                    //In conversions we will still have quoted strings here for QDM type.
+                    argument.setQdmDataType(chomp1(a.getType()));
+                    argument.setArgumentType("QDM Datatype");
+                } else {
+                    argument.setQdmDataType(a.getType());
+                    argument.setArgumentType("FHIR Datatype");
+                }
+                return argument;
+            }).collect(Collectors.toList()));
+            f.setContext(destinationModel.getContext());
+            destinationModel.getCqlFunctions().add(f);
+        }
     }
 
     private String getDefineId(String name) {

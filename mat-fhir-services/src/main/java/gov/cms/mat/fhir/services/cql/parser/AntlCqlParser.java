@@ -85,7 +85,7 @@ public class AntlCqlParser implements CqlParser {
 
         @Override
         public void enterContextDefinition(cqlParser.ContextDefinitionContext ctx) {
-            visitor.context(getFullText(ctx.identifier()));
+            visitor.context(getFullText(ctx.identifier()), getLine(ctx));
         }
 
         @Override
@@ -98,7 +98,7 @@ public class AntlCqlParser implements CqlParser {
                     code,
                     codeSystemName,
                     displayName,
-                    tokens.get(ctx.getSourceInterval().a).getLine());
+                    getLine(ctx));
         }
 
         private String getCodeDefinitionDisplayName(cqlParser.CodeDefinitionContext ctx) {
@@ -118,7 +118,7 @@ public class AntlCqlParser implements CqlParser {
             visitor.codeSystem(name,
                     uri,
                     versionUri,
-                    tokens.get(ctx.getSourceInterval().a).getLine());
+                    getLine(ctx));
         }
 
         @Override
@@ -128,18 +128,7 @@ public class AntlCqlParser implements CqlParser {
             visitor.libraryTag(getFullText(ctx.qualifiedIdentifier()),
                     getUnquotedFullText(ctx.versionSpecifier()),
                     comments,
-                    tokens.get(ctx.getSourceInterval().a).getLine());
-        }
-
-        private String findLibraryComments(int start) {
-            List<Token> comments = tokens.getTokens(start, tokens.size() - 1);
-
-            var optional = comments.stream()
-                    .takeWhile(t -> t.getType() != 3) // type: 3, text: using
-                    .filter(t -> t.getType() == cqlParser.COMMENT)
-                    .findFirst();
-
-            return optional.map(token -> trimComment(token.getText())).orElse(null);
+                    getLine(ctx));
         }
 
         @Override
@@ -149,13 +138,14 @@ public class AntlCqlParser implements CqlParser {
             String alias = getFullText(ctx.localIdentifier());
             String model = BaseProperties.LIBRARY_FHIR_TYPE;
             String modelVersion = BaseProperties.LIBRARY_FHIR_VERSION;
-            visitor.includeLib(libName, version, alias, model, modelVersion, tokens.get(ctx.getSourceInterval().a).getLine());
+            visitor.includeLib(libName, version, alias, model, modelVersion, getLine(ctx));
         }
 
         @Override
         public void enterUsingDefinition(cqlParser.UsingDefinitionContext ctx) {
             visitor.usingModelVersionTag(getUnquotedFullText(ctx.modelIdentifier()),
-                    getUnquotedFullText(ctx.versionSpecifier()));
+                    getUnquotedFullText(ctx.versionSpecifier()),
+                    getLine(ctx));
         }
 
         @Override
@@ -164,7 +154,7 @@ public class AntlCqlParser implements CqlParser {
             String uri = getUnquotedFullText(ctx.valuesetId());
             visitor.valueSet(type,
                     uri,
-                    tokens.get(ctx.getSourceInterval().a).getLine());
+                    getLine(ctx));
         }
 
         @Override
@@ -173,7 +163,7 @@ public class AntlCqlParser implements CqlParser {
             String logic = getDefinitionAndFunctionLogic(ctx).trim();
             String comment = getExpressionComment(ctx).trim();
 
-            visitor.definition(identifier, logic, comment);
+            visitor.definition(identifier, logic, comment, getLine(ctx));
         }
 
         @Override
@@ -203,7 +193,7 @@ public class AntlCqlParser implements CqlParser {
                 }
             }
 
-            visitor.function(identifier, functionArguments, logic, comment);
+            visitor.function(identifier, functionArguments, logic, comment, getLine(ctx));
         }
 
         @Override
@@ -212,7 +202,23 @@ public class AntlCqlParser implements CqlParser {
             String comment = getExpressionComment(ctx).trim();
             String logic = getParameterLogic(ctx, getFullText(ctx.identifier())).trim();
 
-            visitor.parameter(identifier, logic, comment);
+            visitor.parameter(identifier, logic, comment, getLine(ctx));
+        }
+
+        private int getLine(ParserRuleContext ctx) {
+            return tokens.get(ctx.getSourceInterval().a).getLine();
+        }
+
+
+        private String findLibraryComments(int start) {
+            List<Token> comments = tokens.getTokens(start, tokens.size() - 1);
+
+            var optional = comments.stream()
+                    .takeWhile(t -> t.getType() != 3) // type: 3, text: using
+                    .filter(t -> t.getType() == cqlParser.COMMENT)
+                    .findFirst();
+
+            return optional.map(token -> trimComment(token.getText())).orElse(null);
         }
 
 

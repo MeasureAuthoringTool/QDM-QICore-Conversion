@@ -37,7 +37,7 @@ public interface CqlVisitor {
         // by default do nothing unless its implemented.
     }
 
-    default void usingModelVersionTag(String model, String fhirVersion) {
+    default void usingModelVersionTag(String model, String fhirVersion, int lineNumber) {
         // by default do nothing unless its implemented.
     }
 
@@ -66,19 +66,19 @@ public interface CqlVisitor {
         //by default do nothing unless its implemented.
     }
 
-    default void parameter(String name, String logic, String comment) {
+    default void parameter(String name, String logic, String comment, int lineNumber) {
         //by default do nothing unless its implemented.
     }
 
-    default void context(String context) {
+    default void context(String context, int lineNumber) {
         //by default do nothing unless its implemented.
     }
 
-    default void definition(String name, String logic, String comment) {
+    default void definition(String name, String logic, String comment, int lineNumber) {
         //by default do nothing unless its implemented.
     }
 
-    default void function(String name, List<FunctionArgument> args, String logic, String comment) {
+    default void function(String name, List<FunctionArgument> args, String logic, String comment, int lineNumber) {
         //by default do nothing unless its implemented.
     }
 }
