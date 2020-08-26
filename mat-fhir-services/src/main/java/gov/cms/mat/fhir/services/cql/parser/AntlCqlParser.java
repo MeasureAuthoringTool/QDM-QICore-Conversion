@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -104,7 +105,8 @@ public class AntlCqlParser implements CqlParser {
         private String getCodeDefinitionDisplayName(cqlParser.CodeDefinitionContext ctx) {
             String displayName = null;
             cqlParser.DisplayClauseContext displayClauseContext = ctx.displayClause();
-            if (displayClauseContext != null && displayClauseContext.children.size() > 1) {
+            if (displayClauseContext != null &&
+                    displayClauseContext.children.size() > 1) {
                 displayName = CqlUtils.unquote(displayClauseContext.children.get(1).getText());
             }
             return displayName;
@@ -230,24 +232,35 @@ public class AntlCqlParser implements CqlParser {
             if (context == null) {
                 return null;
             }
-            if (context.start == null || context.stop == null || context.start.getStartIndex() < 0 || context.stop.getStopIndex() < 0) {
+            if (context.start == null ||
+                    context.stop == null ||
+                    context.start.getStartIndex() < 0 ||
+                    context.stop.getStopIndex() < 0) {
                 return context.getText();
             }
             return context.start.getInputStream().getText(Interval.of(context.start.getStartIndex(), context.stop.getStopIndex()));
         }
 
         private String getExpressionComment(ParserRuleContext ctx) {
-            Token previous = tokens.get(ctx.start.getTokenIndex() - 2);
-            if (previous.getType() == cqlLexer.COMMENT) {
-                String comment = previous.getText();
-                return trimComment(comment);
+            int index = ctx.start.getTokenIndex() - 2;
+            if (isValidIndex(index)) {
+                var token = tokens.get(index);
+                if (token.getType() == cqlLexer.COMMENT) {
+                    String comment = token.getText();
+                    return trimComment(comment);
+                }
             }
-
             return "";
         }
 
+        private boolean isValidIndex(int i) {
+            return i >= 0;
+        }
+
         private String trimComment(String comment) {
-            return comment.replace(CqlUtils.BLOCK_COMMENT_START, "").replace(CqlUtils.BLOCK_COMMENT_END, "").trim();
+            return comment.replace(CqlUtils.BLOCK_COMMENT_START,
+                    "").replace(CqlUtils.BLOCK_COMMENT_END,
+                    "").trim();
         }
 
         private String getDefinitionAndFunctionLogic(ParserRuleContext ctx) {
@@ -311,14 +324,15 @@ public class AntlCqlParser implements CqlParser {
                 return index - 1;
             }
 
-            Token twoTokensBeforeToken = tokens.get(index - 2);
-            // check if the expression has a comment associated to it
-            // if it does, return the token before it
-            if (twoTokensBeforeToken.getType() == cqlLexer.COMMENT) {
-                return twoTokensBeforeToken.getTokenIndex() - 1;
-            } else {
-                return index - 1;
+            if (isValidIndex(index - 2)) {
+                Token twoTokensBeforeToken = tokens.get(index - 2);
+                // check if the expression has a comment associated to it
+                // if it does, return the token before it
+                if (twoTokensBeforeToken.getType() == cqlLexer.COMMENT) {
+                    return twoTokensBeforeToken.getTokenIndex() - 1;
+                }
             }
+            return index - 1;
         }
     }
 
