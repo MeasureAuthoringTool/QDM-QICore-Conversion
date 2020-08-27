@@ -276,23 +276,27 @@ public class CqlUtils {
     }
 
     public static boolean isValidVersion(String version) {
-        boolean result = true;
-        String[] parts = version.split("\\.");
-
-        if (parts.length == 3) {
-            for (String p : parts) {
-                try {
-                    Integer.parseInt(p);
-                } catch (NumberFormatException nfe) {
-                    result = false;
-                    break;
-                }
-            }
-            result = result && parts[BLK_SEP_LENGTH].length() == 3;
+        if (StringUtils.isBlank(version)) {
+            return false;
         } else {
-            result = false;
+            boolean result = true;
+            String[] parts = version.split("\\.");
+
+            if (parts.length == 3) {
+                for (String p : parts) {
+                    try {
+                        Integer.parseInt(p);
+                    } catch (NumberFormatException nfe) {
+                        result = false;
+                        break;
+                    }
+                }
+                result = result && parts[BLK_SEP_LENGTH].length() == 3;
+            } else {
+                result = false;
+            }
+            return result;
         }
-        return result;
     }
 
     public static Pair<Double, Integer> versionToVersionAndRevision(String version) {
@@ -300,7 +304,7 @@ public class CqlUtils {
             String[] sp = version.split("\\.");
             // 9.1.100 = version 9.001 revision 100.
             // Old legacy annoyance we have to deal with.
-            return Pair.of(Double.parseDouble(sp[0] + "." + StringUtils.leftPad(sp[1],3,'0'))
+            return Pair.of(Double.parseDouble(sp[0] + "." + StringUtils.leftPad(sp[1], 3, '0'))
                     , Integer.parseInt(sp[BLK_SEP_LENGTH]));
         } else {
             throw new IllegalArgumentException("Invalid version: " + version);
