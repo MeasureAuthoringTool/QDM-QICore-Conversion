@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.chomp1;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.isQuoted;
+import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.isValidVersion;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.newGuid;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseCodeSystemName;
 import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseOid;
@@ -112,48 +113,57 @@ public class CqlToMatXml implements CqlVisitor {
     public void libraryTag(String libraryName, String version, @Nullable String libraryComment, int lineNumber) {
         if (StringUtils.isBlank(libraryName)) {
             handleError(severErrorAtLine("library must have a name.", lineNumber));
-        } else if (StringUtils.isBlank(version)) {
+        }
+        if (StringUtils.isBlank(version)) {
             handleError(severErrorAtLine("library must have a version.", lineNumber));
-        } else if (!LIBRARY_NAME_PATTERN.matcher(libraryName).matches()) {
+        }
+        if (!LIBRARY_NAME_PATTERN.matcher(libraryName).matches()) {
             handleError(severErrorAtLine("library name must follow this regex: " + LIB_NAME_REGEX +
                     ". You are only allowed to change this in General Information. It is called CQL Library name.", lineNumber));
-        } else if (!LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
-            handleError(severErrorAtLine("library version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
-        } else {
-            destinationModel.setLibraryName(libraryName);
-            destinationModel.setVersionUsed(version);
-            destinationModel.setLibraryComment(libraryComment);
         }
+        if (!LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
+            handleError(severErrorAtLine("library version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
+        }
+        //Always set these they are needed even if there are errors for cases like conversion.
+        destinationModel.setLibraryName(libraryName);
+        destinationModel.setVersionUsed(version);
+        destinationModel.setLibraryComment(libraryComment);
+
     }
 
     @Override
     public void usingModelVersionTag(String model, String modelVersion, int lineNumber) {
         if (StringUtils.isBlank(model)) {
             handleError(severErrorAtLine("using must have a model.", lineNumber));
-        } else if (StringUtils.isBlank(modelVersion)) {
-            handleError(severErrorAtLine("using must have a version.", lineNumber));
-        } else {
-            destinationModel.setUsingModelVersion(modelVersion);
-            destinationModel.setUsingModel(model);
         }
+        if (StringUtils.isBlank(modelVersion)) {
+            handleError(severErrorAtLine("using must have a version.", lineNumber));
+        }
+        //Always set these they are needed even if there are errors for cases like conversion.else
+        destinationModel.setUsingModelVersion(modelVersion);
+        destinationModel.setUsingModel(model);
     }
 
     @Override
     public void includeLib(String libName, String version, String alias, String model, String modelVersion, int lineNumber) {
         if (StringUtils.isBlank(libName) || !LIBRARY_NAME_PATTERN.matcher(libName).matches()) {
             handleError(severErrorAtLine("include name must follow this regex: " + LIB_NAME_REGEX, lineNumber));
-        } else if (StringUtils.isBlank(version) || !LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
+        }
+        if (StringUtils.isBlank(version) || !LIBRARY_VERSION_PATTERN.matcher(version).matches()) {
             handleError(severErrorAtLine("include version must follow this regex: " + LIB_VERSION_REGEX + ", e.g. 1.0.000", lineNumber));
-        } else if (StringUtils.isBlank(alias)) {
+        }
+        if (StringUtils.isBlank(alias)) {
             handleError(severErrorAtLine("include must have an alias.", lineNumber));
-        } else {
-            CQLIncludeLibrary lib = new CQLIncludeLibrary();
-            lib.setId(newGuid());
-            lib.setCqlLibraryName(libName);
-            lib.setVersion(version);
-            lib.setAliasName(alias);
-            lib.setLibraryModelType(model);
-            lib.setQdmVersion(modelVersion);
+        }
+        //Always set these they are needed even if there are errors for cases like conversion.else
+        CQLIncludeLibrary lib = new CQLIncludeLibrary();
+        lib.setId(newGuid());
+        lib.setCqlLibraryName(libName);
+        lib.setVersion(version);
+        lib.setAliasName(alias);
+        lib.setLibraryModelType(model);
+        lib.setQdmVersion(modelVersion);
+        if (isValidVersion(version)) { //Protect from null/invalid since we already severe errored.
             var versionPair = versionToVersionAndRevision(version);
             var cqlLibrary = cqlLibraryRepository.findByVersionAndCqlNameAndRevisionNumberAndLibraryModelAndDraft(
                     BigDecimal.valueOf(versionPair.getLeft()),
@@ -165,17 +175,24 @@ public class CqlToMatXml implements CqlVisitor {
             } else {
                 handleError(severErrorAtLine("Could not find library " + libName + " " + version, lineNumber));
             }
-            destinationModel.getCqlIncludeLibrarys().add(lib);
         }
+        destinationModel.getCqlIncludeLibrarys().add(lib);
+
     }
 
     @Override
     public void codeSystem(String name, String uri, String versionUri, int lineNumber) {
+        boolean hasSeveres = false;
         if (StringUtils.isBlank(name)) {
             handleError(severErrorAtLine("codesystem must have a name.", lineNumber));
-        } else if (StringUtils.isBlank(uri)) {
+            hasSeveres = true;
+        }
+        if (StringUtils.isBlank(uri)) {
             handleError(severErrorAtLine("codesystem must have a uri.", lineNumber));
-        } else {
+            hasSeveres = true;
+        }
+        if (!hasSeveres) {
+            //It is only save to continue if code system has all of it's components or we will NPE.
             var parsedCodeSystemName = parseCodeSystemName(name);
             var isConversion = !sourceModel.isFhir();
             CQLCodeSystem cs = new CQLCodeSystem();
@@ -197,17 +214,24 @@ public class CqlToMatXml implements CqlVisitor {
 
     @Override
     public void valueSet(String name, String uri, int lineNumber) {
+        boolean hasSeveres = false;
         if (StringUtils.isBlank(name)) {
             handleError(severErrorAtLine("valueset must have a name.", lineNumber));
-        } else if (StringUtils.isBlank(uri)) {
+            hasSeveres = true;
+        }
+        if (StringUtils.isBlank(uri)) {
             handleError(severErrorAtLine("valueset must have a uri.", lineNumber));
-        } else {
-            try {
-                validateValuesetUri(uri);
-            } catch (IllegalArgumentException e) {
-                handleError(severErrorAtLine("Invalid valueset URI: " + uri, lineNumber));
-            }
+            hasSeveres = true;
+        }
+        try {
+            validateValuesetUri(uri);
+        } catch (IllegalArgumentException e) {
+            handleError(severErrorAtLine("Invalid valueset URI: " + uri, lineNumber));
+            hasSeveres = true;
+        }
 
+        if (!hasSeveres) {
+            //It is only save to continue if valueset has all of it's components or we will NPE.
             var vs = new CQLQualityDataSetDTO();
             vs.setId(newGuid());
             vs.setName(name);
@@ -231,15 +255,25 @@ public class CqlToMatXml implements CqlVisitor {
 
     @Override
     public void code(String name, String code, String codeSystemName, String displayName, int lineNumber) {
+        boolean hasSeveres = false;
         if (StringUtils.isBlank(name)) {
             handleError(severErrorAtLine("code must have a name.", lineNumber));
-        } else if (StringUtils.isBlank(code)) {
+            hasSeveres = true;
+        }
+        if (StringUtils.isBlank(code)) {
             handleError(severErrorAtLine("code must have a code.", lineNumber));
-        } else if (StringUtils.isBlank(codeSystemName)) {
+            hasSeveres = true;
+        }
+        if (StringUtils.isBlank(codeSystemName)) {
             handleError(severErrorAtLine("code must have a codeSystemName.", lineNumber));
-        } else if (StringUtils.isBlank(code)) {
+            hasSeveres = true;
+        }
+        if (StringUtils.isBlank(code)) {
             handleError(severErrorAtLine("code must have a displayName.", lineNumber));
-        } else {
+            hasSeveres = true;
+        }
+        if (!hasSeveres) {
+            //It is only save to continue if code has all of it's components or we will NPE.
             var c = new CQLCode();
             var pair = parseCodeSystemName(codeSystemName);
             c.setCodeSystemName(pair.getLeft());
@@ -289,24 +323,38 @@ public class CqlToMatXml implements CqlVisitor {
 
     @Override
     public void definition(String name, String logic, String comment, int lineNumber) {
+        boolean hasSeveres = false;
         if (StringUtils.isBlank(name)) {
             handleError(severErrorAtLine("define must have a name", lineNumber));
-        } else if (StringUtils.isBlank(logic)) {
+            hasSeveres = true;
+        } if (StringUtils.isBlank(logic)) {
             handleError(severErrorAtLine("define must have logic", lineNumber));
-        } else {
+            hasSeveres = true;
+        }
+        if (!hasSeveres){
+            //It is only save to continue if definition has all of it's components or we will NPE.
             destinationModel.getDefinitionList().add(buildCQLDef(name, logic, comment));
         }
     }
 
     @Override
     public void function(String name, List<FunctionArgument> args, String logic, String comment, int lineNumber) {
+        boolean hasSeveres = false;
+
         if (StringUtils.isBlank(name)) {
             handleError(severErrorAtLine("define function must have a name", lineNumber));
-        } else if (CollectionUtils.isEmpty(args)) {
+            hasSeveres = true;
+        }
+        if (CollectionUtils.isEmpty(args)) {
             handleError(severErrorAtLine("define function must have arguments", lineNumber));
-        } else if (StringUtils.isBlank(logic)) {
+            hasSeveres = true;
+        }
+        if (StringUtils.isBlank(logic)) {
             handleError(severErrorAtLine("define function must have logic", lineNumber));
-        } else {
+            hasSeveres = true;
+        }
+        if (!hasSeveres){
+            //It is only save to continue if function has all of it's components or we will NPE.
             // Functions can be overloaded in FHIR
             var f = new CQLFunctions();
             f.setId(getFunctionId(name));
