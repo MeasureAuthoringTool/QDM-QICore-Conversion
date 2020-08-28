@@ -24,7 +24,7 @@ public class LibraryOrchestrationService {
     }
 
     public boolean process(OrchestrationProperties properties) {
-        if (!processValidation(properties)) {
+        if (!properties.isPush() && !processValidation(properties)) {
             log.debug("Conversion Stopped due to validation errors measureId: {}", properties.getMeasureId());
             return false;
         } else {
