@@ -22,7 +22,7 @@ public class VsacConfig {
     private String versionService;
     private String vsacServerDrcUrl;
 
-    private boolean useCache; // By saving the data will speed things up for testing.
+    // private boolean useCache; // By saving the data will speed things up for testing.
     private String cacheDirectory;
 
     private boolean useCacheOnly = true; // Will only look in cache.
