@@ -1,7 +1,5 @@
 FROM openjdk:11-jdk
 RUN mkdir -p /opt/fhir/distribution
-RUN mkdir -p /opt/vsac/cache
-COPY ./cache  /opt/vsac/cache
 
 RUN curl -O https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem
 RUN curl -O https://s3.amazonaws.com/rds-downloads/rds-ca-2019-us-east-1.pem
