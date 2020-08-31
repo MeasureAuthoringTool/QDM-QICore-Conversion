@@ -26,7 +26,9 @@ public class MappingSpreadsheetService {
     private static final String CONVERSION_ATTRIBUTES = "/conversionAttributes";
 
     private final RestTemplate restTemplate;
-    @Value("${qdmqicore.conversion.baseurl}")
+
+
+    @Value("${mapping.services.baseurl}")
     private String conversionUrl;
 
     public MappingSpreadsheetService(RestTemplate restTemplate) {

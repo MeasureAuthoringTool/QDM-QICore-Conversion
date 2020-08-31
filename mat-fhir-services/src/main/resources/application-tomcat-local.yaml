@@ -36,10 +36,6 @@ fhir:
   r4:
     baseurl: ${HAPI_FHIR_URL}
 
-qdmqicore:
-  conversion:
-    baseurl: ${QDM_QICORE_URL}
-
 cql:
   conversion:
     baseurl: ${CQL_CONVERSION_URL}
@@ -47,3 +43,7 @@ cql:
 self:
   health:
     baseurl: ${FHIR_SERVICES_URL}/mat-fhir-serives/
+
+mapping:
+  services:
+    baseUrl: ${QDM_QICORE_MAPPING_SERVICES_URL}

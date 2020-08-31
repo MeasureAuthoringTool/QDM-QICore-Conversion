@@ -41,10 +41,6 @@ fhir:
     baseurl: ${HAPI_FHIR_URL}
     public-url: ${HAPI_FHIR_URL_PUBLIC}
 
-qdmqicore:
-  conversion:
-    baseurl: ${QDM_QICORE_URL}
-
 cql:
   conversion:
     baseurl: ${CQL_CONVERSION_URL}
@@ -52,10 +48,6 @@ cql:
 self:
   health:
     baseurl: ${FHIR_SERVICES_URL}
-
-json:
-  data:
-    url: ${CODESYSTEM_SHEET_URL}
 
 mapping:
   services:

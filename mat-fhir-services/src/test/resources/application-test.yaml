@@ -38,10 +38,6 @@ fhir:
     baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
     public-url: http://localhost:8080/hapi-fhir-jpaserver/fhir/
 
-qdmqicore:
-  conversion:
-    baseurl: http://localhost:9090
-
 cql:
   conversion:
     baseurl: http://localhost:7070
@@ -50,6 +46,8 @@ self:
   health:
     baseurl: http://localhost:${server.port}
 
-json:
-  data:
-    url: https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json
+mapping:
+  services:
+    baseUrl: ${QDM_QICORE_MAPPING_SERVICES_URL}
+
+

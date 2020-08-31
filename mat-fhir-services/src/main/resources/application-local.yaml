@@ -49,9 +49,6 @@ fhir:
     baseurl: http://localhost:6060/fhir/
     public-url: http://localhost:6060/fhir/
 
-qdmqicore:
-  conversion:
-    baseurl: ${QDM_QICORE_URL:http://localhost:9090}
 
 cql:
   conversion:
@@ -62,8 +59,8 @@ self:
   health:
     baseurl: ${FHIR_SERVICES_URL:http://localhost:9080}
 
-json:
-  data:
-    url: https://spreadsheets.google.com/feeds/list/1_heoWR09X3UnyEvyyHLzVXT_D1Hhdt3OPztpgr1hW_k/od6/public/values?alt=json
+mapping:
+  services:
+    baseUrl: ${QDM_QICORE_MAPPING_SERVICES_URL}
 
 swagger-server:
