@@ -9,11 +9,11 @@ import gov.cms.mat.cql.elements.SymbolicProperty;
 import gov.cms.mat.cql.elements.UnionProperties;
 import gov.cms.mat.cql.elements.UsingProperties;
 import gov.cms.mat.cql.elements.ValueSetProperties;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CodeSystemOidNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
-import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
+import gov.cms.mat.fhir.services.service.MappingDataService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +43,7 @@ public class QdmCqlToFhirCqlConverter {
             "DEFINE crosses dissimilar FHIR Resources within UNION statements, this will fail processing, " +
                     "consider creating define statements limited to single FHIR Resource.";
     private final CqlTextParser cqlTextParser;
-    private final QdmQiCoreDataService qdmQiCoreDataService;
+    private final MappingDataService mappingDataService;
     private final Map<String, String> conversionLibLookupMap;
     private final List<CodeSystemEntry> codeSystemMappings;
     private final HapiFhirServer hapiFhirServer;
@@ -56,12 +56,12 @@ public class QdmCqlToFhirCqlConverter {
 
     public QdmCqlToFhirCqlConverter(String cqlText,
                                     boolean includeStdLibraries,
-                                    QdmQiCoreDataService qdmQiCoreDataService,
+                                    MappingDataService mappingDataService,
                                     Map<String, String> conversionLibLookupMap,
                                     List<CodeSystemEntry> codeSystemMappings,
                                     HapiFhirServer hapiFhirServer) {
         cqlTextParser = new CqlTextParser(cqlText);
-        this.qdmQiCoreDataService = qdmQiCoreDataService;
+        this.mappingDataService = mappingDataService;
         this.conversionLibLookupMap = conversionLibLookupMap;
         this.codeSystemMappings = codeSystemMappings;
         this.hapiFhirServer = hapiFhirServer;
@@ -272,7 +272,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private void processSymbolics(DefineProperties properties) {
-        properties.getSymbolicProperties().forEach(p -> p.setHelper(qdmQiCoreDataService.getQdmToFhirMappingHelper()));
+        properties.getSymbolicProperties().forEach(p -> p.setHelper(mappingDataService.getQdmToFhirMappingHelper()));
     }
 
     private void convertIncludes() {

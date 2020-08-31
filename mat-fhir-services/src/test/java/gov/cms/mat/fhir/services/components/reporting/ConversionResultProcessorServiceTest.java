@@ -3,7 +3,7 @@ package gov.cms.mat.fhir.services.components.reporting;
 import gov.cms.mat.fhir.rest.dto.*;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ConversionResultsNotFoundException;
-import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
+import gov.cms.mat.fhir.services.service.MappingDataService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class ConversionResultProcessorServiceTest {
     private ThreadSessionKey threadSessionKey;
 
     @Mock
-    private QdmQiCoreDataService qdmQiCoreDataService;
+    private MappingDataService mappingDataService;
     @Mock
     private ConversionResultsService conversionResultsService;
 

@@ -8,27 +8,23 @@ import gov.cms.mat.fhir.services.cql.QdmCqlToFhirCqlConverter;
 import gov.cms.mat.fhir.services.cql.parser.ConversionParserListener;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import gov.cms.mat.fhir.services.service.CodeSystemConversionDataService;
-import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
+import gov.cms.mat.fhir.services.service.MappingDataService;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CqlLibraryConverter {
-    private final QdmQiCoreDataService qdmQiCoreDataService;
+    private final MappingDataService mappingDataService;
     private final ConversionLibraryLookup conversionLibraryLookup;
-    private final CodeSystemConversionDataService codeSystemConversionDataService;
     private final HapiFhirServer hapiFhirServer;
 
     private final ConversionParserListener conversionParserListener;
 
-    public CqlLibraryConverter(QdmQiCoreDataService qdmQiCoreDataService,
+    public CqlLibraryConverter(MappingDataService mappingDataService,
                                ConversionLibraryLookup conversionLibraryLookup,
-                               CodeSystemConversionDataService codeSystemConversionDataService,
                                HapiFhirServer hapiFhirServer,
                                ConversionParserListener conversionParserListener) {
-        this.qdmQiCoreDataService = qdmQiCoreDataService;
+        this.mappingDataService = mappingDataService;
         this.conversionLibraryLookup = conversionLibraryLookup;
-        this.codeSystemConversionDataService = codeSystemConversionDataService;
         this.hapiFhirServer = hapiFhirServer;
         this.conversionParserListener = conversionParserListener;
     }
@@ -37,14 +33,14 @@ public class CqlLibraryConverter {
         try {
             QdmCqlToFhirCqlConverter qdmCqlToFhirCql = new QdmCqlToFhirCqlConverter(cqlText,
                     includeStdLibraries,
-                    qdmQiCoreDataService,
+                    mappingDataService,
                     conversionLibraryLookup.getMap(),
-                    codeSystemConversionDataService.getCodeSystemMappings(),
+                    mappingDataService.getCodeSystemEntries(),
                     hapiFhirServer);
 
-           String cql =  qdmCqlToFhirCql.convert(null);
+            String cql = qdmCqlToFhirCql.convert(null);
 
-           return conversionParserListener.convert(cql);
+            return conversionParserListener.convert(cql);
 
         } catch (QdmMappingException e) {
             ConversionReporter.setTerminalMessage(e.getMessage(), ConversionOutcome.QDM_MAPPING_ERROR);

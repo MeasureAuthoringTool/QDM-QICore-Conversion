@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLCodeSystem;
 import mat.model.cql.CQLDefinition;
@@ -23,7 +23,6 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -91,8 +90,8 @@ public class AntlrCqlToMatXmlTest {
         var destination = parseModel("code_system_test.cql");
         assertEquals(1, destination.getCodeSystemList().size());
 
-        CQLCodeSystem cqlCodeSystem =destination.getCodeSystemList().get(0);
-        assertNull( cqlCodeSystem.getVersionUri());
+        CQLCodeSystem cqlCodeSystem = destination.getCodeSystemList().get(0);
+        assertNull(cqlCodeSystem.getVersionUri());
 
         assertEquals(1, destination.getCodeList().size());
     }

@@ -1,8 +1,10 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
+
 import java.util.Map;
 
-import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
+
 
 public interface CodeListService {
 

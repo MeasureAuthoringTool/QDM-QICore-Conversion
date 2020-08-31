@@ -7,8 +7,7 @@ import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
 import gov.cms.mat.fhir.services.cql.parser.ConversionParserListener;
 import gov.cms.mat.fhir.services.cql.parser.MappingSpreadsheetService;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import gov.cms.mat.fhir.services.service.CodeSystemConversionDataService;
-import gov.cms.mat.fhir.services.service.QdmQiCoreDataService;
+import gov.cms.mat.fhir.services.service.MappingDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -31,18 +30,12 @@ class CqlLibraryConverterTest implements ResourceFileUtil, HapiFhirServerTest {
     @BeforeEach
     void setUp() {
         RestTemplate restTemplate = new RestTemplate();
-        CodeSystemConversionDataService codeSystemConversionDataService = new CodeSystemConversionDataService(restTemplate);
-        ReflectionTestUtils.setField(codeSystemConversionDataService,
-                "url",
-                "https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json");
-        codeSystemConversionDataService.postConstruct();
-
         ConversionLibraryLookup conversionLibraryLookup = new ConversionLibraryLookup();
         conversionLibraryLookup.setMap(createConvertedLibLookUpMap());
 
-
-        QdmQiCoreDataService qdmQiCoreDataService = new QdmQiCoreDataService(restTemplate);
-        ReflectionTestUtils.setField(qdmQiCoreDataService, "matAtttributesUrl", "http://localhost:9090/qdmToQicoreMappings");
+        MappingDataService mappingDataService = new MappingDataService(restTemplate);
+        ReflectionTestUtils.setField(mappingDataService, "matAttributesUrl", "http://localhost:9090/qdmToQicoreMappings");
+        ReflectionTestUtils.setField(mappingDataService, "codeSystemEntriesUrl", "http://localhost:9090/codeSystemEntries");
 
         HapiFhirServer hapiFhirServer = createTestHapiServer();
 
@@ -52,9 +45,8 @@ class CqlLibraryConverterTest implements ResourceFileUtil, HapiFhirServerTest {
 
         ConversionParserListener conversionParserListener = new ConversionParserListener(conversionDataComponent);
 
-        cqlLibraryConverter = new CqlLibraryConverter(qdmQiCoreDataService,
+        cqlLibraryConverter = new CqlLibraryConverter(mappingDataService,
                 conversionLibraryLookup,
-                codeSystemConversionDataService,
                 hapiFhirServer,
                 conversionParserListener);
     }

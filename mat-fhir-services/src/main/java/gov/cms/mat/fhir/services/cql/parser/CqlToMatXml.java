@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
 import gov.cms.mat.fhir.services.components.validation.CodeSystemVsacAsync;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
