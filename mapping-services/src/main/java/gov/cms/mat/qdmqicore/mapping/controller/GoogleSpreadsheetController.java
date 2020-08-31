@@ -1,5 +1,6 @@
 package gov.cms.mat.qdmqicore.mapping.controller;
 
+import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionAttributes;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionDataTypes;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.DataType;
@@ -75,5 +76,10 @@ public class GoogleSpreadsheetController {
     @GetMapping(path = "/populationBasisValidValues")
     public Collection<String> populationBasisValidValues() {
         return spreadsheetService.getPopulationBasisValidValues();
+    }
+
+    @GetMapping(path = "/codeSystemEntries")
+    public List<CodeSystemEntry> codeSystemEntries() {
+        return spreadsheetService.getCodeSystemEntries();
     }
 }

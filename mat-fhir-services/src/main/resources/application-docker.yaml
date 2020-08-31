@@ -57,4 +57,8 @@ json:
   data:
     url: ${CODESYSTEM_SHEET_URL}
 
+mapping:
+  services:
+    baseUrl: ${QDM_QICORE_MAPPING_SERVICES_URL}
+
 swagger-server: ${MAT_FHIR_SWAGGER_URL}

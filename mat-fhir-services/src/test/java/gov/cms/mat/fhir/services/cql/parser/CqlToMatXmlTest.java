@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.cql.parser;
 
+import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.summary.CodeSystemEntry;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLDefinition;
 import mat.model.cql.CQLModel;
@@ -73,7 +73,7 @@ public class CqlToMatXmlTest {
         map.put("urn:oid:2.16.7.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.7.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/allergyintolerance-verification", "RoleCode", "2019-03"));
 
 
-       // when(codeListService.getOidToVsacCodeSystemMap()).thenReturn(map);
+        // when(codeListService.getOidToVsacCodeSystemMap()).thenReturn(map);
     }
 
 

@@ -1,5 +1,6 @@
 package gov.cms.mat.qdmqicore.mapping.service;
 
+import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionAttributes;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionDataTypes;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.DataType;
@@ -9,6 +10,7 @@ import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToQicoreMapping;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.RequiredMeasureField;
 import gov.cms.mat.fhir.rest.dto.spreadsheet.ResourceDefinition;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleConversionAttributesData;
+import gov.cms.mat.qdmqicore.mapping.model.google.GoogleConversionDataCodeSystemEntry;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleConversionDataTypesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleDataTypesData;
 import gov.cms.mat.qdmqicore.mapping.model.google.GoogleFhirLightBoxDataTypesForFunctionArgsData;
@@ -61,8 +63,11 @@ public class GoogleSpreadsheetService {
     private String fhirLightboxDatatypeAttributeAssociationUrl;
     @Value("${json.data.fhir-lightbox-datatype_for_function_args-url}")
     private String fhirLightboxDataTypesForFunctionArgsUrl;
-    @Value("${json.data.population-basis-valid-values}")
+    @Value("${json.data.population-basis-valid-values-url}")
     private String populationBasisValidValuesUrl;
+
+    @Value("${json.data.code-system-entry-url}")
+    private String codeSystemEntryUrl;
 
 
     public GoogleSpreadsheetService(RestTemplate restTemplate) {
@@ -263,8 +268,30 @@ public class GoogleSpreadsheetService {
 
             return data.getFeed().getEntry().stream()
                     .map(e -> getData(e.getBaseResource()))
-                    .sorted(String::compareToIgnoreCase)
+                    .sorted()
                     .collect(Collectors.toCollection(LinkedHashSet::new));
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<CodeSystemEntry> getCodeSystemEntries() {
+        GoogleConversionDataCodeSystemEntry data = restTemplate.getForObject(codeSystemEntryUrl, GoogleConversionDataCodeSystemEntry.class);
+
+        if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
+            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), codeSystemEntryUrl);
+
+            return data.getFeed().getEntry().stream()
+                    .map(e -> {
+                        var r = new CodeSystemEntry();
+                        r.setOid(getData(e.getOid()));
+                        r.setUrl(getData(e.getUrl()));
+                        r.setName(getData(e.getName()));
+                        r.setDefaultVsacVersion(getData(e.getDefaultVsacVersion()));
+                        return r;
+
+                    }).sorted()
+                    .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
