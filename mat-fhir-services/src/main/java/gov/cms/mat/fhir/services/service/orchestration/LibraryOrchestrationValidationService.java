@@ -22,6 +22,7 @@ import gov.cms.mat.fhir.services.translate.LibraryTranslator;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
@@ -169,11 +170,9 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         return response;
     }
 
-
     private Optional<LibraryConversionResults> find(List<LibraryConversionResults> libraryConversionResults, String matLibId) {
-        return libraryConversionResults.stream().filter(t -> t.getMatLibraryId().equals(matLibId)).findFirst();
+        return libraryConversionResults.stream().filter(t -> StringUtils.equals(t.getMatLibraryId(),matLibId)).findFirst();
     }
-
 
     private boolean processValidation(FhirValidationResult validationResult, AtomicBoolean atomicBoolean, String matLibId) {
 
