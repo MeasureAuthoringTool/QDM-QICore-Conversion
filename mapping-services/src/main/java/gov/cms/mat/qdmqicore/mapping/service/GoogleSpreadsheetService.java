@@ -66,7 +66,7 @@ public class GoogleSpreadsheetService {
     @Value("${json.data.population-basis-valid-values-url}")
     private String populationBasisValidValuesUrl;
 
-    @Value("${code-system-entry-url:}")
+    @Value("${json.data.code-system-entry-url}")
     private String codeSystemEntryUrl;
 
 
