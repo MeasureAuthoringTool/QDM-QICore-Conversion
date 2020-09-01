@@ -15,10 +15,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
     generate-ddl: false
     show-sql: false
-  data:
-    mongodb:
-      database: mat_conversion_results
-      uri: ${MONGO_DB_URL}
 
 logging:
   level:
@@ -43,7 +39,7 @@ fhir:
 
 qdmqicore:
   conversion:
-    baseurl: ${QDM_QICORE_URL}
+    baseurl: ${MAPPING_SERVICES_URL}
 
 cql:
   conversion:
@@ -59,6 +55,6 @@ json:
 
 mapping:
   services:
-    baseUrl: ${QDM_QICORE_MAPPING_SERVICES_URL}
+    baseUrl: ${MAPPING_SERVICES_URL}
 
 swagger-server: ${MAT_FHIR_SWAGGER_URL}

@@ -1,7 +1,7 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/hapi-r4-db?serverTimezone=UTC&max_allowed_packet=16777216&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
-    username: root
+    username: admin
     password: password
 
 hapi:
