@@ -14,7 +14,7 @@ export HAPI_DB_PASS=changeme
 export HAPI_FHIR_URL_PUBLIC='http://localhost:6060/fhir'
 export HAPI_FHIR_URL='http://hapi-fhir-jpaserver:6060/fhir/'
 export FHIR_SERVICES_URL='http://host.docker.internal:9080'
-export QDM_QICORE_URL='http://host.docker.internal:9090'
+export MAPPING_SERVICES_URL='http://host.docker.internal:9090'
 export CQL_CONVERSION_URL='http://host.docker.internal:7070'
 export VSAC_VASE_URL='https://vsac.nlm.nih.gov'
 export VSAC_SERVICE_URL='http://umlsks.nlm.nih.gov'
@@ -31,3 +31,4 @@ export CODESYSTEM_SHEET_URL="https://spreadsheets.google.com/feeds/list/1_heoWR0
 export MAT_FHIR_SWAGGER_URL='http://host.docker.internal:9080'
 export MAPPING_SWAGGER_URL='http://host.docker.internal:9090'
 export CQL_ELM_SWAGGER_URL='http://host.docker.internal:7070'
+

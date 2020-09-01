@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/local-prd-sbx-dump?serverTimezone=UTC&max_allowed_packet=16777216
+    url: jdbc:mysql://localhost:3306/mat_prd_dmp?serverTimezone=UTC&max_allowed_packet=16777216
     username: root
     password: password
   jpa:
@@ -14,9 +14,9 @@ spring:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: false
-    show-sql: false
+    show-sql: true
 
 vsac-client:
   server: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac/ws/Ticket
@@ -51,7 +51,7 @@ fhir:
 
 qdmqicore:
   conversion:
-    baseurl: ${QDM_QICORE_URL:http://localhost:9090}
+    baseurl: ${MAPPING_SERVICES_URL:http://localhost:9090}
 
 cql:
   conversion:
