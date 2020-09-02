@@ -26,8 +26,8 @@ public class MappingSpreadsheetService {
     private static final String CONVERSION_ATTRIBUTES = "/conversionAttributes";
 
     private final RestTemplate restTemplate;
-    @Value("${qdmqicore.conversion.baseurl}")
-    private String conversionUrl;
+    @Value("${mapping.services.baseurl}")
+    private String baseUrl;
 
     public MappingSpreadsheetService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -48,7 +48,7 @@ public class MappingSpreadsheetService {
     public List<ResourceDefinition> resourceDefinitions() {
         try {
             ResponseEntity<ResourceDefinition[]> response =
-                    restTemplate.getForEntity(conversionUrl + RESOURCE_DEFINITION, ResourceDefinition[].class);
+                    restTemplate.getForEntity(baseUrl + RESOURCE_DEFINITION, ResourceDefinition[].class);
             return response.getBody() == null ? Collections.emptyList() : Arrays.asList(response.getBody());
         } catch (RestClientResponseException e) {
             throw new CqlParseException(e);
@@ -59,7 +59,7 @@ public class MappingSpreadsheetService {
     public List<ConversionDataTypes> fetchConversionDataTypes() {
         try {
             ResponseEntity<ConversionDataTypes[]> response =
-                    restTemplate.getForEntity(conversionUrl + CONVERSION_DATA_TYPES, ConversionDataTypes[].class);
+                    restTemplate.getForEntity(baseUrl + CONVERSION_DATA_TYPES, ConversionDataTypes[].class);
             return response.getBody() == null ? Collections.emptyList() : Arrays.asList(response.getBody());
         } catch (RestClientResponseException e) {
             throw new CqlParseException(e);
@@ -70,7 +70,7 @@ public class MappingSpreadsheetService {
     public List<ConversionAttributes> fetchConversionAttributes() {
         try {
             ResponseEntity<ConversionAttributes[]> response =
-                    restTemplate.getForEntity(conversionUrl + CONVERSION_ATTRIBUTES, ConversionAttributes[].class);
+                    restTemplate.getForEntity(baseUrl + CONVERSION_ATTRIBUTES, ConversionAttributes[].class);
             return response.getBody() == null ? Collections.emptyList() : Arrays.asList(response.getBody());
         } catch (RestClientResponseException e) {
             throw new CqlParseException(e);

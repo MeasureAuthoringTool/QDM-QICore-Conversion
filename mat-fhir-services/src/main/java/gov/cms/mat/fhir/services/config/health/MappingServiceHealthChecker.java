@@ -7,11 +7,11 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @Slf4j
-public class QdmQicoreMappingService extends SpringBootHealthChecker {
-    @Value("${qdmqicore.conversion.baseurl}")
+public class MappingServiceHealthChecker extends SpringBootHealthChecker {
+    @Value("${mapping.services.baseurl}")
     private String baseURL;
 
-    public QdmQicoreMappingService(RestTemplate restTemplate) {
+    public MappingServiceHealthChecker(RestTemplate restTemplate) {
         super(restTemplate);
     }
 
