@@ -10,5 +10,6 @@ services:
     environment:
       FHIR_SERVICES_URL: ${FHIR_SERVICES_URL}
       CQL_ELM_SWAGGER_URL: ${CQL_ELM_SWAGGER_URL}
+      MAT_API_KEY: ${MAT_API_KEY}
     ports:
-      - 9090:9090
+      - 7070:7070

@@ -32,14 +32,12 @@ logging:
     clean-history-on-start: true
     max-history: 1
 
+mat-api-key: ${MAT_API_KEY}
+
 fhir:
   r4:
     baseurl: ${HAPI_FHIR_URL}
     public-url: ${HAPI_FHIR_URL_PUBLIC}
-
-qdmqicore:
-  conversion:
-    baseurl: ${MAPPING_SERVICES_URL}
 
 cql:
   conversion:

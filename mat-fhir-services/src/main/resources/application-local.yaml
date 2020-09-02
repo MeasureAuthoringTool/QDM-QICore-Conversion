@@ -18,6 +18,8 @@ spring:
     generate-ddl: false
     show-sql: true
 
+mat-api-key: ${MAT_API_KEY:LOCAL_KEY}
+
 vsac-client:
   server: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac/ws/Ticket
   service: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}
@@ -49,14 +51,13 @@ fhir:
     baseurl: http://localhost:6060/fhir/
     public-url: http://localhost:6060/fhir/
 
-qdmqicore:
-  conversion:
-    baseurl: ${MAPPING_SERVICES_URL:http://localhost:9090}
+mapping:
+  services:
+    baseUrl: ${MAPPING_SERVICES_URL:http://localhost:9090}
 
 cql:
   conversion:
     baseurl: ${CQL_CONVERSION_URL:http://localhost:7070}
-
 
 self:
   health:

@@ -24,6 +24,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
     show-sql: true
+mat-api-key: ${MAT-API-KEY}
 hapi:
   fhir:
     version: r4

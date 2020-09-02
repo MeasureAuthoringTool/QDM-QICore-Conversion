@@ -1,5 +1,8 @@
-package gov.cms.mat.fhir.services.config.logging;
+package gov.cms.mat.fhir.services.config;
 
+import gov.cms.mat.fhir.services.config.logging.BufferedStreamFilter;
+import gov.cms.mat.fhir.services.config.logging.RequestHeaderInterceptor;
+import gov.cms.mat.fhir.services.config.security.SecurityFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +15,7 @@ import org.springframework.web.servlet.handler.MappedInterceptor;
  */
 @Configuration
 @Slf4j
-public class InterceptorConfig implements WebMvcConfigurer {
+public class InterceptorLoggingSecurityConfig implements WebMvcConfigurer {
 
     /**
      * Create the Request Interceptor
@@ -33,6 +36,15 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registrationBean.setFilter(new BufferedStreamFilter());
         registrationBean.addUrlPatterns("/*");
 
+        return registrationBean;
+    }
+
+    @Bean(name="FilterRegistrationBeanSecurityFilter")
+    public FilterRegistrationBean<SecurityFilter> securityFilter(SecurityFilter securityFilter){
+        FilterRegistrationBean<SecurityFilter> registrationBean
+                = new FilterRegistrationBean<>(securityFilter);
+        registrationBean.setFilter(securityFilter);
+        registrationBean.addUrlPatterns("/*");
         return registrationBean;
     }
 }

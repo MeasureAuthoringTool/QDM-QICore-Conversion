@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +27,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 @Configuration
 @Slf4j
-@ComponentScan(basePackages={"ca.uhn.fhir.to"}, excludeFilters={
+@ComponentScan(basePackages={"ca.uhn.fhir.to","gov.mat.hapi"}, excludeFilters={
         @ComponentScan.Filter(type= FilterType.ASSIGNABLE_TYPE, value= FhirTesterMvcConfig.class)})
 public class Application {
     public static void main(String[] args) {
@@ -107,5 +108,14 @@ public class Application {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(this.templateResolver());
         return templateEngine;
+    }
+
+    @Bean(name="FilterRegistrationBeanSecurityFilter")
+    public FilterRegistrationBean<SecurityFilter> securityFilter(SecurityFilter securityFilter){
+        FilterRegistrationBean<SecurityFilter> registrationBean
+                = new FilterRegistrationBean<>(securityFilter);
+        registrationBean.setFilter(securityFilter);
+        registrationBean.addUrlPatterns("/*");
+        return registrationBean;
     }
 }

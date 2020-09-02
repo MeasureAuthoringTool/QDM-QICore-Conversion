@@ -28,6 +28,8 @@ springdoc:
 
 swagger-server: ${MAPPING_SWAGGER_URL}
 
+mat-api-key: ${MAT-API-KEY}
+
 logging:
   level:
     root: INFO
