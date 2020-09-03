@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled // integration test
 class VsacRestClientIntegrationTest {
@@ -46,7 +47,7 @@ class VsacRestClientIntegrationTest {
     @Test
     void fetchVersionFromNameSuccess() {
         VsacRestClient.CodeSystemVersionResponse  version = vsacRestClient.fetchVersionFromName("LOINC", grantingTicket);
-        assertEquals("2.67", version.getVersion()); // This can change over time
+        assertEquals("2.68", version.getVersion()); // This can change over time
     }
 
     @Test
@@ -124,7 +125,7 @@ class VsacRestClientIntegrationTest {
         VsacResponse.VsacDataResultSet vsacDataResultSet = vsacResponse.getData().getResultSet().get(0);
 
         assertEquals("LOINC", vsacDataResultSet.getCsName());
-        assertEquals("2.67", vsacDataResultSet.getCsVersion());
+        assertEquals("2.68", vsacDataResultSet.getCsVersion());
         assertEquals("Complete", vsacDataResultSet.getContentMode());
 
         assertNull(vsacDataResultSet.getCsOID());
@@ -133,5 +134,21 @@ class VsacRestClientIntegrationTest {
         assertNull(vsacDataResultSet.getTermType());
         assertNull(vsacDataResultSet.getActive());
         assertNull(vsacDataResultSet.getRevision());
+    }
+
+    @Test
+    void getDataFromProfile() {
+        ValueSetVSACResponseResult result =    vsacRestClient.getDataFromProfile("oid",  grantingTicket);
+        assertTrue(result.isFailResponse());
+        assertEquals("404 Cannot find value set with oid: oid", result.getFailReason());
+        assertNull(result.getXmlPayLoad());
+    }
+
+    @Test
+    void getDataFromProfileFound() {
+        ValueSetVSACResponseResult result =    vsacRestClient.getDataFromProfile("2.16.840.1.113762.1.4.1096.82",  grantingTicket);
+        assertTrue(result.isFailResponse());
+        assertNull(result.getFailReason());
+        assertTrue(result.getXmlPayLoad().contains("ID=\"2.16.840.1.113762.1.4.1096.82\""));
     }
 }

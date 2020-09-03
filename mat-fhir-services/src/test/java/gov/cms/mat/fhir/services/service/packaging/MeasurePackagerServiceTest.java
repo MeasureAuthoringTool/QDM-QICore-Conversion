@@ -1,11 +1,13 @@
 package gov.cms.mat.fhir.services.service.packaging;
 
-import gov.cms.mat.fhir.services.BundleHelper;
+import gov.cms.mat.fhir.commons.model.CqlLibrary;
+import gov.cms.mat.fhir.services.BundleTestHelper;
 import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.service.packaging.dto.MeasurePackageFullHapi;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CanonicalType;
@@ -24,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MeasurePackagerServiceTest implements BundleHelper {
+class MeasurePackagerServiceTest implements BundleTestHelper {
+
     private static final String ID = "id";
     private static final String URL = "http://iam.hapi.com";
     private static final String LIBRARY_URI = "/Library/1";
@@ -35,6 +38,8 @@ class MeasurePackagerServiceTest implements BundleHelper {
     private HapiFhirLinkProcessor hapiFhirLinkProcessor;
     @Mock
     private LibraryPackagerService libraryPackagerService;
+    @Mock
+    private CqlLibraryRepository cqlLibRepository;
 
     @InjectMocks
     MeasurePackagerService measurePackagerService;
@@ -46,9 +51,17 @@ class MeasurePackagerServiceTest implements BundleHelper {
         Bundle bundle = createBundle(URL, measure);
         when(hapiFhirServer.getMeasureBundle(ID)).thenReturn(bundle);
 
-        when(hapiFhirServer.getBaseURL()).thenReturn(URL);
+
+        CqlLibrary lib =  new CqlLibrary();
+        lib.setCqlName("SuperLib");
+        when(cqlLibRepository.getCqlLibraryByMeasureId("1")).thenReturn(lib);
+
+        when( hapiFhirLinkProcessor.fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib"))
+                .thenReturn(Optional.empty());
+
+
         Library library = new Library();
-        when(hapiFhirLinkProcessor.fetchLibraryByUrl(URL + LIBRARY_URI)).thenReturn(Optional.of(library));
+        when(hapiFhirLinkProcessor.fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib")).thenReturn(Optional.of(library));
 
         Bundle includeBundle = new Bundle();
         when(libraryPackagerService.buildIncludeBundle(library, ID)).thenReturn(includeBundle);
@@ -59,26 +72,31 @@ class MeasurePackagerServiceTest implements BundleHelper {
         assertEquals(includeBundle, measurePackageFullHapi.getIncludeBundle());
 
         verify(hapiFhirServer).getMeasureBundle(ID);
-        verify(hapiFhirLinkProcessor).fetchLibraryByUrl(URL + LIBRARY_URI);
+        verify(hapiFhirLinkProcessor).fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib");
         verify(libraryPackagerService).buildIncludeBundle(library, ID);
     }
 
     @Test
-    void packageFullMeasureFromHapiFoundLibraryFound() {
+    void packageFullMeasureLibraryNotFoundInHapi() {
         Measure measure = new Measure();
         measure.setLibrary(List.of(new CanonicalType(LIBRARY_URI)));
         Bundle bundle = createBundle(URL, measure);
         when(hapiFhirServer.getMeasureBundle(ID)).thenReturn(bundle);
 
-        when(hapiFhirServer.getBaseURL()).thenReturn(URL);
-        when(hapiFhirLinkProcessor.fetchLibraryByUrl(URL + LIBRARY_URI)).thenReturn(Optional.empty());
+        CqlLibrary lib =  new CqlLibrary();
+        lib.setCqlName("SuperLib");
+        when(cqlLibRepository.getCqlLibraryByMeasureId("1")).thenReturn(lib);
+
+        when( hapiFhirLinkProcessor.fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib"))
+                .thenReturn(Optional.empty());
+
 
         assertThrows(HapiResourceNotFoundException.class, () -> {
             measurePackagerService.packageFull(ID);
         });
 
         verify(hapiFhirServer).getMeasureBundle(ID);
-        verify(hapiFhirLinkProcessor).fetchLibraryByUrl(URL + LIBRARY_URI);
+        verify(hapiFhirLinkProcessor).fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib");
         verifyNoInteractions(libraryPackagerService);
     }
 

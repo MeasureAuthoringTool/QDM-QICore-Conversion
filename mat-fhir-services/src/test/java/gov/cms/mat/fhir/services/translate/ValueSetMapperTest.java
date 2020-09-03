@@ -132,12 +132,12 @@ class ValueSetMapperTest {
         wrapper.setQualityDataDTO(Collections.singletonList(create()));
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
-        when(vsacService.getData(OID, VSAC_GRANTING_TICKET)).thenReturn(null);
+        when(vsacService.getVSACValueSetWrapper(OID, VSAC_GRANTING_TICKET)).thenReturn(null);
 
         assertTrue(valueSetMapper.translateToFhir(XML, VSAC_GRANTING_TICKET).isEmpty());
 
         verify(matXmlConverter).toQualityData(XML);
-        verify(vsacService).getData(eq(OID), eq(VSAC_GRANTING_TICKET));
+        verify(vsacService).getVSACValueSetWrapper(eq(OID), eq(VSAC_GRANTING_TICKET));
     }
 
 
@@ -148,7 +148,7 @@ class ValueSetMapperTest {
 
         VSACValueSetWrapper vsacValueSetWrapper = new VSACValueSetWrapper();
         vsacValueSetWrapper.setValueSetList(createValueSetList());
-        when(vsacService.getData(OID, VSAC_GRANTING_TICKET)).thenReturn(vsacValueSetWrapper);
+        when(vsacService.getVSACValueSetWrapper(OID, VSAC_GRANTING_TICKET)).thenReturn(vsacValueSetWrapper);
 
         when(matXmlConverter.toQualityData(XML)).thenReturn(wrapper);
 
@@ -160,7 +160,7 @@ class ValueSetMapperTest {
 
         assertTrue(encoded.contains("ValueSet"));
         verify(matXmlConverter).toQualityData(XML);
-        verify(vsacService).getData(eq(OID), eq(VSAC_GRANTING_TICKET));
+        verify(vsacService).getVSACValueSetWrapper(eq(OID), eq(VSAC_GRANTING_TICKET));
     }
 
     @Test

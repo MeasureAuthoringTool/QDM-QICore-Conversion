@@ -53,3 +53,7 @@ self:
 json:
   data:
     url: https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json
+
+mapping:
+  services:
+    baseUrl: http://localhost:9090

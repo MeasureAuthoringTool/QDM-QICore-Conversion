@@ -49,7 +49,7 @@ public class ValueSetVsacVerifier {
     }
 
     private void verifyOidInVsac(String oid, AtomicBoolean atomicSuccessFlag, String vsacGrantingTicket) {
-        VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid, vsacGrantingTicket);
+        VSACValueSetWrapper vsacValueSetWrapper = vsacService.getVSACValueSetWrapper(oid, vsacGrantingTicket);
 
         if (vsacValueSetWrapper == null) {
             log.debug("VsacService returned null for oid: {}", oid);

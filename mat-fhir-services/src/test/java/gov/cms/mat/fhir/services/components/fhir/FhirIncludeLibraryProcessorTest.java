@@ -2,7 +2,7 @@ package gov.cms.mat.fhir.services.components.fhir;
 
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryReferences;
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
-import gov.cms.mat.fhir.services.BundleHelper;
+import gov.cms.mat.fhir.services.BundleTestHelper;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.exceptions.CqlNotFhirException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -15,16 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleHelper {
+class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleTestHelper {
     private static final String FULL_URL = "http://your.goofy.com/fullStop";
 
     @Mock

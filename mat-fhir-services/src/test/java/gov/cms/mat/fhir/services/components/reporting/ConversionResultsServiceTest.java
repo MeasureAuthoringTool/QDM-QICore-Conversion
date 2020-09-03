@@ -42,6 +42,8 @@ class ConversionResultsServiceTest {
                 .measureId(MEASURE_ID)
                 .start(Instant.now())
                 .build();
+
+        conversionResultsService.clear();
     }
 
     @Test

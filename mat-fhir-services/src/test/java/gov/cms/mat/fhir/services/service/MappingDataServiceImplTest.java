@@ -27,8 +27,7 @@ class MappingDataServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(mappingDataService, "matAtttributesUrl", "http://howdy.doody.com");
-        ReflectionTestUtils.setField(mappingDataService, "self", mappingDataService);
+        ReflectionTestUtils.setField(mappingDataService, "matAttributesUrl", "http://howdy.doody.com");
     }
 
     @Test

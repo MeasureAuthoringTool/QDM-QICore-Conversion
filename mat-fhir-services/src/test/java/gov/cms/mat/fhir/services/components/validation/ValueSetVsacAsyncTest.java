@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.validation;
 
+import gov.cms.mat.fhir.services.components.vsac.ValueSetVSACResponseResult;
 import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.model.cql.VsacStatus;
@@ -10,15 +11,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.vsac.VSACResponseResult;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
+
 
 @ExtendWith(MockitoExtension.class)
 class ValueSetVsacAsyncTest {
@@ -62,7 +63,7 @@ class ValueSetVsacAsyncTest {
         completableFuture.get();
 
         assertEquals("Value set not found in VSAC.", cqlQualityDataSetDTO.getErrorMessage());
-          assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
+        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
 
         verifyNoMoreInteractions(vsacService);
     }
@@ -71,9 +72,12 @@ class ValueSetVsacAsyncTest {
     void validateVsacServiceNotFinding() throws ExecutionException, InterruptedException {
         when(vsacService.getServiceTicket(TOKEN)).thenReturn(TICKET);
 
-        VSACResponseResult vsacResponseResult = new VSACResponseResult();
-        vsacResponseResult.setXmlPayLoad("");
-        when(vsacService.getMultipleValueSetsResponseByOID("2.16.840.1.113883.17.4077.3.2056", TICKET, DEFAULT_EXP_ID))
+        ValueSetVSACResponseResult vsacResponseResult = ValueSetVSACResponseResult.builder()
+                .xmlPayLoad("")
+                .isFailResponse(true)
+                .build();
+
+        when(vsacService.getValueSetVSACResponseResult("2.16.840.1.113883.17.4077.3.2056", TICKET))
                 .thenReturn(vsacResponseResult);
 
         CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN);
@@ -88,9 +92,12 @@ class ValueSetVsacAsyncTest {
 
         when(vsacService.getServiceTicket(TOKEN)).thenReturn(TICKET);
 
-        VSACResponseResult vsacResponseResult = new VSACResponseResult();
-        vsacResponseResult.setXmlPayLoad("<xml>xml</xml>");
-        when(vsacService.getMultipleValueSetsResponseByOID("2.16.840.1.113883.17.4077.3.2056", TICKET, DEFAULT_EXP_ID))
+        ValueSetVSACResponseResult vsacResponseResult = ValueSetVSACResponseResult.builder()
+                .xmlPayLoad("<xml>xml</xml>")
+                .isFailResponse(false)
+                .build();
+
+        when(vsacService.getValueSetVSACResponseResult("2.16.840.1.113883.17.4077.3.2056", TICKET))
                 .thenReturn(vsacResponseResult);
 
         CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN);

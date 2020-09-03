@@ -335,4 +335,8 @@ public class ConversionResultsService {
 
         return result;
     }
+
+    void clear() {
+        threadLocal.remove();
+    }
 }

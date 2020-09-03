@@ -40,6 +40,7 @@ class HapiFhirServerTest {
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(hapiFhirServer, "baseURL", "http://acme.com");
+        ReflectionTestUtils.setField(hapiFhirServer, "hapiClient", hapiClient);
     }
 
     @Test

@@ -1,16 +1,16 @@
 package gov.cms.mat.cql.parsers;
 
 import gov.cms.mat.fhir.services.cql.parser.CqlToMatXml;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class VersionTest {
+class VersionTest {
     @Test
-    public void testVersionRegex() {
+    void testVersionRegex() {
         Pattern p = CqlToMatXml.LIBRARY_VERSION_PATTERN;
         assertTrue(p.matcher("100.100.001").matches());
         assertTrue(p.matcher("1.100.000").matches());

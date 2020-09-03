@@ -5,8 +5,8 @@ import org.apache.commons.httpclient.methods.GetMethod
 import org.vsac.VSACGroovyClient
 import org.vsac.VSACResponseResult
 
-class VsacRestClient extends VSACGroovyClient {
-    VsacRestClient(String proxyServer, int proxyPort, String vsacServerURL, String vsacServiceURL, String vsacReteriveServiceURL, String profileServiceURL, String versionServiceURL, String drcVsacUrl) {
+class GroovyVsacRestClient extends VSACGroovyClient {
+    GroovyVsacRestClient(String proxyServer, int proxyPort, String vsacServerURL, String vsacServiceURL, String vsacReteriveServiceURL, String profileServiceURL, String versionServiceURL, String drcVsacUrl) {
         super(proxyServer, proxyPort, vsacServerURL, vsacServiceURL, vsacReteriveServiceURL, profileServiceURL, versionServiceURL, drcVsacUrl)
     }
 
