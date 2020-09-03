@@ -22,16 +22,13 @@ import static gov.cms.mat.fhir.services.cql.parser.CqlUtils.parseMatVersionFromC
 @Component
 @Slf4j
 public class CodeSystemVsacAsync extends VsacValidator {
-    private static final String INVALID_CODE_URL = "Invalid code system uri.";
-    private static final String CODE_SYSTEM_NAME_IS_INVALID = "Code system name: %s not found in UMLS! Please verify the code system name.";
-    private static final String VSAC_INTERNAL_ERROR = "Error calling UMLS. Please try again later.";
-
     public static final String REQUIRES_VALIDATION = "Code system requires validation. Please login to UMLS to validate it.";
     public static final String NOT_FOUND = "Code system not found in VSAC.";
     public static final String NOT_IN_VSAC = "NOT.IN.VSAC";
     public static final String CODE_IDENTIFIER_FORMAT = "CODE:/CodeSystem/%1$s/Version/%2$s/Code/%3$s/Info";
-
-
+    private static final String INVALID_CODE_URL = "Invalid code system uri.";
+    private static final String CODE_SYSTEM_NAME_IS_INVALID = "Code system name: %s not found in UMLS! Please verify the code system name.";
+    private static final String VSAC_INTERNAL_ERROR = "Error calling UMLS. Please try again later.";
     private final VsacRestClient vsacRestClient;
 
     CodeSystemVsacAsync(VsacService vsacService, VsacRestClient vsacRestClient) {
@@ -41,7 +38,10 @@ public class CodeSystemVsacAsync extends VsacValidator {
 
     @Async("codeSystemTheadPoolValidation")
     CompletableFuture<Void> validateCode(CQLCode cqlCode, String umlsToken) {
-        if (StringUtils.contains(cqlCode.getCodeSystemOID(), NOT_IN_VSAC)) {
+
+        if (StringUtils.isBlank(cqlCode.getCodeIdentifier())) {
+            cqlCode.setErrorMessage("Code system uri is required.");
+        } else if (StringUtils.contains(cqlCode.getCodeSystemOID(), NOT_IN_VSAC)) {
             log.debug("No need to process NOT.IN.VSAC cqlCode: {}", cqlCode.getCodeSystemName());
         } else {
             try {
@@ -54,6 +54,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
             } catch (VsacCodeSystemValidatorException vc) {
                 cqlCode.setErrorMessage(vc.getMessage());
             } catch (Exception e) {
+                log.warn("validateCode exception", e);
                 cqlCode.setErrorMessage(cqlCode.obtainValidatedWithVsac() == VsacStatus.PENDING ?
                         REQUIRES_VALIDATION : NOT_FOUND);
             }
@@ -121,7 +122,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
             String versionUri = parseMatVersionFromCodeSystemUri(c);
             if (StringUtils.isBlank(versionUri)) {
                 //This hit is cached so no need to optimize.
-                var vsacResult = vsacRestClient.fetchVersionFromName(c.getCodeSystemName(), ulmsToken);
+                VsacRestClient.CodeSystemVersionResponse vsacResult = vsacRestClient.fetchVersionFromName(c.getCodeSystemName(), ulmsToken);
                 if (vsacResult.getSuccess()) {
                     versionUri = vsacResult.getVersion();
                     result = String.format(CODE_IDENTIFIER_FORMAT,
@@ -133,7 +134,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
                     c.setErrorCode("802");
                     c.addValidatedWithVsac(VsacStatus.IN_VALID);
                 } else {
-                    c.setErrorMessage(VSAC_INTERNAL_ERROR);
+                    c.setErrorMessage(StringUtils.isBlank(vsacResult.getMessage()) ? VSAC_INTERNAL_ERROR : vsacResult.getMessage());
                     c.setErrorCode("802");
                     c.addValidatedWithVsac(VsacStatus.PENDING);
                 }

@@ -100,7 +100,7 @@ class MeasureOrchestrationValidationServiceTest {
 
     private OrchestrationProperties setUpPush() {
         HapiFhirConfig hapiFhirConfig = new HapiFhirConfig();
-        ReflectionTestUtils.setField(HapiFhirConfig.class,"profiles",new ArrayList<>());
+        //ReflectionTestUtils.setField(hapiFhirConfig,"profiles",new ArrayList<>());
         FhirContext ctx =  hapiFhirConfig.buildFhirContext();
         when(hapiFhirServer.getCtx()).thenReturn(ctx);
 

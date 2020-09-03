@@ -18,11 +18,11 @@ import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.utilities.xhtml.NodeType;
 import org.hl7.fhir.utilities.xhtml.XhtmlNode;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
@@ -37,8 +37,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-public class TestLibraryTranslator {
+@ExtendWith(MockitoExtension.class)
+class TestLibraryTranslator {
     private static final String HAPI_BASE = "http://ecqi.healthit.gov/ecqms";
     private CQLAntlrUtils cqlAntlrUtils = new CQLAntlrUtils();
 
@@ -62,15 +62,15 @@ public class TestLibraryTranslator {
     private String tjcJson = loadCqlResource("/libTranslator/library-TJCOverall.json");
     private String retrieveJson = loadCqlResource("/libTranslator/contains-retrieve.cql");
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         jsonParser = ctx.newJsonParser();
         FhirContext ctx = FhirContext.forR4();
         libTranslator = new LibraryTranslator(hapiFhirServer, cqlAntlrUtils, libRepo, measureExportRepo, libCqlVisitorFactory);
-        ReflectionTestUtils.setField(libTranslator,"matFhirBaseUrl","http://ecqi.healthit.gov/ecqms");
+        ReflectionTestUtils.setField(libTranslator, "matFhirBaseUrl", "http://ecqi.healthit.gov/ecqms");
     }
 
-    public String loadCqlResource(String cqlResource) {
+    String loadCqlResource(String cqlResource) {
         try (InputStream i = TestLibraryTranslator.class.getResourceAsStream(cqlResource)) {
             return IOUtils.toString(i);
         } catch (IOException ioe) {
@@ -79,7 +79,7 @@ public class TestLibraryTranslator {
     }
 
     @Test
-    public void testRetrieveAndRelatedArtifacts() throws IOException {
+    void testRetrieveAndRelatedArtifacts() throws IOException {
         Library fhirHelpers = jsonParser.parseResource(Library.class, fhirHelpersJson);
         Library matGlobalCommonFunctions = jsonParser.parseResource(Library.class, matGlobalJson);
         Library suppData = jsonParser.parseResource(Library.class, suppJson);
@@ -92,14 +92,15 @@ public class TestLibraryTranslator {
         MeasureExport mExport = new MeasureExport();
         mExport.setHumanReadable("<html><body>READABLE THAT IS HUAMN</body></html>".getBytes());
 
-        when(hapiFhirServer.fetchHapiLibrary(eq("FHIRHelpers"), eq("4.0.001"))).
-                thenReturn(Optional.of(fhirHelpers));
-        when(hapiFhirServer.fetchHapiLibrary(eq("MATGlobalCommonFunctions_FHIR4"), eq("5.0.000"))).
-                thenReturn(Optional.of(matGlobalCommonFunctions));
-        when(hapiFhirServer.fetchHapiLibrary(eq("SupplementalDataElements_FHIR4"), eq("2.0.0"))).
-                thenReturn(Optional.of(suppData));
-        when(hapiFhirServer.fetchHapiLibrary(eq("TJCOverall_FHIR4"), eq("5.0.000"))).
-                thenReturn(Optional.of(tjc));
+//        when(hapiFhirServer.fetchHapiLibrary(eq("FHIRHelpers"), eq("4.0.001"))).
+//                thenReturn(Optional.of(fhirHelpers));
+//        when(hapiFhirServer.fetchHapiLibrary(eq("MATGlobalCommonFunctions_FHIR4"), eq("5.0.000"))).
+//                thenReturn(Optional.of(matGlobalCommonFunctions));
+//        when(hapiFhirServer.fetchHapiLibrary(eq("SupplementalDataElements_FHIR4"), eq("2.0.0"))).
+//                thenReturn(Optional.of(suppData));
+//        when(hapiFhirServer.fetchHapiLibrary(eq("TJCOverall_FHIR4"), eq("5.0.000"))).
+//                thenReturn(Optional.of(tjc));
+
         when(libRepo.getCqlLibraryById(eq("uuid"))).thenReturn(cqlLib);
         when(measureExportRepo.findByMeasureId(eq("m12345"))).thenReturn(Optional.of(mExport));
 

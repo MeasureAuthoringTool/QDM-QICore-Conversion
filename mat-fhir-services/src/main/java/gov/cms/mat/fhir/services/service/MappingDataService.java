@@ -20,7 +20,7 @@ public class MappingDataService {
     private final RestTemplate restTemplate;
 
     @Value("${mapping.services.baseurl}/qdmToQicoreMappings")
-    private String matAttributivesUrl;
+    private String matAttributesUrl;
 
     @Value("${mapping.services.baseurl}/codeSystemEntries")
     private String codeSystemEntriesUrl;
@@ -53,9 +53,9 @@ public class MappingDataService {
     @Cacheable("qdmToQiCoreMappingHelper")
     public QdmToFhirMappingHelper getQdmToFhirMappingHelper() {
         try {
-            QdmToQicoreMapping[] mappings = restTemplate.getForObject(matAttributivesUrl, QdmToQicoreMapping[].class);
+            QdmToQicoreMapping[] mappings = restTemplate.getForObject(matAttributesUrl, QdmToQicoreMapping[].class);
             if (mappings == null) {
-                throw new MappingServiceException("No QdmToQicoreMappings found url: " + matAttributivesUrl);
+                throw new MappingServiceException("No QdmToQicoreMappings found url: " + matAttributesUrl);
             }
             return new QdmToFhirMappingHelper(Arrays.asList(mappings));
         } catch (RestClientException e) {

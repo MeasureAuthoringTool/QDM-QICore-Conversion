@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.validation;
 
+import gov.cms.mat.fhir.services.components.vsac.ValueSetVSACResponseResult;
 import gov.cms.mat.fhir.services.service.VsacService;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLQualityDataSetDTO;
@@ -8,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.vsac.VSACResponseResult;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -38,11 +38,11 @@ class ValueSetVsacAsync extends VsacValidator {
 
             code.setErrorMessage(isValid ? null : NOT_FOUND);
             code.addValidatedWithVsac(isValid ? VsacStatus.VALID : VsacStatus.IN_VALID);
-        } catch (ExpiredTicketException ete){
+        } catch (ExpiredTicketException ete) {
             log.warn("Error validating ValueSetVsac with vsac oid: {}", code.getOid(), ete);
             code.setErrorMessage(TICKET_EXPIRED);
             code.addValidatedWithVsac(VsacStatus.PENDING);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Error validating ValueSetVsac with vsac oid: {}", code.getOid(), e);
             code.setErrorMessage(code.obtainValidatedWithVsac() == VsacStatus.PENDING ?
                     REQURIES_VALIDATION : NOT_FOUND);
@@ -52,8 +52,8 @@ class ValueSetVsacAsync extends VsacValidator {
     }
 
     private boolean verifyWithVsac(String oid, String fiveMinServiceTicket) {
-        VSACResponseResult vsacResponseResult =
-                vsacService.getMultipleValueSetsResponseByOID(oid.trim(), fiveMinServiceTicket, defaultExpId);
+        ValueSetVSACResponseResult vsacResponseResult =
+                vsacService.getValueSetVSACResponseResult(oid.trim(), fiveMinServiceTicket);
 
         if (vsacResponseResult != null && StringUtils.isNotBlank(vsacResponseResult.getXmlPayLoad())) {
             log.info("Successfully converted valueset object from vsac xml payload.");

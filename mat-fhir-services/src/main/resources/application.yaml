@@ -8,14 +8,8 @@ spring:
     open-in-view: false
 
 vsac-client:
-  server: ${VSAC_VASE_URL}/vsac/ws/Ticket
   service: ${VSAC_VASE_URL}
-  retrieve-multi-oids-service: ${VSAC_VASE_URL}/vsac/svs/RetrieveMultipleValueSets?
-  profile-service: ${VSAC_VASE_URL}/vsac/profiles
-  version-service: ${VSAC_VASE_URL}/vsac/oid/
-  vsac-server-drc-url: ${VSAC_VASE_URL}/vsac
-  use-cache: on
-  cache-directory: /opt/vsac/cache
+
 
 mat.codesystem.valueset.simultaneous.validations: 5
 mat.qdm.default.expansion.id: Most Recent Code System Versions in VSAC

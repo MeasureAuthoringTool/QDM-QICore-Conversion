@@ -1,6 +1,5 @@
 package gov.cms.mat.fhir.services.components.validation;
 
-import gov.cms.mat.fhir.services.components.vsac.VsacResponse;
 import gov.cms.mat.fhir.services.components.vsac.VsacRestClient;
 import mat.model.cql.CQLCode;
 import mat.model.cql.VsacStatus;
@@ -14,10 +13,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class CodeSystemVsacAsyncTest {
@@ -39,32 +38,23 @@ class CodeSystemVsacAsyncTest {
     @Test
     void validateCodeTicketInvalid() throws ExecutionException, InterruptedException {
 
-        VsacResponse vsacResponse = new VsacResponse();
-        vsacResponse.setStatus("error");
-        vsacResponse.setMessage("Can't log in");
-        when(vsacRestClient.fetchCodeSystem("/CodeSystem/LOINC/Version/2.66/Code/21112-8/Info", TOKEN))
-                .thenReturn(vsacResponse);
+        VsacRestClient.CodeSystemVersionResponse vsacResponse = VsacRestClient.CodeSystemVersionResponse.builder()
+                .success(false)
+                .message("Can't log in")
+                .build();
 
+        cqlCode.setCodeSystemName("LOINC");
+
+        when(vsacRestClient.fetchVersionFromName("LOINC", TOKEN)).thenReturn(vsacResponse);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
         completableFuture.get();
 
         assertEquals("Can't log in", cqlCode.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlCode.obtainValidatedWithVsac());
+        assertEquals(VsacStatus.PENDING, cqlCode.obtainValidatedWithVsac());
 
         verifyNoMoreInteractions(vsacRestClient);
 
-    }
-
-    @Test
-    void validateCodeInvalid() throws ExecutionException, InterruptedException {
-        cqlCode.setCodeIdentifier("VALUESET:/CodeSystem/LOINC/Version/2.66/Code/21112-8/Info");
-
-        CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
-        completableFuture.get();
-
-        assertEquals("Invalid code system uri.", cqlCode.getErrorMessage());
-        verifyNoInteractions(vsacRestClient);
     }
 
     @Test
@@ -81,29 +71,21 @@ class CodeSystemVsacAsyncTest {
     }
 
     @Test
-    void validateVsacServiceReturningErrors() throws ExecutionException, InterruptedException {
-        VsacResponse vsacResponse = new VsacResponse();
-        vsacResponse.setStatus("error");
-        vsacResponse.setMessage("All Bad");
-        vsacResponse.setErrors(new VsacResponse.VsacError());
+    void validateCodeNotFound() throws ExecutionException, InterruptedException {
 
-        VsacResponse.VsacErrorResultSet error1 = new VsacResponse.VsacErrorResultSet();
-        error1.setErrCode("1");
-        error1.setErrDesc("Error 1");
-        vsacResponse.getErrors().getResultSet().add(error1);
+        VsacRestClient.CodeSystemVersionResponse vsacResponse = VsacRestClient.CodeSystemVersionResponse.builder()
+                .success(false)
+                .message("CodeSystem not found.")
+                .build();
 
-        VsacResponse.VsacErrorResultSet error2 = new VsacResponse.VsacErrorResultSet();
-        error2.setErrCode("2");
-        error2.setErrDesc("Error 2");
-        vsacResponse.getErrors().getResultSet().add(error2);
+        cqlCode.setCodeSystemName("LOINC");
 
-        when(vsacRestClient.fetchCodeSystem("/CodeSystem/LOINC/Version/2.66/Code/21112-8/Info", TOKEN))
-                .thenReturn(vsacResponse);
+        when(vsacRestClient.fetchVersionFromName("LOINC", TOKEN)).thenReturn(vsacResponse);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
         completableFuture.get();
 
-        assertEquals("Error 1, Error 2", cqlCode.getErrorMessage());
+        assertEquals("Code system name: LOINC not found in UMLS! Please verify the code system name.", cqlCode.getErrorMessage());
         assertEquals(VsacStatus.IN_VALID, cqlCode.obtainValidatedWithVsac());
     }
 }

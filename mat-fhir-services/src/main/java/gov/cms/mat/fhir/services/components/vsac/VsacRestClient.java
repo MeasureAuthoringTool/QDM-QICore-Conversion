@@ -15,11 +15,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -28,11 +30,11 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class VsacRestClient {
+    static final String PROFILE = "Most Recent Code System Versions in VSAC";
     private static final String CANNOT_OBTAIN_A_SINGLE_USE_SERVICE_TICKET = "Cannot obtain a single-use service ticket.";
     private static final String GRANTING_TICKET_REQUEST_TEMPLATE = "username=%s&password=%s";
     private static final String SINGLE_USE_TICKET_REQUEST = "service=http://umlsks.nlm.nih.gov";
     private static final String TICKET_PATH = "/vsac/ws/Ticket";
-
     @Qualifier("externalRestTemplate")
     private final RestTemplate restTemplate;
     private final VsacConfig vsacConfig;
@@ -52,6 +54,49 @@ public class VsacRestClient {
     public String fetchSingleUseTicket(String grantingTicket) {
         String path = TICKET_PATH + '/' + grantingTicket;
         return fetchTicket(SINGLE_USE_TICKET_REQUEST, path);
+    }
+
+    public ValueSetVSACResponseResult getDataFromProfile(String oid, String grantingTicket) {
+
+        String singleUseTicket = fetchSingleUseTicket(grantingTicket);
+
+        if (StringUtils.isEmpty(singleUseTicket)) {
+            return ValueSetVSACResponseResult.builder()
+                    .isFailResponse(true)
+                    .failReason(CANNOT_OBTAIN_A_SINGLE_USE_SERVICE_TICKET)
+                    .build();
+        }
+
+        String url = vsacConfig.getService() + "/vsac/svs/RetrieveMultipleValueSets";
+
+        URI uri = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("ticket", singleUseTicket)
+                .queryParam("id", oid)
+                .queryParam("profile", PROFILE)
+                .build()
+                .encode()
+                .toUri();
+
+        try {
+            String xml = restTemplate.getForObject(uri, String.class);
+
+            return ValueSetVSACResponseResult.builder()
+                    .isFailResponse(false)
+                    .xmlPayLoad(xml)
+                    .build();
+        } catch (RestClientException e) {
+            String message;
+            if(Objects.equals(e.getMessage(), "404 : [no body]")) {
+               message = "404 Cannot find value set with oid: " + oid;
+            } else  {
+                message = e.getMessage();
+            }
+
+            return ValueSetVSACResponseResult.builder()
+                    .isFailResponse(true)
+                    .failReason(message)
+                    .build();
+        }
     }
 
     @Cacheable(value = "vsacVersions", key = "#name")
@@ -74,7 +119,7 @@ public class VsacRestClient {
 
             if (vsacResponse.getErrors() == null || CollectionUtils.isEmpty(vsacResponse.getErrors().getResultSet())) {
                 if (StringUtils.isEmpty(vsacResponse.getMessage())) {
-                    errorMessage = "Unknown Error obtaining version from V"; // should never happen
+                    errorMessage = "Unknown Error obtaining version from VSAC"; // should never happen
                 } else {
                     errorMessage = vsacResponse.getMessage();
                 }
@@ -107,9 +152,13 @@ public class VsacRestClient {
 
         String url = vsacConfig.getService() + "/vsac" + path;
 
-        URI uri = buildUri(singleUseTicket, url);
-
-        log.debug("Vsac CodeSystem Uri: {}", uri);
+        URI uri = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("ticket", singleUseTicket)
+                .queryParam("resultFormat", "json")
+                .queryParam("resultSet", "standard")
+                .build()
+                .encode()
+                .toUri();
 
         try {
             ResponseEntity<VsacResponse> response = restTemplate.getForEntity(uri, VsacResponse.class);
@@ -141,15 +190,6 @@ public class VsacRestClient {
         return vsacResponse;
     }
 
-    private URI buildUri(String singleUseTicket, String url) {
-        return UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("ticket", singleUseTicket)
-                .queryParam("resultFormat", "json")
-                .queryParam("resultSet", "standard")
-                .build()
-                .encode()
-                .toUri();
-    }
 
     private String fetchTicket(String postRequest, String path) {
         HttpEntity<String> request = new HttpEntity<>(postRequest);
@@ -175,8 +215,8 @@ public class VsacRestClient {
     @Builder
     @Getter
     public static class CodeSystemVersionResponse {
-        private String version;
-        private Boolean success;
-        private String message;
+        private final String version;
+        private final Boolean success;
+        private final String message;
     }
 }

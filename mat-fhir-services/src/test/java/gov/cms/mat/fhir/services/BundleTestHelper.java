@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public interface BundleHelper {
+public interface BundleTestHelper {
     default Bundle createBundle(String url, Resource... resource) {
         Bundle bundle = new Bundle();
 
@@ -28,6 +28,7 @@ public interface BundleHelper {
     }
 
     private Bundle.BundleEntryComponent buildBundleEntryComponent(String url, Resource resource, int id) {
+
         resource.setId(String.format("%d", id));
 
         return new Bundle.BundleEntryComponent()

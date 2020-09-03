@@ -93,7 +93,7 @@ public class ValueSetMapper implements FhirValueSetCreator, FhirRemover {
             oid = cqlQualityDataSetDTO.getOid();
         }
 
-        VSACValueSetWrapper vsacValueSetWrapper = vsacService.getData(oid, vsacGrantingTicket);
+        VSACValueSetWrapper vsacValueSetWrapper = vsacService.getVSACValueSetWrapper(oid, vsacGrantingTicket);
 
         if (vsacValueSetWrapper == null) {
             log.debug("VsacService returned null for oid: {}", oid);

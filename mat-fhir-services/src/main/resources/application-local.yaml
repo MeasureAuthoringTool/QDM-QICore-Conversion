@@ -19,14 +19,7 @@ spring:
     show-sql: true
 
 vsac-client:
-  server: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac/ws/Ticket
   service: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}
-  retrieve-multi-oids-service: ${VSAC_VASE_UR:https://vsac.nlm.nih.gov}/vsac/svs/RetrieveMultipleValueSets?
-  profile-service: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac/profiles
-  version-service: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac/oid/
-  vsac-server-drc-url: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}/vsac
-  use-cache: on
-  cache-directory: /opt/vsac/cache
 
 logging:
   level:

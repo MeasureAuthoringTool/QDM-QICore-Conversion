@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class MeasurePackagerService implements FhirValidatorProcessor {
+
+    private static final String LIBRARY_CANONICAL_BASE = "http://ecqi.healthit.gov/ecqms/Library/";
+
     private static final String MEASURE_URL_TOKEN = "/Measure/";
     private final HapiFhirServer hapiFhirServer;
     private final HapiFhirLinkProcessor hapiFhirLinkProcessor;
@@ -51,14 +54,12 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
     private Library fetchLibraryFromHapi(Measure measure) {
         String url = getLibraryUrlFromMeasure(measure);
 
-        String fullUrl = hapiFhirServer.getBaseURL() + url;
-
-        var optional = hapiFhirLinkProcessor.fetchLibraryByUrl(fullUrl);
+        var optional = hapiFhirLinkProcessor.fetchLibraryByUrl(url);
 
         if (optional.isPresent()) {
             return optional.get();
         } else {
-            throw new HapiResourceNotFoundException(fullUrl, new Exception("Cannot find library"));
+            throw new HapiResourceNotFoundException(url, new Exception("Cannot find library"));
         }
     }
 
@@ -77,7 +78,8 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
         if (lib == null || CollectionUtils.isEmpty(measure.getLibrary())) {
             throw new FhirLibraryNotFoundException(measure.getId());
         }
-        return "Library/" + lib.getId();
+        return LIBRARY_CANONICAL_BASE + lib.getCqlName();
+
     }
 
     private String parseMeasureIdFromHapiUrl(String url) {
@@ -89,7 +91,11 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
             if (nextSlash != -1) {
                 result = url.substring(measureIndex + MEASURE_URL_TOKEN.length(), nextSlash);
             }
+        } else {
+            result = url;
         }
+
+
         return result;
     }
 

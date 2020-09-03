@@ -1,34 +1,37 @@
 package gov.cms.mat.fhir.services.service;
 
-import org.springframework.stereotype.Service;
-import org.vsac.VSACResponseResult;
-
-import gov.cms.mat.fhir.services.components.vsac.VsacClient;
+import gov.cms.mat.fhir.services.components.vsac.ValueSetVSACResponseResult;
 import gov.cms.mat.fhir.services.components.vsac.VsacConverter;
+import gov.cms.mat.fhir.services.components.vsac.VsacRestClient;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.VSACValueSetWrapper;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
 public class VsacService {
-    private final VsacClient vsacClient;
+    private final VsacRestClient vsacRestClient;
     private final VsacConverter vsacConverter;
 
-    public VsacService(VsacClient vsacClient, VsacConverter vsacConverter) {
-        this.vsacClient = vsacClient;
+    public VsacService(VsacRestClient vsacRestClient, VsacConverter vsacConverter) {
+        this.vsacRestClient = vsacRestClient;
         this.vsacConverter = vsacConverter;
     }
 
-    public VSACValueSetWrapper getData(String oid, String vsacGrantingTicket) {
+    public ValueSetVSACResponseResult getValueSetVSACResponseResult(String oid, String vsacGrantingTicket) {
         String ticket = getServiceTicket(vsacGrantingTicket);
 
-        VSACResponseResult vsacResponseResult = vsacClient.getDataFromProfile(oid, ticket);
+        return vsacRestClient.getDataFromProfile(oid, ticket);
+    }
+
+    public VSACValueSetWrapper getVSACValueSetWrapper(String oid, String vsacGrantingTicket) {
+        ValueSetVSACResponseResult vsacResponseResult = getValueSetVSACResponseResult(oid, vsacGrantingTicket);
 
         if (isSuccessFull(vsacResponseResult)) {
             try {
-                return processResponse(vsacResponseResult);
+                return vsacConverter.toWrapper(vsacResponseResult.getXmlPayLoad());
             } catch (Exception e) {
-                log.warn("Cannot get XMl from vsac oid: {}", oid);
+                log.warn("Cannot get XMl from vsac oid: {}, reason: {}", oid, vsacResponseResult.getFailReason());
                 return null;
             }
         } else {
@@ -37,34 +40,23 @@ public class VsacService {
         }
     }
 
-    public VSACResponseResult getDirectReferenceCode(String codeURLString, String serviceTicket) {
-        return vsacClient.getDirectReferenceCode(codeURLString, serviceTicket);
-    }
 
-    private VSACValueSetWrapper processResponse(VSACResponseResult vsacResponseResult) {
-        return vsacConverter.toWrapper(vsacResponseResult.getXmlPayLoad());
-    }
-
-    private boolean isSuccessFull(VSACResponseResult vsacResponseResult) {
+    private boolean isSuccessFull(ValueSetVSACResponseResult vsacResponseResult) {
         return vsacResponseResult != null &&
                 vsacResponseResult.getXmlPayLoad() != null &&
-                !vsacResponseResult.isIsFailResponse();
+                !vsacResponseResult.isFailResponse();
     }
 
 
     public String getServiceTicket(String vsacGrantingTicket) {
-        String serviceTicket = vsacClient.getServiceTicket(vsacGrantingTicket);
-        log.debug("serviceTicket: {}", serviceTicket);
+        String serviceTicket = vsacRestClient.fetchSingleUseTicket(vsacGrantingTicket);
+        log.trace("serviceTicket: {}", serviceTicket);
         return serviceTicket;
     }
-    
-    public String getGrantingTicket(String username, String passwd) {
-        String grantingTicket = vsacClient.getGrantingTicket(username, passwd);
-        log.debug("grantingTicket: {}", grantingTicket);
-        return grantingTicket;
-    }
 
-    public VSACResponseResult getMultipleValueSetsResponseByOID(String oid, String fiveMinServiceTicket, String expansionId) {
-        return vsacClient.getMultipleValueSetsResponseByOID(oid, fiveMinServiceTicket, expansionId);
+    public String getGrantingTicket(String username, String passwd) {
+        String grantingTicket = vsacRestClient.fetchGrantingTicket(username, passwd);
+        log.trace("grantingTicket: {}", grantingTicket);
+        return grantingTicket;
     }
 }

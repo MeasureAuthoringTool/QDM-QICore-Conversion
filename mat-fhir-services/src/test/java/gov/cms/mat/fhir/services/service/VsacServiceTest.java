@@ -1,15 +1,14 @@
 package gov.cms.mat.fhir.services.service;
 
+import gov.cms.mat.fhir.services.components.vsac.ValueSetVSACResponseResult;
+import gov.cms.mat.fhir.services.components.vsac.VsacConverter;
+import gov.cms.mat.fhir.services.components.vsac.VsacRestClient;
+import mat.model.VSACValueSetWrapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.vsac.VSACResponseResult;
-
-import gov.cms.mat.fhir.services.components.vsac.VsacClient;
-import gov.cms.mat.fhir.services.components.vsac.VsacConverter;
-import mat.model.VSACValueSetWrapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -30,60 +29,64 @@ class VsacServiceTest {
     @Mock
     private VsacConverter vsacConverter;
     @Mock
-    private VsacClient vsacClient;
+    private VsacRestClient vsacRestClient;
     @InjectMocks
     private VsacService vsacService;
 
     @Test
     void testGetData_Success() {
-        when(vsacClient.getServiceTicket(TICKET_TOKEN)).thenReturn(SERVICE_TOKEN);
+        when(vsacRestClient.fetchSingleUseTicket(TICKET_TOKEN)).thenReturn(SERVICE_TOKEN);
 
         VSACValueSetWrapper vsacValueSetWrapper = new VSACValueSetWrapper();
         when(vsacConverter.toWrapper(XML)).thenReturn(vsacValueSetWrapper);
 
-        VSACResponseResult vsacResponseResult = new VSACResponseResult();
-        vsacResponseResult.setXmlPayLoad(XML);
-        vsacResponseResult.setIsFailResponse(false);
+        ValueSetVSACResponseResult vsacResponseResult = ValueSetVSACResponseResult.builder()
+                .xmlPayLoad(XML)
+                .isFailResponse(false)
+                .build();
 
-        when(vsacClient.getDataFromProfile(OID, SERVICE_TOKEN)).thenReturn(vsacResponseResult);
+        when(vsacRestClient.getDataFromProfile(OID, SERVICE_TOKEN)).thenReturn(vsacResponseResult);
 
-        assertEquals(vsacValueSetWrapper, vsacService.getData(OID, TICKET_TOKEN));
+        assertEquals(vsacValueSetWrapper, vsacService.getVSACValueSetWrapper(OID, TICKET_TOKEN));
 
         verify(vsacConverter).toWrapper(XML);
     }
 
     @Test
     void testGetData_InvalidVSACResponseResultNull() {
-        when(vsacClient.getServiceTicket(TICKET_TOKEN)).thenReturn(SERVICE_TOKEN);
+        when(vsacRestClient.fetchSingleUseTicket(TICKET_TOKEN)).thenReturn(SERVICE_TOKEN);
 
-        when(vsacClient.getDataFromProfile(OID, SERVICE_TOKEN)).thenReturn(null);
-        assertNull(vsacService.getData(OID, TICKET_TOKEN));
+        when(vsacRestClient.getDataFromProfile(OID, SERVICE_TOKEN)).thenReturn(null);
+        assertNull(vsacService.getVSACValueSetWrapper(OID, TICKET_TOKEN));
 
-        verify(vsacClient).getDataFromProfile(OID, SERVICE_TOKEN);
+        verify(vsacRestClient).getDataFromProfile(OID, SERVICE_TOKEN);
     }
 
     @Test
     void testGetData_InvalidVSACResponseResult_MissingXML() {
-        when(vsacClient.getServiceTicket(TICKET_TOKEN)).thenReturn(SERVICE_TOKEN);
+        when(vsacRestClient.fetchSingleUseTicket(TICKET_TOKEN)).thenReturn(SERVICE_TOKEN);
 
-        VSACResponseResult vsacResponseResult = new VSACResponseResult();
+        ValueSetVSACResponseResult vsacResponseResult = ValueSetVSACResponseResult.builder()
+                .isFailResponse(true)
+                .build();
 
-        when(vsacClient.getDataFromProfile(OID, SERVICE_TOKEN)).thenReturn(vsacResponseResult);
+        when(vsacRestClient.getDataFromProfile(OID, SERVICE_TOKEN)).thenReturn(vsacResponseResult);
 
-        assertNull(vsacService.getData(OID, TICKET_TOKEN));
+        assertNull(vsacService.getVSACValueSetWrapper(OID, TICKET_TOKEN));
     }
 
     @Test
     void testGetData_ValidateTicket_InvalidVSACResponseResult_FailResponse() {
-        when(vsacClient.getServiceTicket(TICKET_TOKEN)).thenReturn(SERVICE_TOKEN);
+        when(vsacRestClient.fetchSingleUseTicket(TICKET_TOKEN)).thenReturn(SERVICE_TOKEN);
 
-        VSACResponseResult vsacResponseResult = new VSACResponseResult();
-        vsacResponseResult.setXmlPayLoad(XML);
-        vsacResponseResult.setIsFailResponse(true);
+        ValueSetVSACResponseResult vsacResponseResult = ValueSetVSACResponseResult.builder()
+                .xmlPayLoad(XML)
+                .isFailResponse(true)
+                .build();
 
-        when(vsacClient.getDataFromProfile(OID, SERVICE_TOKEN)).thenReturn(vsacResponseResult);
+        when(vsacRestClient.getDataFromProfile(OID, SERVICE_TOKEN)).thenReturn(vsacResponseResult);
 
-        assertNull(vsacService.getData(OID, TICKET_TOKEN));
+        assertNull(vsacService.getVSACValueSetWrapper(OID, TICKET_TOKEN));
 
         verify(vsacConverter, never()).toWrapper(XML);
     }
