@@ -19,6 +19,7 @@ import java.io.IOException;
 @Slf4j
 public class SecurityFilter implements Filter {
     private static final String MAT_API_KEY = "MAT-API-KEY";
+    private static final String DISABLED = "DISABLED";
     @Value("${mat-api-key}")
     private String matApiKey;
 
@@ -35,15 +36,19 @@ public class SecurityFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
-        String keyValue = req.getHeader(MAT_API_KEY);
-        if (keyValue == null) {
-            log.error("Request did not contain header " + MAT_API_KEY);
-            res.sendError(403);
-        } else if (!StringUtils.equals(matApiKey, keyValue)) {
-            log.error("Invalid " + MAT_API_KEY + " header.");
-            res.sendError(403);
+        if (!StringUtils.equals(matApiKey,DISABLED)) {
+            String keyValue = req.getHeader(MAT_API_KEY);
+            if (keyValue == null) {
+                log.error("Request did not contain header " + MAT_API_KEY);
+                res.sendError(403);
+            } else if (!StringUtils.equals(matApiKey, keyValue)) {
+                log.error("Invalid " + MAT_API_KEY + " header.");
+                res.sendError(403);
+            } else {
+                log.info("Request contained valid " + MAT_API_KEY);
+                filterChain.doFilter(servletRequest, servletResponse);
+            }
         } else {
-            log.info("Request contained valid " + MAT_API_KEY);
             filterChain.doFilter(servletRequest, servletResponse);
         }
     }
