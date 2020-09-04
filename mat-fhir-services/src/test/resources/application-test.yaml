@@ -33,27 +33,27 @@ vsac-client:
   use-cache: true
   cache-directory: /opt/vsac/cache
 
+mat-api-key: ${MAT_API_KEY:LOCAL_KEY}
+
 fhir:
   r4:
-    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
-    public-url: http://localhost:8080/hapi-fhir-jpaserver/fhir/
-
-qdmqicore:
-  conversion:
-    baseurl: http://localhost:9090
-
-cql:
-  conversion:
-    baseurl: http://localhost:7070
-
-self:
-  health:
-    baseurl: http://localhost:${server.port}
-
-json:
-  data:
-    url: https://spreadsheets.google.com/feeds/list/15YvJbG3LsyqqN4ZIgRd88fgScbE95eK6fUilwHRw0Z0/od6/public/values?alt=json
+    baseurl: http://localhost:6060/fhir/
+    public-url: http://localhost:6060/fhir/
 
 mapping:
   services:
-    baseUrl: http://localhost:9090
+    baseUrl: ${MAPPING_SERVICES_URL:http://localhost:9090}
+
+cql:
+  conversion:
+    baseurl: ${CQL_CONVERSION_URL:http://localhost:7070}
+
+self:
+  health:
+    baseurl: ${FHIR_SERVICES_URL:http://localhost:9080}
+
+json:
+  data:
+    url: https://spreadsheets.google.com/feeds/list/1_heoWR09X3UnyEvyyHLzVXT_D1Hhdt3OPztpgr1hW_k/od6/public/values?alt=json
+
+swagger-server:
