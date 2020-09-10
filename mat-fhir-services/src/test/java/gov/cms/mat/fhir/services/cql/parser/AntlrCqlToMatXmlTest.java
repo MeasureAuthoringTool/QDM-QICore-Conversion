@@ -141,7 +141,7 @@ public class AntlrCqlToMatXmlTest {
 
     @Test
     public void testFhirHelpers() throws Exception {
-        var destination = parseModel("FhirHelpers_FHIR4-4.0.000.cql");
+        var destination = parseModel("FHIRHelpers_FHIR4-4.0.000.cql");
 
         assertEquals("ToInterval", destination.getCqlFunctions().get(0).getName());
         assertEquals("period", destination.getCqlFunctions().get(0).getArgumentList().get(0).getArgumentName());
