@@ -18,7 +18,7 @@ spring:
     generate-ddl: false
     show-sql: true
 
-mat-api-key: ${MAT_API_KEY:LOCAL_KEY}
+mat-api-key: ${MAT_API_KEY:DISABLED}
 
 vsac-client:
   service: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}

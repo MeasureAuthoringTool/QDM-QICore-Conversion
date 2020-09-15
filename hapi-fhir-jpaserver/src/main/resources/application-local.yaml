@@ -9,4 +9,4 @@ hapi:
     server:
       url: http://localhost:6060/fhir/
 
-mat-api-key: ${MAT_API_KEY:LOCAL_KEY}
+mat-api-key: ${MAT_API_KEY:DISABLED}
