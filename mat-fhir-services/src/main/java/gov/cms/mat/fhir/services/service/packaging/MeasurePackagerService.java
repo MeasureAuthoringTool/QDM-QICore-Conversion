@@ -78,7 +78,7 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
         if (lib == null || CollectionUtils.isEmpty(measure.getLibrary())) {
             throw new FhirLibraryNotFoundException(measure.getId());
         }
-        return LIBRARY_CANONICAL_BASE + lib.getCqlName();
+        return hapiFhirServer.getBaseURL()  + lib.getCqlName();
 
     }
 
