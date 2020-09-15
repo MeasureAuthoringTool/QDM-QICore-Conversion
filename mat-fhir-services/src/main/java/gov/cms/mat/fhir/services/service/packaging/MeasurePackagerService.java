@@ -52,7 +52,7 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
     }
 
     private Library fetchLibraryFromHapi(Measure measure) {
-        String url = getLibraryUrlFromMeasure(measure);
+        String url = getHapiUrlForLib(measure);
 
         var optional = hapiFhirLinkProcessor.fetchLibraryByUrl(url);
 
@@ -63,7 +63,9 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
         }
     }
 
-    private String getLibraryUrlFromMeasure(Measure measure) {
+    private String getHapiUrlForLib(Measure measure) {
+        //http://hapi-fhir-jpaserver:6060/hapi-fhir-jpaserver/fhir/Library/8a788f25739040ca0173904280310007/_history/31
+
         if (CollectionUtils.isEmpty(measure.getLibrary())) {
             throw new FhirLibraryNotFoundException(measure.getId());
         }
@@ -78,7 +80,7 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
         if (lib == null || CollectionUtils.isEmpty(measure.getLibrary())) {
             throw new FhirLibraryNotFoundException(measure.getId());
         }
-        return hapiFhirServer.getBaseURL()  + lib.getCqlName();
+        return hapiFhirServer.getBaseURL()  + "Library/" + lib.getId();
 
     }
 
