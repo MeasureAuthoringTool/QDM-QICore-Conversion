@@ -1,8 +1,6 @@
 package gov.cms.mat.fhir.services.hapi;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.IParser;
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
@@ -21,20 +19,12 @@ import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.net.URI;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -45,15 +35,12 @@ public class HapiFhirServer {
 
     @Getter
     private final FhirContext ctx;
-
+    private final RestTemplate restTemplate;
     @Getter
     IGenericClient hapiClient;
-
     @Getter
     @Value("${fhir.r4.baseurl}")
     private String baseURL;
-
-    private final RestTemplate restTemplate;
 
     public HapiFhirServer(FhirContext ctx, RestTemplate restTemplate) {
         this.ctx = ctx;
@@ -76,8 +63,12 @@ public class HapiFhirServer {
         return findResourceInBundle(getLibraryBundle(id), Library.class);
     }
 
-    public Optional<Library> fetchHapiLibrary(String name,String version) {
-        return findResourceInBundle(fetchLibraryBundleByVersionAndName(version,name), Library.class);
+    public Optional<Library> fetchHapiLibrary(String name, String version) {
+        return findResourceInBundle(fetchLibraryBundleByVersionAndName(version, name), Library.class);
+    }
+
+    public Optional<Library> fetchHapiLibraryByName(String name) {
+        return findResourceInBundle(fetchLibraryBundleByName(name), Library.class);
     }
 
     public Optional<Measure> fetchHapiMeasure(String id) {
@@ -135,9 +126,9 @@ public class HapiFhirServer {
 
         HttpHeaders map = new HttpHeaders();
         map.put("Content-type", List.of("application/json"));
-        HttpEntity<String> request = new HttpEntity<>(toJson(resource),map);
+        HttpEntity<String> request = new HttpEntity<>(toJson(resource), map);
         String url = baseURL + "/" + resource.getResourceType().name() + "/" + resource.getId();
-        restTemplate.put(url,request,new HashMap<>());
+        restTemplate.put(url, request, new HashMap<>());
         return url;
     }
 
@@ -153,51 +144,6 @@ public class HapiFhirServer {
                 .toString();
     }
 
-    private void validate(MethodOutcome outcome) {
-        var l = outcome.getResource();
-//        outcome.getResource().
-//        if (CollectionUtils.isEmpty(bundle.getEntry()) || bundle.getEntry().size() > 1) {
-//            log.error("Bundle size is invalid: {}", bundle.getEntry() != null ? bundle.getEntry().size() : null);
-//            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
-//        }
-//
-//        Bundle.BundleEntryComponent bundleEntryComponent = bundle.getEntry().get(0);
-//
-//        if (!bundleEntryComponent.hasResponse()) {
-//            log.error("Bundle does not contain a response");
-//            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
-//        }
-//
-//        if (bundleEntryComponent.getResponse().getStatus() != null &&
-//                bundleEntryComponent.getResponse().getStatus().startsWith("20")) {
-//            log.debug("Successfully (OK) Persisted resource {} with id {}",
-//                    resource.getResourceType() != null ? resource.getResourceType().name() : "null",
-//                    resource.getId());
-//        } else {
-//            log.error("FAILED Persisted resource: {} with id: {} status:{}",
-//                    resource.getResourceType().name(), resource.getId(),
-//                    bundleEntryComponent.getResponse().getStatus());
-//            throw new HapiFhirCreateMeasureException(resource.getIdElement().getValue());
-//        }
-    }
-
-//    public Bundle createAndExecuteBundle(Resource resource) {
-//        Bundle bundle = buildBundle(resource);
-//
-//        return hapiClient.transaction()
-//                .withBundle(bundle)
-//                .execute();
-//    }
-
-//    Bundle buildBundle(Resource resource) {
-//        Bundle bundle = new Bundle();
-//        bundle.setType(Bundle.BundleType.TRANSACTION);
-//        bundle.addEntry().setResource(resource)
-//                .getRequest()
-//                .setUrl(baseURL + resource.getResourceType().name() + "/" + resource.getId())
-//                .setMethod(Bundle.HTTPVerb.PUT);
-//        return bundle;
-//    }
 
     private LoggingInterceptor createLoggingInterceptor() {
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
@@ -262,6 +208,15 @@ public class HapiFhirServer {
         return hapiClient.search()
                 .forResource(Library.class)
                 .where(Library.VERSION.exactly().code(version))
+                .and(Library.NAME.matches().value(name))
+                .returnBundle(Bundle.class)
+                .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
+                .execute();
+    }
+
+    public Bundle fetchLibraryBundleByName(String name) {
+        return hapiClient.search()
+                .forResource(Library.class)
                 .and(Library.NAME.matches().value(name))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)

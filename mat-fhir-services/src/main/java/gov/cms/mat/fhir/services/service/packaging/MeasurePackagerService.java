@@ -52,18 +52,18 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
     }
 
     private Library fetchLibraryFromHapi(Measure measure) {
-        String url = getLibraryUrlFromMeasure(measure);
+        String name = getLibraryNameFromMeasure(measure);
 
-        var optional = hapiFhirLinkProcessor.fetchLibraryByUrl(url);
+        var optional = hapiFhirServer.fetchHapiLibraryByName(name);
 
         if (optional.isPresent()) {
             return optional.get();
         } else {
-            throw new HapiResourceNotFoundException(url, new Exception("Cannot find library"));
+            throw new HapiResourceNotFoundException("Cannot find library with name: " + name);
         }
     }
 
-    private String getLibraryUrlFromMeasure(Measure measure) {
+    private String getLibraryNameFromMeasure(Measure measure) {
         if (CollectionUtils.isEmpty(measure.getLibrary())) {
             throw new FhirLibraryNotFoundException(measure.getId());
         }
@@ -78,7 +78,7 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
         if (lib == null || CollectionUtils.isEmpty(measure.getLibrary())) {
             throw new FhirLibraryNotFoundException(measure.getId());
         }
-        return hapiFhirServer.getBaseURL()  + lib.getCqlName();
+        return lib.getCqlName();
 
     }
 
