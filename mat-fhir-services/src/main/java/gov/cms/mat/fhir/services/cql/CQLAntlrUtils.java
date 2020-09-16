@@ -26,7 +26,7 @@ public class CQLAntlrUtils {
         Optional<Attachment> a = library.getContent().stream().filter(
                 c -> c.getContentType().equals(CQL_CONTENT_TYPE)).findFirst();
         if (a.isPresent()) {
-            return new String(Base64.getDecoder().decode(a.get().getData()), StandardCharsets.UTF_8);
+            return new String(a.get().getData(), StandardCharsets.UTF_8);
         } else {
             throw new CqlParseException("Could not find content " + CQL_CONTENT_TYPE + " in lib " +
                     library.getName() + "v" + library.getVersion());
