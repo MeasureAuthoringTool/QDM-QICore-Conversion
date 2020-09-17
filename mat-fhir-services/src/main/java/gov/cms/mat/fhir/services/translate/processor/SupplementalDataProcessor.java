@@ -101,7 +101,7 @@ public class SupplementalDataProcessor implements FhirCreator {
 
     private Expression criteriaExpression(String expression) {
         return new Expression()
-                .setLanguage("text/cql")
+                .setLanguage("text/cql.identifier")
                 .setExpression(expression);
     }
 }
