@@ -128,8 +128,10 @@ public class MeasureTranslator extends TranslatorBase {
         result.setClinicalRecommendationStatement(simpleXmlModel.getClinicalRecomms());
         result.setGuidance(simpleXmlModel.getGuidance());
         result.setVersion(createVersion(matMeasure));
-        result.setName(simpleXmlModel.getMeasureName());
-        result.setTitle(simpleXmlModel.getShortName());  //measure title
+
+        result.setName(simpleXmlModel.getShortName());
+        result.setTitle(simpleXmlModel.getMeasureName());
+
         result.setExperimental(simpleXmlModel.isExperimental());
         result.setDescription(StringUtils.isBlank(simpleXmlModel.getDescription()) ? FHIR_UNKNOWN  :
                 simpleXmlModel.getDescription());
