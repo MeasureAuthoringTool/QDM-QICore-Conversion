@@ -1,15 +1,20 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
+import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureXml;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.cql.parser.CqlParser;
 import gov.cms.mat.fhir.services.cql.parser.CqlToMatXml;
 import gov.cms.mat.fhir.services.cql.parser.CqlVisitorFactory;
+import gov.cms.mat.fhir.services.exceptions.MeasureNotFoundException;
+import gov.cms.mat.fhir.services.exceptions.MeasureReleaseVersionInvalidException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureXmlRepository;
 import gov.cms.mat.fhir.services.rest.dto.CQLObject;
 import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
 import gov.cms.mat.fhir.services.rest.dto.ValidationRequest;
+import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.service.ValidationOrchestrationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
@@ -19,6 +24,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLModel;
 import mat.server.CQLUtilityClass;
+import mat.shared.CQLError;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -41,12 +47,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_NOT_FOUND;
+import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSION_INVALID;
+
 @RestController
 @RequestMapping(path = "/cql-xml-gen")
 @Tag(name = "MatXmlController", description = "API for validating cql")
 @Slf4j
 @Controller
 public class MatXmlController {
+
+    private final MeasureXmlRepository measureXmlRepo;
+    private final CqlLibraryRepository cqlLibRepo;
+    private final CqlVisitorFactory visitorFactory;
+    private final CqlParser cqlParser;
+    private final ValidationOrchestrationService validationOrchestrationService;
+    private final MeasureDataService measureDataService;
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -83,22 +100,17 @@ public class MatXmlController {
         private ValidationRequest validationRequest;
     }
 
-    private final MeasureXmlRepository measureXmlRepo;
-    private final CqlLibraryRepository cqlLibRepo;
-    private final CqlVisitorFactory visitorFactory;
-    private final CqlParser cqlParser;
-    private final ValidationOrchestrationService validationOrchestrationService;
-
     public MatXmlController(MeasureXmlRepository measureXmlRepo,
                             CqlLibraryRepository cqlLibRepo,
                             CqlVisitorFactory visitorFactory,
                             CqlParser cqlParser,
-                            ValidationOrchestrationService validationOrchestrationService) {
+                            ValidationOrchestrationService validationOrchestrationService, MeasureDataService measureDataService) {
         this.measureXmlRepo = measureXmlRepo;
         this.cqlLibRepo = cqlLibRepo;
         this.visitorFactory = visitorFactory;
         this.cqlParser = cqlParser;
         this.validationOrchestrationService = validationOrchestrationService;
+        this.measureDataService = measureDataService;
     }
 
     @PutMapping("/standalone-lib/{id}")
@@ -123,7 +135,8 @@ public class MatXmlController {
                 return run(ulmsToken,
                         cql,
                         model,
-                        matXmlReq);
+                        matXmlReq,
+                        null);
             } else {
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "CQL_LIBRARY not found for CQL_LIBRARY.id " + libId + "."
@@ -162,7 +175,8 @@ public class MatXmlController {
                 return run(ulmsToken,
                         cql,
                         model,
-                        matXmlReq);
+                        matXmlReq,
+                        measureId);
             } else {
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "MEASURE not found for MEASURE.id " + measureId + "."
@@ -187,7 +201,8 @@ public class MatXmlController {
             MatXmlResponse resp = run(umlsToken,
                     matCqlXmlReq.getCql(),
                     matCqlXmlReq.getSourceModel(),
-                    matCqlXmlReq);
+                    matCqlXmlReq,
+                    null);
             log.debug("MatXmlController::fromCql -> exit {}", resp);
             return resp;
         } catch (RuntimeException e) {
@@ -202,13 +217,23 @@ public class MatXmlController {
     private MatXmlResponse run(String umlsToken,
                                String cql,
                                @Null CQLModel sourceModel,
-                               MatXmlReq req) {
+                               MatXmlReq req,
+                               String measureId) {
         MatXmlResponse matXmlResponse = new MatXmlResponse();
-
         CqlToMatXml cqlToMatXml = visitorFactory.getCqlToMatXmlVisitor();
         cqlToMatXml.setSourceModel(sourceModel);
         cqlToMatXml.setUmlsToken(umlsToken);
         cqlParser.parse(cql, cqlToMatXml);
+
+        if (measureId != null){
+            Measure measure = find(measureId);
+            if (measure.getDescription() != null && measure.getDescription().contains("_")) {
+                matXmlResponse.setErrors(getMeasureValidations(measure));
+            }
+            if (sourceModel != null && sourceModel.getLibraryName().contains("_")) {
+                matXmlResponse.getErrors().addAll(getLibraryValidations(sourceModel));
+            }
+        }
 
         matXmlResponse.setCql(cql);
         matXmlResponse.setCqlModel(cqlToMatXml.getDestinationModel());
@@ -228,7 +253,7 @@ public class MatXmlController {
             libraryErrors.setErrors(cqlToMatXml.getSeveres());
             libraryErrors.setName(matXmlResponse.getCqlModel().getLibraryName());
             libraryErrors.setVersion(matXmlResponse.getCqlModel().getVersionUsed());
-            matXmlResponse.setErrors(Collections.singletonList(libraryErrors));
+            matXmlResponse.getErrors().add(libraryErrors);
         } else {
             // Create a library error for all preexisting errors and warnings.
             LibraryErrors preexistingErrors = new LibraryErrors();
@@ -243,7 +268,7 @@ public class MatXmlController {
                             umlsToken,
                             Collections.singletonList(preexistingErrors),
                             req.getValidationRequest());
-            matXmlResponse.setErrors(libraryErrors);
+            matXmlResponse.getErrors().addAll(libraryErrors);
 
             if (req.getValidationRequest().isValidateReturnType()) {
                 matXmlResponse.setCqlObject(validationOrchestrationService.buildCqlObject(sourceModel));
@@ -251,4 +276,43 @@ public class MatXmlController {
         }
         return matXmlResponse;
     }
+
+    private Measure find(String id) {
+        try {
+            return measureDataService.findOneValid(id);
+        } catch (MeasureReleaseVersionInvalidException e) {
+            ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_RELEASE_VERSION_INVALID);
+            return null;
+        } catch (MeasureNotFoundException e) {
+            ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_NOT_FOUND);
+            return null;
+        }
+    }
+
+    private @NotNull List<LibraryErrors> getMeasureValidations(Measure measure) {
+        @NotNull List<LibraryErrors> libraryErrorsList = new ArrayList<>();
+        LibraryErrors libraryErrors = new LibraryErrors(measure.getDescription(), measure.getVersion().toString());
+        List<CQLError> errors = new ArrayList<>();
+        CQLError cqlError = new CQLError();
+        cqlError.setErrorMessage("Measure name must not contain '_' (underscore)");
+        cqlError.setSeverity("Severe");
+        errors.add(cqlError);
+        libraryErrors.setErrors(errors);
+        libraryErrorsList.add(libraryErrors);
+        return libraryErrorsList;
+    }
+
+    private @NotNull List<LibraryErrors> getLibraryValidations(CQLModel sourceModel) {
+        @NotNull List<LibraryErrors> libraryErrorsList = new ArrayList<>();
+        LibraryErrors libraryErrors = new LibraryErrors(sourceModel.getLibraryName(), sourceModel.getVersionUsed());
+        List<CQLError> errors = new ArrayList<>();
+        CQLError cqlError = new CQLError();
+        cqlError.setErrorMessage("Library name must not contain '_' (underscore)");
+        cqlError.setSeverity("Severe");
+        errors.add(cqlError);
+        libraryErrors.setErrors(errors);
+        libraryErrorsList.add(libraryErrors);
+        return libraryErrorsList;
+    }
+
 }
