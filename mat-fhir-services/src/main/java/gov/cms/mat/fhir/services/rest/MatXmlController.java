@@ -56,6 +56,14 @@ import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSIO
 @Slf4j
 @Controller
 public class MatXmlController {
+
+    private final MeasureXmlRepository measureXmlRepo;
+    private final CqlLibraryRepository cqlLibRepo;
+    private final CqlVisitorFactory visitorFactory;
+    private final CqlParser cqlParser;
+    private final ValidationOrchestrationService validationOrchestrationService;
+    private final MeasureDataService measureDataService;
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -91,13 +99,6 @@ public class MatXmlController {
         @Valid
         private ValidationRequest validationRequest;
     }
-
-    private final MeasureXmlRepository measureXmlRepo;
-    private final CqlLibraryRepository cqlLibRepo;
-    private final CqlVisitorFactory visitorFactory;
-    private final CqlParser cqlParser;
-    private final ValidationOrchestrationService validationOrchestrationService;
-    private final MeasureDataService measureDataService;
 
     public MatXmlController(MeasureXmlRepository measureXmlRepo,
                             CqlLibraryRepository cqlLibRepo,
