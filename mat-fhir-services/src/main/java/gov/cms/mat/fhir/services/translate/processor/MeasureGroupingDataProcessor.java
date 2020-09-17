@@ -88,7 +88,7 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
         result.setId(clauseDetail.getId());
         result.setCode(new CodeableConcept().setText(clauseDetail.getDisplayName()));
         result.setCriteria(new Expression()
-                .setLanguage("text/cql")
+                .setLanguage("text/cql.identifier")
                 .setExpression(clauseDetail.getCqlDefinition().getDisplay()));
         return result;
     }
@@ -177,7 +177,7 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
 
         return component
                 .setCriteria(new Expression()
-                        .setLanguage("text/cql")
+                        .setLanguage("text/cql.identifier")
                         .setExpression(mappedType))
                 .setCode(buildCodeableConcept(type, MEASURE_POPULATION_CODE_SYSTEM, display));
     }
