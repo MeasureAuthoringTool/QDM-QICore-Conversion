@@ -195,7 +195,7 @@ public class MatXmlController {
     public @ResponseBody
     MatXmlResponse fromCql(@RequestHeader(value = "UMLS-TOKEN", required = false) String umlsToken,
                            @Valid @RequestBody MatCqlXmlReq matCqlXmlReq) {
-        log.debug("MatXmlController::fromCql -> enter {}", matCqlXmlReq);
+        log.trace("MatXmlController::fromCql -> enter {}", matCqlXmlReq);
         String cql = matCqlXmlReq.getCql();
         try {
             MatXmlResponse resp = run(umlsToken,
@@ -203,7 +203,7 @@ public class MatXmlController {
                     matCqlXmlReq.getSourceModel(),
                     matCqlXmlReq,
                     null);
-            log.debug("MatXmlController::fromCql -> exit {}", resp);
+            log.trace("MatXmlController::fromCql -> exit {}", resp);
             return resp;
         } catch (RuntimeException e) {
             log.error("fromCql", e);

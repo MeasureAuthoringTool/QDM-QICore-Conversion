@@ -29,7 +29,10 @@ public class RestTemplateConfig {
     }
 
     public RestTemplate getRestTemplate(RequestResponseLoggingInterceptor interceptor) {
-        ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
+        SimpleClientHttpRequestFactory requestFactory =   new SimpleClientHttpRequestFactory();
+        requestFactory.setOutputStreaming(false);
+
+        ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(requestFactory);
         RestTemplate restTemplate = new RestTemplate(factory);
         restTemplate
                 .setInterceptors(List.of(interceptor));
