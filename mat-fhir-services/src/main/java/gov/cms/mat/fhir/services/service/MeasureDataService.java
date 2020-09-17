@@ -29,6 +29,7 @@ public class MeasureDataService {
         return measureRepository.findAllIdsWithAllowedVersions(allowedVersions);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Transactional
     public Measure findOneValid(String measureId) {
         Optional<Measure> optional = measureRepository.findById(measureId);

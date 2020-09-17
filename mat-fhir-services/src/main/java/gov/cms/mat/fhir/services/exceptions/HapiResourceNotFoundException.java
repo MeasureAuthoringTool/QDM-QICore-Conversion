@@ -17,6 +17,11 @@ public class HapiResourceNotFoundException extends RuntimeException {
         log.warn(getMessage());
     }
 
+    public HapiResourceNotFoundException(String message) {
+        super(message);
+        log.warn(this.getMessage());
+    }
+
     public HapiResourceNotFoundException(String url, Exception cause) {
         super(String.format(URL_MESSAGE, url), cause);
         log.warn(getMessage());

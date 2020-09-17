@@ -22,7 +22,7 @@ public interface FhirCreator {
     default Attachment createAttachment(String contentType, byte[] rawData) {
         return new Attachment()
                 .setContentType(contentType)
-                .setData(rawData == null ? null : encodeBase64(rawData));
+                .setData(rawData == null ? null : rawData);
     }
 
     default byte[] encodeBase64(byte[] src) {

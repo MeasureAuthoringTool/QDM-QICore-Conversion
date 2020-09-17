@@ -65,7 +65,7 @@ public class RequestHeaderInterceptor extends HandlerInterceptorAdapter {
             try {
                 body = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
             } catch (IOException e) {
-                log.debug("Cannot find body", e);
+                log.debug("Cannot find body");
             }
             String headers = processRequestHeaders(request);
 

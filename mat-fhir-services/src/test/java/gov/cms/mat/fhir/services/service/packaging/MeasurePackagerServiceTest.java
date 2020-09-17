@@ -22,8 +22,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MeasurePackagerServiceTest implements BundleTestHelper {
@@ -31,7 +34,9 @@ class MeasurePackagerServiceTest implements BundleTestHelper {
     private static final String ID = "id";
     private static final String URL = "http://iam.hapi.com";
     private static final String LIBRARY_URI = "/Library/1";
-
+    private static final String LIBRARY_NAME = "SuperLib";
+    @InjectMocks
+    MeasurePackagerService measurePackagerService;
     @Mock
     private HapiFhirServer hapiFhirServer;
     @Mock
@@ -41,9 +46,6 @@ class MeasurePackagerServiceTest implements BundleTestHelper {
     @Mock
     private CqlLibraryRepository cqlLibRepository;
 
-    @InjectMocks
-    MeasurePackagerService measurePackagerService;
-
     @Test
     void packageFullMeasureHappyPath() {
         Measure measure = new Measure();
@@ -52,16 +54,13 @@ class MeasurePackagerServiceTest implements BundleTestHelper {
         when(hapiFhirServer.getMeasureBundle(ID)).thenReturn(bundle);
 
 
-        CqlLibrary lib =  new CqlLibrary();
-        lib.setCqlName("SuperLib");
+        CqlLibrary lib = new CqlLibrary();
+        lib.setCqlName(LIBRARY_NAME);
         when(cqlLibRepository.getCqlLibraryByMeasureId("1")).thenReturn(lib);
 
-        when( hapiFhirLinkProcessor.fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib"))
-                .thenReturn(Optional.empty());
-
-
         Library library = new Library();
-        when(hapiFhirLinkProcessor.fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib")).thenReturn(Optional.of(library));
+
+        when(hapiFhirServer.fetchHapiLibraryByName(LIBRARY_NAME)).thenReturn(Optional.of(library));
 
         Bundle includeBundle = new Bundle();
         when(libraryPackagerService.buildIncludeBundle(library, ID)).thenReturn(includeBundle);
@@ -72,7 +71,6 @@ class MeasurePackagerServiceTest implements BundleTestHelper {
         assertEquals(includeBundle, measurePackageFullHapi.getIncludeBundle());
 
         verify(hapiFhirServer).getMeasureBundle(ID);
-        verify(hapiFhirLinkProcessor).fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib");
         verify(libraryPackagerService).buildIncludeBundle(library, ID);
     }
 
@@ -83,20 +81,18 @@ class MeasurePackagerServiceTest implements BundleTestHelper {
         Bundle bundle = createBundle(URL, measure);
         when(hapiFhirServer.getMeasureBundle(ID)).thenReturn(bundle);
 
-        CqlLibrary lib =  new CqlLibrary();
+        CqlLibrary lib = new CqlLibrary();
         lib.setCqlName("SuperLib");
         when(cqlLibRepository.getCqlLibraryByMeasureId("1")).thenReturn(lib);
 
-        when( hapiFhirLinkProcessor.fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib"))
-                .thenReturn(Optional.empty());
-
+        when(hapiFhirServer.fetchHapiLibraryByName(LIBRARY_NAME)).thenReturn(Optional.empty());
 
         assertThrows(HapiResourceNotFoundException.class, () -> {
             measurePackagerService.packageFull(ID);
         });
 
         verify(hapiFhirServer).getMeasureBundle(ID);
-        verify(hapiFhirLinkProcessor).fetchLibraryByUrl("http://ecqi.healthit.gov/ecqms/Library/SuperLib");
+
         verifyNoInteractions(libraryPackagerService);
     }
 

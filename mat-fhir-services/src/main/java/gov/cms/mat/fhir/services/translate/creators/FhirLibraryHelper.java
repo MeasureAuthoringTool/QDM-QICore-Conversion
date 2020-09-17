@@ -7,10 +7,11 @@ import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.exceptions.cql.LibraryAttachmentNotFoundException;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Library;
+
+import java.nio.charset.StandardCharsets;
 
 public interface FhirLibraryHelper {
     default Attachment findCqlAttachment(Library library, String type) {
@@ -43,8 +44,8 @@ public interface FhirLibraryHelper {
             throw new LibraryAttachmentNotFoundException(library);
         } else {
             Attachment cqlAttachment = findCqlAttachment(library, "text/cql");
-            byte[] cqlBytes = Base64.decodeBase64(cqlAttachment.getData());
-            return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(new String(cqlBytes));
+            String data = new String(cqlAttachment.getData(), StandardCharsets.UTF_8);
+            return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(data);
         }
     }
 }
