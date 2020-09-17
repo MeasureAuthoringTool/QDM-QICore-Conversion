@@ -36,7 +36,8 @@ public class SecurityFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
-        if (!StringUtils.equals(matApiKey,DISABLED)) {
+
+        if (!isWhiteListUrl(req) && !StringUtils.equals(matApiKey, DISABLED)) {
             String keyValue = req.getHeader(MAT_API_KEY);
             if (keyValue == null) {
                 log.error("Request did not contain header " + MAT_API_KEY);
@@ -51,5 +52,11 @@ public class SecurityFilter implements Filter {
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
+    }
+
+    private boolean isWhiteListUrl(HttpServletRequest req) {
+        String uri = req.getRequestURI();
+        String method = req.getMethod();
+        return uri.equals("/actuator/health") && method.equals("GET");
     }
 }
