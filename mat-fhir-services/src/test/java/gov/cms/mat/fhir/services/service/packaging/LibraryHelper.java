@@ -19,7 +19,7 @@ public interface LibraryHelper {
 
         library.setName(libraryProperties.getName());
         library.setVersion(libraryProperties.getVersion());
-        library.addContent().setContentType("text/cql").setData(Base64.getEncoder().encode(cql.getBytes()));
+        library.addContent().setContentType("text/cql").setData(cql.getBytes());
         return library;
     }
 
