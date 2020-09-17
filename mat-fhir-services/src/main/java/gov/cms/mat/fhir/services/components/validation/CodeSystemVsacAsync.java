@@ -39,9 +39,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
     @Async("codeSystemTheadPoolValidation")
     CompletableFuture<Void> validateCode(CQLCode cqlCode, String umlsToken) {
 
-        if (StringUtils.isBlank(cqlCode.getCodeIdentifier())) {
-            cqlCode.setErrorMessage("Code system uri is required.");
-        } else if (StringUtils.contains(cqlCode.getCodeSystemOID(), NOT_IN_VSAC)) {
+        if (StringUtils.contains(cqlCode.getCodeSystemOID(), NOT_IN_VSAC)) {
             log.debug("No need to process NOT.IN.VSAC cqlCode: {}", cqlCode.getCodeSystemName());
         } else {
             try {
