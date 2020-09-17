@@ -82,9 +82,7 @@ public class LibraryFinderService implements CqlVersionConverter, FhirLibraryHel
         Optional<Library> optional = hapiFhirServer.findResourceInBundle(bundle, Library.class);
 
         if (optional.isPresent()) {
-            String encoded = getCqlFromHapiLibrary(name, version, optional.get());
-            byte[] cqlBytes = Base64.getDecoder().decode(encoded);
-            return new String(cqlBytes);
+            return getCqlFromHapiLibrary(name, version, optional.get());
         } else {
             throw new CqlLibraryNotFoundException("Cannot find library in bundle for name: " + name + ", version: " + version);
         }
