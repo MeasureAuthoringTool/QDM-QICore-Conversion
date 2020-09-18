@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Disabled
         // integration test
 class VsacRestClientIntegrationTest {
-    private static String grantingTicket = "TGT-310648-jTl0DTuveHIWbkmO90IKJWc4d1n46RrCHTq5zlPp5dmg1rCNAA-cas";
+    private static String grantingTicket = "";
     private static RestTemplate restTemplate;
     private VsacRestClient vsacRestClient;
 
