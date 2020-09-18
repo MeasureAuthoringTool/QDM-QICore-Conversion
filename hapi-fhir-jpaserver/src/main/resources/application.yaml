@@ -49,6 +49,9 @@ management:
   endpoint:
     health:
       show-details: always
+      group:
+        custom:
+          include: diskSpace,ping,db
   endpoints:
     web:
       exposure:

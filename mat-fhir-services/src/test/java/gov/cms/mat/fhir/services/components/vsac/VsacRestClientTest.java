@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.components.vsac;
 
+import gov.cms.mat.fhir.services.config.RestTemplateConfig;
 import gov.cms.mat.fhir.services.config.VsacConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,20 +9,28 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled // integration test
+@Disabled
+        // integration test
 class VsacRestClientIntegrationTest {
-    private final RestTemplate restTemplate = new RestTemplate();
+    private static String grantingTicket = "";
+    private static RestTemplate restTemplate;
     private VsacRestClient vsacRestClient;
-    private String grantingTicket = "";
 
     @BeforeEach
     public void setUp() {
         VsacConfig vsacConfig = new VsacConfig();
         vsacConfig.setService("https://vsac.nlm.nih.gov");
+
+        RestTemplateConfig restTemplateConfig = new RestTemplateConfig();
+
+        if (restTemplate == null) {
+            restTemplate = restTemplateConfig.restTemplateExternal(null);
+        }
 
         vsacRestClient = new VsacRestClient(restTemplate, vsacConfig);
 
@@ -30,12 +39,13 @@ class VsacRestClientIntegrationTest {
 
         if (StringUtils.isEmpty(grantingTicket)) {
             grantingTicket = vsacRestClient.fetchGrantingTicket(userName, userPass);
+            System.out.println(grantingTicket);
         }
     }
 
     @Test
-    public void fetchGrantingTicket() {
-        assertNotNull(grantingTicket);
+    void fetchGrantingTicket() {
+        assertTrue(grantingTicket.length() > 10);
     }
 
     @Test
@@ -46,14 +56,16 @@ class VsacRestClientIntegrationTest {
 
     @Test
     void fetchVersionFromNameSuccess() {
-        VsacRestClient.CodeSystemVersionResponse  version = vsacRestClient.fetchVersionFromName("LOINC", grantingTicket);
+        VsacRestClient.CodeSystemVersionResponse version = vsacRestClient.fetchVersionFromName("LOINC", grantingTicket);
         assertEquals("2.68", version.getVersion()); // This can change over time
     }
 
     @Test
     void fetchVersionFromNameFailure() {
-        VsacRestClient.CodeSystemVersionResponse  version = vsacRestClient.fetchVersionFromName("FLYBYNIGHT", grantingTicket);
-        assertNull(version); // This can change over time
+        VsacRestClient.CodeSystemVersionResponse version = vsacRestClient.fetchVersionFromName("FLYBYNIGHT", grantingTicket);
+
+        assertEquals("CodeSystem not found.", version.getMessage());
+        assertFalse(version.getSuccess());
     }
 
 
@@ -137,8 +149,8 @@ class VsacRestClientIntegrationTest {
     }
 
     @Test
-    void getDataFromProfile() {
-        ValueSetVSACResponseResult result =    vsacRestClient.getDataFromProfile("oid",  grantingTicket);
+    void getDataFromProfileNotFound() {
+        ValueSetVSACResponseResult result = vsacRestClient.getDataFromProfile("oid", grantingTicket);
         assertTrue(result.isFailResponse());
         assertEquals("404 Cannot find value set with oid: oid", result.getFailReason());
         assertNull(result.getXmlPayLoad());
@@ -146,8 +158,8 @@ class VsacRestClientIntegrationTest {
 
     @Test
     void getDataFromProfileFound() {
-        ValueSetVSACResponseResult result =    vsacRestClient.getDataFromProfile("2.16.840.1.113762.1.4.1096.82",  grantingTicket);
-        assertTrue(result.isFailResponse());
+        ValueSetVSACResponseResult result = vsacRestClient.getDataFromProfile("2.16.840.1.113762.1.4.1096.82", grantingTicket);
+        assertFalse(result.isFailResponse());
         assertNull(result.getFailReason());
         assertTrue(result.getXmlPayLoad().contains("ID=\"2.16.840.1.113762.1.4.1096.82\""));
     }

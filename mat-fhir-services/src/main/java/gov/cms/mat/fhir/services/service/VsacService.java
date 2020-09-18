@@ -19,9 +19,7 @@ public class VsacService {
     }
 
     public ValueSetVSACResponseResult getValueSetVSACResponseResult(String oid, String vsacGrantingTicket) {
-        String ticket = getServiceTicket(vsacGrantingTicket);
-
-        return vsacRestClient.getDataFromProfile(oid, ticket);
+        return vsacRestClient.getDataFromProfile(oid, vsacGrantingTicket);
     }
 
     public VSACValueSetWrapper getVSACValueSetWrapper(String oid, String vsacGrantingTicket) {

@@ -57,18 +57,6 @@ class CodeSystemVsacAsyncTest {
 
     }
 
-    @Test
-    void validateCodeBlankUrl() throws ExecutionException, InterruptedException {
-        cqlCode.setCodeIdentifier("");
-
-        CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
-        completableFuture.get();
-
-        assertEquals("Code system uri is required.", cqlCode.getErrorMessage());
-
-
-        verifyNoInteractions(vsacRestClient);
-    }
 
     @Test
     void validateCodeNotFound() throws ExecutionException, InterruptedException {

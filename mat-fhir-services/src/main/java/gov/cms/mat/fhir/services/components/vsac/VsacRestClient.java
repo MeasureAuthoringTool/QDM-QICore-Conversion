@@ -206,7 +206,7 @@ public class VsacRestClient {
             } else {
                 return null;
             }
-        } catch (HttpClientErrorException e) {
+        } catch (Exception e) {
             log.info("Vsac Rest Error", e);
             return null;
         }
