@@ -32,9 +32,8 @@ class ValueSetVsacAsync extends VsacValidator {
     CompletableFuture<Void> validateWithVsac(CQLQualityDataSetDTO code, String umlsToken) {
         try {
             String oid = parseOid(code.getOid());
-            String fiveMinServiceTicket = fetchFiveMinuteTicket(umlsToken);
 
-            boolean isValid = verifyWithVsac(oid, fiveMinServiceTicket);
+            boolean isValid = verifyWithVsac(oid, umlsToken);
 
             code.setErrorMessage(isValid ? null : NOT_FOUND);
             code.addValidatedWithVsac(isValid ? VsacStatus.VALID : VsacStatus.IN_VALID);
@@ -51,9 +50,9 @@ class ValueSetVsacAsync extends VsacValidator {
         return CompletableFuture.completedFuture(null);
     }
 
-    private boolean verifyWithVsac(String oid, String fiveMinServiceTicket) {
+    private boolean verifyWithVsac(String oid, String umlsToken) {
         ValueSetVSACResponseResult vsacResponseResult =
-                vsacService.getValueSetVSACResponseResult(oid.trim(), fiveMinServiceTicket);
+                vsacService.getValueSetVSACResponseResult(oid.trim(), umlsToken);
 
         if (vsacResponseResult != null && StringUtils.isNotBlank(vsacResponseResult.getXmlPayLoad())) {
             log.info("Successfully converted valueset object from vsac xml payload.");
