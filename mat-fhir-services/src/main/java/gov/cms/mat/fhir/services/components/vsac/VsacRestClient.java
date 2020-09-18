@@ -52,8 +52,6 @@ public class VsacRestClient {
     }
 
     public String fetchSingleUseTicket(String grantingTicket) {
-        grantingTicket = "TGT-310648-jTl0DTuveHIWbkmO90IKJWc4d1n46RrCHTq5zlPp5dmg1rCNAA-cas";
-
         String path = TICKET_PATH + '/' + grantingTicket;
         return fetchTicket(SINGLE_USE_TICKET_REQUEST, path);
     }
