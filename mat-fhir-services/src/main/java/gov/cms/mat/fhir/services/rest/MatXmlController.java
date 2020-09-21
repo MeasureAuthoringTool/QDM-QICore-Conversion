@@ -225,14 +225,15 @@ public class MatXmlController {
         cqlToMatXml.setUmlsToken(umlsToken);
         cqlParser.parse(cql, cqlToMatXml);
 
-        if (measureId != null){
+        if (measureId != null) {
             Measure measure = find(measureId);
             if (measure.getDescription() != null && measure.getDescription().contains("_")) {
                 matXmlResponse.setErrors(getMeasureValidations(measure));
             }
-            if (sourceModel != null && sourceModel.getLibraryName().contains("_")) {
-                matXmlResponse.getErrors().addAll(getLibraryValidations(sourceModel));
-            }
+        }
+
+        if (sourceModel != null && sourceModel.getLibraryName().contains("_")) {
+            matXmlResponse.getErrors().addAll(getLibraryValidations(sourceModel));
         }
 
         matXmlResponse.setCql(cql);
@@ -293,9 +294,7 @@ public class MatXmlController {
         @NotNull List<LibraryErrors> libraryErrorsList = new ArrayList<>();
         LibraryErrors libraryErrors = new LibraryErrors(measure.getDescription(), measure.getVersion().toString());
         List<CQLError> errors = new ArrayList<>();
-        CQLError cqlError = new CQLError();
-        cqlError.setErrorMessage("Measure name must not contain '_' (underscore)");
-        cqlError.setSeverity("Severe");
+        CQLError cqlError = createError("Measure name must not contain '_' (underscore)", "Severe", 1);
         errors.add(cqlError);
         libraryErrors.setErrors(errors);
         libraryErrorsList.add(libraryErrors);
@@ -306,13 +305,22 @@ public class MatXmlController {
         @NotNull List<LibraryErrors> libraryErrorsList = new ArrayList<>();
         LibraryErrors libraryErrors = new LibraryErrors(sourceModel.getLibraryName(), sourceModel.getVersionUsed());
         List<CQLError> errors = new ArrayList<>();
-        CQLError cqlError = new CQLError();
-        cqlError.setErrorMessage("Library name must not contain '_' (underscore)");
-        cqlError.setSeverity("Severe");
+        CQLError cqlError = createError("Library name must not contain '_' (underscore)", "Severe", 1);
         errors.add(cqlError);
         libraryErrors.setErrors(errors);
         libraryErrorsList.add(libraryErrors);
         return libraryErrorsList;
+    }
+
+    private CQLError createError(String msg, String sevrity, int lineNumber) {
+        CQLError e = new CQLError();
+        e.setSeverity(sevrity);
+        e.setErrorMessage(msg);
+        e.setErrorInLine(lineNumber);
+        e.setErrorAtOffset(0);
+        e.setStartErrorInLine(lineNumber);
+        e.setEndErrorInLine(lineNumber);
+        return e;
     }
 
 }
