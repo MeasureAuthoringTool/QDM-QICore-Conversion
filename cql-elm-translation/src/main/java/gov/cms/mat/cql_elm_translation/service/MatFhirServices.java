@@ -47,9 +47,11 @@ public class MatFhirServices {
                     return cqlPayload.getData();
                 }
             } else {
+                log.error("cqlPayload has no Body");
                 return null;
             }
         } else {
+            log.error("cqlPayload has invalid status code: {}", responseEntity.getStatusCode() );
             return null;
         }
     }
