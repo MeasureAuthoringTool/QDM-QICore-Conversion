@@ -18,7 +18,7 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class SecurityFilter implements Filter {
-    private static final String MAT_API_KEY = "MAT-API-KEY";
+    public static final String MAT_API_KEY = "MAT-API-KEY";
     private static final String DISABLED = "DISABLED";
     @Value("${mat-api-key}")
     private String matApiKey;

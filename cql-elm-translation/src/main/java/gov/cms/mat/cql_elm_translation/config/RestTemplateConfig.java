@@ -13,12 +13,19 @@ import java.util.List;
 
 @Configuration
 public class RestTemplateConfig {
+
+    private  final RequestResponseLoggingMdcInternalInterceptor requestResponseLoggingMdcInternalInterceptor;
+
+    public RestTemplateConfig(RequestResponseLoggingMdcInternalInterceptor requestResponseLoggingMdcInternalInterceptor) {
+        this.requestResponseLoggingMdcInternalInterceptor = requestResponseLoggingMdcInternalInterceptor;
+    }
+
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
         RestTemplate restTemplate = new RestTemplate(factory);
         restTemplate
-                .setInterceptors(List.of(new RequestResponseLoggingMdcInternalInterceptor()));
+                .setInterceptors(List.of(requestResponseLoggingMdcInternalInterceptor));
         return restTemplate;
     }
 }

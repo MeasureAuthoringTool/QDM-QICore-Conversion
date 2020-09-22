@@ -17,10 +17,16 @@ import java.util.List;
 @Configuration
 public class RestTemplateConfig {
 
+   private final RequestResponseLoggingMdcInternalInterceptor requestResponseLoggingMdcInternalInterceptor;
+
+    public RestTemplateConfig(RequestResponseLoggingMdcInternalInterceptor requestResponseLoggingMdcInternalInterceptor) {
+        this.requestResponseLoggingMdcInternalInterceptor = requestResponseLoggingMdcInternalInterceptor;
+    }
+
     @Bean(name = "internalRestTemplate")
     @Primary
     public RestTemplate restTemplateInternal(RestTemplateBuilder builder) {
-        return getRestTemplate(new RequestResponseLoggingMdcInternalInterceptor());
+        return getRestTemplate(requestResponseLoggingMdcInternalInterceptor);
     }
 
     @Bean(name = "externalRestTemplate")
