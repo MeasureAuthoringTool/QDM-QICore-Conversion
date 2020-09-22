@@ -34,24 +34,24 @@ public class SecurityFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
-//        HttpServletRequest req = (HttpServletRequest) servletRequest;
-//        HttpServletResponse res = (HttpServletResponse) servletResponse;
-//
-//        if (!isWhiteListUrl(req) && !StringUtils.equals(matApiKey, DISABLED)) {
-//            String keyValue = req.getHeader(MAT_API_KEY);
-//            if (keyValue == null) {
-//                log.error("Request did not contain header " + MAT_API_KEY);
-//                res.sendError(403);
-//            } else if (!StringUtils.equals(matApiKey, keyValue)) {
-//                log.error("Invalid " + MAT_API_KEY + " header.");
-//                res.sendError(403);
-//            } else {
-//                log.info("Request contained valid " + MAT_API_KEY);
-//                filterChain.doFilter(servletRequest, servletResponse);
-//            }
-//        } else {
+        HttpServletRequest req = (HttpServletRequest) servletRequest;
+        HttpServletResponse res = (HttpServletResponse) servletResponse;
+
+        if (!isWhiteListUrl(req) && !StringUtils.equals(matApiKey, DISABLED)) {
+            String keyValue = req.getHeader(MAT_API_KEY);
+            if (keyValue == null) {
+                log.error("Request did not contain header " + MAT_API_KEY);
+                res.sendError(403);
+            } else if (!StringUtils.equals(matApiKey, keyValue)) {
+                log.error("Invalid " + MAT_API_KEY + " header.");
+                res.sendError(403);
+            } else {
+                log.info("Request contained valid " + MAT_API_KEY);
+                filterChain.doFilter(servletRequest, servletResponse);
+            }
+        } else {
             filterChain.doFilter(servletRequest, servletResponse);
-       // }
+        }
     }
 
     private boolean isWhiteListUrl(HttpServletRequest req) {
