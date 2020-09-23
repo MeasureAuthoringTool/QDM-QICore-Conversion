@@ -39,17 +39,21 @@ public class MatFhirServices {
                 CqlPayload cqlPayload = responseEntity.getBody();
 
                 if (cqlPayload == null || cqlPayload.getType() == null) {
-                    log.error("cqlPayload is invalid");
+                    log.error("cqlPayload is INVALID (null)");
                     return null;
                 } else if (cqlPayload.getType() == CqlPayloadType.XML) {
+                    log.info("cqlPayload is XML valid");
                     return matXmlConversionService.processCqlXml(cqlPayload.getData());
                 } else {
+                    log.info("cqlPayload is valid");
                     return cqlPayload.getData();
                 }
             } else {
+                log.error("cqlPayload has no Body");
                 return null;
             }
         } else {
+            log.error("cqlPayload has invalid status code: {}", responseEntity.getStatusCode() );
             return null;
         }
     }

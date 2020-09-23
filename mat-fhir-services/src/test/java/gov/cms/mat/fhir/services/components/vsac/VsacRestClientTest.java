@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.components.vsac;
 
 import gov.cms.mat.fhir.services.config.RestTemplateConfig;
 import gov.cms.mat.fhir.services.config.VsacConfig;
+import gov.cms.mat.fhir.services.config.logging.RequestResponseLoggingMdcInternalInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -25,8 +26,8 @@ class VsacRestClientIntegrationTest {
     public void setUp() {
         VsacConfig vsacConfig = new VsacConfig();
         vsacConfig.setService("https://vsac.nlm.nih.gov");
-
-        RestTemplateConfig restTemplateConfig = new RestTemplateConfig();
+        RequestResponseLoggingMdcInternalInterceptor requestResponseLoggingMdcInternalInterceptor = new RequestResponseLoggingMdcInternalInterceptor();
+        RestTemplateConfig restTemplateConfig = new RestTemplateConfig(requestResponseLoggingMdcInternalInterceptor);
 
         if (restTemplate == null) {
             restTemplate = restTemplateConfig.restTemplateExternal(null);

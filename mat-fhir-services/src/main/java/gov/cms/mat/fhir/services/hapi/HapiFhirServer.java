@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
+import gov.cms.mat.fhir.services.config.security.SecurityFilter;
 import gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,9 @@ import java.util.Optional;
 public class HapiFhirServer {
     private static final String CACHE_HEADER_NAME = "Cache-Control";
     private static final String CACHE_HEADER_VALUE = "no-cache";
+
+    @Value("${mat-api-key}")
+    private String matApiKey;
 
     @Getter
     private final FhirContext ctx;
@@ -166,8 +170,10 @@ public class HapiFhirServer {
                 .resource(resource)
                 .prettyPrint()
                 .encodedJson()
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
                 .execute();
     }
+
 
     public Bundle getValueSetBundle(String oid) {
         return getOidBundle(ValueSet.class, oid);
@@ -183,6 +189,7 @@ public class HapiFhirServer {
                 .where(ValueSet.IDENTIFIER.exactly().systemAndIdentifier("urn:ietf:rfc:3986", oid))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
                 .execute();
     }
 
@@ -192,6 +199,7 @@ public class HapiFhirServer {
                 .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
                 .execute();
     }
 
@@ -201,6 +209,7 @@ public class HapiFhirServer {
                 .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
                 .execute();
     }
 
@@ -211,6 +220,7 @@ public class HapiFhirServer {
                 .and(Library.NAME.matches().value(name))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
                 .execute();
     }
 
@@ -220,6 +230,7 @@ public class HapiFhirServer {
                 .and(Library.NAME.matches().value(name))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
                 .execute();
     }
 
@@ -229,6 +240,7 @@ public class HapiFhirServer {
                 .totalMode(SearchTotalModeEnum.ACCURATE)
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
                 .execute()
                 .getTotal();
     }
@@ -238,12 +250,14 @@ public class HapiFhirServer {
                 .forResource(resourceClass)
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
                 .execute();
     }
 
     public Bundle getNextPage(Bundle bundle) {
         return hapiClient.loadPage()
                 .next(bundle)
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
                 .execute();
     }
 

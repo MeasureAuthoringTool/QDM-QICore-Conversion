@@ -4,9 +4,11 @@ import gov.cms.mat.config.logging.MdcHeaderString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
+import org.springframework.stereotype.Component;
 
 import static gov.cms.mat.config.logging.MdcHeaderString.MDC_PARAMS_ID;
 
+@Component
 @Slf4j
 public class RequestResponseLoggingMdcInternalInterceptor extends RequestResponseLoggingInterceptor {
     private static final String MAT_API_KEY = "MAT-API-KEY";

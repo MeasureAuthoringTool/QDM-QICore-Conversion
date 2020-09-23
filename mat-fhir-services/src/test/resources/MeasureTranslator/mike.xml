@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cqlLookUp>
+    <library>MATGlobalCommonFunctions_FHIR4</library>
+    <version>1.0.000</version>
+    <libraryComment>@update: @@BTR 2020-03-31 -&gt;
+        Incremented version to 5.0.000
+        Updated FHIR version to 4.0.1
+        Changed timezone keyword to timezoneoffset for use with CQL 1.4
+        Removed Normalize Onset in favor of more general Normalize Interval
+        @@@
+    </libraryComment>
+    <usingModel>FHIR</usingModel>
+    <usingModelVersion>4.0.1</usingModelVersion>
+    <cqlContext>Patient</cqlContext>
+    <codeSystems>
+        <codeSystem codeSystem="http://loinc.org" codeSystemName="LOINC" id="8e0608ad-bc7d-45ec-b7c9-4aee9db621f6"/>
+        <codeSystem codeSystem="http://snomed.info/sct" codeSystemName="SNOMEDCT"
+                    id="7b2416dc-e253-45fb-aec7-68ad23d3b4ac"/>
+        <codeSystem codeSystem="http://hl7.org/fhir/v3/RoleCode" codeSystemName="RoleCode"
+                    id="e325de93-efb9-45d9-864f-5a3c66f761df"/>
+        <codeSystem codeSystem="http://terminology.hl7.org/CodeSystem/diagnosis-role" codeSystemName="Diagnosis Role"
+                    id="347d8158-4cb2-4ed3-9517-f4f6b881b3ca"/>
+        <codeSystem codeSystem="http://terminology.hl7.org/CodeSystem/medicationrequest-category"
+                    codeSystemName="MedicationRequestCategory" id="059725e6-5ba0-48f4-b916-dfe2789651cd"/>
+        <codeSystem codeSystem="http://terminology.hl7.org/CodeSystem/condition-clinical"
+                    codeSystemName="ConditionClinicalStatusCodes" id="9b397ec4-5880-41ee-8fe0-33059fcc2a91"/>
+        <codeSystem codeSystem="http://terminology.hl7.org/CodeSystem/condition-verification"
+                    codeSystemName="ConditionVerificationStatusCodes" id="49fcffdc-c543-47de-8e50-da51fc8b0d38"/>
+        <codeSystem codeSystem="http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical"
+                    codeSystemName="AllergyIntoleranceClinicalStatusCodes" id="290da9f9-38f5-4240-9740-1d5a17cbdcfa"/>
+        <codeSystem codeSystem="http://terminology.hl7.org/CodeSystem/allergyintolerance-verification"
+                    codeSystemName="AllergyIntoleranceVerificationStatusCodes"
+                    id="af10aecf-17e0-4910-9816-1683d8fbd631"/>
+    </codeSystems>
+    <valuesets>
+        <valueset id="06bde635-d3d6-40ec-ae99-c75a5bf7337e" isValidatedWithVsac="VALID" name="Encounter Inpatient"
+                  oid="http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.666.5.307"
+                  originalName="Encounter Inpatient" suppDataElement="false" taxonomy="Grouping"
+                  uuid="e15b7c0d-4277-4a54-863b-31ee46687100"/>
+        <valueset id="b5314031-f29d-4f1f-afce-0022dbecebc6" isValidatedWithVsac="VALID"
+                  name="Emergency Department Visit"
+                  oid="http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.292"
+                  originalName="Emergency Department Visit" suppDataElement="false" taxonomy="Grouping"
+                  uuid="e8fc70c0-4bc8-421d-b822-3a5365921010"/>
+        <valueset id="b30be9ba-245d-488a-b32b-129ecb19e84e" isValidatedWithVsac="VALID" name="Observation Services"
+                  oid="http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1111.143"
+                  originalName="Observation Services" suppDataElement="false" taxonomy="Grouping"
+                  uuid="cac2ad23-455a-4a9c-8d87-1a3bb1e60fc5"/>
+    </valuesets>
+    <codes>
+        <code codeIdentifier="" codeName="Birthdate" codeOID="21112-8" codeSystemName="LOINC"
+              codeSystemOID="http://loinc.org" displayName="Birth date" id="081412f5-e122-41ae-b78f-69c9bfc4755d"
+              isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID" readOnly="false"/>
+        <code codeIdentifier="" codeName="Dead" codeOID="419099009" codeSystemName="SNOMEDCT"
+              codeSystemOID="http://snomed.info/sct" displayName="Dead" id="04de8881-d8f6-49d2-ad9b-fc6b9660d1dc"
+              isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID" readOnly="false"/>
+        <code codeIdentifier="" codeName="ER" codeOID="ER" codeSystemName="RoleCode"
+              codeSystemOID="http://hl7.org/fhir/v3/RoleCode" displayName="Emergency room"
+              id="e5c3bf37-7e13-47ce-895c-e1a4a0a1b4ca" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="ICU" codeOID="ICU" codeSystemName="RoleCode"
+              codeSystemOID="http://hl7.org/fhir/v3/RoleCode" displayName="Intensive care unit"
+              id="2051896e-82f4-47b8-82c5-9fef1f4d3ddf" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="Billing" codeOID="billing" codeSystemName="Diagnosis Role"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/diagnosis-role" displayName="Billing"
+              id="0bb03d0d-4da2-44cf-b99d-0aabe54cb67e" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="active" codeOID="active" codeSystemName="ConditionClinicalStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-clinical" displayName="active"
+              id="0e52f0ce-867a-492a-911a-9fdbf59ba04c" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="recurrence" codeOID="recurrence" codeSystemName="ConditionClinicalStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-clinical" displayName="recurrence"
+              id="3bf86f67-c6e2-4e9c-9183-57ccc91b22be" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="relapse" codeOID="relapse" codeSystemName="ConditionClinicalStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-clinical" displayName="relapse"
+              id="a4f9aef6-2625-48d7-a5ed-dd63e3e087e9" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="inactive" codeOID="inactive" codeSystemName="ConditionClinicalStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-clinical" displayName="inactive"
+              id="121a1bc5-f4ea-4b71-8607-98e025efef10" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="remission" codeOID="remission" codeSystemName="ConditionClinicalStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-clinical" displayName="remission"
+              id="7ffe2d11-9848-44b3-a142-467a1cdb6e80" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="resolved" codeOID="resolved" codeSystemName="ConditionClinicalStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-clinical" displayName="resolved"
+              id="4c1340d4-5770-4dc8-8c50-0ec0b63472bf" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="unconfirmed" codeOID="unconfirmed"
+              codeSystemName="ConditionVerificationStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-verification" displayName="unconfirmed"
+              id="e9ab97a0-1ae4-49d4-b9f9-dcfa48092059" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="provisional" codeOID="provisional"
+              codeSystemName="ConditionVerificationStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-verification" displayName="provisional"
+              id="2a577277-9ece-410f-883e-6346c3a4d718" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="differential" codeOID="differential"
+              codeSystemName="ConditionVerificationStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-verification" displayName="differential"
+              id="c0704942-a88e-41ce-9a8c-f91e9fd61ecd" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="confirmed" codeOID="confirmed"
+              codeSystemName="ConditionVerificationStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-verification" displayName="confirmed"
+              id="840bacc0-ca6e-4494-9899-3b5e70f94c3a" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="refuted" codeOID="refuted" codeSystemName="ConditionVerificationStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-verification" displayName="refuted"
+              id="b8cea379-37a9-4b35-b795-40e70c611a21" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="entered-in-error" codeOID="entered-in-error"
+              codeSystemName="ConditionVerificationStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/condition-verification"
+              displayName="entered-in-error" id="66a36e5d-1129-49af-a014-d7b687a8eb7e"
+              isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID" readOnly="false"/>
+        <code codeIdentifier="" codeName="allergy-active" codeOID="active"
+              codeSystemName="AllergyIntoleranceClinicalStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical"
+              displayName="allergy-active" id="dc3aafc6-4193-4551-bf3e-274f3c24c2f9" isCodeSystemVersionIncluded="false"
+              isValidatedWithVsac="VALID" readOnly="false"/>
+        <code codeIdentifier="" codeName="allergy-inactive" codeOID="inactive"
+              codeSystemName="AllergyIntoleranceClinicalStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical"
+              displayName="allergy-inactive" id="78550a9a-7f01-4ba9-a87f-e8166aafdeed"
+              isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID" readOnly="false"/>
+        <code codeIdentifier="" codeName="allergy-resolved" codeOID="resolved"
+              codeSystemName="AllergyIntoleranceClinicalStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical"
+              displayName="allergy-resolved" id="f287921b-9fb1-4358-b4a7-db72dbaa6ee4"
+              isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID" readOnly="false"/>
+        <code codeIdentifier="" codeName="allergy-unconfirmed" codeOID="unconfirmed"
+              codeSystemName="AllergyIntoleranceVerificationStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/allergyintolerance-verification"
+              displayName="allergy-unconfirmed" id="a0b563b4-05ba-4e40-9d8b-5f8a8c4cfd96"
+              isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID" readOnly="false"/>
+        <code codeIdentifier="" codeName="allergy-confirmed" codeOID="confirmed"
+              codeSystemName="AllergyIntoleranceVerificationStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/allergyintolerance-verification"
+              displayName="allergy-confirmed" id="3ad71d72-7a38-4741-a87b-a812565403a0"
+              isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID" readOnly="false"/>
+        <code codeIdentifier="" codeName="allergy-refuted" codeOID="refuted"
+              codeSystemName="AllergyIntoleranceVerificationStatusCodes"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/allergyintolerance-verification"
+              displayName="allergy-refuted" id="27285b4d-8ea0-4ef4-a97b-0c8dd8fd3ec4"
+              isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID" readOnly="false"/>
+        <code codeIdentifier="" codeName="Community" codeOID="community" codeSystemName="MedicationRequestCategory"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/medicationrequest-category" displayName="Community"
+              id="d3d26ebd-dae6-4ddc-9fc1-912eab9149a9" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+        <code codeIdentifier="" codeName="Discharge" codeOID="discharge" codeSystemName="MedicationRequestCategory"
+              codeSystemOID="http://terminology.hl7.org/CodeSystem/medicationrequest-category" displayName="Discharge"
+              id="374e9076-7651-4e9a-8517-f83f6ac2c5f2" isCodeSystemVersionIncluded="false" isValidatedWithVsac="VALID"
+              readOnly="false"/>
+    </codes>
+    <parameters>
+        <parameter id="b484be51-ea3a-4b97-8b3e-d1e353cd1593" name="Measurement Period" readOnly="false">
+            <comment/>
+            <logic>Interval&lt;DateTime&gt;
+                default Interval[@2019-01-01T00:00:00.0, @2020-01-01T00:00:00.0)
+            </logic>
+        </parameter>
+    </parameters>
+    <definitions>
+        <definition context="Patient" id="8549f758-94d2-4339-b66b-a00f202d62a0" name="Inpatient Encounter"
+                    popDefinition="false" supplDataElement="false">
+            <logic>[Encounter: "Encounter Inpatient"] EncounterInpatient
+                where EncounterInpatient.status = 'finished'
+                and "LengthInDays"(EncounterInpatient.period) &lt;= 120
+                and EncounterInpatient.period ends during "Measurement Period"
+            </logic>
+            <comment/>
+        </definition>
+    </definitions>
+    <functions>
+        <function context="Patient" id="f9f918fb-c20e-40f9-9d11-061ad484d18f" name="ToDate">
+            <logic>DateTime(year from Value, month from Value, day from Value, 0, 0, 0, 0, timezoneoffset from Value)
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="Value" id="182a4e04-379b-42bc-be58-46d5561f86c9" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="9f2e7099-fce0-41ba-b8cf-956b5030dc5e" name="CalendarAgeInDaysAt">
+            <logic>days between ToDate(BirthDateTime)and ToDate(AsOf)</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="BirthDateTime" id="792ac6c3-3b5c-411f-bbca-84eb18aabfe6" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+                <argument argumentName="AsOf" id="d518350b-f754-498c-911f-f218e01bfa8b" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="95a42558-0c6c-42e2-b8c8-d6d433114b33" name="CalendarAgeInDays">
+            <logic>CalendarAgeInDaysAt(BirthDateTime, Today())</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="BirthDateTime" id="3c86ce3f-90a6-43aa-90c8-72657d4dfe65" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="4af23d68-bf18-4547-8ac0-052ed4f2b78c" name="CalendarAgeInMonthsAt">
+            <logic>months between ToDate(BirthDateTime)and ToDate(AsOf)</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="BirthDateTime" id="15f178ed-5467-4e7b-9b70-a15b0f16e1dc" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+                <argument argumentName="AsOf" id="11242905-a8d1-43a8-919d-746fbd010d52" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="4b1a08e7-1fb6-427a-a008-6ac9397639b0" name="CalendarAgeInMonths">
+            <logic>CalendarAgeInMonthsAt(BirthDateTime, Today())</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="BirthDateTime" id="a3f76932-587f-4eab-a57f-8aeba15b7800" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="c61e2deb-b630-4cab-947e-270ddf9784d1" name="CalendarAgeInYearsAt">
+            <logic>years between ToDate(BirthDateTime)and ToDate(AsOf)</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="BirthDateTime" id="e63eaaa8-5134-47a8-bbd8-d2982119c9dd" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+                <argument argumentName="AsOf" id="46a73df1-29d1-407e-abb2-168a52f7d3fe" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="85db0156-965d-43ad-ba33-d4f3f1ce9991" name="CalendarAgeInYears">
+            <logic>CalendarAgeInYearsAt(BirthDateTime, Today())</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="BirthDateTime" id="37a578b0-dc2d-406b-ad93-58a1f3a7dbdc" qdmDataType="DateTime"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="7e3ef718-1870-48b7-9e1e-4888d109fd7d" name="LengthInDays">
+            <logic>difference in days between start of Value and end of Value</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="Value" id="56299c64-3a28-4b09-9401-e7d48a2c10a4"
+                          qdmDataType="Interval&lt;DateTime&gt;" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="c593d042-1d65-42e6-8337-d216ac2ec043" name="ED Visit">
+            <logic>singleton from (
+                [Encounter: "Emergency Department Visit"] EDVisit
+                where EDVisit.status = 'finished'
+                and EDVisit.period ends 1 hour or less on or before start of FHIRHelpers.ToInterval(TheEncounter.period)
+                )
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="TheEncounter" id="05cfd29f-c716-4c0a-9608-aeaef26737f7"
+                          qdmDataType="FHIR.Encounter" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="3c6081c8-45df-44a2-88f6-9b70de79db0b" name="Hospitalization">
+            <logic>( "ED Visit"(TheEncounter) ) X
+                return
+                if X is null then TheEncounter.period
+                else Interval[start of FHIRHelpers.ToInterval(X.period), end of
+                FHIRHelpers.ToInterval(TheEncounter.period)]
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="TheEncounter" id="12643491-8b48-4e4d-8fa3-dc9f4a4dd622"
+                          qdmDataType="FHIR.Encounter" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="b068659f-0571-49f3-ae96-a8d88bdbe8eb" name="Hospitalization Locations">
+            <logic>( "ED Visit"(TheEncounter) ) EDEncounter
+                return
+                if EDEncounter is null then TheEncounter.location
+                else flatten { EDEncounter.location, TheEncounter.location }
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="TheEncounter" id="767c5c3f-d2e3-45f0-81b1-4d1f523b365e"
+                          qdmDataType="FHIR.Encounter" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="f2fef0a6-accd-4abb-93cc-c0b6eccda904" name="Hospitalization Length of Stay">
+            <logic>LengthInDays("Hospitalization"(TheEncounter))</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="TheEncounter" id="b7a4268f-f10c-4413-a737-42d1c552c751"
+                          qdmDataType="FHIR.Encounter" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="0fa2b045-739c-4842-89f2-e9d6b5fc2aa4" name="Hospital Admission Time">
+            <logic>start of "Hospitalization"(TheEncounter)</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="TheEncounter" id="85d757c7-6607-437e-81a4-164767230c86"
+                          qdmDataType="FHIR.Encounter" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="70a6e61b-6bb5-40ca-9913-2a3475611cca" name="Hospital Discharge Time">
+            <logic>end of FHIRHelpers.ToInterval(TheEncounter.period)</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="TheEncounter" id="44860f83-9a55-4968-bbad-e32b4b37853b"
+                          qdmDataType="FHIR.Encounter" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="6a5e5613-b5db-46ad-9f30-7cb671c748a4" name="Hospital Arrival Time">
+            <logic>start of FHIRHelpers.ToInterval(First(
+                ( "Hospitalization Locations"(TheEncounter) ) HospitalLocation
+                sort by start of FHIRHelpers.ToInterval(period)
+                ).period)
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="TheEncounter" id="77f0a3c4-4531-41de-b6a2-d783ce3f9c13"
+                          qdmDataType="FHIR.Encounter" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="7a813cef-4e63-460b-bf46-d0a571885152" name="HospitalizationWithObservation">
+            <logic>TheEncounter Visit
+                let ObsVisit: Last([Encounter: "Observation Services"] LastObs
+                where LastObs.period ends 1 hour or less on or before start of Visit.period
+                sort by end of period
+                ),
+                VisitStart: Coalesce(start of ObsVisit.period, start of Visit.period),
+                EDVisit: Last([Encounter: "Emergency Department Visit"] LastED
+                where LastED.period ends 1 hour or less on or before VisitStart
+                sort by end of period
+                )
+                return Interval[Coalesce(start of EDVisit.period, VisitStart), end of Visit.period]
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="TheEncounter" id="f93cc0f9-d0c1-448a-b7b4-32f9b70c3646"
+                          qdmDataType="FHIR.Encounter" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="7e606c66-69cd-4a12-b3cf-c7f9ef2d647a"
+                  name="HospitalizationWithObservationLengthofStay">
+            <logic>"LengthInDays"("HospitalizationWithObservation"(Encounter))
+
+                // TODO - fix these (must fetch Location resources and compare id to reference)
+                /*define function "Hospital Departure Time"(TheEncounter FHIR.Encounter):
+                end of FHIRHelpers.ToInterval(Last(
+                ( "Hospitalization Locations"(TheEncounter) ) HospitalLocation
+                sort by start of FHIRHelpers.ToInterval(period)
+                ).period)
+                define function "Emergency Department Arrival Time"(TheEncounter FHIR.Encounter):
+                start of FHIRHelpers.ToInterval((
+                singleton from (
+                ( "Hospitalization Locations"(TheEncounter) ) HospitalLocation
+                where HospitalLocation.type ~ "ER"
+                )
+                ).period)
+                define function "First Inpatient Intensive Care Unit"(TheEncounter FHIR.Encounter):
+                First(
+                ( TheEncounter.location ) HospitalLocation
+                where HospitalLocation.type ~ "ICU"
+                and HospitalLocation.period during TheEncounter.period
+                sort by start of FHIRHelpers.ToInterval(period)
+                )*/
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="Encounter" id="16ce276f-46a3-4e6c-9935-518d3646bc83"
+                          qdmDataType="FHIR.Encounter" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="420326f3-026d-4956-8b67-6213fcc4662f" name="Normalize Interval">
+            <logic>case
+                when choice is FHIR.dateTime then
+                Interval[FHIRHelpers.ToDateTime(choice as FHIR.dateTime), FHIRHelpers.ToDateTime(choice as
+                FHIR.dateTime)]
+                when choice is FHIR.Period then
+                FHIRHelpers.ToInterval(choice as FHIR.Period)
+                when choice is FHIR.instant then
+                Interval[FHIRHelpers.ToDateTime(choice as FHIR.instant), FHIRHelpers.ToDateTime(choice as FHIR.instant)]
+                when choice is FHIR.Age then
+                Interval[FHIRHelpers.ToDate(Patient.birthDate) + FHIRHelpers.ToQuantity(choice as FHIR.Age),
+                FHIRHelpers.ToDate(Patient.birthDate) + FHIRHelpers.ToQuantity(choice as FHIR.Age) + 1 year)
+                when choice is FHIR.Range then
+                Interval[FHIRHelpers.ToDate(Patient.birthDate) + FHIRHelpers.ToQuantity((choice as FHIR.Range).low),
+                FHIRHelpers.ToDate(Patient.birthDate) + FHIRHelpers.ToQuantity((choice as FHIR.Range).high) + 1 year)
+                when choice is FHIR.Timing then
+                Message(null as Interval&lt;DateTime&gt;, true, '1', 'Error', 'Cannot compute a single interval from a
+                Timing type')
+                when choice is FHIR.string then
+                Message(null as Interval&lt;DateTime&gt;, true, '1', 'Error', 'Cannot compute an interval from a String
+                value')
+                else
+                null as Interval&lt;DateTime&gt;
+                end
+            </logic>
+            <comment>*
+                * CQFMeasures Common Logic
+                *
+            </comment>
+            <arguments>
+                <argument argumentName="choice" id="8fceb7fe-2f4f-4eae-9d9c-fd03816a0211"
+                          qdmDataType="Choice&lt;FHIR.dateTime, FHIR.Period, FHIR.Timing, FHIR.instant, FHIR.string, FHIR.Age, FHIR.Range&gt;"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="497c8021-0766-47ba-90ec-4bdb490b5e20" name="Normalize Abatement">
+            <logic>if condition.abatement is FHIR.dateTime then
+                Interval[FHIRHelpers.ToDateTime(condition.abatement as FHIR.dateTime),
+                FHIRHelpers.ToDateTime(condition.abatement as FHIR.dateTime)]
+                else if condition.abatement is FHIR.Period then
+                FHIRHelpers.ToInterval(condition.abatement as FHIR.Period)
+                else if condition.abatement is FHIR.string then
+                Message(null as Interval&lt;DateTime&gt;, true, '1', 'Error', 'Cannot compute an interval from a String
+                value')
+                else if condition.abatement is FHIR.Age then
+                Interval[FHIRHelpers.ToDate(Patient.birthDate) + FHIRHelpers.ToQuantity(condition.abatement as
+                FHIR.Age),
+                FHIRHelpers.ToDate(Patient.birthDate) + FHIRHelpers.ToQuantity(condition.abatement as FHIR.Age) + 1
+                year)
+                else if condition.abatement is FHIR.Range then
+                Interval[FHIRHelpers.ToDate(Patient.birthDate) + FHIRHelpers.ToQuantity((condition.abatement as
+                FHIR.Range).low),
+                FHIRHelpers.ToDate(Patient.birthDate) + FHIRHelpers.ToQuantity((condition.abatement as FHIR.Range).high)
+                + 1 year)
+                else if condition.abatement is FHIR.boolean then
+                Interval[end of "Normalize Interval"(condition.onset), condition.recordedDate)
+                else null
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="condition" id="935f1639-e6a5-484c-994b-2a520d142899" qdmDataType="Condition"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="87be664b-89f5-4038-843a-8bec6f9f5d75" name="Prevalence Period">
+            <logic>Interval[start of "Normalize Interval"(condition.onset), end of "Normalize Abatement"(condition))
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="condition" id="7b5d5b2c-64c5-421a-8ac9-5069ff15b968" qdmDataType="Condition"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="1bafd474-2424-465d-a303-7b322de2fed1" name="GetId">
+            <logic>Last(Split(uri, '/'))</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="uri" id="60a83610-579b-4d6b-9ad6-0f95c93a9846" qdmDataType="String"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="c53db772-59e9-4797-8da7-0c5183dd0211" name="EncounterDiagnosis">
+            <logic>Encounter.diagnosis D
+                return singleton from ([Condition] C where C.id = "GetId"(D.condition.reference))
+
+                // Returns the condition that is specified as the principal diagnosis for the encounter
+                // TODO: BTR 2019-07-30: Shouldn't need the FHIRHelpers reference here, investigate
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="Encounter" id="6ecd6f9f-d3e2-48b8-9463-aa199f661c44" qdmDataType="Encounter"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="2022ab10-f713-4e88-aa94-4829ee96249b" name="PrincipalDiagnosis">
+            <logic>(singleton from (Encounter.diagnosis D where FHIRHelpers.ToInteger(D.rank) = 1)) PD
+                return singleton from ([Condition] C where C.id = "GetId"(PD.condition.reference))
+                // Returns the location for the given location reference
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="Encounter" id="b89e5d1d-0cb6-480a-8957-480fd97ffcb9" qdmDataType="Encounter"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="6a59b79e-e299-466e-aa9b-f9a1cfe8e03b" name="GetLocation">
+            <logic>singleton from (
+                [Location] L where L.id = GetId(reference.reference)
+                )
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="reference" id="6378836f-ae79-460f-868c-475460ad9370" qdmDataType="Reference"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="fd6ebecd-dc26-4983-b1af-9884b4666716" name="GetExtensions">
+            <logic>domainResource.extension E
+                where E.url = ('http://hl7.org/fhir/us/qicore/StructureDefinition/' + url)
+                return E
+            </logic>
+            <comment>NOTE: Extensions are not the preferred approach, but are used as a way to access
+                content that is defined by extensions but not yet surfaced in the
+                CQL model info.
+            </comment>
+            <arguments>
+                <argument argumentName="domainResource" id="414919f2-163d-4eab-a94b-877633d1f3e7"
+                          qdmDataType="DomainResource" type="FHIR Datatype"/>
+                <argument argumentName="url" id="f34afae6-e60b-4e14-b437-5f41923b2549" qdmDataType="String"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="034feb3b-8f5f-4353-ae7f-ff7cad72106e" name="GetExtension">
+            <logic>singleton from "GetExtensions"(domainResource, url)</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="domainResource" id="ccbdfd6e-9b5a-4494-9e34-88a9923801ce"
+                          qdmDataType="DomainResource" type="FHIR Datatype"/>
+                <argument argumentName="url" id="df84b5a6-c4a8-41db-ba2c-8cae63c3410b" qdmDataType="String"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="1e7a2653-7eec-4494-b47d-61b13bdc7745" name="GetExtensions">
+            <logic>element.extension E
+                where E.url = (url)
+                return E
+            </logic>
+            <comment>NOTE: Extensions are not the preferred approach, but are used as a way to access
+                content that is defined by extensions but not yet surfaced in the
+                CQL model info.
+            </comment>
+            <arguments>
+                <argument argumentName="element" id="14ffc5ef-24c2-4390-b9b9-caa03820dd0b" qdmDataType="Element"
+                          type="FHIR Datatype"/>
+                <argument argumentName="url" id="140892ef-bdc7-4b0f-9940-7ace53fb7ced" qdmDataType="String"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="1ccdd535-c7cf-42b1-8aac-3bb0f7688e89" name="GetExtension">
+            <logic>singleton from "GetExtensions"(element, url)</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="element" id="f220c03e-7555-4114-a74e-e7f5a17a2091" qdmDataType="Element"
+                          type="FHIR Datatype"/>
+                <argument argumentName="url" id="36ffcfc0-6fa6-4718-a9fa-ddfa66baa2d3" qdmDataType="String"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="8c170299-ecba-4584-ba52-1646bbadc4e5" name="GetBaseExtensions">
+            <logic>domainResource.extension E
+                where E.url = ('http://hl7.org/fhir/StructureDefinition/' + url)
+                return E
+            </logic>
+            <comment>NOTE: Extensions are not the preferred approach, but are used as a way to access
+                content that is defined by extensions but not yet surfaced in the
+                CQL model info.
+            </comment>
+            <arguments>
+                <argument argumentName="domainResource" id="f83e1a09-224f-47d8-b2fb-3220ca5f1518"
+                          qdmDataType="DomainResource" type="FHIR Datatype"/>
+                <argument argumentName="url" id="a81d26f5-5e79-49aa-92f3-c6a0b405c808" qdmDataType="String"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="12ff22a2-ce33-4e22-890c-1828427905e1" name="GetBaseExtension">
+            <logic>singleton from "GetBaseExtensions"(domainResource, url)</logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="domainResource" id="6894bf7e-ddf5-4fc9-8e78-9031a0e5816f"
+                          qdmDataType="DomainResource" type="FHIR Datatype"/>
+                <argument argumentName="url" id="b0205d3b-d7ae-4588-8dbd-593eb20ed2af" qdmDataType="String"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="55e83015-5f9e-4116-88c4-971e4f120493" name="GetProvenance">
+            <logic>singleton from ([Provenance: target in resource.id])</logic>
+            <comment>NOTE: Provenance is not the preferred approach, this is provided only as an illustration
+                for what using Provenance could look like, and is not a tested pattern
+            </comment>
+            <arguments>
+                <argument argumentName="resource" id="12dc46f9-49fc-4976-8c3b-7fa9a0dddf84" qdmDataType="Resource"
+                          type="FHIR Datatype"/>
+            </arguments>
+        </function>
+        <function context="Patient" id="509b44d2-31f0-4585-b07f-39573d4e4a7e" name="GetMedicationCode">
+            <logic>if request.medication is CodeableConcept then
+                request.medication as CodeableConcept
+                else
+                (singleton from ([Medication] M where M.id = GetId((request.medication as Reference).reference))).code
+            </logic>
+            <comment/>
+            <arguments>
+                <argument argumentName="request" id="5edfb987-b6ce-4169-a7a4-4c7b83a86622"
+                          qdmDataType="MedicationRequest" type="FHIR Datatype"/>
+            </arguments>
+        </function>
+    </functions>
+    <includeLibrarys>
+        <includeLibrary cqlLibRefId="FHIRHelpers-4-0-001" cqlLibRefName="FHIRHelpers" cqlVersion="4.0.001"
+                        id="66b18b9e-21a9-43c9-81cf-3b9e16622374" name="FHIRHelpers" qdmVersion="4.0.1"/>
+    </includeLibrarys>
+</cqlLookUp>
