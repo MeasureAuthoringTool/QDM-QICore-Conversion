@@ -7,7 +7,6 @@ swagger-server: ${CQL_ELM_SWAGGER_URL}
 logging:
   level:
     root: INFO
-    gov.cms.mat.config.logging: WARN
   file:
     name: cql-elm-translation.log
     clean-history-on-start: true

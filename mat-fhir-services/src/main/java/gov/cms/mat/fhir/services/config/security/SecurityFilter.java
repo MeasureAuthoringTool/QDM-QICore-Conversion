@@ -37,7 +37,7 @@ public class SecurityFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
 
-        if (!isWhiteListUrl(req) && !StringUtils.equals(matApiKey, DISABLED)) {
+        if (!StringUtils.equals(matApiKey, DISABLED) && !isWhiteListUrl(req)) {
             String keyValue = req.getHeader(MAT_API_KEY);
             if (keyValue == null) {
                 log.error("Request did not contain header " + MAT_API_KEY);

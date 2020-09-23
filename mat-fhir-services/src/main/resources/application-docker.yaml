@@ -24,7 +24,6 @@ logging:
     org.exolab: WARN
     org.springframework.data.mongodb.core.MongoTemplate: WARN
     org.hl7.fhir.r4.hapi.validation: INFO
-    gov.cms.mat.config.logging: WARN
   pattern:
     console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
     file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %mdc %logger{36}.%M - %msg%n"
