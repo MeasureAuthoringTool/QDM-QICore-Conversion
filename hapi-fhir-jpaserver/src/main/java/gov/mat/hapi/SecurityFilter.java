@@ -57,6 +57,6 @@ public class SecurityFilter implements Filter {
     private boolean isWhiteListUrl(HttpServletRequest req) {
         String uri = req.getRequestURI();
         String method = req.getMethod();
-        return uri.equals("/actuator/health") && method.equals("GET");
+        return uri.equals("/actuator/health/custom") && method.equals("GET");
     }
 }
