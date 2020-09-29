@@ -7,6 +7,8 @@ import java.net.URI;
 
 @Slf4j
 public final class ServletLogging {
+    private static final int MAX_BODY_TO_LOG = 4096;
+
     private ServletLogging() {
     }
 
@@ -20,7 +22,7 @@ public final class ServletLogging {
         log.info("Method: {}", method);
         log.info("Headers: {}", headers);
 
-        if (StringUtils.isNotBlank(body)) {
+        if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
             log.info("Request body : {}", body);
         }
     }
@@ -30,7 +32,7 @@ public final class ServletLogging {
         log.info("Exec Time ms: {}", executionTime);
         log.info("Headers: {}", headers);
 
-        if (StringUtils.isNotBlank(body)) {
+        if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
             log.info("Response body: {}", body);
         }
     }
@@ -40,7 +42,7 @@ public final class ServletLogging {
         log.info("Method: {}", method);
         log.info("Headers: {}", headers);
 
-        if (StringUtils.isNotBlank(body)) {
+        if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
             log.info("Request body : {}", body);
         }
     }
@@ -54,6 +56,9 @@ public final class ServletLogging {
 
         log.info("Exec Time ms: {}", executionTime);
         log.info("Headers: {}", headers);
-        log.info("Response body: {}", body);
+
+        if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
+            log.info("Response body: {}", body);
+        }
     }
 }
