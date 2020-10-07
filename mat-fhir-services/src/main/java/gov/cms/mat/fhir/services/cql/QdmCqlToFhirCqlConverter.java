@@ -312,7 +312,7 @@ public class QdmCqlToFhirCqlConverter {
     }
 
     private String getNonFhirName(String name) {
-        int idx = name.indexOf("FHIR4");
+        int idx = name.indexOf("_FHIR4");
 
         if (idx < 0) {
             return name;
