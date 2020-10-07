@@ -49,6 +49,7 @@ class MeasurePackagerServiceTest implements BundleTestHelper {
     @Test
     void packageFullMeasureHappyPath() {
         Measure measure = new Measure();
+        measure.setVersion("1.0.000");
         measure.setLibrary(List.of(new CanonicalType(LIBRARY_URI)));
         Bundle bundle = createBundle(URL, measure);
         when(hapiFhirServer.getMeasureBundle(ID)).thenReturn(bundle);
@@ -60,7 +61,7 @@ class MeasurePackagerServiceTest implements BundleTestHelper {
 
         Library library = new Library();
 
-        when(hapiFhirServer.fetchHapiLibraryByName(LIBRARY_NAME)).thenReturn(Optional.of(library));
+        when(hapiFhirServer.fetchHapiLibrary(LIBRARY_NAME,"1.0.000")).thenReturn(Optional.of(library));
 
         Bundle includeBundle = new Bundle();
         when(libraryPackagerService.buildIncludeBundle(library, ID)).thenReturn(includeBundle);
@@ -77,6 +78,7 @@ class MeasurePackagerServiceTest implements BundleTestHelper {
     @Test
     void packageFullMeasureLibraryNotFoundInHapi() {
         Measure measure = new Measure();
+        measure.setVersion("1.0.000");
         measure.setLibrary(List.of(new CanonicalType(LIBRARY_URI)));
         Bundle bundle = createBundle(URL, measure);
         when(hapiFhirServer.getMeasureBundle(ID)).thenReturn(bundle);
@@ -85,7 +87,7 @@ class MeasurePackagerServiceTest implements BundleTestHelper {
         lib.setCqlName("SuperLib");
         when(cqlLibRepository.getCqlLibraryByMeasureId("1")).thenReturn(lib);
 
-        when(hapiFhirServer.fetchHapiLibraryByName(LIBRARY_NAME)).thenReturn(Optional.empty());
+        when(hapiFhirServer.fetchHapiLibrary(LIBRARY_NAME,"1.0.000")).thenReturn(Optional.empty());
 
         assertThrows(HapiResourceNotFoundException.class, () -> {
             measurePackagerService.packageFull(ID);
