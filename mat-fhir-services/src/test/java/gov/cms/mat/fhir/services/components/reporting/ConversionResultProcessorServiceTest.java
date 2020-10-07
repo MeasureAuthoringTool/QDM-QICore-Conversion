@@ -83,7 +83,6 @@ class ConversionResultProcessorServiceTest {
 
     private void verifyResult(ConversionResultDto dto) {
         assertEquals(MEASURE_ID, dto.getMeasureId());
-        assertNotNull(dto.getValueSetConversionResults());
         assertEquals(2, dto.getMeasureConversionResults().getMeasureResults().size());
         assertEquals(1, dto.getLibraryConversionResults().size());
     }
@@ -95,21 +94,12 @@ class ConversionResultProcessorServiceTest {
         //conversionResult.setValueSetConversionResults(new ValueSetConversionResults());
         conversionResult.setMeasureConversionResults(new MeasureConversionResults());
 
-        conversionResult.getValueSetConversionResults().addAll(createValueSetResults(oidFound));
 
         conversionResult.getMeasureConversionResults().setMeasureResults(createMeasureResults());
 
         conversionResult.getLibraryConversionResults().addAll(createLibraryResults());
 
         return conversionResult;
-    }
-
-    private List<ValueSetConversionResults> createValueSetResults(boolean oidFound) {
-        ValueSetConversionResults valueSetConversionResults = new ValueSetConversionResults();
-        valueSetConversionResults.setSuccess(oidFound);
-        valueSetConversionResults.setReason("REASON");
-
-        return Collections.singletonList(valueSetConversionResults);
     }
 
     private List<FieldConversionResult> createMeasureResults() {

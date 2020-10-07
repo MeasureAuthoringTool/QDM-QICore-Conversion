@@ -100,6 +100,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>mat-server-commons</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>vsac</artifactId>
+        </dependency>
         <!-- CQFramework. -->
         <dependency>
             <groupId>info.cqframework</groupId>
@@ -137,7 +141,6 @@
             <groupId>info.cqframework</groupId>
             <artifactId>qdm</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

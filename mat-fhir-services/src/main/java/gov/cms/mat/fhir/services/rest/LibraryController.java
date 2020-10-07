@@ -47,7 +47,7 @@ public class LibraryController implements FhirValidatorProcessor {
     @Operation(summary = "Count of persisted FHIR Libraries.",
             description = "The count of all the Libraries in the HAPI FHIR Database.")
     @GetMapping(path = "/count")
-    public int countValueSets() {
+    public int count() {
         return libraryMapper.count();
     }
 
@@ -55,7 +55,7 @@ public class LibraryController implements FhirValidatorProcessor {
             description = "Delete all the Libraries in the HAPI FHIR Database. (chiefly used for testing). " +
                     "Returns the count of resources deleted.")
     @DeleteMapping(path = "/deleteAll")
-    public int deleteValueSets() {
+    public int deleteAll() {
         return libraryMapper.deleteAll();
     }
 }

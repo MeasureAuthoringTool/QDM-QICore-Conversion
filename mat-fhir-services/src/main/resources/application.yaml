@@ -7,8 +7,9 @@ spring:
   jpa:
     open-in-view: false
 
-vsac-client:
-  service: ${VSAC_VASE_URL}
+vsac:
+  ticket-url-base: ${VSAC_TICKET_URL_BASE:https://utslogin.nlm.nih.gov/cas/v1}
+  url-base: ${VSAC_URL_BASE:https://vsac.nlm.nih.gov}
 
 
 mat.codesystem.valueset.simultaneous.validations: 5

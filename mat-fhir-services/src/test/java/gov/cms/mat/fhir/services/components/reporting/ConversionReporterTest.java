@@ -54,12 +54,4 @@ class ConversionReporterTest {
 
         verify(conversionResultsService).addMeasureResult(any(), any(FieldConversionResult.class));
     }
-
-
-    @Test
-    void setValueSetResult_NoThreadLocal() {
-        ConversionReporter.setValueSetInit(OID, REASON, null);
-
-        verifyNoInteractions(conversionResultsService); // since no object in ThreadLocal no interactions
-    }
 }

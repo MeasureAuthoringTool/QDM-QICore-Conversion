@@ -79,7 +79,6 @@ public class ConversionResultProcessorService {
         return ConversionResultDto.builder()
                 .measureId(conversionResult.getSourceMeasureId())
                 .modified(conversionResult.getModified() == null ? null : conversionResult.getModified().toString())
-                .valueSetConversionResults(conversionResult.getValueSetConversionResults())
                 .measureConversionResults(conversionResult.getMeasureConversionResults())
                 .libraryConversionResults(conversionResult.getLibraryConversionResults())
                 .errorReason(conversionResult.getErrorReason())

@@ -8,7 +8,6 @@ import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
 import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
 import gov.cms.mat.fhir.rest.dto.MeasureConversionResults;
-import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,24 +62,6 @@ class ConversionResultsServiceTest {
     void findConversionResultFound() {
         conversionResultsService.addMeasureResult(key, buildFieldConversionResult());
         assertNotNull(conversionResultsService.findConversionResult(key));
-    }
-
-    @Test
-    void addValueSetResult() {
-        conversionResultsService.addValueSetResult(key, "oid", "reason", Boolean.TRUE, "link");
-
-        ConversionResult conversionResult = getConversionResult();
-
-        List<ValueSetConversionResults> valueSetConversionResults = conversionResult.getValueSetConversionResults();
-        assertEquals(1, valueSetConversionResults.size());
-        ValueSetConversionResults valueSetConversionResult = conversionResult.getValueSetConversionResults().get(0);
-        assertEquals("oid", valueSetConversionResult.getOid());
-        assertEquals("reason", valueSetConversionResult.getReason());
-        assertTrue(valueSetConversionResult.getSuccess());
-        assertEquals("link", valueSetConversionResult.getLink());
-
-        assertNull(valueSetConversionResult.getJson());
-        assertTrue(valueSetConversionResult.getValueSetFhirValidationResults().isEmpty());
     }
 
     @Test
@@ -226,25 +207,6 @@ class ConversionResultsServiceTest {
         ConversionResult conversionResult = getConversionResult();
         assertEquals(1, conversionResult.getLibraryConversionResults().size());
         assertEquals(1, conversionResult.getLibraryConversionResults().get(0).getLibraryFhirValidationResults().size());
-    }
-
-    @Test
-    void addValueSetJson() {
-        conversionResultsService.addValueSetJson(key, "oid", "json");
-        ConversionResult conversionResult = getConversionResult();
-        assertEquals(1, conversionResult.getValueSetConversionResults().size());
-        assertEquals("oid", conversionResult.getValueSetConversionResults().get(0).getOid());
-        assertEquals("json", conversionResult.getValueSetConversionResults().get(0).getJson());
-    }
-
-    @Test
-    void addValueSetValidationResults() {
-        List<FhirValidationResult> validationResults = List.of(new FhirValidationResult());
-        conversionResultsService.addValueSetValidationResults(key, "oid", validationResults);
-        ConversionResult conversionResult = getConversionResult();
-        assertEquals(1, conversionResult.getValueSetConversionResults().size());
-        assertEquals("oid", conversionResult.getValueSetConversionResults().get(0).getOid());
-        assertEquals(1, conversionResult.getValueSetConversionResults().get(0).getValueSetFhirValidationResults().size());
     }
 
     @Test

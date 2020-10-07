@@ -173,26 +173,6 @@ public class ConversionReporter {
         return conversionReporter.findConversionResult();
     }
 
-    public static void setValueSetInit(String oid, String reason, Boolean success) {
-        ConversionReporter conversionReporter = getFromThreadLocal();
-
-        if (conversionReporter != null) {
-            conversionReporter.addValueSetResult(oid, success, null, reason);
-        }
-    }
-
-    public static void setValueSetsValidationLink(String oid,
-                                                  String link,
-                                                  HapiResourcePersistedState state) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetResult(oid, Boolean.TRUE, link, state.value);
-    }
-
-    public static void setValueSetJson(String oid, String json) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetJson(oid, json);
-    }
-
     public static void removeInThreadLocalAndComplete() {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.complete();
@@ -245,18 +225,6 @@ public class ConversionReporter {
     public static void setFhirLibraryValidationResults(List<FhirValidationResult> list, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addFhirMeasureLibraryResults(list, matLibraryId);
-    }
-
-    public static void setValueSetsValidationResults(String oid,
-                                                     List<FhirValidationResult> list) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetValidationResults(oid, list);
-    }
-
-    public static void setValueSetsValidationError(String oid,
-                                                   String error) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetResult(oid, Boolean.FALSE, null, error);
     }
 
     public static void setMeasureValidationLink(String link,
@@ -479,18 +447,6 @@ public class ConversionReporter {
 
     private void addFhirMeasureLibraryResults(List<FhirValidationResult> list, String matLibraryId) {
         conversionResultsService.addLibraryValidationResults(key, list, matLibraryId);
-    }
-
-    private void addValueSetValidationResults(String oid, List<FhirValidationResult> list) {
-        conversionResultsService.addValueSetValidationResults(key, oid, list);
-    }
-
-    private void addValueSetResult(String oid, Boolean success, String link, String reason) {
-        conversionResultsService.addValueSetResult(key, oid, reason, success, link);
-    }
-
-    private void addValueSetJson(String oid, String json) {
-        conversionResultsService.addValueSetJson(key, oid, json);
     }
 
     private void addMeasureConversionResult(Boolean success, String link, String reason) {

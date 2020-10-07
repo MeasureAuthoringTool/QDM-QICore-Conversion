@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.components.validation;
 
-import gov.cms.mat.fhir.services.components.vsac.ValueSetVSACResponseResult;
-import gov.cms.mat.fhir.services.service.VsacService;
+import gov.cms.mat.vsac.VsacService;
+import gov.cms.mat.vsac.model.ValueSetResult;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.model.cql.VsacStatus;
@@ -51,8 +51,8 @@ class ValueSetVsacAsync extends VsacValidator {
     }
 
     private boolean verifyWithVsac(String oid, String umlsToken) {
-        ValueSetVSACResponseResult vsacResponseResult =
-                vsacService.getValueSetVSACResponseResult(oid.trim(), umlsToken);
+        ValueSetResult vsacResponseResult =
+                vsacService.getValueSetResult(oid.trim(), umlsToken);
 
         if (vsacResponseResult != null && StringUtils.isNotBlank(vsacResponseResult.getXmlPayLoad())) {
             log.info("Successfully converted valueset object from vsac xml payload.");
