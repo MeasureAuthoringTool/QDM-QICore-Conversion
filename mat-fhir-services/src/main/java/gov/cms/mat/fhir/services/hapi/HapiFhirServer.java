@@ -71,10 +71,6 @@ public class HapiFhirServer {
         return findResourceInBundle(fetchLibraryBundleByVersionAndName(version, name), Library.class);
     }
 
-    public Optional<Library> fetchHapiLibraryByName(String name) {
-        return findResourceInBundle(fetchLibraryBundleByName(name), Library.class);
-    }
-
     public Optional<Measure> fetchHapiMeasure(String id) {
         return findResourceInBundle(getMeasureBundle(id), Measure.class);
     }
