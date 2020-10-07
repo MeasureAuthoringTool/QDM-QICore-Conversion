@@ -90,7 +90,7 @@
             </dependency>
             <dependency>
                 <groupId>gov.cms.mat</groupId>
-                <artifactId>vsac</artifactId>
+                <artifactId>vsac-mat-conversion</artifactId>
                 <version>${mat.microservices.version}</version>
             </dependency>
 
@@ -136,11 +136,11 @@
     <modules>
         <module>hapi-fhir-jpaserver</module>
         <module>cql-elm-wrapper</module>
-        <module>vsac</module>
         <module>mat-fhir-commons</module>
         <module>mat-fhir-services</module>
         <module>mat-server-commons</module>
         <module>mat-rest-commons</module>
+        <module>vsac-mat-conversion</module>
         <module>mapping-services</module>
         <module>cql-elm-translation</module>
     </modules>

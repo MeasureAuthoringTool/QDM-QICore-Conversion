@@ -8,6 +8,7 @@ import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
 import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
 import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
 import gov.cms.mat.fhir.rest.dto.MeasureConversionResults;
+import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.LibraryConversionException;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,19 @@ public class ConversionResultsService {
 
     public ConversionResultsService(LibraryDataService libraryDataService) {
         this.libraryDataService = libraryDataService;
+    }
+
+    void addValueSetResult(ThreadSessionKey key,
+                           String oid,
+                           String reason,
+                           Boolean success,
+                           String link) {
+        ConversionResult conversionResult = findOrCreate(key);
+
+        ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
+        valueSetConversionResults.setSuccess(success);
+        valueSetConversionResults.setReason(reason);
+        valueSetConversionResults.setLink(link);
     }
 
     void addMeasureResult(ThreadSessionKey key, FieldConversionResult result) {
@@ -204,6 +218,22 @@ public class ConversionResultsService {
 
         libraryConversionResults.getLibraryFhirValidationResults().addAll(list);
     }
+
+    public void addValueSetJson(ThreadSessionKey key, String oid, String json) {
+        ConversionResult conversionResult = findOrCreate(key);
+
+        ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
+        valueSetConversionResults.setJson(json);
+    }
+
+    public void addValueSetValidationResults(ThreadSessionKey key,
+                                             String oid,
+                                             List<FhirValidationResult> list) {
+        ConversionResult conversionResult = findOrCreate(key);
+        ValueSetConversionResults valueSetConversionResults = conversionResult.findOrCreateValueSetConversionResults(oid);
+        valueSetConversionResults.getValueSetFhirValidationResults().addAll(list);
+    }
+
 
     public void addLibraryConversionResult(ThreadSessionKey key,
                                            String link,

@@ -57,12 +57,12 @@ class LibraryControllerTest {
     @Test
     void countValueSets() {
         when(libraryMapper.count()).thenReturn(Integer.MAX_VALUE);
-        assertEquals(Integer.MAX_VALUE, libraryController.count());
+        assertEquals(Integer.MAX_VALUE, libraryController.countValueSets());
     }
 
     @Test
     void deleteValueSets() {
         when(libraryMapper.deleteAll()).thenReturn(Integer.MAX_VALUE);
-        assertEquals(Integer.MAX_VALUE, libraryController.deleteAll());
+        assertEquals(Integer.MAX_VALUE, libraryController.deleteValueSets());
     }
 }

@@ -1,7 +1,7 @@
 MAT_API_KEY=LOCAL_KEY
-#FHIR_SERVICES_URL='http://localhost:9080'
+FHIR_SERVICES_URL='http://localhost:9080'
 #FHIR_SERVICES_URL=http://internal-mat-dev-ecs-lb-1195232407.us-east-1.elb.amazonaws.com:9080
-FHIR_SERVICES_URL=http://internal-mat-test-ecs-lb-1803224691.us-east-1.elb.amazonaws.com:9080
+#FHIR_SERVICES_URL=http://internal-mat-test-ecs-lb-1803224691.us-east-1.elb.amazonaws.com:9080
 #FHIR_SERVICES_URL=http://internal-mat-prod-ecs-lb-1778389775.us-east-1.elb.amazonaws.com:9080
 #FHIR_SERVICES_URL=https://matdev.semanticbits.com/mat-fhir-services
 

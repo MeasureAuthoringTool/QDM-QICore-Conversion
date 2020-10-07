@@ -20,6 +20,9 @@ spring:
 
 mat-api-key: ${MAT_API_KEY:DISABLED}
 
+vsac-client:
+  service: ${VSAC_VASE_URL:https://vsac.nlm.nih.gov}
+
 logging:
   level:
     root: WARN

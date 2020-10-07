@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.components.validation;
 
-import gov.cms.mat.vsac.VsacService;
-import gov.cms.mat.vsac.model.ValueSetResult;
+import gov.cms.mat.fhir.services.components.vsac.ValueSetVSACResponseResult;
+import gov.cms.mat.fhir.services.service.VsacService;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.model.cql.VsacStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,12 +55,12 @@ class ValueSetVsacAsyncTest {
 
         //when(vsacService.getServiceTicket(TOKEN)).thenReturn(TICKET);
 
-        ValueSetResult vsacResponseResult = ValueSetResult.builder()
+        ValueSetVSACResponseResult vsacResponseResult = ValueSetVSACResponseResult.builder()
                 .xmlPayLoad("<xml>xml</xml>")
                 .isFailResponse(false)
                 .build();
 
-        when(vsacService.getValueSetResult("2.16.840.1.113883.17.4077.3.2056", TOKEN))
+        when(vsacService.getValueSetVSACResponseResult("2.16.840.1.113883.17.4077.3.2056", TOKEN))
                 .thenReturn(vsacResponseResult);
 
         CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN);
