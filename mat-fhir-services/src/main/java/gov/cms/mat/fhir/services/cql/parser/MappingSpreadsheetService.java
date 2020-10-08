@@ -33,7 +33,7 @@ public class MappingSpreadsheetService {
         this.restTemplate = restTemplate;
     }
 
-    @Cacheable("spreadSheetfhirTypes")
+    @Cacheable("spreadSheetFhirTypes")
     public List<String> getFhirTypes() {
         return resourceDefinitions().stream().
                 filter(r -> StringUtils.isNotBlank(r.getElementId()) &&
@@ -66,7 +66,7 @@ public class MappingSpreadsheetService {
         }
     }
 
-    @Cacheable("ConversionAttributes")
+    @Cacheable("conversionAttributes")
     public List<ConversionAttributes> fetchConversionAttributes() {
         try {
             ResponseEntity<ConversionAttributes[]> response =

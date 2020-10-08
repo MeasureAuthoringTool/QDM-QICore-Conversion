@@ -40,3 +40,5 @@ logging:
   pattern:
     console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
     file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %mdc %logger{36}.%M - %msg%n"
+
+cache-names: matAttributes, qdmToQicoreMapping, dataTypes, requiredMeasureFields, resourceDefinitions, conversionDataTypes, conversionAttributes, fhirLightboxDataTypesForFunctionArg, populationBasisValidValues
