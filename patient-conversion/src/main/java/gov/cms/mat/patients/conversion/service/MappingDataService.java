@@ -35,7 +35,7 @@ public class MappingDataService {
 
             return Arrays.asList(codeSystemEntriesArray);
         } catch (RestClientException e) {
-            log.warn("Cannot get F QdmToQicoreMapping", e);
+            log.warn("Cannot get QdmToQicoreMapping", e);
             throw new MappingServiceException(e.getMessage());
         }
     }

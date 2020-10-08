@@ -1,4 +1,4 @@
-package gov.cms.mat.fhir.services.config.security;
+package gov.cms.mat.patients.conversion.config.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,12 +25,10 @@ public class SecurityFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        log.debug("init");
     }
 
     @Override
     public void destroy() {
-        log.debug("destroy");
     }
 
     @Override

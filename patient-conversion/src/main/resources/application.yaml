@@ -1,0 +1,51 @@
+server:
+  port: 5050
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+springdoc:
+  swagger-ui:
+    path: /swagger
+
+mapping:
+  services:
+    baseUrl: http://localhost:9090
+
+swagger-server:
+
+bonnie-thread-pools:
+  thread-pool-configurations:
+    - name: threadPoolConversion
+      core-pool-size: 5
+      max-pool-size: 25
+      queue-capacity: 100
+
+mat-api-key: ${MAT_API_KEY}
+
+cache-names: codeSystemEntries
+
+logging:
+  level:
+    root: INFO
+    gov.cms.mat: INFO
+    org.hl7.fhir.r4.hapi.ctx: INFO
+    org.hl7.fhir.r4.hapi.validation: INFO
+    logging.level.web: DEBUG
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
+    file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %mdc %logger{36}.%M - %msg%n"
+  file:
+    name: mat-fhir-services.log
+    clean-history-on-start: true
+    max-history: 1
