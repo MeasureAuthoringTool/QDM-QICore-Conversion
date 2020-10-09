@@ -19,6 +19,8 @@ public class ConversionResultDto {
     private ConversionOutcome outcome;
     private ConversionType conversionType;
 
+    List<ValueSetConversionResults> valueSetConversionResults;
+
     MeasureConversionResults measureConversionResults;
 
     List<LibraryConversionResults> libraryConversionResults;

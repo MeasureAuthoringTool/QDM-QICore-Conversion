@@ -54,7 +54,7 @@ public class MeasurePackagerService implements FhirValidatorProcessor {
     private Library fetchLibraryFromHapi(Measure measure) {
         String name = getLibraryNameFromMeasure(measure);
 
-        var optional = hapiFhirServer.fetchHapiLibraryByName(name);
+        var optional = hapiFhirServer.fetchHapiLibrary(name,measure.getVersion());
 
         if (optional.isPresent()) {
             return optional.get();

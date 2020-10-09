@@ -125,6 +125,14 @@ public class VSACOrchestrationController {
 
 
     private boolean haveConversionResultError(ConversionResult conversionResult) {
+        var optionalValueSetError = conversionResult.getValueSetConversionResults().stream()
+                .filter(l -> BooleanUtils.isNotTrue(l.getSuccess()))
+                .findFirst();
+
+        if (optionalValueSetError.isPresent()) {
+            return true;
+        }
+
         var optionalLibraryError = conversionResult.getLibraryConversionResults().stream()
                 .filter(l -> BooleanUtils.isNotTrue(l.getSuccess()))
                 .findFirst();
