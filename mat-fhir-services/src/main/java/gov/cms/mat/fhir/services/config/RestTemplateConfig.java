@@ -21,9 +21,9 @@ import java.util.List;
 @Component
 public class RestTemplateConfig {
     @Value("${vsac.ticket-url-base}")
-    private String vsacUrlBase;
-    @Value("${vsac.url-base}")
     private String ticketUrlBase;
+    @Value("${vsac.url-base}")
+    private String vsacUrlBase;
 
    private final RequestResponseLoggingMdcInternalInterceptor requestResponseLoggingMdcInternalInterceptor;
 
