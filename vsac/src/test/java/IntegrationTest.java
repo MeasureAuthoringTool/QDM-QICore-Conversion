@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 public class IntegrationTest {
-    private static final String API_KEY = "c0ef990b-37ae-4a0a-a4a0-8ad8c26f3b8b";
+    private static final String API_KEY = "FIX_ME";
     private static final String TICKET_BASE_URL = "https://utslogin.nlm.nih.gov/cas/v1";
     private static final String VSAC_BASE_URL = "https://vsac.nlm.nih.gov";
     private final VsacService vsacService;
