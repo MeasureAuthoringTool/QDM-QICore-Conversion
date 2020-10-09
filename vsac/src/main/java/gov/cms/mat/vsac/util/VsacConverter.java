@@ -1,7 +1,7 @@
 package gov.cms.mat.vsac.util;
 
-import lombok.extern.slf4j.Slf4j;
 import gov.cms.mat.vsac.model.ValueSetWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ public class VsacConverter {
     public ValueSetWrapper toWrapper(String xml) {
         if (StringUtils.isBlank(xml)) {
             log.debug("Vsac Xml is blank");
-            throw new UncheckedIOException(new IOException("Xml is blank xml: " +  xml));
+            throw new UncheckedIOException(new IOException("Xml is blank xml: " + xml));
         } else {
             return convertXml(xml);
         }

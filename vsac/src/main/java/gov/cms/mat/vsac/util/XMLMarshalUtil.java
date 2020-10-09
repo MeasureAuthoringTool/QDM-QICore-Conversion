@@ -37,5 +37,4 @@ public class XMLMarshalUtil {
         mapping.loadMapping(new ResourceLoader().getResourceAsURL(fileName));
         return mapping;
     }
-
 }

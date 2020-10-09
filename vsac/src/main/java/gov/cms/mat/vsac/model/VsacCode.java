@@ -27,15 +27,15 @@ public class VsacCode {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VsacError {
-        private  int errorCount;
-        private  List<VsacErrorResultSet> resultSet = new ArrayList<>();
+        private int errorCount;
+        private List<VsacErrorResultSet> resultSet = new ArrayList<>();
     }
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VsacErrorResultSet {
-        private  String errDesc;
-        private  String errCode;
+        private String errDesc;
+        private String errCode;
     }
 
     @Data
@@ -47,8 +47,8 @@ public class VsacCode {
         private String code;
         private String contentMode;
         private String codeName;
-        private  String termType;
-        private  String active;
-        private  Long revision;
+        private String termType;
+        private String active;
+        private Long revision;
     }
 }

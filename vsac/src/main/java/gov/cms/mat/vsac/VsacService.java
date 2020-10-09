@@ -154,7 +154,7 @@ public class VsacService {
             try {
                 return vsacConverter.toWrapper(vsacResponseResult.getXmlPayLoad());
             } catch (Exception e) {
-                log.warn("Cannot get XMl from mat.vsac oid: {}, reason: {}", oid, vsacResponseResult.getFailReason(),e);
+                log.warn("Cannot get XMl from mat.vsac oid: {}, reason: {}", oid, vsacResponseResult.getFailReason(), e);
                 return null;
             }
         } else {
@@ -409,7 +409,7 @@ public class VsacService {
                     }
                     return result;
                 } catch (Exception e) {
-                    log.error("Error parsing json in getAllPrograms " + response.getBody(),e);
+                    log.error("Error parsing json in getAllPrograms " + response.getBody(), e);
                     return buildBasicResponseForFailure();
                 }
             } else {
@@ -441,7 +441,7 @@ public class VsacService {
                     }
                     return result;
                 } catch (Exception e) {
-                    log.error("Error parsing json in getAllPrograms " + response.getBody(),e);
+                    log.error("Error parsing json in getAllPrograms " + response.getBody(), e);
                     return buildBasicResponseForFailure();
                 }
             } else {
@@ -502,7 +502,7 @@ public class VsacService {
                     result.setXmlPayLoad(node.get("name").asText());
                     return result;
                 } catch (Exception e) {
-                    log.error("Error parsing json in getAllPrograms " + response.getBody(),e);
+                    log.error("Error parsing json in getAllPrograms " + response.getBody(), e);
                     return buildBasicResponseForFailure();
                 }
             } else {
