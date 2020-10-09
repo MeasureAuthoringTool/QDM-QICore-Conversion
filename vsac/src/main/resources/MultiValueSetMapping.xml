@@ -12,7 +12,7 @@
 	<class name="gov.cms.mat.vsac.model.ValueSet">
 		<map-to xml="DescribedValueSet" ns-uri="urn:ihe:iti:svs:2008" />
 		<field name="ID" type="java.lang.String">
-			<bind-xml name="" node="attribute" />
+			<bind-xml name="ID" node="attribute" />
 		</field>
 		<field name="displayName" type="java.lang.String">
 			<bind-xml name="displayName" node="attribute" />
