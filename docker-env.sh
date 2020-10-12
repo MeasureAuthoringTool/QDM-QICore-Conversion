@@ -1,7 +1,4 @@
 #!/bin/sh
-export VSAC_USER=FIXME
-export VSAC_PASS=FIXME
-
 export MAT_DB_URL='jdbc:mysql://host.docker.internal:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216'
 export MAT_DB_USER=root
 export MAT_DB_PASS=changeme
@@ -18,8 +15,8 @@ export HAPI_FHIR_URL='http://hapi-fhir-jpaserver:6060/fhir/'
 export FHIR_SERVICES_URL='http://host.docker.internal:9080'
 export MAPPING_SERVICES_URL='http://host.docker.internal:9090'
 export CQL_CONVERSION_URL='http://host.docker.internal:7070'
-export VSAC_VASE_URL='https://vsac.nlm.nih.gov'
-export VSAC_SERVICE_URL='http://umlsks.nlm.nih.gov'
+export VSAC_TICKET_URL_BASE='https://utslogin.nlm.nih.gov/cas/v1'
+export VSAC_URL_BASE='https://vsac.nlm.nih.gov'
 export HEALTH_CHECK_URL='http://host.docker.internal:9080'
 
 export GOOGLE_MAT_ATTRIBUTES_URL='https://spreadsheets.google.com/feeds/list/1uFtfWIHndogk-aoqROpuFSwHfcEKjaELw2Ph567uiNo/o7a94yh/public/values?alt=json'
