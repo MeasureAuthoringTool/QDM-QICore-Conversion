@@ -33,4 +33,3 @@ export CODESYSTEM_SHEET_URL="https://spreadsheets.google.com/feeds/list/1_heoWR0
 export MAT_FHIR_SWAGGER_URL='http://host.docker.internal:9080'
 export MAPPING_SWAGGER_URL='http://host.docker.internal:9090'
 export CQL_ELM_SWAGGER_URL='http://host.docker.internal:7070'
-

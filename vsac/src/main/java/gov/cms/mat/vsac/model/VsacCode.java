@@ -1,14 +1,16 @@
-package gov.cms.mat.fhir.services.components.vsac;
+package gov.cms.mat.vsac.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class VsacResponse {
+@ToString
+public class VsacCode {
     private String message;
     private String status;
 

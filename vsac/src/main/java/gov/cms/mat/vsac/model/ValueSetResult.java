@@ -1,13 +1,15 @@
-package gov.cms.mat.fhir.services.components.vsac;
+package gov.cms.mat.vsac.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Builder
 @Getter
-public class ValueSetVSACResponseResult {
+@ToString
+public class ValueSetResult {
     private String xmlPayLoad;
     private List<String> pgmRels;
     private boolean isFailResponse;

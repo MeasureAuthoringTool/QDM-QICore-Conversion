@@ -1,8 +1,9 @@
 package gov.cms.mat.fhir.services.components.validation;
 
-import gov.cms.mat.fhir.services.components.vsac.VsacResponse;
-import gov.cms.mat.fhir.services.components.vsac.VsacRestClient;
-import gov.cms.mat.fhir.services.service.VsacService;
+
+import gov.cms.mat.vsac.VsacService;
+import gov.cms.mat.vsac.model.CodeSystemVersionResponse;
+import gov.cms.mat.vsac.model.VsacCode;
 import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLCode;
 import mat.model.cql.VsacStatus;
@@ -29,11 +30,9 @@ public class CodeSystemVsacAsync extends VsacValidator {
     private static final String INVALID_CODE_URL = "Invalid code system uri.";
     private static final String CODE_SYSTEM_NAME_IS_INVALID = "Code system name: %s not found in UMLS! Please verify the code system name.";
     private static final String VSAC_INTERNAL_ERROR = "Error calling UMLS. Please try again later.";
-    private final VsacRestClient vsacRestClient;
 
-    CodeSystemVsacAsync(VsacService vsacService, VsacRestClient vsacRestClient) {
+    CodeSystemVsacAsync(VsacService vsacService) {
         super(vsacService);
-        this.vsacRestClient = vsacRestClient;
     }
 
     @Async("codeSystemTheadPoolValidation")
@@ -78,7 +77,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
             if (validator.validateForCodeIdentifier(url)) {
                 throw new VsacCodeSystemValidatorException(INVALID_CODE_URL);
             }
-            VsacResponse vsacResponse = vsacRestClient.fetchCodeSystem(getCodeSystemUrlFromMatUrl(url), umlsToken);
+            VsacCode vsacResponse = vsacService.getCode(getCodeSystemUrlFromMatUrl(url), umlsToken);
 
             if (vsacResponse.getStatus().equals("ok")) {
                 cqlCode.setErrorMessage(null);
@@ -95,7 +94,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
 
                     List<String> strList = vsacResponse.getErrors().getResultSet()
                             .stream()
-                            .map(VsacResponse.VsacErrorResultSet::getErrDesc)
+                            .map(VsacCode.VsacErrorResultSet::getErrDesc)
                             .collect(Collectors.toList());
 
                     cqlCode.setErrorMessage(String.join(", ", strList));
@@ -120,7 +119,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
             String versionUri = parseMatVersionFromCodeSystemUri(c);
             if (StringUtils.isBlank(versionUri)) {
                 //This hit is cached so no need to optimize.
-                VsacRestClient.CodeSystemVersionResponse vsacResult = vsacRestClient.fetchVersionFromName(c.getCodeSystemName(), ulmsToken);
+                CodeSystemVersionResponse vsacResult = vsacService.getCodeSystemVersionFromName(c.getCodeSystemName(), ulmsToken);
                 if (vsacResult.getSuccess()) {
                     versionUri = vsacResult.getVersion();
                     result = String.format(CODE_IDENTIFIER_FORMAT,
