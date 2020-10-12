@@ -55,7 +55,7 @@ public class PatientService implements FhirCreator {
 
         //  maintain the order from the input list
         return bonniePatients.stream()
-                .map(b -> findResultById(b.get_id().getOid(), results))
+                .map(b -> findResultById(b.get_id(), results))
                 .collect(Collectors.toList());
     }
 
@@ -81,7 +81,7 @@ public class PatientService implements FhirCreator {
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
 
             return ConversionResult.builder()
-                    .patientId(bonniePatient.get_id().getOid())
+                    .patientId(bonniePatient.get_id())
                     .fhirPatient(mapper.readTree(toJson(fhirContext, fhirPatient)))
                     .encounters(mapper.readTree(encounters.get()))
                     .serviceRequests(mapper.readTree(serviceRequests.get()))

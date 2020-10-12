@@ -5,12 +5,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class QdmCodeSystem {
-    String code;
-    String system;
-    String display;
-    String version;
-    String _type;
+public class FacilityLocation {
 
-    String codeSystem;
+    String qdmVersion;
+    String _type;
+    String _id;
+    QdmCodeSystem code;
+
+    QdmInterval locationPeriod;
 }

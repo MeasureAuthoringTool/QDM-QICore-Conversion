@@ -39,7 +39,7 @@ public class MedicationDischargeConverter implements FhirCreator, DataElementFin
         List<MedicationRequest> medicationRequests = process(bonniePatient, fhirPatient);
         String json = manyToJson(fhirContext, medicationRequests);
 
-        return CompletableFuture.completedFuture(json);
+        return CompletableFuture.completedFuture(json == null ? "[]" : json);
     }
 
     public List<MedicationRequest> process(BonniePatient bonniePatient, Patient fhirPatient) {
@@ -56,14 +56,14 @@ public class MedicationDischargeConverter implements FhirCreator, DataElementFin
 
     private MedicationRequest convertToMedicationRequest(Patient fhirPatient, DataElements dataElement) {
         MedicationRequest medicationRequest = new MedicationRequest();
-        medicationRequest.setId(dataElement.get_id().getOid());
+        medicationRequest.setId(dataElement.get_id());
         medicationRequest.setSubject(createReference(fhirPatient));
         medicationRequest.setMedication(getMedicationCodeableConcept(dataElement.getDataElementCodes()));
-        medicationRequest.setAuthoredOn(dataElement.getAuthorDatetime().getDate());
+        medicationRequest.setAuthoredOn(dataElement.getAuthorDatetime());
 
         medicationRequest.setStatus(MedicationRequest.MedicationRequestStatus.UNKNOWN);
 
-        if (StringUtils.isNotBlank(dataElement.getRoute())) {
+        if (dataElement.getRoute() != null) {
             //  medicationRequest.setDosageInstruction()
             log.info("We have a dosage");
         }
@@ -76,10 +76,10 @@ public class MedicationDischargeConverter implements FhirCreator, DataElementFin
             log.info("We have a daysSupplied"); // all null in test data
         }
 
-        if (StringUtils.isNotBlank(dataElement.getSupply())) {
-            MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
-            dispenseRequest.setQuantity(new Quantity(Long.parseLong(dataElement.getSupply()))); // could throw error
-            log.info("We have a supply"); // all null in test data
+        if (dataElement.getSupply()!= null) {
+           // MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
+           // dispenseRequest.setQuantity(new Quantity(Long.parseLong(dataElement.getSupply()))); // could throw error
+            log.info("We have a supply"); // all null in test data   TODO
         }
 
         if (StringUtils.isNotBlank(dataElement.getRefills())) {

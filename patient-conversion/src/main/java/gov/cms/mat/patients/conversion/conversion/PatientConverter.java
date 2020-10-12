@@ -29,7 +29,7 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
 
     public Patient process(BonniePatient bonniePatient) {
         Patient fhirPatient = new Patient();
-        fhirPatient.setId(bonniePatient.get_id().getOid());
+        fhirPatient.setId(bonniePatient.get_id());
         fhirPatient.setExtension(List.of(new Extension(US_CORE_RACE_URL), new Extension(DETAILED_RACE_URL)));
         fhirPatient.setActive(true); // ??
 
@@ -37,7 +37,7 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
         fhirPatient.setName(List.of(createName(bonniePatient)));
 
         // ?? "_type": "QDM::PatientCharacteristicBirthdate", 2 birhtdatas which one wins
-        fhirPatient.setBirthDate(bonniePatient.getQdmPatient().getBirthDatetime().getDate());
+        fhirPatient.setBirthDate(bonniePatient.getQdmPatient().getBirthDatetime());
 
         fhirPatient.setGender(processSex(bonniePatient));
         processRace(bonniePatient, fhirPatient);
@@ -54,7 +54,7 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
         if (optional.isPresent()) {
             DataElements dataElement = optional.get();
             log.debug("Patient is dead");
-            return new DateTimeType(dataElement.getExpiredDatetime().getDate());
+            return new DateTimeType(dataElement.getExpiredDatetime());
         } else {
             log.debug("Patient is alive");
             return null;

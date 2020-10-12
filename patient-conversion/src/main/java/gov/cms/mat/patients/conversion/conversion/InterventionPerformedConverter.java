@@ -36,7 +36,7 @@ public class InterventionPerformedConverter implements FhirCreator, DataElementF
         List<Procedure> procedures = process(bonniePatient, fhirPatient);
         String json = manyToJson(fhirContext, procedures);
 
-        return CompletableFuture.completedFuture(json);
+        return CompletableFuture.completedFuture(json == null ? "[]" : json);
     }
 
     public List<Procedure> process(BonniePatient bonniePatient, Patient fhirPatient) {
@@ -53,7 +53,7 @@ public class InterventionPerformedConverter implements FhirCreator, DataElementF
 
     private Procedure convertToFhirEncounter(Patient fhirPatient, DataElements dataElements) {
         Procedure procedure = new Procedure();
-        procedure.setId(dataElements.get_id().getOid());
+        procedure.setId(dataElements.get_id());
 
         procedure.setSubject(createReference(fhirPatient));
         procedure.setStatus(Procedure.ProcedureStatus.UNKNOWN);
@@ -74,7 +74,7 @@ public class InterventionPerformedConverter implements FhirCreator, DataElementF
         // procedure.setAuthoredOn todo how to map this
 
 
-        if (StringUtils.isNotBlank(dataElements.getReason())) {
+        if (dataElements.getReason() != null ) {
             // procedure.setReasonCode()
             log.info("We have Reason"); // all null in test data
         }

@@ -1,9 +1,7 @@
 server:
   port: 5050
 
-spring:
-  main:
-    allow-bean-definition-overriding: true
+
 
 management:
   endpoint:
@@ -33,7 +31,6 @@ bonnie-thread-pools:
 
 mat-api-key: ${MAT_API_KEY}
 
-cache-names: codeSystemEntries
 
 logging:
   level:
@@ -49,3 +46,5 @@ logging:
     name: mat-fhir-services.log
     clean-history-on-start: true
     max-history: 1
+
+cache-names: codeSystemEntries

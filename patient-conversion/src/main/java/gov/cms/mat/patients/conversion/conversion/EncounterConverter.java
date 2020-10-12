@@ -56,7 +56,7 @@ public class EncounterConverter implements FhirCreator, DataElementFinder {
 
     private Encounter convertToFhirEncounter(Patient fhirPatient, DataElements dataElement) {
         Encounter encounter = new Encounter();
-        encounter.setId(dataElement.get_id().getOid());
+        encounter.setId(dataElement.get_id());
 
         encounter.setClass_(createCodingFromDataElementCodes(codeSystemEntriesService, dataElement.getDataElementCodes()));
 

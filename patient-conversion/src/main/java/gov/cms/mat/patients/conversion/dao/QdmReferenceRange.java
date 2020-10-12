@@ -7,10 +7,10 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class RelevantPeriod {
-    Date low;
-    Date high;
+public class QdmReferenceRange {
+    QdmQuantity low;
+    QdmQuantity high;
     Boolean lowClosed;
     Boolean highClosed;
-    String _type;
+    String _type; //  is "QDM::Interval"  but has different high/low
 }

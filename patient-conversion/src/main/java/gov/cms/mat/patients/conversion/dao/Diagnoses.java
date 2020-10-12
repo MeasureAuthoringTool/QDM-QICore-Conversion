@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Diagnoses {
-    SystemId _id;
+  String _id;
     String _type;
     QdmCodeSystem code;
-    String presentOnAdmissionIndicator;
+  QdmCode presentOnAdmissionIndicator;
     Integer rank;
     String qdmVersion;
 }

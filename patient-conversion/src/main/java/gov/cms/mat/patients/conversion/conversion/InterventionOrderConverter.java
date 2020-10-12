@@ -35,7 +35,7 @@ public class InterventionOrderConverter implements FhirCreator, DataElementFinde
         List<ServiceRequest> serviceRequests = process(bonniePatient, fhirPatient);
         String json = manyToJson(fhirContext, serviceRequests);
 
-        return CompletableFuture.completedFuture(json);
+        return CompletableFuture.completedFuture(json == null ? "[]" : json);
     }
 
     public List<ServiceRequest> process(BonniePatient bonniePatient, Patient fhirPatient) {
@@ -52,10 +52,10 @@ public class InterventionOrderConverter implements FhirCreator, DataElementFinde
 
     private ServiceRequest convertToFhirEncounter(Patient fhirPatient, DataElements dataElements) {
         ServiceRequest serviceRequest = new ServiceRequest();
-        serviceRequest.setId(dataElements.get_id().getOid());
+        serviceRequest.setId(dataElements.get_id());
 
         serviceRequest.setSubject(createReference(fhirPatient));
-        serviceRequest.setAuthoredOn(dataElements.getAuthorDatetime().getDate());
+        serviceRequest.setAuthoredOn(dataElements.getAuthorDatetime());
 
         serviceRequest.setStatus(ServiceRequest.ServiceRequestStatus.UNKNOWN);
 

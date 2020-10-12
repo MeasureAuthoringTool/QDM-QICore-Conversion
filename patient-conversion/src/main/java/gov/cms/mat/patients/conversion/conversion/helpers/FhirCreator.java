@@ -51,8 +51,8 @@ public interface FhirCreator {
         RelevantPeriod relevantPeriod = dataElement.getRelevantPeriod();
 
         return new Period()
-                .setStart(relevantPeriod.getLow().getDate())
-                .setEnd(relevantPeriod.getHigh() == null ? null : relevantPeriod.getHigh().getDate());
+                .setStart(relevantPeriod.getLow())
+                .setEnd(relevantPeriod.getHigh() == null ? null : relevantPeriod.getHigh());
 
     }
 
