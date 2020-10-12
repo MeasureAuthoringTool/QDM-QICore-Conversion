@@ -19,7 +19,6 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableScheduling
 @EnableJpaRepositories(basePackages = "gov.cms.mat.fhir.services.repository")
-@EnableCaching
 @EnableAsync
 @ComponentScan(basePackages = "gov.cms.mat")
 @Configuration
