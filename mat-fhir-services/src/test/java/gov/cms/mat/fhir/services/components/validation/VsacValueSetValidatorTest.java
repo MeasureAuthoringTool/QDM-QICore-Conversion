@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.components.validation;
 
 import gov.cms.mat.fhir.services.CqlHelper;
-import gov.cms.mat.fhir.services.service.VsacService;
+import gov.cms.mat.vsac.VsacService;
 import mat.model.cql.CQLModel;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.model.cql.VsacStatus;

@@ -1,6 +1,8 @@
 package gov.cms.mat.fhir.services.components.validation;
 
-import gov.cms.mat.fhir.services.components.vsac.VsacRestClient;
+
+import gov.cms.mat.vsac.VsacService;
+import gov.cms.mat.vsac.model.CodeSystemVersionResponse;
 import mat.model.cql.CQLCode;
 import mat.model.cql.VsacStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +29,7 @@ class CodeSystemVsacAsyncTest {
     @InjectMocks
     private CodeSystemVsacAsync codeSystemVsacAsync;
     @Mock
-    private VsacRestClient vsacRestClient;
+    private VsacService vsacService;
 
     @BeforeEach
     void setUp() {
@@ -38,14 +40,14 @@ class CodeSystemVsacAsyncTest {
     @Test
     void validateCodeTicketInvalid() throws ExecutionException, InterruptedException {
 
-        VsacRestClient.CodeSystemVersionResponse vsacResponse = VsacRestClient.CodeSystemVersionResponse.builder()
+        CodeSystemVersionResponse vsacResponse = CodeSystemVersionResponse.builder()
                 .success(false)
                 .message("Can't log in")
                 .build();
 
         cqlCode.setCodeSystemName("LOINC");
 
-        when(vsacRestClient.fetchVersionFromName("LOINC", TOKEN)).thenReturn(vsacResponse);
+        when(vsacService.getCodeSystemVersionFromName("LOINC", TOKEN)).thenReturn(vsacResponse);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
         completableFuture.get();
@@ -53,7 +55,7 @@ class CodeSystemVsacAsyncTest {
         assertEquals("Can't log in", cqlCode.getErrorMessage());
         assertEquals(VsacStatus.PENDING, cqlCode.obtainValidatedWithVsac());
 
-        verifyNoMoreInteractions(vsacRestClient);
+        verifyNoMoreInteractions(vsacService);
 
     }
 
@@ -61,14 +63,14 @@ class CodeSystemVsacAsyncTest {
     @Test
     void validateCodeNotFound() throws ExecutionException, InterruptedException {
 
-        VsacRestClient.CodeSystemVersionResponse vsacResponse = VsacRestClient.CodeSystemVersionResponse.builder()
+        CodeSystemVersionResponse vsacResponse = CodeSystemVersionResponse.builder()
                 .success(false)
                 .message("CodeSystem not found.")
                 .build();
 
         cqlCode.setCodeSystemName("LOINC");
 
-        when(vsacRestClient.fetchVersionFromName("LOINC", TOKEN)).thenReturn(vsacResponse);
+        when(vsacService.getCodeSystemVersionFromName("LOINC", TOKEN)).thenReturn(vsacResponse);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
         completableFuture.get();
