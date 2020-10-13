@@ -88,4 +88,4 @@ fhir-profiles:
     - /fhir/qdm-artifact-comment.json
     - /fhir/ratio-measure-cqfm.json
 
-cache-names: codeSystemEntries, qdmToQiCoreMappingHelper, vsacVersions, spreadSheetFhirTypes, spreadSheetResourceDefinitions, conversionDataTypes, conversionAttributes, oidToVSACDodeSystemDTO
+cache-names: codeSystemEntries, qdmToQiCoreMappingHelper, vsacCodesystemVersions, spreadSheetFhirTypes, spreadSheetResourceDefinitions, conversionDataTypes, conversionAttributes, oidToVSACDodeSystemDTO
