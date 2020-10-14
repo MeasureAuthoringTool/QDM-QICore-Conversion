@@ -1,7 +1,5 @@
 package gov.cms.mat.patients.conversion.dao;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,8 +14,8 @@ public class QdmPatient {
     String qdmVersion;
 
     Date birthDatetime;
-    // ExtendedData extendedData;
-    JsonNode extendedData;
+    ExtendedData extendedData;
+   // JsonNode extendedData;
 
-    List<DataElements> dataElements;
+    List<QdmDataElement> dataElements;
 }

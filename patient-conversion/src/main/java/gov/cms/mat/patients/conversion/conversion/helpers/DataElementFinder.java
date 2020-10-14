@@ -3,7 +3,7 @@ package gov.cms.mat.patients.conversion.conversion.helpers;
 
 import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
 import gov.cms.mat.patients.conversion.dao.BonniePatient;
-import gov.cms.mat.patients.conversion.dao.DataElements;
+import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
 import gov.cms.mat.patients.conversion.dao.QdmPatient;
 import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
@@ -39,9 +39,16 @@ public interface DataElementFinder {
     }
 
     default Coding convertToCoding(CodeSystemEntriesService codeSystemEntriesService, QdmCodeSystem qdmCodeSystem) {
-        CodeSystemEntry codeSystemEntry = codeSystemEntriesService.findRequired(qdmCodeSystem.getSystem());
+        String theSystem;
 
-        return new Coding(codeSystemEntry.getUrl(), qdmCodeSystem.getCode(), qdmCodeSystem.getDisplay());
+        try {
+            CodeSystemEntry codeSystemEntry = codeSystemEntriesService.findRequired(qdmCodeSystem.getSystem());
+            theSystem = codeSystemEntry.getUrl();
+        } catch (PatientConversionException e) {
+            theSystem = qdmCodeSystem.getSystem();
+        }
+
+        return new Coding(theSystem, qdmCodeSystem.getCode(), qdmCodeSystem.getDisplay());
     }
 
 
@@ -64,8 +71,8 @@ public interface DataElementFinder {
     }
 
 
-    default Optional<DataElements> findOptionalDataElementsByType(BonniePatient bonniePatient, String type) {
-        List<DataElements> dataElements = findDataElementsByType(bonniePatient, type);
+    default Optional<QdmDataElement> findOptionalDataElementsByType(BonniePatient bonniePatient, String type) {
+        List<QdmDataElement> dataElements = findDataElementsByType(bonniePatient, type);
 
         if (dataElements.isEmpty()) {
             return Optional.empty();
@@ -79,12 +86,12 @@ public interface DataElementFinder {
         }
     }
 
-    default DataElements findOneDataElementsByType(BonniePatient bonniePatient, String type) {
-        List<DataElements> dataElements = findDataElementsByType(bonniePatient, type);
+    default QdmDataElement findOneDataElementsByType(BonniePatient bonniePatient, String type) {
+        List<QdmDataElement> dataElements = findDataElementsByType(bonniePatient, type);
 
         if (dataElements.isEmpty()) {
             throw new PatientConversionException(String.format("Patient %s has no %s",
-                    type, bonniePatient.identifier()));
+                    bonniePatient.identifier(), type));
         } else {
             if (dataElements.size() > 1) {
                 throw new PatientConversionException(String.format("Patient %s has %s %s elements. Should be one.",
@@ -95,7 +102,7 @@ public interface DataElementFinder {
         }
     }
 
-    default List<DataElements> findDataElementsByType(BonniePatient bonniePatient, String type) {
+    default List<QdmDataElement> findDataElementsByType(BonniePatient bonniePatient, String type) {
         QdmPatient qdmPatient = bonniePatient.getQdmPatient();
 
         if (CollectionUtils.isEmpty(qdmPatient.getDataElements())) {
@@ -108,7 +115,7 @@ public interface DataElementFinder {
     }
 
     default QdmCodeSystem findOneCodeSystemWithRequiredDisplay(BonniePatient bonniePatient, String type) {
-        DataElements element = findOneDataElementsByType(bonniePatient, type);
+        QdmDataElement element = findOneDataElementsByType(bonniePatient, type);
 
         QdmCodeSystem qdmCodeSystem = getOneCodeSystem(element);
 
@@ -120,7 +127,7 @@ public interface DataElementFinder {
         return qdmCodeSystem;
     }
 
-    default QdmCodeSystem getOneCodeSystem(DataElements element) {
+    default QdmCodeSystem getOneCodeSystem(QdmDataElement element) {
         List<QdmCodeSystem> dataElementCodes = element.getDataElementCodes();
 
         if (dataElementCodes.isEmpty()) {

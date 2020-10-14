@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 // @JsonIgnoreProperties(ignoreUnknown = true)
-public class DataElements {
+public class QdmDataElement {
     String _id;
     List<QdmCodeSystem> dataElementCodes;
 
@@ -46,7 +46,7 @@ public class DataElements {
     Sender sender;
     Sender recipient;
 
-    String refills;
+    Integer refills;
     QdmQuantity dosage;
     QdmQuantity supply;
     QdmCodeSystem frequency;

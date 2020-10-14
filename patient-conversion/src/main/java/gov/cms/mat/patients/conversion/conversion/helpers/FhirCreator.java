@@ -1,7 +1,7 @@
 package gov.cms.mat.patients.conversion.conversion.helpers;
 
 import ca.uhn.fhir.context.FhirContext;
-import gov.cms.mat.patients.conversion.dao.DataElements;
+import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
 import gov.cms.mat.patients.conversion.dao.RelevantPeriod;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -47,7 +47,7 @@ public interface FhirCreator {
         }
     }
 
-    default Period createFhirPeriod(DataElements dataElement) {
+    default Period createFhirPeriod(QdmDataElement dataElement) {
         RelevantPeriod relevantPeriod = dataElement.getRelevantPeriod();
 
         return new Period()
@@ -59,7 +59,7 @@ public interface FhirCreator {
     default String manyToJson(FhirContext fhirContext, List<? extends IBaseResource> resources) {
 
         if (CollectionUtils.isEmpty(resources)) {
-            return null;
+            return "[]";
         } else {
             String json = resources.stream()
                     .map(r -> toJson(fhirContext, r))

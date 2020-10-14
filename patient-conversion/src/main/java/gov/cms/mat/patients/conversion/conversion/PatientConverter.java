@@ -4,8 +4,9 @@ package gov.cms.mat.patients.conversion.conversion;
 import gov.cms.mat.patients.conversion.conversion.helpers.DataElementFinder;
 import gov.cms.mat.patients.conversion.conversion.helpers.FhirCreator;
 import gov.cms.mat.patients.conversion.dao.BonniePatient;
-import gov.cms.mat.patients.conversion.dao.DataElements;
+import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
+import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.DateTimeType;
@@ -52,7 +53,7 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
         var optional = findOptionalDataElementsByType(bonniePatient, "QDM::PatientCharacteristicExpired");
 
         if (optional.isPresent()) {
-            DataElements dataElement = optional.get();
+            QdmDataElement dataElement = optional.get();
             log.debug("Patient is dead");
             return new DateTimeType(dataElement.getExpiredDatetime());
         } else {
@@ -79,31 +80,44 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
     }
 
     private void processRace(BonniePatient bonniePatient, Patient fhirPatient) {
-        QdmCodeSystem qdmCodeSystem = findOneCodeSystemWithRequiredDisplay(bonniePatient, "QDM::PatientCharacteristicRace");
-        Extension extension = fhirPatient.getExtensionByUrl(US_CORE_RACE_URL);
+        try {
+            QdmCodeSystem qdmCodeSystem = findOneCodeSystemWithRequiredDisplay(bonniePatient, "QDM::PatientCharacteristicRace");
+            Extension extension = fhirPatient.getExtensionByUrl(US_CORE_RACE_URL);
 
-        extension.setValue(new CodeType(qdmCodeSystem.getCode()));
+            extension.setValue(new CodeType(qdmCodeSystem.getCode()));
+        } catch (PatientConversionException e) {
+            log.warn(e.getMessage());
+        }
     }
 
     private void processEthnicity(BonniePatient bonniePatient, Patient fhirPatient) {
-        QdmCodeSystem qdmCodeSystem = findOneCodeSystemWithRequiredDisplay(bonniePatient, "QDM::PatientCharacteristicEthnicity");
-        Extension extension = fhirPatient.getExtensionByUrl(DETAILED_RACE_URL);
+        try {
+            QdmCodeSystem qdmCodeSystem = findOneCodeSystemWithRequiredDisplay(bonniePatient, "QDM::PatientCharacteristicEthnicity");
+            Extension extension = fhirPatient.getExtensionByUrl(DETAILED_RACE_URL);
 
-        extension.setValue(new CodeType(qdmCodeSystem.getCode()));
+            extension.setValue(new CodeType(qdmCodeSystem.getCode()));
+        }catch (PatientConversionException e) {
+            log.warn(e.getMessage());
+        }
     }
 
     private Enumerations.AdministrativeGender processSex(BonniePatient bonniePatient) {
-        QdmCodeSystem qdmCodeSystem = findOneCodeSystemWithRequiredDisplay(bonniePatient, "QDM::PatientCharacteristicSex");
+        try {
+            QdmCodeSystem qdmCodeSystem = findOneCodeSystemWithRequiredDisplay(bonniePatient, "QDM::PatientCharacteristicSex");
 
-        Enumerations.AdministrativeGender value = Enumerations.AdministrativeGender.UNKNOWN;
-        if (qdmCodeSystem.getDisplay().toLowerCase().startsWith("m")) { // sometimes Male and M
-            value = Enumerations.AdministrativeGender.MALE;
+            Enumerations.AdministrativeGender value = Enumerations.AdministrativeGender.UNKNOWN;
+            if (qdmCodeSystem.getDisplay().toLowerCase().startsWith("m")) { // sometimes Male and M
+                value = Enumerations.AdministrativeGender.MALE;
+            }
+
+            if (qdmCodeSystem.getDisplay().toLowerCase().startsWith("f")) {
+                value = Enumerations.AdministrativeGender.FEMALE;
+            }
+
+            return value;
+        } catch (PatientConversionException e) {
+            log.warn(e.getMessage());
+            return null;
         }
-
-        if (qdmCodeSystem.getDisplay().toLowerCase().startsWith("f")) {
-            value = Enumerations.AdministrativeGender.FEMALE;
-        }
-
-        return value;
     }
 }

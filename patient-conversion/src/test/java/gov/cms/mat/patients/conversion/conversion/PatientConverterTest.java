@@ -3,15 +3,12 @@ package gov.cms.mat.patients.conversion.conversion;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.mat.patients.conversion.ResourceFileUtil;
 import gov.cms.mat.patients.conversion.dao.BonniePatient;
+import gov.cms.mat.patients.conversion.service.PatientService;
 import lombok.SneakyThrows;
-import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,56 +18,38 @@ import java.util.stream.Stream;
 @SpringBootTest
 class PatientConverterTest implements ResourceFileUtil {
 
-        @SneakyThrows
+    @Autowired
+    PatientService patientService;
+
+    @SneakyThrows
     @Test
     void process() {
         String all = getStringFromResource("/cqm_patients.json");
 
-            ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
 
         List<String> splits = Stream.of(all.split("\n"))
                 .map(String::new)
                 .collect(Collectors.toList());
 
-            Set<String> types =   new TreeSet<>();
+        Set<String> types = new TreeSet<>();
+        BonniePatient bonniePatient = null;
+        for (String split : splits) {
 
-            for( String split:  splits ) {
-          try {
-              BonniePatient bonniePatient = objectMapper.readValue(split, BonniePatient.class);
+            try {
+                bonniePatient = objectMapper.readValue(split, BonniePatient.class);
+                patientService.processOne(bonniePatient);
 
-         var elements=     bonniePatient.getQdmPatient().getDataElements();
+            } catch (Exception e) {
+                System.out.println(bonniePatient.get_id());
+                System.out.println(split);
+                e.printStackTrace();
+                // throw new IllegalArgumentException("shit");
+            }
 
-         elements.forEach(d-> {
-             types.add(  d.get_type());
+        }
 
-//             if( d.getTargetOutcome() != null) {
-//                 System.out.println(  bonniePatient.get_id());
-//             }
-
-
-//             if(CollectionUtils.isNotEmpty(d.getComponents())) {
-//
-//                 d.getComponents().forEach(c-> {
-//                     if( c.getResult() != null) {
-//                         System.out.println(  bonniePatient.get_id());
-//                     }
-//                 });
-//
-//             }
-         });
-
-
-              // System.out.println(split);
-              // System.out.println(bonniePatient.get_id());
-          } catch (Exception e) {
-              System.out.println(split);
-              e.printStackTrace();
-              throw new IllegalArgumentException("shit");
-          }
-
-      }
-
-      System.out.println(types);
+        System.out.println(types);
 
 
 //        String json = "[" + String.join(",\n", splits) + "]";
@@ -78,7 +57,7 @@ class PatientConverterTest implements ResourceFileUtil {
 //        Path path = Paths.get("/tmp/all.json");
 //        byte[] strToBytes = json.getBytes();
 
-   //     Files.write(path, strToBytes);
+        //     Files.write(path, strToBytes);
     }
 
     @SneakyThrows
@@ -87,7 +66,7 @@ class PatientConverterTest implements ResourceFileUtil {
 
         String all = getStringFromResource("/patients_all_QDM_PROD_as_array.json");
         ObjectMapper objectMapper = new ObjectMapper();
-        BonniePatient[] patients =   objectMapper.readValue(all, BonniePatient[].class);
+        BonniePatient[] patients = objectMapper.readValue(all, BonniePatient[].class);
 
         //   objectMapper.readValue()
 

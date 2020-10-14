@@ -1,0 +1,153 @@
+{
+  "id": "5f74dcb2d332a9707f748900",
+  "expected_values": [
+    {
+      "measure_id": "A0D89C15-C983-405C-9585-3ACCAA50EC60",
+      "population_index": 0,
+      "IPP": 0,
+      "DENOM": 0,
+      "NUMER": 0
+    }
+  ],
+  "measure_ids": [
+    "A0D89C15-C983-405C-9585-3ACCAA50EC60"
+  ],
+  "fhir_patient": {
+    "id": "5f74dcb2d332a9707f748900",
+    "resourceType": "Patient",
+    "extension": [
+      {
+        "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+        "valueCoding": {
+          "system": "http://hl7.org/fhir/us/core/STU3.1/CodeSystem-cdcrec.html",
+          "code": "1002-5",
+          "display": "American Indian or Alaska Native",
+          "userSelected": true
+        }
+      },
+      {
+        "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+        "valueCoding": {
+          "system": "http://hl7.org/fhir/us/core/STU3.1/CodeSystem-cdcrec.html",
+          "code": "2135-2",
+          "display": "Hispanic or Latino",
+          "userSelected": true
+        }
+      }
+    ],
+    "name": [
+      {
+        "family": "john",
+        "given": [
+          "doe"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "2020-04-02"
+  },
+  "data_elements": [
+    {
+      "codeListId": "2.16.840.1.113883.3.666.5.307",
+      "valueSetTitle": "Encounter Inpatient",
+      "description": "Encounter: Encounter Inpatient",
+      "fhir_resource": {
+        "resourceType": "Encounter",
+        "status": "test",
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "SNOMEDCT",
+                "version": "2019-09",
+                "code": "183452005",
+                "display": "Emergency hospital admission (procedure)",
+                "userSelected": true
+              }
+            ]
+          }
+        ],
+        "period": {
+          "start": "2020-10-06T08:00:00.000+00:00",
+          "end": "2020-10-06T08:15:00.000+00:00"
+        }
+      }
+    },
+    {
+      "codeListId": "2.16.840.1.113883.3.117.1.7.1.202",
+      "valueSetTitle": "Atrial Fibrillation/Flutter",
+      "description": "Condition: Atrial Fibrillation/Flutter",
+      "fhir_resource": {
+        "resourceType": "Condition",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "condition-clinical",
+              "version": "4.0.1",
+              "code": "remission",
+              "display": "Remission",
+              "userSelected": true
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "condition-ver-status",
+              "code": "yourcode",
+              "userSelected": true
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "SNOMEDCT",
+              "version": "2019-09",
+              "code": "120041000119109",
+              "display": "Atrial fibrillation with rapid ventricular response (disorder)",
+              "userSelected": true
+            }
+          ]
+        },
+        "abatementRange": {
+          "low": {
+            "value": 1,
+            "unit": "days"
+          },
+          "high": {
+            "value": 4,
+            "unit": "days"
+          }
+        },
+        "recordedDate": "2020-10-07T08:00:00.000+00:00"
+      }
+    },
+    {
+      "codeListId": "2.16.840.1.113883.3.666.5.1743",
+      "valueSetTitle": "General or Neuraxial Anesthesia",
+      "description": "Procedure: General or Neuraxial Anesthesia",
+      "fhir_resource": {
+        "resourceType": "Procedure",
+        "status": "on-hold",
+        "code": {
+          "coding": [
+            {
+              "system": "SNOMEDCT",
+              "version": "2019-09",
+              "code": "112943005",
+              "display": "Epidural injection of anesthetic substance, diagnostic, caudal, continuous (procedure)",
+              "userSelected": true
+            }
+          ]
+        },
+        "performedPeriod": {
+          "start": "2020-10-08T08:00:00.000+00:00",
+          "end": "2020-10-08T08:15:00.000+00:00"
+        }
+      }
+    }
+  ],
+  "created_at": "2020-09-30T19:33:49.308Z",
+  "updated_at": "2020-09-30T19:33:49.308Z"
+}

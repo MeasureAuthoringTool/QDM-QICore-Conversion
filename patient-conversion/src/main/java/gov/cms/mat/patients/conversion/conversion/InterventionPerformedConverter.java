@@ -2,56 +2,34 @@ package gov.cms.mat.patients.conversion.conversion;
 
 
 import ca.uhn.fhir.context.FhirContext;
-import gov.cms.mat.patients.conversion.conversion.helpers.DataElementFinder;
-import gov.cms.mat.patients.conversion.conversion.helpers.FhirCreator;
-import gov.cms.mat.patients.conversion.dao.BonniePatient;
-import gov.cms.mat.patients.conversion.dao.DataElements;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Procedure;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class InterventionPerformedConverter implements FhirCreator, DataElementFinder {
-    private final CodeSystemEntriesService codeSystemEntriesService;
-    private final FhirContext fhirContext;
+public class InterventionPerformedConverter extends ConverterBase<Procedure> {
+    public static final String QDM_TYPE = "QDM::InterventionPerformed";
 
-    public InterventionPerformedConverter(CodeSystemEntriesService codeSystemEntriesService, FhirContext fhirContext) {
-        this.codeSystemEntriesService = codeSystemEntriesService;
-        this.fhirContext = fhirContext;
+    public InterventionPerformedConverter(CodeSystemEntriesService codeSystemEntriesService,
+                                          FhirContext fhirContext,
+                                          ObjectMapper objectMapper) {
+        super(codeSystemEntriesService, fhirContext, objectMapper);
     }
 
-    @Async("threadPoolConversion")
-    public CompletableFuture<String> convertToString(BonniePatient bonniePatient, Patient fhirPatient) {
-        List<Procedure> procedures = process(bonniePatient, fhirPatient);
-        String json = manyToJson(fhirContext, procedures);
-
-        return CompletableFuture.completedFuture(json == null ? "[]" : json);
+    @Override
+    String getQdmType() {
+        return QDM_TYPE;
     }
 
-    public List<Procedure> process(BonniePatient bonniePatient, Patient fhirPatient) {
-        List<DataElements> dataElements = findDataElementsByType(bonniePatient, "QDM::InterventionPerformed");
-
-        if (dataElements.isEmpty()) {
-            return Collections.emptyList();
-        } else {
-            return dataElements.stream()
-                    .map(d -> convertToFhirEncounter(fhirPatient, d))
-                    .collect(Collectors.toList());
-        }
-    }
-
-    private Procedure convertToFhirEncounter(Patient fhirPatient, DataElements dataElements) {
+    Procedure convertToFhir(Patient fhirPatient, QdmDataElement dataElements) {
         Procedure procedure = new Procedure();
         procedure.setId(dataElements.get_id());
 
@@ -74,9 +52,8 @@ public class InterventionPerformedConverter implements FhirCreator, DataElementF
         // procedure.setAuthoredOn todo how to map this
 
 
-        if (dataElements.getReason() != null ) {
-            // procedure.setReasonCode()
-            log.info("We have Reason"); // all null in test data
+        if (dataElements.getReason() != null) {
+            procedure.setReasonCode(List.of(convertToCodeableConcept(codeSystemEntriesService, dataElements.getReason())));
         }
 
         CodeableConcept codeableConcept = convertToCodeSystems(codeSystemEntriesService, dataElements.getDataElementCodes());

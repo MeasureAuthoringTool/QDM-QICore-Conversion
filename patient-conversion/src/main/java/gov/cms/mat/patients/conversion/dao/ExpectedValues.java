@@ -1,6 +1,7 @@
 package gov.cms.mat.patients.conversion.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-// @JsonIgnoreProperties("OBSERV")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExpectedValues {
     @JsonProperty("measure_id")
     String measureId;

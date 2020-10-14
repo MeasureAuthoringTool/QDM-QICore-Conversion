@@ -2,59 +2,38 @@ package gov.cms.mat.patients.conversion.conversion;
 
 
 import ca.uhn.fhir.context.FhirContext;
-import gov.cms.mat.patients.conversion.conversion.helpers.DataElementFinder;
-import gov.cms.mat.patients.conversion.conversion.helpers.FhirCreator;
-import gov.cms.mat.patients.conversion.dao.BonniePatient;
-import gov.cms.mat.patients.conversion.dao.DataElements;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
+import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Duration;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Quantity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class MedicationDischargeConverter implements FhirCreator, DataElementFinder {
-    private final CodeSystemEntriesService codeSystemEntriesService;
-    private final FhirContext fhirContext;
+public class MedicationDischargeConverter extends ConverterBase<MedicationRequest> {
+    public static final String QDM_TYPE = "QDM::MedicationDischarge";
 
-    public MedicationDischargeConverter(CodeSystemEntriesService codeSystemEntriesService, FhirContext fhirContext) {
-        this.codeSystemEntriesService = codeSystemEntriesService;
-        this.fhirContext = fhirContext;
+    public MedicationDischargeConverter(CodeSystemEntriesService codeSystemEntriesService,
+                                        FhirContext fhirContext,
+                                        ObjectMapper objectMapper) {
+        super(codeSystemEntriesService, fhirContext, objectMapper);
     }
 
-    @Async("threadPoolConversion")
-    public CompletableFuture<String> convertToString(BonniePatient bonniePatient, Patient fhirPatient) {
-        List<MedicationRequest> medicationRequests = process(bonniePatient, fhirPatient);
-        String json = manyToJson(fhirContext, medicationRequests);
-
-        return CompletableFuture.completedFuture(json == null ? "[]" : json);
+    @Override
+    String getQdmType() {
+        return QDM_TYPE;
     }
 
-    public List<MedicationRequest> process(BonniePatient bonniePatient, Patient fhirPatient) {
-        List<DataElements> dataElements = findDataElementsByType(bonniePatient, "QDM::MedicationDischarge");
-
-        if (dataElements.isEmpty()) {
-            return Collections.emptyList();
-        } else {
-            return dataElements.stream()
-                    .map(d -> convertToMedicationRequest(fhirPatient, d))
-                    .collect(Collectors.toList());
-        }
-    }
-
-    private MedicationRequest convertToMedicationRequest(Patient fhirPatient, DataElements dataElement) {
+    MedicationRequest convertToFhir(Patient fhirPatient, QdmDataElement dataElement) {
         MedicationRequest medicationRequest = new MedicationRequest();
         medicationRequest.setId(dataElement.get_id());
         medicationRequest.setSubject(createReference(fhirPatient));
@@ -65,6 +44,7 @@ public class MedicationDischargeConverter implements FhirCreator, DataElementFin
 
         if (dataElement.getRoute() != null) {
             //  medicationRequest.setDosageInstruction()
+            // todo Still NO data
             log.info("We have a dosage");
         }
 
@@ -73,19 +53,22 @@ public class MedicationDischargeConverter implements FhirCreator, DataElementFin
             Duration duration = new Duration();
             duration.setValue(dataElement.getDaysSupplied());
             dispenseRequest.setExpectedSupplyDuration(duration);
-            log.info("We have a daysSupplied"); // all null in test data
         }
 
-        if (dataElement.getSupply()!= null) {
-           // MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
-           // dispenseRequest.setQuantity(new Quantity(Long.parseLong(dataElement.getSupply()))); // could throw error
-            log.info("We have a supply"); // all null in test data   TODO
-        }
-
-        if (StringUtils.isNotBlank(dataElement.getRefills())) {
+        if (dataElement.getSupply() != null) {
             MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
-            dispenseRequest.setNumberOfRepeatsAllowed(Integer.parseInt(dataElement.getRefills()));
-            log.info("We have a refill"); // all null in test data
+
+            Quantity quantity = new Quantity();
+            quantity.setValue(dataElement.getSupply().getValue());
+            quantity.setSystem("http://unitsofmeasure.org");
+            quantity.setCode(convertUnitToCode(dataElement.getSupply().getUnit()));
+            dispenseRequest.setQuantity(quantity);
+
+        }
+
+        if (dataElement.getRefills() != null) {
+            MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
+            dispenseRequest.setNumberOfRepeatsAllowed(dataElement.getRefills());
         }
 
 
@@ -96,6 +79,18 @@ public class MedicationDischargeConverter implements FhirCreator, DataElementFin
         }
 
         return medicationRequest;
+    }
+
+    private String convertUnitToCode(String unit) {
+        // https://ucum.nlm.nih.gov/ucum-lhc/demo.html Nice tool for codes
+        // todo need all valid codes used in bonnie
+        switch (unit) {
+            case "days":
+                return "d";
+            default:
+                throw new PatientConversionException("Cannot convert unit: " + unit + " to ucm code");
+        }
+
     }
 
     private CodeableConcept getMedicationCodeableConcept(List<QdmCodeSystem> dataElementCodes) {

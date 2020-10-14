@@ -1,18 +1,52 @@
 
-[QDM::AdverseEvent, QDM::AllergyIntolerance, QDM::AssessmentOrder, QDM::AssessmentPerformed, QDM::AssessmentRecommended,
- QDM::CareGoal, QDM::CommunicationPerformed, QDM::DeviceApplied, QDM::DeviceOrder, QDM::Diagnosis, QDM::DiagnosticStudyOrder,
- QDM::DiagnosticStudyPerformed, QDM::EncounterOrder, QDM::EncounterPerformed, QDM::FamilyHistory, QDM::ImmunizationAdministered,
-  QDM::ImmunizationOrder, QDM::InterventionOrder, QDM::InterventionPerformed, QDM::InterventionRecommended, QDM::LaboratoryTestOrder, 
-  QDM::LaboratoryTestPerformed, QDM::MedicationActive, QDM::MedicationAdministered, QDM::MedicationDischarge, QDM::MedicationDispensed, 
-  QDM::MedicationOrder, QDM::Participation,
-   QDM::PhysicalExamPerformed, QDM::ProcedureOrder, QDM::ProcedurePerformed, QDM::SubstanceAdministered, 
-   QDM::SubstanceOrder, QDM::SubstanceRecommended, QDM::Symptom]
+[
+_QDM::AdverseEvent_, 
+QDM::AllergyIntolerance, 
+QDM::AssessmentOrder, 
+QDM::AssessmentPerformed,
+QDM::AssessmentRecommended,
+QDM::CareGoal,
+QDM::CommunicationPerformed, 
+QDM::DeviceApplied,
+QDM::DeviceOrder,
+QDM::Diagnosis, 
+QDM::DiagnosticStudyOrder,
+QDM::DiagnosticStudyPerformed, 
+QDM::EncounterOrder,
+~~QDM::EncounterPerformed,~~
+QDM::FamilyHistory,
+QDM::ImmunizationAdministered,
+QDM::ImmunizationOrder, 
+~~QDM::InterventionOrder,~~ 
+~~QDM::InterventionPerformed,~~ 
+QDM::InterventionRecommended, 
+QDM::LaboratoryTestOrder, 
+QDM::LaboratoryTestPerformed, 
+QDM::MedicationActive, 
+QDM::MedicationAdministered, 
+~~QDM::MedicationDischarge,~~ 
+QDM::MedicationDispensed, 
+QDM::MedicationOrder, 
+QDM::Participation,
+QDM::PhysicalExamPerformed, 
+QDM::ProcedureOrder, 
+QDM::ProcedurePerformed,
+QDM::SubstanceAdministered, 
+QDM::SubstanceOrder, 
+QDM::SubstanceRecommended, 
+QDM::Symptom
+]
 
- [QDM::PatientCharacteristic, QDM::PatientCharacteristicBirthdate, QDM::PatientCharacteristicEthnicity,
-   QDM::PatientCharacteristicExpired, QDM::PatientCharacteristicPayer, QDM::PatientCharacteristicRace, QDM::PatientCharacteristicSex, ]
+ [QDM::PatientCharacteristic, 
+ ~~QDM::PatientCharacteristicBirthdate,~~ 
+ ~~QDM::PatientCharacteristicEthnicity,~~
+   ~~QDM::PatientCharacteristicExpired,~~ 
+   ~~QDM::PatientCharacteristicPayer,~~ 
+   ~~QDM::PatientCharacteristicRace,~~ 
+   ~~QDM::PatientCharacteristicSex~~ ]
 
 ---
-cqm_patients id: 5d654a171c76ba7ea32ea080 has a bad entry in dataElements[2] array concerning components[0]:
+cqm_patients id: 5d654a171c76ba7ea32ea080 has a bad entry in fhirDataElements[2] array concerning components[0]:
 
 It has the result as a string value 43510-06-10T08:00:00+00:00
 
@@ -31,7 +65,7 @@ While the vast majority of the other ones have it mapped as a code E.G. id: 5d65
 ```
 ---
 
-cqm_patients id: 5d654a171c76ba7ea32ea080 has a bad entry in dataElements[0] array concerning result it is mapped as 
+cqm_patients id: 5d654a171c76ba7ea32ea080 has a bad entry in fhirDataElements[0] array concerning result it is mapped as 
 int32 69.
 
 While the vast majority of the other ones have it mapped as a code E.G. id: 5d65454d1c76ba7ea32d989a
@@ -46,7 +80,7 @@ While the vast majority of the other ones have it mapped as a code E.G. id: 5d65
 ```
 ---
 
-cqm_patients id: 5d654ae61c76ba7ea32ed30c has a bad entry in dataElements[1] array concerning targetOutcome it is mapped
+cqm_patients id: 5d654ae61c76ba7ea32ed30c has a bad entry in fhirDataElements[1] array concerning targetOutcome it is mapped
 like a QdmQuantity.
  
 ```javascript
@@ -56,7 +90,7 @@ like a QdmQuantity.
         },
 ```
 
-While the vast majority of the other ones have it mapped as a code E.G. id: 5d6547af1c76ba7ea32e1d95 dataElements[0]:
+While the vast majority of the other ones have it mapped as a code E.G. id: 5d6547af1c76ba7ea32e1d95 fhirDataElements[0]:
 
 ```javascript
  "targetOutcome" : {
@@ -154,7 +188,7 @@ This first attribute seems out of place with the description **Patient Character
 
 The second attribute is the way that most all patients determine sex. We need to remove these.
 ```javascript
- "dataElements": [
+ "fhirDataElements": [
       {
         "_id": "5aeb774ab848463d625b28f1",
         "dataElementCodes": [
@@ -275,7 +309,7 @@ Does **Patient Characteristic: Education** How to map?
 ###### Insurance Providers
 
 Insurance providers are supplies as a String to the BonniePatient extendedData element.
-Do we need to include.
+Do we need to include.****
 
 ```javascript {
 [

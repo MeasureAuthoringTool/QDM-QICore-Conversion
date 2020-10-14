@@ -17,12 +17,12 @@ public class BonniePatient {
 
     String[] provider_ids;
 
-    ExpectedValues[] expectedValues;
+    List<ExpectedValues> expectedValues;
 
     String notes;
 
     @JsonProperty("measure_ids")
-    String[] measureIds;
+    List<String> measureIds;
 
     String user_id;
 
