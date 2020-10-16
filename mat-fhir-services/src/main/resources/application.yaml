@@ -27,7 +27,7 @@ conversion-lib-lookup-4-1:
 
 measures:
   allowed:
-    versions: v5.5,v5.6,v5.7,v5.8,v5.9,v6.0
+    greater-than: 5.4
 
 management:
   endpoint:
