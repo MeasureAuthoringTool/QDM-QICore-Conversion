@@ -18,15 +18,11 @@ import java.util.Optional;
 @Slf4j
 public class MeasureDataService {
     private final MeasureRepository measureRepository;
-    @Value("#{'${measures.allowed.versions}'.split(',')}")
-    private List<String> allowedVersions;
+    @Value("${measures.allowed.greater-than}")
+    private Double allowedGreaterThan;
 
     public MeasureDataService(MeasureRepository measureRepository) {
         this.measureRepository = measureRepository;
-    }
-
-    public List<String> findAllValidIds() {
-        return measureRepository.findAllIdsWithAllowedVersions(allowedVersions);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -54,8 +50,7 @@ public class MeasureDataService {
 
     public Measure checkMeasure(String measureId, Measure measure) {
         if (!isValidReleaseVersion(measure.getReleaseVersion())) {
-            String joinedVersions = "(" + StringUtils.join(allowedVersions, ", ") + ")";
-            throw new MeasureReleaseVersionInvalidException(measureId, measure.getReleaseVersion(), joinedVersions);
+            throw new MeasureReleaseVersionInvalidException(measureId, measure.getReleaseVersion(), "v" + allowedGreaterThan);
         } else {
             return measure;
         }
@@ -65,7 +60,11 @@ public class MeasureDataService {
         if (StringUtils.isEmpty(releaseVersion)) {
             return false;
         } else {
-            return allowedVersions.contains(releaseVersion);
+            try {
+                return Double.parseDouble(StringUtils.remove(releaseVersion, 'v')) > allowedGreaterThan;
+            } catch (NumberFormatException nfe) {
+                throw new RuntimeException("Could not convert release version, " + releaseVersion + ", to a double.");
+            }
         }
     }
 }

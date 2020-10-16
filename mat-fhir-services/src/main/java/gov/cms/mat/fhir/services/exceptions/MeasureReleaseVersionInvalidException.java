@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 public class MeasureReleaseVersionInvalidException extends RuntimeException {
     private static final String MESSAGE =
-            "MAT Measure with measureId: %s and releaseVersion: %s not in allowedReleaseVersions %s.";
+            "MAT Measure with measureId: %s and releaseVersion: %s not > %s.";
 
-    public MeasureReleaseVersionInvalidException(String measureId, String releaseVersion, String allowedVersions) {
-        super(String.format(MESSAGE, measureId, releaseVersion, allowedVersions));
+    public MeasureReleaseVersionInvalidException(String measureId, String releaseVersion, String greaterThanVersion) {
+        super(String.format(MESSAGE, measureId, releaseVersion, greaterThanVersion));
         log.debug(getMessage());
     }
 }
