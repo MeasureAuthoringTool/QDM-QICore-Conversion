@@ -1,5 +1,5 @@
 FROM openjdk:11-jdk
-ARG JAR_FILE=target/hapi-fhir-jpaserver-0.0.1-SNAPSHOT.war
+ARG JAR_FILE=target/hapi-fhir-jpaserver-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
 RUN curl -O https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem \
