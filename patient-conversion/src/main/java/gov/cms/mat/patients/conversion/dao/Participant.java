@@ -11,7 +11,7 @@ public class Participant {
     String _type;
     String hqmfOid;
     String qrdaOid;
-    QdmCode relationship;
+    QdmCodeSystem relationship;
 
     QdmIdentifier identifier;
 

@@ -1,12 +1,16 @@
 package gov.cms.mat.patients.conversion.conversion;
 
 
+import ca.uhn.fhir.validation.ValidationResult;
 import gov.cms.mat.patients.conversion.conversion.helpers.DataElementFinder;
 import gov.cms.mat.patients.conversion.conversion.helpers.FhirCreator;
+import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirPatientResult;
 import gov.cms.mat.patients.conversion.dao.BonniePatient;
-import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
+import gov.cms.mat.patients.conversion.dao.QdmDataElement;
+import gov.cms.mat.patients.conversion.data.ConversionOutcome;
 import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
+import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.DateTimeType;
@@ -18,6 +22,7 @@ import org.hl7.fhir.r4.model.StringType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +33,33 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
     private static final String US_CORE_RACE_URL = "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race";
     private static final String DETAILED_RACE_URL = "http://hl7.org/fhir/us/core/ValueSet/detailed-race";
 
-    public Patient process(BonniePatient bonniePatient) {
+
+    private final ValidationService validationService;
+
+
+    public PatientConverter(ValidationService validationService) {
+
+        this.validationService = validationService;
+    }
+
+    public QdmToFhirPatientResult convert(BonniePatient bonniePatient) {
+        List<String> conversionMessages = new ArrayList<>();
+        Patient patient = process(bonniePatient, conversionMessages);
+
+        ValidationResult validationResult = validationService.validate(patient);
+
+        ConversionOutcome outcome = ConversionOutcome.builder()
+                .conversionMessages(conversionMessages)
+                .validationMessages(validationResult.getMessages())
+                .build();
+
+        return QdmToFhirPatientResult.builder()
+                .outcome(outcome)
+                .fhirPatient(patient)
+                .build();
+    }
+
+    public Patient process(BonniePatient bonniePatient, List<String> conversionMessages) {
         Patient fhirPatient = new Patient();
         fhirPatient.setId(bonniePatient.get_id());
         fhirPatient.setExtension(List.of(new Extension(US_CORE_RACE_URL), new Extension(DETAILED_RACE_URL)));
@@ -96,7 +127,7 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
             Extension extension = fhirPatient.getExtensionByUrl(DETAILED_RACE_URL);
 
             extension.setValue(new CodeType(qdmCodeSystem.getCode()));
-        }catch (PatientConversionException e) {
+        } catch (PatientConversionException e) {
             log.warn(e.getMessage());
         }
     }

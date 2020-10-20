@@ -1,10 +1,10 @@
 
 [
-_QDM::AdverseEvent_, 
-QDM::AllergyIntolerance, 
+~~_QDM::AdverseEvent_,~~ 
+~~QDM::AllergyIntolerance, 
 QDM::AssessmentOrder, 
 QDM::AssessmentPerformed,
-QDM::AssessmentRecommended,
+QDM::AssessmentRecommended,~~
 QDM::CareGoal,
 QDM::CommunicationPerformed, 
 QDM::DeviceApplied,

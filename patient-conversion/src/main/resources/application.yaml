@@ -34,11 +34,10 @@ mat-api-key: ${MAT_API_KEY}
 
 logging:
   level:
-    root: INFO
-    gov.cms.mat: INFO
-    org.hl7.fhir.r4.hapi.ctx: INFO
-    org.hl7.fhir.r4.hapi.validation: INFO
-    logging.level.web: DEBUG
+    root: WARN
+    gov.cms.mat: WARN
+    org.hl7.fhir.r4.hapi.ctx: WARN
+    org.hl7.fhir.r4.hapi.validation: WARN
   pattern:
     console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
     file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %mdc %logger{36}.%M - %msg%n"

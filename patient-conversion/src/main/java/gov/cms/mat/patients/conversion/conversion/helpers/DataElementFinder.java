@@ -38,6 +38,7 @@ public interface DataElementFinder {
         return new CodeableConcept().setCoding(List.of(convertToCoding(codeSystemEntriesService, qdmCodeSystem)));
     }
 
+
     default Coding convertToCoding(CodeSystemEntriesService codeSystemEntriesService, QdmCodeSystem qdmCodeSystem) {
         String theSystem;
 

@@ -9,7 +9,7 @@ public class Diagnoses {
     String _id;
     String _type;
     QdmCodeSystem code;
-    QdmCode presentOnAdmissionIndicator;
+    QdmCodeSystem presentOnAdmissionIndicator;
     Integer rank;
     String qdmVersion;
 }

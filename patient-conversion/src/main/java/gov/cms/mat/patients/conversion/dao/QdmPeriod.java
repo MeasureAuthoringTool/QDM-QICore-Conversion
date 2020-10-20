@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class PrevalencePeriod {
+public class QdmPeriod {
     Date low;
     Date high;
     Boolean lowClosed;

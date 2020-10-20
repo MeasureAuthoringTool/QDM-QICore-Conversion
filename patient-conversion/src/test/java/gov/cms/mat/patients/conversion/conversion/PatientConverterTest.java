@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -38,10 +39,11 @@ class PatientConverterTest implements ResourceFileUtil {
 
             try {
                 bonniePatient = objectMapper.readValue(split, BonniePatient.class);
+                System.out.println(bonniePatient.get_id());
                 patientService.processOne(bonniePatient);
 
             } catch (Exception e) {
-                System.out.println(bonniePatient.get_id());
+
                 System.out.println(split);
                 e.printStackTrace();
                 // throw new IllegalArgumentException("shit");
@@ -67,6 +69,8 @@ class PatientConverterTest implements ResourceFileUtil {
         String all = getStringFromResource("/patients_all_QDM_PROD_as_array.json");
         ObjectMapper objectMapper = new ObjectMapper();
         BonniePatient[] patients = objectMapper.readValue(all, BonniePatient[].class);
+
+        patientService.processMany(Arrays.asList(patients));
 
         //   objectMapper.readValue()
 

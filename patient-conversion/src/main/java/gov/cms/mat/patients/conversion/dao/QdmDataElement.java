@@ -1,6 +1,6 @@
 package gov.cms.mat.patients.conversion.dao;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,17 +11,18 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 // @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class QdmDataElement {
     String _id;
     List<QdmCodeSystem> dataElementCodes;
 
     String _type;
 
-    QdmCode type; //in there  "_id": "5c95406eb8484612c37f1f57",
+    QdmCodeSystem type; //in there  "_id": "5c95406eb8484612c37f1f57",
 
     String facilityLocation;
 
-    FacilityLocation[] facilityLocations;
+    List<FacilityLocation> facilityLocations;
     String qdmTitle;
     String hqmfOid;
     String qrdaOid;
@@ -51,14 +52,14 @@ public class QdmDataElement {
     QdmQuantity supply;
     QdmCodeSystem frequency;
     Integer daysSupplied;
-    QdmCode setting;
+    QdmCodeSystem setting;
     QdmCodeSystem route;
 
     QdmCodeSystem admissionSource;
 
-    RelevantPeriod relevantPeriod;
+    QdmPeriod relevantPeriod;
 
-    PrevalencePeriod prevalencePeriod;
+    QdmPeriod prevalencePeriod;
 
     QdmCodeSystem dischargeDisposition;
 
@@ -72,9 +73,9 @@ public class QdmDataElement {
 
     QdmReferenceRange referenceRange;
 
-    QdmCode status;
+    QdmCodeSystem status;
     Date resultDatetime;
-    QdmCode method;
+    QdmCodeSystem method;
 
     QdmCodeSystem negationRationale;
 
@@ -108,8 +109,8 @@ public class QdmDataElement {
 
     String rank;
 
-    QdmCode category;
-    QdmCode medium;
+    QdmCodeSystem category;
+    QdmCodeSystem medium;
     Date sentDatetime;
     Date receivedDatetime;
 

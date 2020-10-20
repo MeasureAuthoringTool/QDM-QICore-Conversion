@@ -2,6 +2,12 @@ package gov.cms.mat.patients.conversion.service;
 
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.mat.patients.conversion.conversion.AdverseEventConverter;
+import gov.cms.mat.patients.conversion.conversion.AllergyIntoleranceConverter;
+import gov.cms.mat.patients.conversion.conversion.AssessmentOrderConverter;
+import gov.cms.mat.patients.conversion.conversion.AssessmentPerformedConverter;
+import gov.cms.mat.patients.conversion.conversion.AssessmentRecommendedConverter;
+import gov.cms.mat.patients.conversion.conversion.CareCoalConverter;
 import gov.cms.mat.patients.conversion.conversion.ConverterBase;
 import gov.cms.mat.patients.conversion.conversion.EncounterConverter;
 import gov.cms.mat.patients.conversion.conversion.InterventionOrderConverter;
@@ -9,9 +15,11 @@ import gov.cms.mat.patients.conversion.conversion.InterventionPerformedConverter
 import gov.cms.mat.patients.conversion.conversion.MedicationDischargeConverter;
 import gov.cms.mat.patients.conversion.conversion.PatientConverter;
 import gov.cms.mat.patients.conversion.conversion.helpers.FhirCreator;
+import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirPatientResult;
 import gov.cms.mat.patients.conversion.dao.BonniePatient;
 import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.data.ConversionResult;
+import gov.cms.mat.patients.conversion.data.ConvertedPatient;
 import gov.cms.mat.patients.conversion.data.FhirDataElement;
 import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +47,13 @@ public class PatientService implements FhirCreator {
     private final InterventionOrderConverter interventionOrderConverter;
     private final InterventionPerformedConverter interventionPerformedConverter;
     private final MedicationDischargeConverter medicationDischargeConverter;
+    private final AdverseEventConverter adverseEventConverter;
+    private final AllergyIntoleranceConverter allergyIntoleranceConverter;
+    private final AssessmentOrderConverter assessmentOrderConverter;
+    private final AssessmentPerformedConverter assessmentPerformedConverter;
+    private final AssessmentRecommendedConverter assessmentRecommendedConverter;
+    private final CareCoalConverter careCoalConverter;
+
     private final ObjectMapper objectMapper;
 
     private final FhirContext fhirContext;
@@ -48,13 +63,22 @@ public class PatientService implements FhirCreator {
                           InterventionOrderConverter interventionOrderConverter,
                           InterventionPerformedConverter interventionPerformedConverter,
                           MedicationDischargeConverter medicationDischargeConverter,
-                          FhirContext fhirContext,
+                          AdverseEventConverter adverseEventConverter,
+                          AllergyIntoleranceConverter allergyIntoleranceConverter,
+                          AssessmentOrderConverter assessmentOrderConverter,
+                          AssessmentPerformedConverter assessmentPerformedConverter, AssessmentRecommendedConverter assessmentRecommendedConverter, CareCoalConverter careCoalConverter, FhirContext fhirContext,
                           ObjectMapper objectMapper) {
         this.patientConverter = patientConverter;
         this.encounterConverter = encounterConverter;
         this.interventionOrderConverter = interventionOrderConverter;
         this.interventionPerformedConverter = interventionPerformedConverter;
         this.medicationDischargeConverter = medicationDischargeConverter;
+        this.adverseEventConverter = adverseEventConverter;
+        this.allergyIntoleranceConverter = allergyIntoleranceConverter;
+        this.assessmentOrderConverter = assessmentOrderConverter;
+        this.assessmentPerformedConverter = assessmentPerformedConverter;
+        this.assessmentRecommendedConverter = assessmentRecommendedConverter;
+        this.careCoalConverter = careCoalConverter;
         this.fhirContext = fhirContext;
         this.objectMapper = objectMapper;
     }
@@ -76,7 +100,8 @@ public class PatientService implements FhirCreator {
 
             var qdmTypes = collectQdmTypes(bonniePatient);
 
-            Patient fhirPatient = patientConverter.process(bonniePatient);
+            QdmToFhirPatientResult qdmToFhirPatientResult = patientConverter.convert(bonniePatient);
+            Patient fhirPatient = qdmToFhirPatientResult.getFhirPatient();
 
             if (qdmTypes.contains(EncounterConverter.QDM_TYPE)) {
                 processFuture(bonniePatient, fhirPatient, encounterConverter, futures);
@@ -94,16 +119,45 @@ public class PatientService implements FhirCreator {
                 processFuture(bonniePatient, fhirPatient, medicationDischargeConverter, futures);
             }
 
+            if (qdmTypes.contains(AdverseEventConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, adverseEventConverter, futures);
+            }
+
+            if (qdmTypes.contains(AllergyIntoleranceConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, allergyIntoleranceConverter, futures);
+            }
+
+            if (qdmTypes.contains(AssessmentOrderConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, assessmentOrderConverter, futures);
+            }
+
+            if (qdmTypes.contains(AssessmentPerformedConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, assessmentPerformedConverter, futures);
+            }
+
+            if (qdmTypes.contains(AssessmentRecommendedConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, assessmentRecommendedConverter, futures);
+            }
+
+            if (qdmTypes.contains(CareCoalConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, careCoalConverter, futures);
+            }
+
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
 
             List<FhirDataElement> fhirDataElements = findFhirDataElementsFromFutures(futures);
+
+            ConvertedPatient convertedPatient = ConvertedPatient.builder()
+                    .fhirPatient(objectMapper.readTree(toJson(fhirContext, fhirPatient)))
+                    .outcome(qdmToFhirPatientResult.getOutcome())
+                    .build();
 
             Instant timeStamp = Instant.now();
             return ConversionResult.builder()
                     .id(bonniePatient.get_id())
                     .expectedValues(bonniePatient.getExpectedValues())
                     .measureIds(bonniePatient.getMeasureIds())
-                    .fhirPatient(objectMapper.readTree(toJson(fhirContext, fhirPatient)))
+                    .convertedPatient(convertedPatient)
                     .dataElements(fhirDataElements)
                     .createdAt(timeStamp)
                     .updatedAt(timeStamp)
@@ -147,7 +201,7 @@ public class PatientService implements FhirCreator {
                                Patient fhirPatient,
                                ConverterBase<? extends IBaseResource> converter,
                                List<CompletableFuture<List<FhirDataElement>>> futures) {
-        CompletableFuture<List<FhirDataElement>> future = converter.convertToString(bonniePatient, fhirPatient);
+        CompletableFuture<List<FhirDataElement>> future = converter.convertToFhirDataElement(bonniePatient, fhirPatient);
         future.orTimeout(THREAD_POOL_TIMEOUT_MINUTES, TimeUnit.MINUTES);
         futures.add(future);
     }

@@ -13,4 +13,6 @@ public class FhirDataElement {
     String description;
 
     JsonNode fhirResource;
+
+    ConversionOutcome outcome;
 }

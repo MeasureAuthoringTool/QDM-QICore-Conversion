@@ -11,9 +11,9 @@ public class Sender {
     String qdmVersion;
     String _type;
 
-    QdmCode role;
-    QdmCode specialty;
-    QdmCode qualification;
+    QdmCodeSystem role;
+    QdmCodeSystem specialty;
+    QdmCodeSystem qualification;
 
     QdmIdentifier identifier;
     String hqmfOid;

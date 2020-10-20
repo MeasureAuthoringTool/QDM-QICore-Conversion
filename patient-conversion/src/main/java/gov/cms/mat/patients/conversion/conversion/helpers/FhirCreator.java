@@ -1,10 +1,14 @@
 package gov.cms.mat.patients.conversion.conversion.helpers;
 
 import ca.uhn.fhir.context.FhirContext;
-import gov.cms.mat.patients.conversion.dao.QdmDataElement;
+import ca.uhn.fhir.validation.FhirValidator;
+import ca.uhn.fhir.validation.ValidationOptions;
+import ca.uhn.fhir.validation.ValidationResult;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
-import gov.cms.mat.patients.conversion.dao.RelevantPeriod;
+import gov.cms.mat.patients.conversion.dao.QdmPeriod;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.hapi.ctx.IValidationSupport;
+import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.HumanName;
@@ -47,27 +51,14 @@ public interface FhirCreator {
         }
     }
 
-    default Period createFhirPeriod(QdmDataElement dataElement) {
-        RelevantPeriod relevantPeriod = dataElement.getRelevantPeriod();
-
-        return new Period()
-                .setStart(relevantPeriod.getLow())
-                .setEnd(relevantPeriod.getHigh() == null ? null : relevantPeriod.getHigh());
-
-    }
-
-    default String manyToJson(FhirContext fhirContext, List<? extends IBaseResource> resources) {
-
-        if (CollectionUtils.isEmpty(resources)) {
-            return "[]";
+    default Period createFhirPeriod(QdmPeriod relevantPeriod) {
+        if (relevantPeriod == null) {
+            return null;
         } else {
-            String json = resources.stream()
-                    .map(r -> toJson(fhirContext, r))
-                    .collect(Collectors.joining(",\n"));
-
-            return "[\n" + json + "\n]";
+            return new Period()
+                    .setStart(relevantPeriod.getLow())
+                    .setEnd(relevantPeriod.getHigh() == null ? null : relevantPeriod.getHigh());
         }
-
     }
 
     default String toJson(FhirContext fhirContext, IBaseResource theResource) {
