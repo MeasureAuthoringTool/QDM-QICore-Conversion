@@ -142,7 +142,7 @@ public class QdmCqlToFhirCqlConverter {
             log.debug("CodeSystem {} set to CodeSystem URL: {}", codeSystemProperties.getName(), codeSystem.getUrl());
             codeSystemProperties.setUrnOid(codeSystem.getUrl());
         } else {
-            log.info("Resource is not a CodeSystem it is a: {}", resource.getClass().getName());
+            log.debug("Resource is not a CodeSystem it is a: {}", resource.getClass().getName());
         }
     }
 

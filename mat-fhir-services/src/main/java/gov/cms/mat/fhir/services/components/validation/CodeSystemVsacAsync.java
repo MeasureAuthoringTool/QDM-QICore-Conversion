@@ -43,7 +43,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
         } else {
             try {
                 isDirectReferenceCodeValid(cqlCode, umlsToken);
-                log.info("Validated code {} with vsac {} message: {}",
+                log.debug("Validated code {} with vsac {} message: {}",
                         cqlCode.getCodeIdentifier(),
                         cqlCode.isValidatedWithVsac(),
                         cqlCode.getErrorMessage());

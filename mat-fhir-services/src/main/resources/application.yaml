@@ -25,6 +25,13 @@ conversion-lib-lookup-4-1:
     TJCOverall: 5.0.000
     VTEICU: 4.0.000
 
+logging:
+  level:
+    root: ${LOG_LEVEL:WARN}
+    org.exolab: WARN
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
+
 measures:
   allowed:
     greater-than: 5.4

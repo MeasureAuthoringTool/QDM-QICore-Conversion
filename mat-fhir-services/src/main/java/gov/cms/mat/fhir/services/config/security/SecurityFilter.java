@@ -46,7 +46,7 @@ public class SecurityFilter implements Filter {
                 log.error("Invalid " + MAT_API_KEY + " header.");
                 res.sendError(403);
             } else {
-                log.info("Request contained valid " + MAT_API_KEY);
+                log.debug("Request contained valid " + MAT_API_KEY);
                 filterChain.doFilter(servletRequest, servletResponse);
             }
         } else {

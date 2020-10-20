@@ -91,7 +91,7 @@ public class CqlConversionService {
     }
 
     private void logErrors(List<CqlTranslatorException> exceptions) {
-        exceptions.forEach(e -> log.warn(formatMessage(e)));
+        exceptions.forEach(e -> log.debug(formatMessage(e)));
     }
 
     private String formatMessage(CqlTranslatorException e) {

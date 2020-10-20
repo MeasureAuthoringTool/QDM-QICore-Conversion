@@ -45,7 +45,7 @@ public class MeasureOrchestrationConversionService {
     }
 
     public boolean convert(OrchestrationProperties properties) {
-        log.info("Converting measure hapi measureId: {}", properties.getMeasureId());
+        log.debug("Converting measure hapi measureId: {}", properties.getMeasureId());
 
         try {
             String link = hapiFhirServer.persist(properties.getFhirMeasure());

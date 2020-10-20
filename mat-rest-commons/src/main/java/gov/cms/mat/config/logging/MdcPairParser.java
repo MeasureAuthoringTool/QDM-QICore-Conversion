@@ -17,7 +17,7 @@ public final class MdcPairParser {
 
     public static void parseAndSetInMdc(String params) {
         if (StringUtils.isBlank(params)) {
-            log.warn("Params string is blank");
+            log.debug("Params string is blank");
         } else {
             String[] paramsArray = params.split(",");
 
@@ -30,7 +30,7 @@ public final class MdcPairParser {
         }
 
         String uuid = UUID.randomUUID().toString();
-        log.info("Adding requestId UUID: {}", uuid);
+        log.debug("Adding requestId UUID: {}", uuid);
         MDC.put("requestId", uuid);
 
         addMissingDefaultParamsToMDC();
@@ -43,14 +43,14 @@ public final class MdcPairParser {
     private static void addIfMissing(String key) {
         if (MDC.get(key) == null) {
             String uuid = UUID.randomUUID().toString();
-            log.info("Adding default UUID: {} for MDC key: {}", uuid, key);
+            log.debug("Adding default UUID: {} for MDC key: {}", uuid, key);
             MDC.put(key, uuid);
         }
     }
 
     private static boolean checkParam(String param) {
         if (StringUtils.isBlank(param)) {
-            log.warn("Param string is blank");
+            log.debug("Param string is blank");
             return false;
         }
 
@@ -59,7 +59,7 @@ public final class MdcPairParser {
         if (matches == 1) {
             return true;
         } else {
-            log.warn("Cannot parse param string: {}", param);
+            log.debug("Cannot parse param string: {}", param);
             return false;
         }
     }
