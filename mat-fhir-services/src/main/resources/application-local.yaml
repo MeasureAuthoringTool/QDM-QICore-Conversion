@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mat_prd_dmp?serverTimezone=UTC&max_allowed_packet=16777216
+    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
     username: root
     password: password
   jpa:
@@ -19,22 +19,6 @@ spring:
     show-sql: true
 
 mat-api-key: ${MAT_API_KEY:DISABLED}
-
-logging:
-  level:
-    root: WARN
-    gov.cms.mat: DEBUG
-    org.hl7.fhir.r4.hapi.ctx: INFO
-    org.exolab: WARN
-    org.springframework.data.mongodb.core.MongoTemplate: WARN
-    org.hl7.fhir.r4.hapi.validation: WARN
-    org.springframework.web.client.RestTemplate: WARN
-  pattern:
-    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
-    file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %mdc %logger{36}.%M - %msg%n"
-  file:
-    name: mat-fhir-services.log
-
 
 fhir:
   r4:

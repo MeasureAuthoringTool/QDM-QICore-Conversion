@@ -9,7 +9,7 @@
         <relativePath>..</relativePath>
     </parent>
     <artifactId>hapi-fhir-jpaserver</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>hapi-fhir-jpaserver</name>
     <description>Hhapi-fhir-jpaserver Spriing Boot</description>
 

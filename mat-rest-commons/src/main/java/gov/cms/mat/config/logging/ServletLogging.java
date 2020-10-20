@@ -13,52 +13,60 @@ public final class ServletLogging {
     }
 
     public static void logIncomingRequest(String requestURI, String queryString, String method, String headers, String body) {
-        log.info("Incoming Request Uri: {}", requestURI);
+        if (log.isDebugEnabled()) {
+            log.debug("Incoming Request Uri: {}", requestURI);
 
-        if (StringUtils.isNotBlank(queryString)) {
-            log.info("QueryString: {}", queryString);
-        }
+            if (StringUtils.isNotBlank(queryString)) {
+                log.debug("QueryString: {}", queryString);
+            }
 
-        log.info("Method: {}", method);
-        log.info("Headers: {}", headers);
+            log.debug("Method: {}", method);
+            log.debug("Headers: {}", headers);
 
-        if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
-            log.info("Request body : {}", body);
+            if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
+                log.debug("Request body : {}", body);
+            }
         }
     }
 
     public static void logIncomingResponse(String status, long executionTime, String headers, String body) {
-        log.info("Incoming Response Status: {}", status);
-        log.info("Exec Time ms: {}", executionTime);
-        log.info("Headers: {}", headers);
+        if (log.isDebugEnabled()) {
+            log.debug("Incoming Response Status: {}", status);
+            log.debug("Exec Time ms: {}", executionTime);
+            log.debug("Headers: {}", headers);
 
-        if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
-            log.info("Response body: {}", body);
+            if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
+                log.debug("Response body: {}", body);
+            }
         }
     }
 
     public static void logOutgoingRequest(URI requestURI, String method, String headers, String body) {
-        log.info("Outgoing Request Uri: {}", requestURI);
-        log.info("Method: {}", method);
-        log.info("Headers: {}", headers);
+        if (log.isDebugEnabled()) {
+            log.debug("Outgoing Request Uri: {}", requestURI);
+            log.debug("Method: {}", method);
+            log.debug("Headers: {}", headers);
 
-        if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
-            log.info("Request body : {}", body);
+            if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
+                log.debug("Request body : {}", body);
+            }
         }
     }
 
     public static void logOutgoingResponse(String statusCode, String statusText, long executionTime, String headers, String body) {
-        log.info("Outgoing Response Status: {}", statusCode);
+        if (log.isDebugEnabled()) {
+            log.debug("Outgoing Response Status: {}", statusCode);
 
-        if (StringUtils.isNotBlank(statusText)) {
-            log.info("Status Text: {}", statusText);
-        }
+            if (StringUtils.isNotBlank(statusText)) {
+                log.debug("Status Text: {}", statusText);
+            }
 
-        log.info("Exec Time ms: {}", executionTime);
-        log.info("Headers: {}", headers);
+            log.debug("Exec Time ms: {}", executionTime);
+            log.debug("Headers: {}", headers);
 
-        if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
-            log.info("Response body: {}", body);
+            if (StringUtils.isNotBlank(body) && body.length() <= MAX_BODY_TO_LOG) {
+                log.debug("Response body: {}", body);
+            }
         }
     }
 }

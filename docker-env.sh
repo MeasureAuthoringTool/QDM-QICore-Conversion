@@ -5,9 +5,10 @@ export MAT_DB_PASS=changeme
 
 export HAPI_DB=hapi-r4-db
 export HAPI_DB_URL='jdbc:mysql://hapi-fhir-mysql:3306/'${HAPI_DB}'?serverTimezone=UTC&max_allowed_packet=16777216&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false'
-export HAPI_DB_USER=admin	
+export HAPI_DB_USER=admin
 export HAPI_DB_PASS=changeme
 
+export LOG_LEVEL=INFO
 export MAT_API_KEY=DISABLED
 
 export HAPI_FHIR_URL_PUBLIC='http://localhost:6060/fhir'

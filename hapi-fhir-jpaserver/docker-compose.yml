@@ -6,11 +6,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        ENV: ${ENV}
     environment:
       HAPI_DB_URL: ${HAPI_DB_URL}
       HAPI_DB_USER: ${HAPI_DB_USER}
       HAPI_DB_PASS: ${HAPI_DB_PASS}
       HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
       MAT_API_KEY: ${MAT_API_KEY}
+      LOG_LEVEL: ${LOG_LEVEL}
     ports:
       - 6060:6060

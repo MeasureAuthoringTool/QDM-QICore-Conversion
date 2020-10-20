@@ -53,7 +53,7 @@ public class CqlTranslatorExceptionFilter implements CqlLibraryFinder {
             return false;
         } else {
             VersionedIdentifier versionedIdentifier = translatorException.getLocator().getLibrary();
-            log.info("versionedIdentifier : {}", versionedIdentifier);
+            log.debug("versionedIdentifier : {}", versionedIdentifier);
             return isPointingToSameLibrary(libraryProperties, versionedIdentifier);
         }
     }

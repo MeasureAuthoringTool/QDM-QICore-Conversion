@@ -55,10 +55,10 @@ class ValueSetVsacAsync extends VsacValidator {
                 vsacService.getValueSetResult(oid.trim(), umlsToken);
 
         if (vsacResponseResult != null && StringUtils.isNotBlank(vsacResponseResult.getXmlPayLoad())) {
-            log.info("Successfully converted valueset object from vsac xml payload.");
+            log.debug("Successfully converted valueset object from vsac xml payload.");
             return true;
         } else {
-            log.info("Unable to retrieve value set in VSAC.");
+            log.debug("Unable to retrieve value set in VSAC.");
             return false;
         }
     }

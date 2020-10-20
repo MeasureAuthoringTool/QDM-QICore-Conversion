@@ -25,7 +25,7 @@ public class ValidationService {
 
     @Async("threadPoolValidation")
     public CompletableFuture<List<LibraryErrors>> validateCql(String cql) {
-        log.info("Running async validateCql");
+        log.debug("Running async validateCql");
 
         CqlConversionPayload payload = cqlLibraryTranslationService.convertCqlToJson(cql, false);
 

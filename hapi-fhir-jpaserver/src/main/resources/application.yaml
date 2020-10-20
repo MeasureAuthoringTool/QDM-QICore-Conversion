@@ -23,8 +23,10 @@ spring:
       hibernate.search.model_mapping: ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-    show-sql: true
+    show-sql: false
+
 mat-api-key: ${MAT-API-KEY}
+
 hapi:
   fhir:
     version: r4
@@ -56,3 +58,9 @@ management:
     web:
       exposure:
         include: "*"
+
+logging:
+  level:
+    root: ${LOG_LEVEL:WARN}
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"

@@ -59,7 +59,7 @@ public class RequestHeaderInterceptor extends HandlerInterceptorAdapter {
     }
 
     public void logRequest(HttpServletRequest request) {
-        if (log.isInfoEnabled()) {
+        if (log.isDebugEnabled()) {
             String body = "";
 
             try {
@@ -91,7 +91,7 @@ public class RequestHeaderInterceptor extends HandlerInterceptorAdapter {
     }
 
     private void logResponse(HttpServletResponse response, long executionTime) {
-        if (log.isInfoEnabled()) {
+        if (log.isDebugEnabled()) {
             HttpStatus httpStatus = HttpStatus.resolve(response.getStatus());
             String statusText = httpStatus == null ? "" : httpStatus.getReasonPhrase();
             String status = response.getStatus() + " " + statusText;

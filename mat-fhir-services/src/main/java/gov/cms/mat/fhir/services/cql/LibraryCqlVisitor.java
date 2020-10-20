@@ -184,7 +184,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
             // We do not add dataRequirements non retrieves like this:
             // define FirstInpatientEncounter:
             //   First([Encounter] E where E.class = 'inpatient' sort by period.start desc)
-            log.info("Skipping retrieve it is not a dataRequirement: " + ctx.getText());
+            log.debug("Skipping retrieve it is not a dataRequirement: " + ctx.getText());
         }
 
         return null;
@@ -222,7 +222,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
             if (optionalVs.isPresent()) {
                 result = optionalVs.get();
             } else {
-                log.info("Could not find valueset with name " + valueSetName);
+                log.debug("Could not find valueset with name " + valueSetName);
             }
         } else {
             // Check to see if its a lib reference like TJC."value set id"

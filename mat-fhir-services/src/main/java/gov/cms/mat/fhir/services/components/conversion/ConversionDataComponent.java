@@ -36,7 +36,7 @@ public class ConversionDataComponent {
                                                                      String qdmAttribute,
                                                                      String fhirType) {
         return mappingSpreadsheetService.fetchConversionAttributes().stream()
-                .peek(c -> log.info("c= {}", c))
+                .peek(c -> log.debug("c= {}", c))
                 .filter(c -> isFhirAttributeMatchByQdmAttribute(c, qdmType, qdmAttribute, fhirType))
                 .map(c -> buildFhirAttributeResult(c.getFhirAttribute(), c.getComment(), c.getFhirAttribute()))
                 .findFirst();

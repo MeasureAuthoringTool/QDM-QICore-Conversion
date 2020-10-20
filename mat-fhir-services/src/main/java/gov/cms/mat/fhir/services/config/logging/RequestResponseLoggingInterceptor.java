@@ -31,7 +31,7 @@ public abstract class RequestResponseLoggingInterceptor implements ClientHttpReq
     protected abstract void processHeaders(HttpRequest request);
 
     private void logResponse(ClientHttpResponse response, long start) throws IOException {
-        if (log.isInfoEnabled()) {
+        if (log.isDebugEnabled()) {
             long executionTime = System.currentTimeMillis() - start;
             String body = StreamUtils.copyToString(response.getBody(), Charset.defaultCharset());
 
@@ -49,7 +49,7 @@ public abstract class RequestResponseLoggingInterceptor implements ClientHttpReq
     }
 
     private void logRequest(HttpRequest request, String body) {
-        if (log.isInfoEnabled()) {
+        if (log.isDebugEnabled()) {
 
             String headers = "";
             if (!request.getHeaders().isEmpty()) {
