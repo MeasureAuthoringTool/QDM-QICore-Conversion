@@ -2,14 +2,15 @@ package gov.cms.mat.patients.conversion.conversion;
 
 
 import ca.uhn.fhir.context.FhirContext;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirConversionResult;
+import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
 import gov.cms.mat.patients.conversion.dao.QdmDataElement;
+import gov.cms.mat.patients.conversion.dao.TargetOutcome;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.DateType;
 import org.hl7.fhir.r4.model.Goal;
 import org.hl7.fhir.r4.model.Patient;
@@ -52,17 +53,6 @@ public class CareCoalConverter extends ConverterBase<Goal> {
 
         goal.setTarget(createTarget(qdmDataElement.getTargetOutcome()));
 
-
-//        goal.setStart()
-//
-//        goal.setTarget()
-//
-//
-//
-//
-//        qdmDataElement.getTargetOutcome();
-
-
         processNegation(qdmDataElement, goal);
 
         return QdmToFhirConversionResult.builder()
@@ -71,20 +61,34 @@ public class CareCoalConverter extends ConverterBase<Goal> {
                 .build();
     }
 
-    private List<Goal.GoalTargetComponent> createTarget(JsonNode targetOutcome) {
+    private List<Goal.GoalTargetComponent> createTarget(TargetOutcome targetOutcome) {
+        QdmCodeSystem qdmCodeSystem = convertToQdmCodeSystem(targetOutcome);
 
+        if (qdmCodeSystem == null) {
+            return Collections.emptyList();
+        } else {
+            Goal.GoalTargetComponent targetComponent = new Goal.GoalTargetComponent();
 
-        if (targetOutcome instanceof ObjectNode) {
-//            ObjectNode objectNode = (ObjectNode) targetOutcome;
-//
-//            JsonNode codeNode = objectNode.get("code");
-//            String code = codeNode.textValue();
-//
-//            JsonNode systemNode = objectNode.get("system");
+            targetComponent.setMeasure(convertToCodeableConcept(codeSystemEntriesService, qdmCodeSystem));
+
+            return List.of(targetComponent);
         }
+    }
 
-
-        return Collections.emptyList();
+    private QdmCodeSystem convertToQdmCodeSystem(TargetOutcome targetOutcome) {
+        if (targetOutcome == null) {
+            log.warn("targetOutcome is null");
+            return null;
+        } else if (StringUtils.isBlank(targetOutcome.getSystem()) || StringUtils.isBlank(targetOutcome.getCode())) {
+            log.warn("targetOutcome is invalid: {}", targetOutcome);
+            return null;
+        } else {
+            QdmCodeSystem qdmCodeSystem = new QdmCodeSystem();
+            qdmCodeSystem.setSystem(targetOutcome.getSystem());
+            qdmCodeSystem.setCode(targetOutcome.getCode());
+            qdmCodeSystem.setDisplay(targetOutcome.getDisplay());
+            return qdmCodeSystem;
+        }
     }
 
 

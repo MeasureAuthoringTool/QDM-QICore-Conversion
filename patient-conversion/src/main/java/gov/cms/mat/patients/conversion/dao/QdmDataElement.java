@@ -100,7 +100,9 @@ public class QdmDataElement {
         } */
     //@JsonIgnore
   //  QdmCode targetOutcome;  // "_id": "5d654ae61c76ba7ea32ed30c",
-    JsonNode targetOutcome;
+    //JsonNode targetOutcome;
+
+   TargetOutcome targetOutcome;
 
     String codeListId;
     Prescriber prescriber;
