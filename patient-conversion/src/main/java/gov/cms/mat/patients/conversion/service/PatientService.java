@@ -11,6 +11,7 @@ import gov.cms.mat.patients.conversion.conversion.CareCoalConverter;
 import gov.cms.mat.patients.conversion.conversion.CommunicationPerformedConverter;
 import gov.cms.mat.patients.conversion.conversion.ConverterBase;
 import gov.cms.mat.patients.conversion.conversion.DiagnosisConverter;
+import gov.cms.mat.patients.conversion.conversion.DiagnosticStudyOrderConverter;
 import gov.cms.mat.patients.conversion.conversion.EncounterConverter;
 import gov.cms.mat.patients.conversion.conversion.InterventionOrderConverter;
 import gov.cms.mat.patients.conversion.conversion.InterventionPerformedConverter;
@@ -57,6 +58,7 @@ public class PatientService implements FhirCreator {
     private final CareCoalConverter careCoalConverter;
     private final CommunicationPerformedConverter communicationPerformedConverter;
     private final DiagnosisConverter diagnosisConverter;
+    private final DiagnosticStudyOrderConverter diagnosticStudyOrderConverter;
 
     private final ObjectMapper objectMapper;
 
@@ -75,6 +77,7 @@ public class PatientService implements FhirCreator {
                           CareCoalConverter careCoalConverter,
                           CommunicationPerformedConverter communicationPerformedConverter,
                           DiagnosisConverter diagnosisConverter,
+                          DiagnosticStudyOrderConverter diagnosticStudyOrderConverter,
                           FhirContext fhirContext,
                           ObjectMapper objectMapper) {
         this.patientConverter = patientConverter;
@@ -90,6 +93,7 @@ public class PatientService implements FhirCreator {
         this.careCoalConverter = careCoalConverter;
         this.communicationPerformedConverter = communicationPerformedConverter;
         this.diagnosisConverter = diagnosisConverter;
+        this.diagnosticStudyOrderConverter = diagnosticStudyOrderConverter;
         this.fhirContext = fhirContext;
         this.objectMapper = objectMapper;
     }
@@ -160,6 +164,10 @@ public class PatientService implements FhirCreator {
 
             if (qdmTypes.contains(DiagnosisConverter.QDM_TYPE)) {
                 processFuture(bonniePatient, fhirPatient, diagnosisConverter, futures);
+            }
+
+            if (qdmTypes.contains(DiagnosticStudyOrderConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, diagnosticStudyOrderConverter, futures);
             }
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();

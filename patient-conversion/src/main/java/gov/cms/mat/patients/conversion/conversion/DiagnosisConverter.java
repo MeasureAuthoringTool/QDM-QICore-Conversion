@@ -38,6 +38,8 @@ public class DiagnosisConverter extends ConverterBase<Condition> {
         List<String> conversionMessages = new ArrayList<>();
 
         Condition condition = new Condition();
+        condition.setId(qdmDataElement.get_id());
+        condition.setSubject(createReference(fhirPatient));
 
         condition.setCode(convertToCodeSystems(codeSystemEntriesService, qdmDataElement.getDataElementCodes()));
 
@@ -47,6 +49,7 @@ public class DiagnosisConverter extends ConverterBase<Condition> {
 
         if(CollectionUtils.isNotEmpty(qdmDataElement.getFacilityLocations())) {
             log.debug("We have FacilityLocations");
+           // condition.setBodySite() ??
         }
 
         processNegation(qdmDataElement, condition);
@@ -56,6 +59,4 @@ public class DiagnosisConverter extends ConverterBase<Condition> {
                 .conversionMessages(conversionMessages)
                 .build();
     }
-
-
 }

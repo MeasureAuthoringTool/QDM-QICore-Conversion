@@ -8,8 +8,6 @@ import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
-import org.hl7.fhir.r4.model.Extension;
-import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.springframework.stereotype.Component;
@@ -62,12 +60,7 @@ public class AssessmentRecommendedConverter extends ConverterBase<ServiceRequest
     }
 
     @Override
-    void convertNegation(QdmDataElement qdmDataElement,  ServiceRequest serviceRequest) {
-        serviceRequest.setStatus(ServiceRequest.ServiceRequestStatus.COMPLETED);
-        serviceRequest.setDoNotPerform(true);
-
-        Extension extensionDoNotPerformReason = new Extension(QICORE_DO_NOT_PERFORM_REASON);
-        extensionDoNotPerformReason.setValue(convertToCoding(codeSystemEntriesService, qdmDataElement.getNegationRationale()));
-        serviceRequest.setExtension(List.of(extensionDoNotPerformReason));
+    void convertNegation(QdmDataElement qdmDataElement, ServiceRequest serviceRequest) {
+        convertNegationServiceRequest(qdmDataElement, serviceRequest);
     }
 }

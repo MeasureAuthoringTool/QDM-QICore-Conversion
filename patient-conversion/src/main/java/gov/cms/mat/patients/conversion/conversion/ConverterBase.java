@@ -18,7 +18,9 @@ import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.ServiceRequest;
 import org.springframework.scheduling.annotation.Async;
 
 import java.util.Collections;
@@ -144,5 +146,14 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
        } catch (JsonProcessingException e) {
            e.printStackTrace();
        }
+    }
+
+    void convertNegationServiceRequest (QdmDataElement qdmDataElement,  ServiceRequest serviceRequest) {
+        serviceRequest.setStatus(ServiceRequest.ServiceRequestStatus.COMPLETED);
+        serviceRequest.setDoNotPerform(true);
+
+        Extension extensionDoNotPerformReason = new Extension(QICORE_DO_NOT_PERFORM_REASON);
+        extensionDoNotPerformReason.setValue(convertToCoding(codeSystemEntriesService, qdmDataElement.getNegationRationale()));
+        serviceRequest.setExtension(List.of(extensionDoNotPerformReason));
     }
 }

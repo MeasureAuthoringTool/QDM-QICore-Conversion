@@ -9,7 +9,7 @@ QDM::AssessmentRecommended,~~
 ~~QDM::CommunicationPerformed,~~ 
 QDM::DeviceApplied,
 QDM::DeviceOrder,
-QDM::Diagnosis, 
+~~QDM::Diagnosis,~~ 
 QDM::DiagnosticStudyOrder,
 QDM::DiagnosticStudyPerformed, 
 QDM::EncounterOrder,
