@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+/src/test/resources/patients_all_QDM_PROD_as_array.json
+/src/test/resources/patients_all.json
+/src/test/resources/cqm_patients.json

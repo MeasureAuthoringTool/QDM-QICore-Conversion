@@ -1,0 +1,339 @@
+{
+  "_id": "5d65454d1c76ba7ea62d9880",
+  "givenNames": [
+    "Test"
+  ],
+  "familyName": "Patient",
+  "bundleId": "56337f036c5d1c6930000963",
+  "expectedValues": [
+    {
+      "measure_id": "AD62692E-6FD0-41CC-83E2-3DB569A45977",
+      "population_index": 0,
+      "IPP": 1,
+      "DENOM": 1,
+      "NUMER": 0
+    }
+  ],
+  "notes": "",
+  "measure_ids": [
+    "AD62692E-6FD0-41CC-83E2-3DB569A45977"
+  ],
+  "user_id": "56337f026c5d1c6930000962",
+  "qdmPatient": {
+    "_id": "5d65454d1c76ba7ea62d9881",
+    "qdmVersion": "5.5",
+    "birthDatetime": "2010-06-11T08:00:00.000Z",
+    "extendedData": {
+      "type": null,
+      "is_shared": false,
+      "origin_data": [],
+      "test_id": null,
+      "medical_record_number": "a4390cb604467f429fdacec0ec0a3487",
+      "medical_record_assigner": "Bonnie",
+      "description": null,
+      "description_category": null,
+      "insurance_providers": "[]"
+    },
+    "dataElements": [
+      {
+        "_id": "5aeb772bb848463d625b1bd8",
+        "dataElementCodes": [
+          {
+            "code": "179005",
+            "system": "2.16.840.1.113883.6.96"
+          }
+        ],
+        "_type": "QDM::Symptom",
+        "qdmTitle": "Symptom",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.116",
+        "qrdaOid": "2.16.840.1.113883.10.20.24.3.136",
+        "qdmCategory": "symptom",
+        "qdmVersion": "5.5",
+        "prevalencePeriod": {
+          "low": "2012-10-29T08:00:00.000Z",
+          "high": "2012-10-30T08:15:00.000Z",
+          "lowClosed": true,
+          "highClosed": true,
+          "_type": "QDM::Interval"
+        },
+        "severity": null,
+        "description": "Symptom: Neurologic Symptoms of Stroke",
+        "codeListId": "2.16.840.1.113883.3.117.1.7.1.399"
+      },
+      {
+        "_id": "5aeb772bb848463d625b1bd9",
+        "dataElementCodes": [
+          {
+            "code": "1201005",
+            "system": "2.16.840.1.113883.6.96"
+          },
+          {
+            "code": "401.1",
+            "system": "2.16.840.1.113883.6.103"
+          },
+          {
+            "code": "H35.039",
+            "system": "2.16.840.1.113883.6.90"
+          }
+        ],
+        "_type": "QDM::Diagnosis",
+        "qdmTitle": "Diagnosis",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.110",
+        "qrdaOid": "2.16.840.1.113883.10.20.24.3.135",
+        "qdmCategory": "condition",
+        "qdmVersion": "5.5",
+        "authorDatetime": null,
+        "prevalencePeriod": {
+          "low": "2012-10-30T08:00:00.000Z",
+          "high": "2012-10-30T08:15:00.000Z",
+          "lowClosed": true,
+          "highClosed": true,
+          "_type": "QDM::Interval"
+        },
+        "anatomicalLocationSite": {
+          "code": "431321000124109",
+          "system": "2.16.840.1.113883.6.96",
+          "display": "Body Site Value Set",
+          "version": null,
+          "_type": "QDM::Code"
+        },
+        "severity": {
+          "code": "24484000",
+          "system": "2.16.840.1.113883.6.96",
+          "display": "Severe",
+          "version": null,
+          "_type": "QDM::Code"
+        },
+        "description": "Diagnosis: Diagnosis of hypertension",
+        "codeListId": "2.16.840.1.113883.3.600.263"
+      },
+      {
+        "_id": "5aeb772bb848463d625b1bda",
+        "dataElementCodes": [
+          {
+            "code": "432621000124105",
+            "system": "2.16.840.1.113883.6.96"
+          }
+        ],
+        "_type": "QDM::EncounterPerformed",
+        "facilityLocations": [],
+        "qdmTitle": "Encounter, Performed",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.5",
+        "qdmCategory": "encounter",
+        "qdmStatus": "performed",
+        "qdmVersion": "5.5",
+        "authorDatetime": null,
+        "admissionSource": null,
+        "relevantPeriod": {
+          "low": "2012-10-30T08:00:00.000Z",
+          "high": "2012-10-30T08:15:00.000Z",
+          "lowClosed": true,
+          "highClosed": true,
+          "_type": "QDM::Interval"
+        },
+        "dischargeDisposition": null,
+        "diagnoses": [
+          {
+            "_id": "5d655bf41c76ba651c850911",
+            "_type": "QDM::DiagnosisComponent",
+            "code": {
+              "code": "402.01",
+              "system": "2.16.840.1.113883.6.103",
+              "display": "Heart Failure",
+              "version": null,
+              "_type": "QDM::Code"
+            },
+            "presentOnAdmissionIndicator": null,
+            "rank": 1,
+            "qdmVersion": "5.5"
+          },
+          {
+            "_id": "5d655bf41c76ba651c850912",
+            "_type": "QDM::DiagnosisComponent",
+            "code": {
+              "code": "402.01",
+              "system": "2.16.840.1.113883.6.103",
+              "display": "Heart Failure",
+              "version": null,
+              "_type": "QDM::Code"
+            },
+            "presentOnAdmissionIndicator": null,
+            "rank": null,
+            "qdmVersion": "5.5"
+          }
+        ],
+        "negationRationale": null,
+        "lengthOfStay": {
+          "value": 0,
+          "unit": "days",
+          "_type": "QDM::Quantity"
+        },
+        "description": "Encounter, Performed: Inpatient Encounter",
+        "codeListId": "2.16.840.1.113883.3.464.1003.101.12.1060"
+      },
+      {
+        "_id": "5aeb772bb848463d625b1bde",
+        "dataElementCodes": [
+          {
+            "code": "134439009",
+            "system": "2.16.840.1.113883.6.96"
+          }
+        ],
+        "_type": "QDM::FamilyHistory",
+        "qdmTitle": "Family History",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.111",
+        "qrdaOid": "2.16.840.1.113883.10.20.24.3.12",
+        "qdmCategory": "family_history",
+        "qdmVersion": "5.5",
+        "authorDatetime": "2012-10-29T08:00:00.000Z",
+        "relationship": {
+          "code": "AUNT",
+          "system": null,
+          "display": "Family Member Value",
+          "version": null,
+          "_type": "QDM::Code"
+        },
+        "description": "Family History: Family History CHD",
+        "codeListId": "2.16.840.1.113883.3.600.1557"
+      },
+      {
+        "_id": "5aeb772bb848463d625b1bdc",
+        "dataElementCodes": [
+          {
+            "code": "20",
+            "system": "2.16.840.1.113883.12.292"
+          }
+        ],
+        "_type": "QDM::ImmunizationAdministered",
+        "qdmTitle": "Immunization, Administered",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.112",
+        "qrdaOid": "2.16.840.1.113883.10.20.24.3.140",
+        "qdmCategory": "immunization",
+        "qdmStatus": "administered",
+        "qdmVersion": "5.5",
+        "authorDatetime": "2012-10-29T08:00:00.000Z",
+        "reason": null,
+        "dosage": null,
+        "route": null,
+        "negationRationale": null,
+        "description": "Immunization, Administered: DTaP Vaccine",
+        "codeListId": "2.16.840.1.113883.3.464.1003.196.12.1214"
+      },
+      {
+        "_id": "5aeb772bb848463d625b1bdd",
+        "dataElementCodes": [
+          {
+            "code": "20",
+            "system": "2.16.840.1.113883.12.292"
+          }
+        ],
+        "_type": "QDM::ImmunizationOrder",
+        "qdmTitle": "Immunization, Order",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.113",
+        "qdmCategory": "immunization",
+        "qdmStatus": "order",
+        "qdmVersion": "5.5",
+        "activeDatetime": "2012-10-29T08:00:00.000Z",
+        "authorDatetime": "2012-10-29T08:00:00.000Z",
+        "dosage": {
+          "value": null,
+          "unit": "nm",
+          "_type": "QDM::Quantity"
+        },
+        "supply": null,
+        "reason": null,
+        "route": null,
+        "negationRationale": null,
+        "description": "Immunization, Order: DTaP Vaccine",
+        "codeListId": "2.16.840.1.113883.3.464.1003.196.12.1214"
+      },
+      {
+        "_id": "5aeb772bb848463d625b1bdf",
+        "dataElementCodes": [
+          {
+            "code": "2093-3",
+            "system": "2.16.840.1.113883.6.1"
+          }
+        ],
+        "_type": "QDM::LaboratoryTestPerformed",
+        "qdmTitle": "Laboratory Test, Performed",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.42",
+        "qdmCategory": "laboratory_test",
+        "qdmStatus": "performed",
+        "qdmVersion": "5.5",
+        "authorDatetime": null,
+        "relevantPeriod": {
+          "low": "2012-10-29T08:00:00.000Z",
+          "high": "2012-10-30T08:15:00.000Z",
+          "lowClosed": true,
+          "highClosed": true,
+          "_type": "QDM::Interval"
+        },
+        "status": null,
+        "method": null,
+        "result": null,
+        "resultDatetime": null,
+        "reason": null,
+        "referenceRange": null,
+        "negationRationale": null,
+        "components": [],
+        "description": "Laboratory Test, Performed: Total Cholesterol Laboratory Test",
+        "codeListId": "2.16.840.1.113883.3.464.1003.104.12.1013"
+      },
+      {
+        "_id": "5d65454d1c76ba7ea62d987d",
+        "dataElementCodes": [
+          {
+            "code": "2186-5",
+            "system": "2.16.840.1.113883.6.238",
+            "display": "Not Hispanic or Latino",
+            "version": null,
+            "_type": "QDM::Code"
+          }
+        ],
+        "_type": "QDM::PatientCharacteristicEthnicity",
+        "qdmTitle": "Patient Characteristic Ethnicity",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.56",
+        "qdmCategory": "patient_characteristic",
+        "qdmStatus": "ethnicity",
+        "qdmVersion": "5.5"
+      },
+      {
+        "_id": "5d65454d1c76ba7ea62d987e",
+        "dataElementCodes": [
+          {
+            "code": "1002-5",
+            "system": "2.16.840.1.113883.6.238",
+            "display": "American Indian or Alaska Native",
+            "version": null,
+            "_type": "QDM::Code"
+          }
+        ],
+        "_type": "QDM::PatientCharacteristicRace",
+        "qdmTitle": "Patient Characteristic Race",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.59",
+        "qdmCategory": "patient_characteristic",
+        "qdmStatus": "race",
+        "qdmVersion": "5.5"
+      },
+      {
+        "_id": "5d65454d1c76ba7ea62d987f",
+        "dataElementCodes": [
+          {
+            "code": "M",
+            "system": "2.16.840.1.113883.5.1",
+            "display": "M",
+            "version": null,
+            "_type": "QDM::Code"
+          }
+        ],
+        "_type": "QDM::PatientCharacteristicSex",
+        "qdmTitle": "Patient Characteristic Sex",
+        "hqmfOid": "2.16.840.1.113883.10.20.28.4.55",
+        "qdmCategory": "patient_characteristic",
+        "qdmStatus": "gender",
+        "qdmVersion": "5.5"
+      }
+    ]
+  }
+}
