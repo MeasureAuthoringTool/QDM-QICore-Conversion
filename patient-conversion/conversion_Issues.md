@@ -5,8 +5,8 @@
 QDM::AssessmentOrder, 
 QDM::AssessmentPerformed,
 QDM::AssessmentRecommended,~~
-QDM::CareGoal,
-QDM::CommunicationPerformed, 
+~~QDM::CareGoal,~~
+~~QDM::CommunicationPerformed,~~ 
 QDM::DeviceApplied,
 QDM::DeviceOrder,
 QDM::Diagnosis, 
