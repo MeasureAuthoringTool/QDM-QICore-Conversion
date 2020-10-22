@@ -77,7 +77,6 @@ public class JsonNodeObservationResultProcessor implements FhirCreator, DataElem
                 conversionMessages.add(e.getMessage());
             }
 
-            quantity.setCode(convertUnitToCode(unitNode.asText()));
             observation.setValue(quantity);
         }
     }

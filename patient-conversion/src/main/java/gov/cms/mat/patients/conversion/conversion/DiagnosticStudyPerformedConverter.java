@@ -2,23 +2,15 @@ package gov.cms.mat.patients.conversion.conversion;
 
 
 import ca.uhn.fhir.context.FhirContext;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import gov.cms.mat.patients.conversion.conversion.helpers.JsonNodeObservationResultProcessor;
 import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirConversionResult;
-import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
 import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Quantity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -50,7 +42,18 @@ public class DiagnosticStudyPerformedConverter extends ConverterBase<Observation
         observation.setId(qdmDataElement.get_id());
         observation.setSubject(createReference(fhirPatient));
         observation.setCode(convertToCodeSystems(codeSystemEntriesService, qdmDataElement.getDataElementCodes()));
-        observation.setEffective(createFhirPeriod(qdmDataElement.getRelevantPeriod()));
+
+        if (qdmDataElement.getRelevantPeriod() == null) {
+            log.debug("RelevantPeriod is null"); // this does not happen in test data
+
+            // todo np place to to map this since
+           // if (qdmDataElement.getRelevantDatetime() != null) {
+                // observation.getEffectiveDateTimeType()
+           //   }
+
+        } else {
+            observation.setEffective(createFhirPeriod(qdmDataElement.getRelevantPeriod()));
+        }
 
         if (qdmDataElement.getResult() != null) {
             JsonNodeObservationResultProcessor resultProcessor =
@@ -66,10 +69,7 @@ public class DiagnosticStudyPerformedConverter extends ConverterBase<Observation
             conversionMessages.add(NO_STATUS_MAPPING);
         }
 
-        qdmDataElement.getRelevantDatetime();
-
         observation.setIssued(qdmDataElement.getAuthorDatetime());
-
 
         return QdmToFhirConversionResult.builder()
                 .fhirResource(observation)
