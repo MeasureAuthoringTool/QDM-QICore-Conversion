@@ -31,7 +31,13 @@ public class DeviceOrderConverter extends ConverterBase<ServiceRequest> implemen
 
     @Override
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        return convertServiceRequestToFhir(fhirPatient, qdmDataElement, codeSystemEntriesService, this);
+        ServiceRequest serviceRequest = new ServiceRequest();
+        serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
+        return convertServiceRequestToFhir(fhirPatient,
+                qdmDataElement,
+                codeSystemEntriesService,
+                this,
+                serviceRequest);
     }
 
     @Override

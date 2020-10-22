@@ -32,29 +32,13 @@ public class DiagnosticStudyOrderConverter extends ConverterBase<ServiceRequest>
 
     @Override
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-//        List<String> conversionMessages = new ArrayList<>();
-//
-//        ServiceRequest serviceRequest = new ServiceRequest();
-//        serviceRequest.setId(qdmDataElement.get_id());
-//        serviceRequest.setSubject(createReference(fhirPatient));
-//
-//        serviceRequest.setAuthoredOn(qdmDataElement.getAuthorDatetime());
-//
-//        serviceRequest.setCode(convertToCodeSystems(codeSystemEntriesService, qdmDataElement.getDataElementCodes()));
-//
-//        if (!processNegation(qdmDataElement, serviceRequest)) {
-//            //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8101-diagnostic-study-order
-//            //Constrain to one or more of active, on-hold, completed
-//            serviceRequest.setStatus(ServiceRequest.ServiceRequestStatus.UNKNOWN);
-//            conversionMessages.add(NO_STATUS_MAPPING);
-//        }
-//
-//        return QdmToFhirConversionResult.builder()
-//                .fhirResource(serviceRequest)
-//                .conversionMessages(conversionMessages)
-//                .build();
-
-        return convertServiceRequestToFhir(fhirPatient, qdmDataElement, codeSystemEntriesService, this);
+        ServiceRequest serviceRequest = new ServiceRequest();
+        serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
+        return convertServiceRequestToFhir(fhirPatient,
+                qdmDataElement,
+                codeSystemEntriesService,
+                this,
+                serviceRequest);
     }
 
     @Override

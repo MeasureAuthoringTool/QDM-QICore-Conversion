@@ -32,30 +32,14 @@ public class InterventionOrderConverter extends ConverterBase<ServiceRequest> im
     }
 
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-//        List<String> conversionMessages = new ArrayList<>();
-//        ServiceRequest serviceRequest = new ServiceRequest();
-//        serviceRequest.setId(qdmDataElement.get_id());
-//        serviceRequest.setSubject(createReference(fhirPatient));
-//        serviceRequest.setAuthoredOn(qdmDataElement.getAuthorDatetime());
-//
-//        // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#81531-negation-rationale-for-intervention-order
-//        //Constrain only to “order” (include children: original-order, reflex-order, filler-order, instance-order)
-//        serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
-//
-//        CodeableConcept codeableConcept = convertToCodeSystems(codeSystemEntriesService, qdmDataElement.getDataElementCodes());
-//        serviceRequest.setCode(codeableConcept); // ???  serviceRequest.setBasedOn()
-//
-//        if (!processNegation(qdmDataElement, serviceRequest)) {
-//            serviceRequest.setStatus(ServiceRequest.ServiceRequestStatus.UNKNOWN);
-//            conversionMessages.add(NO_STATUS_MAPPING);
-//        }
-//
-//        return QdmToFhirConversionResult.builder()
-//                .fhirResource(serviceRequest)
-//                .conversionMessages(conversionMessages)
-//                .build();
 
-        return convertServiceRequestToFhir(fhirPatient, qdmDataElement, codeSystemEntriesService, this);
+        ServiceRequest serviceRequest = new ServiceRequest();
+        serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
+        return convertServiceRequestToFhir(fhirPatient,
+                qdmDataElement,
+                codeSystemEntriesService,
+                this,
+                serviceRequest);
     }
 
     @Override

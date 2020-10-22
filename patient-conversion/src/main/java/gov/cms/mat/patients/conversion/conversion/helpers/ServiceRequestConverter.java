@@ -15,15 +15,13 @@ public interface ServiceRequestConverter extends DataElementFinder, FhirCreator 
     default QdmToFhirConversionResult convertServiceRequestToFhir(Patient fhirPatient,
                                                     QdmDataElement qdmDataElement,
                                                     CodeSystemEntriesService codeSystemEntriesService,
-                                                    ConverterBase<ServiceRequest> converterBase) {
+                                                    ConverterBase<ServiceRequest> converterBase,
+                                                                  ServiceRequest serviceRequest) {
         List<String> conversionMessages = new ArrayList<>();
-        ServiceRequest serviceRequest = new ServiceRequest();
 
         serviceRequest.setId(qdmDataElement.get_id());
         serviceRequest.setSubject(createReference(fhirPatient));
         serviceRequest.setAuthoredOn(qdmDataElement.getAuthorDatetime());
-
-        serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
         serviceRequest.setCode(convertToCodeSystems(codeSystemEntriesService, qdmDataElement.getDataElementCodes()));
 
         if (!converterBase.processNegation(qdmDataElement, serviceRequest)) {
