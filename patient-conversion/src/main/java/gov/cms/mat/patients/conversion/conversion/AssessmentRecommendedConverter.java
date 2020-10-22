@@ -3,6 +3,7 @@ package gov.cms.mat.patients.conversion.conversion;
 
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.mat.patients.conversion.conversion.helpers.ServiceRequestConverter;
 import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirConversionResult;
 import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
@@ -12,12 +13,9 @@ import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 @Slf4j
-public class AssessmentRecommendedConverter extends ConverterBase<ServiceRequest> {
+public class AssessmentRecommendedConverter extends ConverterBase<ServiceRequest> implements ServiceRequestConverter {
     public static final String QDM_TYPE = "QDM::AssessmentRecommended";
 
     public AssessmentRecommendedConverter(CodeSystemEntriesService codeSystemEntriesService,
@@ -34,29 +32,17 @@ public class AssessmentRecommendedConverter extends ConverterBase<ServiceRequest
 
     @Override
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        List<String> conversionMessages = new ArrayList<>();
+
         ServiceRequest serviceRequest = new ServiceRequest();
-
-        serviceRequest.setId(qdmDataElement.get_id());
-
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#843-assessment-recommended
         //Constrain only to “plan”
         serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.PLAN);
+        return convertServiceRequestToFhir(fhirPatient,
+                qdmDataElement,
+                codeSystemEntriesService,
+                this,
+                serviceRequest);
 
-        serviceRequest.setSubject(createReference(fhirPatient));
-        serviceRequest.setAuthoredOn(qdmDataElement.getAuthorDatetime());
-        serviceRequest.setCode(convertToCodeSystems(codeSystemEntriesService, qdmDataElement.getDataElementCodes()));
-
-        if (!processNegation(qdmDataElement, serviceRequest)) {
-            // Constrain to one or more of active, on-hold, completed
-            serviceRequest.setStatus(ServiceRequest.ServiceRequestStatus.UNKNOWN);
-            conversionMessages.add(NO_STATUS_MAPPING);
-        }
-
-        return QdmToFhirConversionResult.builder()
-                .fhirResource(serviceRequest)
-                .conversionMessages(conversionMessages)
-                .build();
     }
 
     @Override
