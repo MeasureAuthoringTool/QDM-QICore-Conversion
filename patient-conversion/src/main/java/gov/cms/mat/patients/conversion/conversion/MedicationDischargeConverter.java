@@ -68,9 +68,14 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
             Quantity quantity = new Quantity();
             quantity.setValue(qdmDataElement.getSupply().getValue());
             quantity.setSystem("http://unitsofmeasure.org");
-            quantity.setCode(convertUnitToCode(qdmDataElement.getSupply().getUnit()));
-            dispenseRequest.setQuantity(quantity);
 
+            try {
+                quantity.setCode(convertUnitToCode(qdmDataElement.getSupply().getUnit()));
+            } catch (PatientConversionException e ) {
+                conversionMessages.add(e.getMessage());
+            }
+
+            dispenseRequest.setQuantity(quantity);
         }
 
         if (qdmDataElement.getRefills() != null) {

@@ -4,6 +4,7 @@ import ca.uhn.fhir.context.FhirContext;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
 import gov.cms.mat.patients.conversion.dao.QdmPeriod;
 import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
@@ -66,15 +67,26 @@ public interface FhirCreator {
     default String convertUnitToCode(String unit) {
         // https://ucum.nlm.nih.gov/ucum-lhc/demo.html Nice tool for codes
         // todo need all valid codes used in bonnie
-        switch (unit) {
-            case "days":
-                return "d";
-            case "%":
-                return "%";
-            case "mg":
-                return "mg";
-            default:
-                throw new PatientConversionException("Cannot convert unit: " + unit + " to ucm code");
+
+        if (StringUtils.isBlank(unit)) {
+            throw new PatientConversionException("Cannot convert unit, unit is blank");
+        } else {
+            switch (unit) {
+                case "days":
+                    return "d";
+                case "weeks":
+                case "week":
+                case "wk":
+                    return "wk";
+                case "%":
+                    return "%";
+                case "mg":
+                    return "mg";
+                case "g":
+                    return "g";
+                default:
+                    throw new PatientConversionException("Cannot convert unit: " + unit + " to ucm code");
+            }
         }
 
     }

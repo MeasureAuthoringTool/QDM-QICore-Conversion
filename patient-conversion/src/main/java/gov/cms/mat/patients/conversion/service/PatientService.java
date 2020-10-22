@@ -181,6 +181,10 @@ public class PatientService implements FhirCreator {
                 processFuture(bonniePatient, fhirPatient, diagnosticStudyOrderConverter, futures);
             }
 
+            if (qdmTypes.contains(DiagnosticStudyPerformedConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, diagnosticStudyPerformedConverter, futures);
+            }
+
             if (qdmTypes.contains(DeviceAppliedConverter.QDM_TYPE)) {
                 processFuture(bonniePatient, fhirPatient, deviceAppliedConverter, futures);
             }
@@ -211,7 +215,7 @@ public class PatientService implements FhirCreator {
 
         } catch (Exception e) {
             log.warn("Error ", e);
-            throw new PatientConversionException("Error");
+            throw new PatientConversionException("Error", e);
         }
     }
 
