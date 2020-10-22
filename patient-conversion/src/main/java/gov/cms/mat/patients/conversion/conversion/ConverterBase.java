@@ -37,7 +37,7 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
     static final String  QICORE_DO_NOT_PERFORM_REASON = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-doNotPerformReason";
     private static final String QICORE_RECORDED = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-recorded";
 
-    static final String NO_STATUS_MAPPING = "No mapping for status";
+    public static final String NO_STATUS_MAPPING = "No mapping for status";
 
     final CodeSystemEntriesService codeSystemEntriesService;
     final FhirContext fhirContext;
@@ -131,7 +131,7 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
         return buildDataElement(qdmToFhirConversionResult, validationResult, dataElement);
     }
 
-    boolean processNegation( QdmDataElement qdmDataElement, T resource) {
+    public boolean processNegation( QdmDataElement qdmDataElement, T resource) {
         if (qdmDataElement.getNegationRationale() != null) {
             convertNegation( qdmDataElement, resource );
             return true;
