@@ -19,9 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.BooleanType;
+import org.hl7.fhir.r4.model.DateTimeType;
+import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Procedure;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.springframework.scheduling.annotation.Async;
 
@@ -34,6 +37,7 @@ import java.util.stream.Collectors;
 public abstract class ConverterBase<T extends IBaseResource> implements FhirCreator, DataElementFinder {
     static final String QICORE_NOT_DONE = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-notDone";
     static final String  QICORE_DO_NOT_PERFORM_REASON = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-doNotPerformReason";
+    private static final String QICORE_RECORDED = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-recorded";
     static final String QICORE_NOT_DONE_REASON = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-notDoneReason";
 
     static final String NO_STATUS_MAPPING = "No mapping for status";
@@ -173,4 +177,20 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
         observation.setExtension(List.of(extensionNotDoneReason));
     }
 
+
+    void convertNegationProcedure(QdmDataElement qdmDataElement, Procedure procedure) {
+        // http://hl7.org/fhir/us/qicore/Procedure-negation-example.json.html
+        procedure.setStatus(Procedure.ProcedureStatus.NOTDONE);
+
+        Extension extensionNotDone = new Extension(QICORE_NOT_DONE);
+        extensionNotDone.setValue(new BooleanType(true));
+        procedure.setModifierExtension(List.of(extensionNotDone));
+
+        //todo stan is this correct
+        Extension extensionNotDoneReason = new Extension(QICORE_RECORDED);
+        extensionNotDoneReason.setValue(new DateTimeType(qdmDataElement.getAuthorDatetime()));
+        procedure.setExtension(List.of(extensionNotDoneReason));
+
+        procedure.setStatusReason(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getNegationRationale()));
+    }
 }

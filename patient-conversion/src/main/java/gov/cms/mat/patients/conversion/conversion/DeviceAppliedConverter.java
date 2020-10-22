@@ -7,9 +7,6 @@ import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
-import org.hl7.fhir.r4.model.BooleanType;
-import org.hl7.fhir.r4.model.DateTimeType;
-import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Procedure;
 import org.springframework.stereotype.Component;
@@ -22,8 +19,6 @@ import java.util.List;
 public class DeviceAppliedConverter extends ConverterBase<Procedure> {
 
     public static final String QDM_TYPE = "QDM::DeviceApplied";
-
-    private static final String QICORE_RECORDED = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-recorded";
 
     public DeviceAppliedConverter(CodeSystemEntriesService codeSystemEntriesService,
                               FhirContext fhirContext,
@@ -68,18 +63,6 @@ public class DeviceAppliedConverter extends ConverterBase<Procedure> {
 
     @Override
     void convertNegation(QdmDataElement qdmDataElement, Procedure procedure) {
-        // http://hl7.org/fhir/us/qicore/Procedure-negation-example.json.html
-        procedure.setStatus(Procedure.ProcedureStatus.NOTDONE);
-
-        Extension extensionNotDone = new Extension(QICORE_NOT_DONE);
-        extensionNotDone.setValue(new BooleanType(true));
-        procedure.setModifierExtension(List.of(extensionNotDone));
-
-        //todo stan is this correct
-        Extension extensionNotDoneReason = new Extension(QICORE_RECORDED);
-        extensionNotDoneReason.setValue(new DateTimeType(qdmDataElement.getAuthorDatetime()));
-        procedure.setExtension(List.of(extensionNotDoneReason));
-
-        procedure.setStatusReason(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getNegationRationale()));
+        convertNegationProcedure(qdmDataElement, procedure);
     }
 }
