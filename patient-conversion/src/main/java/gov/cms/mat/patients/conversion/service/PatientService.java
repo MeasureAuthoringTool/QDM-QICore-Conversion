@@ -12,6 +12,7 @@ import gov.cms.mat.patients.conversion.conversion.CommunicationPerformedConverte
 import gov.cms.mat.patients.conversion.conversion.ConverterBase;
 import gov.cms.mat.patients.conversion.conversion.DiagnosisConverter;
 import gov.cms.mat.patients.conversion.conversion.DiagnosticStudyOrderConverter;
+import gov.cms.mat.patients.conversion.conversion.DiagnosticStudyPerformedConverter;
 import gov.cms.mat.patients.conversion.conversion.EncounterConverter;
 import gov.cms.mat.patients.conversion.conversion.InterventionOrderConverter;
 import gov.cms.mat.patients.conversion.conversion.InterventionPerformedConverter;
@@ -59,6 +60,7 @@ public class PatientService implements FhirCreator {
     private final CommunicationPerformedConverter communicationPerformedConverter;
     private final DiagnosisConverter diagnosisConverter;
     private final DiagnosticStudyOrderConverter diagnosticStudyOrderConverter;
+    private final DiagnosticStudyPerformedConverter diagnosticStudyPerformedConverter;
 
     private final ObjectMapper objectMapper;
 
@@ -78,6 +80,7 @@ public class PatientService implements FhirCreator {
                           CommunicationPerformedConverter communicationPerformedConverter,
                           DiagnosisConverter diagnosisConverter,
                           DiagnosticStudyOrderConverter diagnosticStudyOrderConverter,
+                          DiagnosticStudyPerformedConverter diagnosticStudyPerformedConverter,
                           FhirContext fhirContext,
                           ObjectMapper objectMapper) {
         this.patientConverter = patientConverter;
@@ -94,6 +97,7 @@ public class PatientService implements FhirCreator {
         this.communicationPerformedConverter = communicationPerformedConverter;
         this.diagnosisConverter = diagnosisConverter;
         this.diagnosticStudyOrderConverter = diagnosticStudyOrderConverter;
+        this.diagnosticStudyPerformedConverter = diagnosticStudyPerformedConverter;
         this.fhirContext = fhirContext;
         this.objectMapper = objectMapper;
     }
@@ -170,6 +174,14 @@ public class PatientService implements FhirCreator {
                 processFuture(bonniePatient, fhirPatient, diagnosticStudyOrderConverter, futures);
             }
 
+            if (qdmTypes.contains(DiagnosticStudyOrderConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, diagnosticStudyOrderConverter, futures);
+            }
+
+            if (qdmTypes.contains(DiagnosticStudyPerformedConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, diagnosticStudyPerformedConverter, futures);
+            }
+
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
 
             List<FhirDataElement> fhirDataElements = findFhirDataElementsFromFutures(futures);
@@ -213,7 +225,6 @@ public class PatientService implements FhirCreator {
     }
 
     public Set<String> collectQdmTypes(BonniePatient bonniePatient) {
-
         if (bonniePatient.getQdmPatient() == null || CollectionUtils.isEmpty(bonniePatient.getQdmPatient().getDataElements())) {
             log.warn("Bonnie Patient id: {} has no data elements", bonniePatient.get_id());
             return Collections.emptySet();

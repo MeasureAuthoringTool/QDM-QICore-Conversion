@@ -91,17 +91,7 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
                 .build();
     }
 
-    private String convertUnitToCode(String unit) {
-        // https://ucum.nlm.nih.gov/ucum-lhc/demo.html Nice tool for codes
-        // todo need all valid codes used in bonnie
-        switch (unit) {
-            case "days":
-                return "d";
-            default:
-                throw new PatientConversionException("Cannot convert unit: " + unit + " to ucm code");
-        }
 
-    }
 
     private CodeableConcept getMedicationCodeableConcept(List<QdmCodeSystem> dataElementCodes) {
         CodeableConcept codeableConcept = new CodeableConcept();

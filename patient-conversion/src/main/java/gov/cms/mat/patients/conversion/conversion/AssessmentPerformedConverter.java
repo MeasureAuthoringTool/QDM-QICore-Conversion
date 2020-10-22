@@ -21,7 +21,7 @@ import java.util.List;
 public class AssessmentPerformedConverter extends ConverterBase<Observation> {
     public static final String QDM_TYPE = "QDM::AssessmentPerformed";
 
-    private static final String QICORE_NOT_DONE_REASON = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-notDoneReason";
+
 
     public AssessmentPerformedConverter(CodeSystemEntriesService codeSystemEntriesService,
                                         FhirContext fhirContext,
@@ -48,7 +48,7 @@ public class AssessmentPerformedConverter extends ConverterBase<Observation> {
 
 
         if (qdmDataElement.getResult() != null) {
-            //todo how to map thic an take values like below, types be damned full speed ahead
+            //todo how to map this an take values like below, types be damned full speed ahead
 
             // Result: {"unit":"weeks","value":3 7}
             //  "2012-01-01T11:00:00.000+00:00"
@@ -73,14 +73,6 @@ public class AssessmentPerformedConverter extends ConverterBase<Observation> {
 
     @Override
     void convertNegation(QdmDataElement qdmDataElement, Observation observation) {
-        observation.setStatus(Observation.ObservationStatus.FINAL);
-
-        Extension extensionNotDone = new Extension(QICORE_NOT_DONE);
-        extensionNotDone.setValue(new BooleanType(true));
-        observation.setModifierExtension(List.of(extensionNotDone));
-
-        Extension extensionNotDoneReason = new Extension(QICORE_NOT_DONE_REASON);
-        extensionNotDoneReason.setValue(convertToCoding(codeSystemEntriesService, qdmDataElement.getNegationRationale()));
-        observation.setExtension(List.of(extensionNotDoneReason));
+        convertNegationObservation(qdmDataElement, observation);
     }
 }

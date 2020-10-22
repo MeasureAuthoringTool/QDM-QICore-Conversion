@@ -1,14 +1,10 @@
 package gov.cms.mat.patients.conversion.conversion.helpers;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.validation.FhirValidator;
-import ca.uhn.fhir.validation.ValidationOptions;
-import ca.uhn.fhir.validation.ValidationResult;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
 import gov.cms.mat.patients.conversion.dao.QdmPeriod;
+import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.hapi.ctx.IValidationSupport;
-import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.HumanName;
@@ -65,5 +61,21 @@ public interface FhirCreator {
         return fhirContext.newJsonParser()
                 .setPrettyPrint(true)
                 .encodeResourceToString(theResource);
+    }
+
+    default String convertUnitToCode(String unit) {
+        // https://ucum.nlm.nih.gov/ucum-lhc/demo.html Nice tool for codes
+        // todo need all valid codes used in bonnie
+        switch (unit) {
+            case "days":
+                return "d";
+            case "%":
+                return "%";
+            case "mg":
+                return "mg";
+            default:
+                throw new PatientConversionException("Cannot convert unit: " + unit + " to ucm code");
+        }
+
     }
 }
