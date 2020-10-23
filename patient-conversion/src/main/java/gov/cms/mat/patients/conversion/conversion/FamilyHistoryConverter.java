@@ -1,4 +1,4 @@
-package gov.cms.mat.patients.conversion;
+package gov.cms.mat.patients.conversion.conversion;
 
 
 import ca.uhn.fhir.context.FhirContext;

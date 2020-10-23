@@ -19,8 +19,8 @@ QDM::ImmunizationAdministered,
 QDM::ImmunizationOrder, 
 ~~QDM::InterventionOrder,~~ 
 ~~QDM::InterventionPerformed,~~ 
-QDM::InterventionRecommended, 
-QDM::LaboratoryTestOrder, 
+~~QDM::InterventionRecommended,~~ 
+~~QDM::LaboratoryTestOrder,~~ 
 QDM::LaboratoryTestPerformed, 
 QDM::MedicationActive, 
 QDM::MedicationAdministered, 
