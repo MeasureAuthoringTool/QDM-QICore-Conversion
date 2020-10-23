@@ -33,7 +33,7 @@ public class DeviceOrderConverter extends ConverterBase<ServiceRequest> implemen
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#892-device-order--non-patient-use-devices
         // Constrain to “Order” (include children)
-        return convertServiceRequestToFhir(fhirPatient,
+        return convertToFhirServiceRequest(fhirPatient,
                 qdmDataElement,
                 this,
                 ServiceRequest.ServiceRequestIntent.ORDER);

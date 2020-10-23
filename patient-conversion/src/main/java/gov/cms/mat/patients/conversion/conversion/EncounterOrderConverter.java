@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class AssessmentOrderConverter extends ConverterBase<ServiceRequest> implements ServiceRequestConverter {
-    public static final String QDM_TYPE = "QDM::AssessmentOrder";
+public class EncounterOrderConverter extends ConverterBase<ServiceRequest> implements ServiceRequestConverter {
+    public static final String QDM_TYPE = "QDM::EncounterOrder";
 
-    public AssessmentOrderConverter(CodeSystemEntriesService codeSystemEntriesService,
-                                    FhirContext fhirContext,
-                                    ObjectMapper objectMapper,
-                                    ValidationService validationService) {
+    public EncounterOrderConverter(CodeSystemEntriesService codeSystemEntriesService,
+                                   FhirContext fhirContext,
+                                   ObjectMapper objectMapper,
+                                   ValidationService validationService) {
         super(codeSystemEntriesService, fhirContext, objectMapper, validationService);
     }
 
@@ -32,10 +32,23 @@ public class AssessmentOrderConverter extends ConverterBase<ServiceRequest> impl
 
     @Override
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        return convertToFhirServiceRequest(fhirPatient,
+        //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8113-encounter-order
+        //Constrain only to “order” (include children: original-order, reflex-order, filler-order, instance-order)
+        QdmToFhirConversionResult result = convertToFhirServiceRequest(fhirPatient,
                 qdmDataElement,
                 this,
                 ServiceRequest.ServiceRequestIntent.ORDER);
+
+
+        if( qdmDataElement.getFacilityLocations() != null) {
+            log.debug("HI"); //todo can it exists
+        }
+
+        if( qdmDataElement.getPriority() != null) {
+            log.debug("HI"); //todo can it exists
+        }
+
+        return result;
     }
 
     @Override

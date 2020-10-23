@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ServiceRequestConverter extends DataElementFinder, FhirCreator {
 
-    default QdmToFhirConversionResult convertServiceRequestToFhir(Patient fhirPatient,
+    default QdmToFhirConversionResult convertToFhirServiceRequest(Patient fhirPatient,
                                                                   QdmDataElement qdmDataElement,
                                                                   ConverterBase<ServiceRequest> converterBase,
                                                                   ServiceRequest.ServiceRequestIntent intent) {

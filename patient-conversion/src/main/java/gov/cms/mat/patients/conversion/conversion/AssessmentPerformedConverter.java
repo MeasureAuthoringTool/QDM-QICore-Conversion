@@ -32,7 +32,7 @@ public class AssessmentPerformedConverter extends ConverterBase<Observation> imp
     @Override
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#842-assessment-performed
-        return convertToObservation(fhirPatient, qdmDataElement, this);
+        return convertToFhirObservation(fhirPatient, qdmDataElement, this);
     }
 
     @Override

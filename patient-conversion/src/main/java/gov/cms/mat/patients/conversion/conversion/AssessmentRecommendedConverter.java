@@ -34,7 +34,7 @@ public class AssessmentRecommendedConverter extends ConverterBase<ServiceRequest
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#843-assessment-recommended
         //Constrain only to “plan”
-        return convertServiceRequestToFhir(fhirPatient,
+        return convertToFhirServiceRequest(fhirPatient,
                 qdmDataElement,
                 this,
                 ServiceRequest.ServiceRequestIntent.PLAN);

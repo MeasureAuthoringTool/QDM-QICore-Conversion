@@ -11,8 +11,8 @@ QDM::AssessmentRecommended,~~
 ~~QDM::DeviceOrder,~~
 ~~QDM::Diagnosis,~~ 
 ~~QDM::DiagnosticStudyOrder,~~
-QDM::DiagnosticStudyPerformed, 
-QDM::EncounterOrder,
+~~QDM::DiagnosticStudyPerformed,~~ 
+~~QDM::EncounterOrder,~~
 ~~QDM::EncounterPerformed,~~
 QDM::FamilyHistory,
 QDM::ImmunizationAdministered,
