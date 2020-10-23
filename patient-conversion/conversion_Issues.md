@@ -14,7 +14,7 @@ QDM::AssessmentRecommended,~~
 ~~QDM::DiagnosticStudyPerformed,~~ 
 ~~QDM::EncounterOrder,~~
 ~~QDM::EncounterPerformed,~~
-QDM::FamilyHistory,
+~~QDM::FamilyHistory,~~
 QDM::ImmunizationAdministered,
 QDM::ImmunizationOrder, 
 ~~QDM::InterventionOrder,~~ 
