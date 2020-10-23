@@ -47,9 +47,9 @@ public class DiagnosisConverter extends ConverterBase<Condition> {
 
         condition.setOnset(createFhirPeriod(qdmDataElement.getPrevalencePeriod()));
 
-        if(CollectionUtils.isNotEmpty(qdmDataElement.getFacilityLocations())) {
+        if (CollectionUtils.isNotEmpty(qdmDataElement.getFacilityLocations())) {
             log.debug("We have FacilityLocations");
-           // condition.setBodySite() ??
+            // condition.setBodySite() ??
         }
 
         processNegation(qdmDataElement, condition);

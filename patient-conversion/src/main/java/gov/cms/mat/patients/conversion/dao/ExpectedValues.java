@@ -1,6 +1,5 @@
 package gov.cms.mat.patients.conversion.dao;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,7 +41,7 @@ public class ExpectedValues {
     @JsonProperty("OBSERV_UNIT")
     String observeUnit;
 
-   @JsonProperty("OBSERV")  // "_id": "5d65454e1c76ba7ea32d98f2", todo
+    @JsonProperty("OBSERV")  // "_id": "5d65454e1c76ba7ea32d98f2", todo
     // Integer[] observ;
     JsonNode observ;
 }

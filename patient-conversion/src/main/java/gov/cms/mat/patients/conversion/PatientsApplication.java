@@ -16,7 +16,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableScheduling
 @EnableCaching
-@EnableAsync(proxyTargetClass=true)
+@EnableAsync(proxyTargetClass = true)
 @Slf4j
 public class PatientsApplication {
     public static void main(String[] args) {

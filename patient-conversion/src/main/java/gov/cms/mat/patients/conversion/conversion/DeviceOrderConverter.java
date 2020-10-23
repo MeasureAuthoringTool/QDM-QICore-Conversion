@@ -18,9 +18,9 @@ public class DeviceOrderConverter extends ConverterBase<ServiceRequest> implemen
     public static final String QDM_TYPE = "QDM::DeviceOrder";
 
     public DeviceOrderConverter(CodeSystemEntriesService codeSystemEntriesService,
-                                         FhirContext fhirContext,
-                                         ObjectMapper objectMapper,
-                                         ValidationService validationService) {
+                                FhirContext fhirContext,
+                                ObjectMapper objectMapper,
+                                ValidationService validationService) {
         super(codeSystemEntriesService, fhirContext, objectMapper, validationService);
     }
 
@@ -31,13 +31,12 @@ public class DeviceOrderConverter extends ConverterBase<ServiceRequest> implemen
 
     @Override
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        ServiceRequest serviceRequest = new ServiceRequest();
-        serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
+        //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#892-device-order--non-patient-use-devices
+        // Constrain to “Order” (include children)
         return convertServiceRequestToFhir(fhirPatient,
                 qdmDataElement,
-                codeSystemEntriesService,
                 this,
-                serviceRequest);
+                ServiceRequest.ServiceRequestIntent.ORDER);
     }
 
     @Override

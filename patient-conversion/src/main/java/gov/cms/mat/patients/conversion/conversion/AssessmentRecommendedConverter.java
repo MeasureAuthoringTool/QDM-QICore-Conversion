@@ -32,17 +32,12 @@ public class AssessmentRecommendedConverter extends ConverterBase<ServiceRequest
 
     @Override
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-
-        ServiceRequest serviceRequest = new ServiceRequest();
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#843-assessment-recommended
         //Constrain only to “plan”
-        serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.PLAN);
         return convertServiceRequestToFhir(fhirPatient,
                 qdmDataElement,
-                codeSystemEntriesService,
                 this,
-                serviceRequest);
-
+                ServiceRequest.ServiceRequestIntent.PLAN);
     }
 
     @Override

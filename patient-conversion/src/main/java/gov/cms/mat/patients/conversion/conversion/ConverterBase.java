@@ -15,12 +15,12 @@ import gov.cms.mat.patients.conversion.data.FhirDataElement;
 import gov.cms.mat.patients.conversion.exceptions.MappingServiceException;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.DateTimeType;
-import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
@@ -35,13 +35,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class ConverterBase<T extends IBaseResource> implements FhirCreator, DataElementFinder {
-    static final String QICORE_NOT_DONE = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-notDone";
-    static final String  QICORE_DO_NOT_PERFORM_REASON = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-doNotPerformReason";
-    private static final String QICORE_RECORDED = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-recorded";
-    static final String QICORE_NOT_DONE_REASON = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-notDoneReason";
-
     public static final String NO_STATUS_MAPPING = "No mapping for status";
-
+    static final String QICORE_NOT_DONE = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-notDone";
+    static final String QICORE_DO_NOT_PERFORM_REASON = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-doNotPerformReason";
+    static final String QICORE_NOT_DONE_REASON = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-notDoneReason";
+    private static final String QICORE_RECORDED = "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-recorded";
+    @Getter
     final CodeSystemEntriesService codeSystemEntriesService;
     final FhirContext fhirContext;
     final ObjectMapper objectMapper;
@@ -134,9 +133,9 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
         return buildDataElement(qdmToFhirConversionResult, validationResult, dataElement);
     }
 
-    public boolean processNegation( QdmDataElement qdmDataElement, T resource) {
+    public boolean processNegation(QdmDataElement qdmDataElement, T resource) {
         if (qdmDataElement.getNegationRationale() != null) {
-            convertNegation( qdmDataElement, resource );
+            convertNegation(qdmDataElement, resource);
             return true;
         } else {
             log.trace("No negations found");
@@ -144,18 +143,18 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
         }
     }
 
-   void convertNegation(QdmDataElement qdmDataElement, T resource) {
+    void convertNegation(QdmDataElement qdmDataElement, T resource) {
         log.warn("Negation not handled - implement this method");
 
         //todo remove me
-       try {
-           System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(qdmDataElement));
-       } catch (JsonProcessingException e) {
-           e.printStackTrace();
-       }
+        try {
+            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(qdmDataElement));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
-    void convertNegationServiceRequest (QdmDataElement qdmDataElement,  ServiceRequest serviceRequest) {
+    void convertNegationServiceRequest(QdmDataElement qdmDataElement, ServiceRequest serviceRequest) {
         serviceRequest.setStatus(ServiceRequest.ServiceRequestStatus.COMPLETED);
         serviceRequest.setDoNotPerform(true);
 
@@ -165,7 +164,7 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
     }
 
 
-    void convertNegationObservation(QdmDataElement qdmDataElement,  Observation observation ) {
+    void convertNegationObservation(QdmDataElement qdmDataElement, Observation observation) {
         observation.setStatus(Observation.ObservationStatus.FINAL);
 
         Extension extensionNotDone = new Extension(QICORE_NOT_DONE);

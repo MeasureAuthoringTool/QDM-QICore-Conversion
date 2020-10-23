@@ -2,7 +2,6 @@ package gov.cms.mat.patients.conversion.dao;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hl7.fhir.r4.model.Identifier;
 
 @Data
 @NoArgsConstructor

@@ -68,7 +68,7 @@ public class QdmDataElement {
 
     QdmCodeSystem reason;  //"5ca62964b8484628b8de1f51", is a Qdm
 
-   // @JsonIgnore  // "5aeb772fb848463d625b1dd7" is an int
+    // @JsonIgnore  // "5aeb772fb848463d625b1dd7" is an int
     JsonNode result;
 
     QdmReferenceRange referenceRange;
@@ -99,10 +99,10 @@ public class QdmDataElement {
           "value": 2
         } */
     //@JsonIgnore
-  //  QdmCode targetOutcome;  // "_id": "5d654ae61c76ba7ea32ed30c",
+    //  QdmCode targetOutcome;  // "_id": "5d654ae61c76ba7ea32ed30c",
     //JsonNode targetOutcome;
 
-   TargetOutcome targetOutcome;
+    TargetOutcome targetOutcome;
 
     String codeListId;
     Prescriber prescriber;

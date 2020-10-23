@@ -63,15 +63,15 @@ public class CommunicationPerformedConverter extends ConverterBase<Communication
         extensionNotDone.setValue(new BooleanType(true));
         communication.setModifierExtension(List.of(extensionNotDone));
 
-        if( qdmDataElement.getSender() != null) {
+        if (qdmDataElement.getSender() != null) {
             log.debug("We have Sender");
         }
 
-        if( qdmDataElement.getSentDatetime() != null) {
+        if (qdmDataElement.getSentDatetime() != null) {
             log.debug("We have SendDateTime");
         }
 
-        communication.setStatusReason(convertToCodeableConcept(codeSystemEntriesService,  qdmDataElement.getNegationRationale()));
+        communication.setStatusReason(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getNegationRationale()));
     }
 
 

@@ -24,7 +24,7 @@ import java.util.List;
 
 @Slf4j
 public class JsonNodeObservationResultProcessor implements FhirCreator, DataElementFinder {
-   private final CodeSystemEntriesService codeSystemEntriesService;
+    private final CodeSystemEntriesService codeSystemEntriesService;
     private final Observation observation;
     private final List<String> conversionMessages;
 
@@ -37,6 +37,11 @@ public class JsonNodeObservationResultProcessor implements FhirCreator, DataElem
     }
 
     public void processNode(JsonNode result) {
+        if (result == null) {
+            log.debug("JsonNode is null");
+            return;
+        }
+
         if (result instanceof ObjectNode) {
             processObjectNode((ObjectNode) result);
         } else if (result instanceof NullNode) {
@@ -53,7 +58,7 @@ public class JsonNodeObservationResultProcessor implements FhirCreator, DataElem
     }
 
     private void processIntMode(IntNode result) {
-        observation.setValue(new IntegerType( result.intValue()));
+        observation.setValue(new IntegerType(result.intValue()));
     }
 
     void processObjectNode(ObjectNode objectNode) {

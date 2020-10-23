@@ -40,7 +40,7 @@ public class AllergyIntoleranceConverter extends ConverterBase<AllergyIntoleranc
 
         // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#83-allergyintolerance
         // active, inactive, resolved
-       // allergyIntolerance.setClinicalStatus() 	this is codeable Concept
+        // allergyIntolerance.setClinicalStatus() 	this is codeable Concept
 
         allergyIntolerance.setPatient(createReference(fhirPatient));
 

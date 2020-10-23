@@ -15,7 +15,7 @@ public class QdmPatient {
 
     Date birthDatetime;
     ExtendedData extendedData;
-   // JsonNode extendedData;
+    // JsonNode extendedData;
 
     List<QdmDataElement> dataElements;
 }

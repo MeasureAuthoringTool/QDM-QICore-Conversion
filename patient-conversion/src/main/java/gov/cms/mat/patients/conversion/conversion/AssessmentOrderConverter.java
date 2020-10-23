@@ -32,13 +32,10 @@ public class AssessmentOrderConverter extends ConverterBase<ServiceRequest> impl
 
     @Override
     QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        ServiceRequest serviceRequest = new ServiceRequest();
-        serviceRequest.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
         return convertServiceRequestToFhir(fhirPatient,
                 qdmDataElement,
-                codeSystemEntriesService,
                 this,
-                serviceRequest);
+                ServiceRequest.ServiceRequestIntent.ORDER);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package gov.cms.mat.patients.conversion.dao;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.JsonObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +11,7 @@ public class ExtendedData {
     String type; // always null
     Boolean is_shared;
 
-  //  OriginData[] origin_data;
+    //  OriginData[] origin_data;
     JsonNode origin_data;
 
     String test_id; // always null
@@ -27,7 +25,7 @@ public class ExtendedData {
      */
     String insurance_providers;
 
-   JsonNode source_data_criteria; // what to do with data below
+    JsonNode source_data_criteria; // what to do with data below
    /* source_data_criteria": [
         {
           "negation": false,

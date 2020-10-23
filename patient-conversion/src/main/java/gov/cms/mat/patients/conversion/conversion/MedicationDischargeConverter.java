@@ -4,8 +4,8 @@ package gov.cms.mat.patients.conversion.conversion;
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirConversionResult;
-import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
+import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
@@ -47,7 +47,7 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
         medicationRequest.setMedication(getMedicationCodeableConcept(qdmDataElement.getDataElementCodes()));
         medicationRequest.setAuthoredOn(qdmDataElement.getAuthorDatetime());
 
-       // medicationRequest.setIntent()
+        // medicationRequest.setIntent()
 
         if (qdmDataElement.getRoute() != null) {
             //  medicationRequest.setDosageInstruction()
@@ -71,7 +71,7 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
 
             try {
                 quantity.setCode(convertUnitToCode(qdmDataElement.getSupply().getUnit()));
-            } catch (PatientConversionException e ) {
+            } catch (PatientConversionException e) {
                 conversionMessages.add(e.getMessage());
             }
 
@@ -83,7 +83,7 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
             dispenseRequest.setNumberOfRepeatsAllowed(qdmDataElement.getRefills());
         }
 
-        if( !processNegation(qdmDataElement, medicationRequest) ) {
+        if (!processNegation(qdmDataElement, medicationRequest)) {
             // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8173-medication-discharge
             // 	Constrain to active, completed, on-hold
             medicationRequest.setStatus(MedicationRequest.MedicationRequestStatus.UNKNOWN);
@@ -97,7 +97,6 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
     }
 
 
-
     private CodeableConcept getMedicationCodeableConcept(List<QdmCodeSystem> dataElementCodes) {
         CodeableConcept codeableConcept = new CodeableConcept();
         codeableConcept.addCoding(createCodingFromDataElementCodes(codeSystemEntriesService, dataElementCodes));
@@ -106,7 +105,7 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
     }
 
     @Override
-    void convertNegation(QdmDataElement qdmDataElement,  MedicationRequest medicationRequest) {
+    void convertNegation(QdmDataElement qdmDataElement, MedicationRequest medicationRequest) {
         medicationRequest.setStatus(MedicationRequest.MedicationRequestStatus.COMPLETED);
 
         medicationRequest.setDoNotPerform(true);

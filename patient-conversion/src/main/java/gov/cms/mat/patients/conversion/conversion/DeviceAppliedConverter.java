@@ -21,9 +21,9 @@ public class DeviceAppliedConverter extends ConverterBase<Procedure> {
     public static final String QDM_TYPE = "QDM::DeviceApplied";
 
     public DeviceAppliedConverter(CodeSystemEntriesService codeSystemEntriesService,
-                              FhirContext fhirContext,
-                              ObjectMapper objectMapper,
-                              ValidationService validationService) {
+                                  FhirContext fhirContext,
+                                  ObjectMapper objectMapper,
+                                  ValidationService validationService) {
         super(codeSystemEntriesService, fhirContext, objectMapper, validationService);
     }
 
@@ -51,7 +51,7 @@ public class DeviceAppliedConverter extends ConverterBase<Procedure> {
             procedure.setReasonCode(List.of(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getReason())));
         }
 
-        if(!processNegation(qdmDataElement, procedure)) {
+        if (!processNegation(qdmDataElement, procedure)) {
             procedure.setStatus(Procedure.ProcedureStatus.COMPLETED);
         }
 
