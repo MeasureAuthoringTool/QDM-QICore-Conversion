@@ -26,12 +26,12 @@ public class DiagnosticStudyOrderConverter extends ConverterBase<ServiceRequest>
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8101-diagnostic-study-order
         //Constrain only to “order” (include children: original-order, reflex-order, filler-order, instance-order)
         return convertToFhirServiceRequest(fhirPatient,

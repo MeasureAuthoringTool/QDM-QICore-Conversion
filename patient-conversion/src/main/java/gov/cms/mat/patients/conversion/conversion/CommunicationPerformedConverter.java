@@ -30,12 +30,12 @@ public class CommunicationPerformedConverter extends ConverterBase<Communication
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<Communication> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<Communication> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
 
         Communication communication = new Communication();

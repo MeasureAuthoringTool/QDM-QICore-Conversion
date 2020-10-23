@@ -26,12 +26,12 @@ public class DiagnosticStudyPerformedConverter extends ConverterBase<Observation
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<Observation> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<Observation> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8102-diagnostic-study-performed
         return convertToFhirObservation(fhirPatient, qdmDataElement, this);
     }

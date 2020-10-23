@@ -29,12 +29,12 @@ public class DiagnosisConverter extends ConverterBase<Condition> {
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<Condition> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<Condition> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
 
         Condition condition = new Condition();

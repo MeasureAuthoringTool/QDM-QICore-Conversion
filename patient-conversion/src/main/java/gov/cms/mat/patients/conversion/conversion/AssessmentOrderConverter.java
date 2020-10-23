@@ -26,12 +26,12 @@ public class AssessmentOrderConverter extends ConverterBase<ServiceRequest> impl
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         return convertToFhirServiceRequest(fhirPatient,
                 qdmDataElement,
                 this,

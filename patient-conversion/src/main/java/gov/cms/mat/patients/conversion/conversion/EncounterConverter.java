@@ -36,12 +36,12 @@ public class EncounterConverter extends ConverterBase<Encounter> {
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<Encounter> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<Encounter> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
         Encounter encounter = new Encounter();
         encounter.setId(qdmDataElement.get_id());

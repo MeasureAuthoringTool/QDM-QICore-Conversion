@@ -121,9 +121,9 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
         return objectMapper.readTree(json);
     }
 
-    abstract String getQdmType();
+    public abstract String getQdmType();
 
-    abstract QdmToFhirConversionResult<T> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement);
+    public abstract QdmToFhirConversionResult<T> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement);
 
     public FhirDataElement convertQdmToFhir(Patient fhirPatient, QdmDataElement dataElement) {
         QdmToFhirConversionResult<T> qdmToFhirConversionResult = convertToFhir(fhirPatient, dataElement);

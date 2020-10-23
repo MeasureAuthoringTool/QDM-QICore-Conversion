@@ -28,12 +28,12 @@ public class AllergyIntoleranceConverter extends ConverterBase<AllergyIntoleranc
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<AllergyIntolerance> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<AllergyIntolerance> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
 
         AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
         allergyIntolerance.setId(qdmDataElement.get_id());

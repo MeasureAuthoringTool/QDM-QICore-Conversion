@@ -2,6 +2,7 @@ package gov.cms.mat.patients.conversion.service;
 
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.mat.patients.conversion.FamilyHistoryConverter;
 import gov.cms.mat.patients.conversion.conversion.AdverseEventConverter;
 import gov.cms.mat.patients.conversion.conversion.AllergyIntoleranceConverter;
 import gov.cms.mat.patients.conversion.conversion.AssessmentOrderConverter;
@@ -67,6 +68,7 @@ public class PatientService implements FhirCreator {
     private final DeviceOrderConverter deviceOrderConverter;
     private final DiagnosticStudyPerformedConverter diagnosticStudyPerformedConverter;
     private final EncounterOrderConverter encounterOrderConverter;
+    private final FamilyHistoryConverter familyHistoryConverter;
 
     private final ObjectMapper objectMapper;
     private final FhirContext fhirContext;
@@ -86,6 +88,7 @@ public class PatientService implements FhirCreator {
                           DiagnosisConverter diagnosisConverter,
                           DiagnosticStudyOrderConverter diagnosticStudyOrderConverter,
                           DiagnosticStudyPerformedConverter diagnosticStudyPerformedConverter,
+                          FamilyHistoryConverter familyHistoryConverter,
                           FhirContext fhirContext,
                           DeviceAppliedConverter deviceAppliedConverter,
                           DeviceOrderConverter deviceOrderConverter,
@@ -106,6 +109,7 @@ public class PatientService implements FhirCreator {
         this.diagnosisConverter = diagnosisConverter;
         this.diagnosticStudyOrderConverter = diagnosticStudyOrderConverter;
         this.diagnosticStudyPerformedConverter = diagnosticStudyPerformedConverter;
+        this.familyHistoryConverter = familyHistoryConverter;
         this.deviceAppliedConverter = deviceAppliedConverter;
         this.fhirContext = fhirContext;
         this.deviceOrderConverter = deviceOrderConverter;
@@ -199,6 +203,10 @@ public class PatientService implements FhirCreator {
 
             if (qdmTypes.contains(EncounterOrderConverter.QDM_TYPE)) {
                 processFuture(bonniePatient, fhirPatient, encounterOrderConverter, futures);
+            }
+
+            if (qdmTypes.contains(FamilyHistoryConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, familyHistoryConverter, futures);
             }
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();

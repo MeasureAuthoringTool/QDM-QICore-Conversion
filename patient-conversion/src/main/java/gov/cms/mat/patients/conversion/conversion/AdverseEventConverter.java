@@ -27,12 +27,12 @@ public class AdverseEventConverter extends ConverterBase<AdverseEvent> {
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<AdverseEvent> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<AdverseEvent> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         log.info("patient has  AdverseEvent: {}", fhirPatient.getId());
 
         AdverseEvent adverseEvent = new AdverseEvent();

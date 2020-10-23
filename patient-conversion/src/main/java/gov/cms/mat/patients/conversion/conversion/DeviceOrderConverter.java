@@ -25,12 +25,12 @@ public class DeviceOrderConverter extends ConverterBase<ServiceRequest> implemen
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#892-device-order--non-patient-use-devices
         // Constrain to “Order” (include children)
         return convertToFhirServiceRequest(fhirPatient,

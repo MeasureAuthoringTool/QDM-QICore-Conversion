@@ -33,12 +33,12 @@ public class CareCoalConverter extends ConverterBase<Goal> {
     }
 
     @Override
-    String getQdmType() {
+    public String getQdmType() {
         return QDM_TYPE;
     }
 
     @Override
-    QdmToFhirConversionResult<Goal> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    public QdmToFhirConversionResult<Goal> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
         Goal goal = new Goal();
         goal.setId(qdmDataElement.get_id());
