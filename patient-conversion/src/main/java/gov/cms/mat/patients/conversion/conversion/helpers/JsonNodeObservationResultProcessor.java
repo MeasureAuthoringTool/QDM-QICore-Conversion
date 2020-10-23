@@ -12,9 +12,9 @@ import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.IntegerType;
-import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.StringType;
+import org.hl7.fhir.r4.model.Type;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -25,49 +25,54 @@ import java.util.List;
 @Slf4j
 public class JsonNodeObservationResultProcessor implements FhirCreator, DataElementFinder {
     private final CodeSystemEntriesService codeSystemEntriesService;
-    private final Observation observation;
     private final List<String> conversionMessages;
 
-    public JsonNodeObservationResultProcessor(Observation observation,
-                                              CodeSystemEntriesService codeSystemEntriesService,
+    public JsonNodeObservationResultProcessor(CodeSystemEntriesService codeSystemEntriesService,
                                               List<String> conversionMessages) {
-        this.observation = observation;
         this.codeSystemEntriesService = codeSystemEntriesService;
         this.conversionMessages = conversionMessages;
     }
 
-    public void processNode(JsonNode result) {
+
+    public Type findType(JsonNode result) {
         if (result == null) {
             log.debug("JsonNode is null");
-            return;
+            return null;
         }
 
         if (result instanceof ObjectNode) {
-            processObjectNode((ObjectNode) result);
+            return processObjectNode((ObjectNode) result);
         } else if (result instanceof NullNode) {
             log.trace("Null node ignored");
+            return null;
         } else if (result instanceof TextNode) {
-            processTextNode(observation, (TextNode) result);
+            return processTextNode((TextNode) result);
         } else if (result instanceof IntNode) {
-            processIntMode((IntNode) result);
+            return processIntMode((IntNode) result);
         } else if (result instanceof DoubleNode) {
             conversionMessages.add("Observation result does not handle doubles value: " + result.asText());
+            return null;
         } else {
-            log.warn(result.getClass().getName());
+            log.warn("Unknown json node type: {}", result.getClass().getName());
+            throw new PatientConversionException("Unknown json node type: " + result.getClass().getName());
         }
     }
 
-    private void processIntMode(IntNode result) {
-        observation.setValue(new IntegerType(result.intValue()));
+    private IntegerType processIntMode(IntNode result) {
+        return new IntegerType(result.intValue());
     }
 
-    void processObjectNode(ObjectNode objectNode) {
-        if (!processValueCodeableConcept(objectNode)) {
-            processValueQuantity(objectNode);
+    Type processObjectNode(ObjectNode objectNode) {
+        Type type = processValueCodeableConcept(objectNode);
+
+        if (type == null) {
+            type = processValueQuantity(objectNode);
         }
+
+        return type;
     }
 
-    private void processValueQuantity(ObjectNode objectNode) {
+    private Type processValueQuantity(ObjectNode objectNode) {
         JsonNode unitNode = objectNode.get("unit");
         JsonNode valueNode = objectNode.get("value"); // oid
 
@@ -82,11 +87,13 @@ public class JsonNodeObservationResultProcessor implements FhirCreator, DataElem
                 conversionMessages.add(e.getMessage());
             }
 
-            observation.setValue(quantity);
+            return quantity;
+        } else {
+            return null;
         }
     }
 
-    private boolean processValueCodeableConcept(ObjectNode objectNode) {
+    private Type processValueCodeableConcept(ObjectNode objectNode) {
         JsonNode codeNode = objectNode.get("code");
         JsonNode systemNode = objectNode.get("system"); // oid
 
@@ -101,14 +108,14 @@ public class JsonNodeObservationResultProcessor implements FhirCreator, DataElem
                 qdmCodeSystem.setDisplay(displayNode.asText());
             }
 
-            observation.setValue(convertToCodeableConcept(codeSystemEntriesService, qdmCodeSystem));
-            return true;
+
+            return convertToCodeableConcept(codeSystemEntriesService, qdmCodeSystem);
         } else {
-            return false;
+            return null;
         }
     }
 
-    private void processTextNode(Observation observation, TextNode result) {
+    private Type processTextNode(TextNode result) {
         String data = result.textValue();
 
         try {
@@ -116,9 +123,9 @@ public class JsonNodeObservationResultProcessor implements FhirCreator, DataElem
 
             Date date = convertToDateViaInstant(dateTime);
 
-            observation.setValue(new DateTimeType(date));
+            return new DateTimeType(date);
         } catch (Exception e) { // Not a date
-            observation.setValue(new StringType(data));
+            return new StringType(data);
         }
     }
 
