@@ -31,7 +31,7 @@ public class AssessmentOrderConverter extends ConverterBase<ServiceRequest> impl
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         return convertToFhirServiceRequest(fhirPatient,
                 qdmDataElement,
                 this,

@@ -35,7 +35,7 @@ public class CommunicationPerformedConverter extends ConverterBase<Communication
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<Communication> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
 
         Communication communication = new Communication();
@@ -49,13 +49,14 @@ public class CommunicationPerformedConverter extends ConverterBase<Communication
             conversionMessages.add(NO_STATUS_MAPPING);
         }
 
-        return QdmToFhirConversionResult.builder()
+        return QdmToFhirConversionResult.<Communication>builder()
                 .fhirResource(communication)
                 .conversionMessages(conversionMessages)
                 .build();
     }
 
 
+    @Override
     void convertNegation(QdmDataElement qdmDataElement, Communication communication) {
         communication.setStatus(Communication.CommunicationStatus.NOTDONE);
 

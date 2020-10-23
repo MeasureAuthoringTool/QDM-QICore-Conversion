@@ -74,7 +74,7 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
         }
     }
 
-    FhirDataElement buildDataElement(QdmToFhirConversionResult qdmToFhirConversionResult,
+    FhirDataElement buildDataElement(QdmToFhirConversionResult<T> qdmToFhirConversionResult,
                                      ValidationResult validationResult,
                                      QdmDataElement dataElement) {
         try {
@@ -123,10 +123,10 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
 
     abstract String getQdmType();
 
-    abstract QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement);
+    abstract QdmToFhirConversionResult<T> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement);
 
     public FhirDataElement convertQdmToFhir(Patient fhirPatient, QdmDataElement dataElement) {
-        QdmToFhirConversionResult qdmToFhirConversionResult = convertToFhir(fhirPatient, dataElement);
+        QdmToFhirConversionResult<T> qdmToFhirConversionResult = convertToFhir(fhirPatient, dataElement);
 
         ValidationResult validationResult = validationService.validate(qdmToFhirConversionResult.getFhirResource());
 
@@ -148,7 +148,8 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
 
         //todo remove me
         try {
-            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(qdmDataElement));
+            log.debug(resource.getClass().getName());
+            log.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(qdmDataElement));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

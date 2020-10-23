@@ -31,7 +31,7 @@ public class AssessmentRecommendedConverter extends ConverterBase<ServiceRequest
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#843-assessment-recommended
         //Constrain only to “plan”
         return convertToFhirServiceRequest(fhirPatient,

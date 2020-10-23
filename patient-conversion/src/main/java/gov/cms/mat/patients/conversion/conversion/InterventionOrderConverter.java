@@ -31,7 +31,7 @@ public class InterventionOrderConverter extends ConverterBase<ServiceRequest> im
         return QDM_TYPE;
     }
 
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8153-intervention-order
         // Constrain only to “order” (include children: original-order, reflex-order, filler-order, instance-order)
         return convertToFhirServiceRequest(fhirPatient,

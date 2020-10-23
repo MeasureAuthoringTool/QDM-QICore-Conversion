@@ -17,7 +17,6 @@ import java.util.List;
 @Component
 @Slf4j
 public class DeviceAppliedConverter extends ConverterBase<Procedure> {
-
     public static final String QDM_TYPE = "QDM::DeviceApplied";
 
     public DeviceAppliedConverter(CodeSystemEntriesService codeSystemEntriesService,
@@ -33,7 +32,7 @@ public class DeviceAppliedConverter extends ConverterBase<Procedure> {
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<Procedure> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
         Procedure procedure = new Procedure();
 
@@ -55,7 +54,7 @@ public class DeviceAppliedConverter extends ConverterBase<Procedure> {
             procedure.setStatus(Procedure.ProcedureStatus.COMPLETED);
         }
 
-        return QdmToFhirConversionResult.builder()
+        return QdmToFhirConversionResult.<Procedure>builder()
                 .fhirResource(procedure)
                 .conversionMessages(conversionMessages)
                 .build();

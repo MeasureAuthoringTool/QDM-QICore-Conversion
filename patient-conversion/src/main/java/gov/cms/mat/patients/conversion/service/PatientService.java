@@ -66,7 +66,7 @@ public class PatientService implements FhirCreator {
     private final DeviceAppliedConverter deviceAppliedConverter;
     private final DeviceOrderConverter deviceOrderConverter;
     private final DiagnosticStudyPerformedConverter diagnosticStudyPerformedConverter;
-    private final  EncounterOrderConverter encounterOrderConverter;
+    private final EncounterOrderConverter encounterOrderConverter;
 
     private final ObjectMapper objectMapper;
     private final FhirContext fhirContext;

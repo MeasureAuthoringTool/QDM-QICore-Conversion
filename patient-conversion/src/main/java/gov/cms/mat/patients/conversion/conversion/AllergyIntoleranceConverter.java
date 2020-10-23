@@ -33,7 +33,7 @@ public class AllergyIntoleranceConverter extends ConverterBase<AllergyIntoleranc
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<AllergyIntolerance> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
 
         AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
         allergyIntolerance.setId(qdmDataElement.get_id());
@@ -62,7 +62,7 @@ public class AllergyIntoleranceConverter extends ConverterBase<AllergyIntoleranc
 
         processNegation(qdmDataElement, allergyIntolerance);
 
-        return QdmToFhirConversionResult.builder()
+        return QdmToFhirConversionResult.<AllergyIntolerance>builder()
                 .fhirResource(allergyIntolerance)
                 .conversionMessages(Collections.emptyList())
                 .build();

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Builder
 @Data
-public class QdmToFhirConversionResult {
+public class QdmToFhirConversionResult<T extends IBaseResource> {
     List<String> conversionMessages;
-    IBaseResource fhirResource;
+    T fhirResource;
 }

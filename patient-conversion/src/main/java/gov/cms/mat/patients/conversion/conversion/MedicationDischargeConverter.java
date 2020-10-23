@@ -38,7 +38,7 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<MedicationRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
 
         MedicationRequest medicationRequest = new MedicationRequest();
@@ -90,7 +90,7 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
             conversionMessages.add(NO_STATUS_MAPPING);
         }
 
-        return QdmToFhirConversionResult.builder()
+        return QdmToFhirConversionResult.<MedicationRequest>builder()
                 .fhirResource(medicationRequest)
                 .conversionMessages(conversionMessages)
                 .build();

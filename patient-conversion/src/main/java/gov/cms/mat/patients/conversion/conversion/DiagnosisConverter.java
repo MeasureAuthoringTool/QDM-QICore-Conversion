@@ -34,7 +34,7 @@ public class DiagnosisConverter extends ConverterBase<Condition> {
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<Condition> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
 
         Condition condition = new Condition();
@@ -54,7 +54,7 @@ public class DiagnosisConverter extends ConverterBase<Condition> {
 
         processNegation(qdmDataElement, condition);
 
-        return QdmToFhirConversionResult.builder()
+        return QdmToFhirConversionResult.<Condition>builder()
                 .fhirResource(condition)
                 .conversionMessages(conversionMessages)
                 .build();

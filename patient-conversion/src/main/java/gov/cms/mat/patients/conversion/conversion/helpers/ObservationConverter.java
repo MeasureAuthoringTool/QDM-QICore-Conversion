@@ -13,9 +13,9 @@ import static gov.cms.mat.patients.conversion.conversion.ConverterBase.NO_STATUS
 
 public interface ObservationConverter extends FhirCreator, DataElementFinder {
 
-    default QdmToFhirConversionResult convertToFhirObservation(Patient fhirPatient,
-                                                               QdmDataElement qdmDataElement,
-                                                               ConverterBase<Observation> converterBase) {
+    default QdmToFhirConversionResult<Observation> convertToFhirObservation(Patient fhirPatient,
+                                                                            QdmDataElement qdmDataElement,
+                                                                            ConverterBase<Observation> converterBase) {
 
         Observation observation = new Observation();
         List<String> conversionMessages = new ArrayList<>();
@@ -44,7 +44,7 @@ public interface ObservationConverter extends FhirCreator, DataElementFinder {
 
         observation.setIssued(qdmDataElement.getAuthorDatetime());
 
-        return QdmToFhirConversionResult.builder()
+        return QdmToFhirConversionResult.<Observation>builder()
                 .fhirResource(observation)
                 .conversionMessages(conversionMessages)
                 .build();

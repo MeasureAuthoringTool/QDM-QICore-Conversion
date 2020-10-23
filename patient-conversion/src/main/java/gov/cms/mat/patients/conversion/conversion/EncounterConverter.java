@@ -41,7 +41,7 @@ public class EncounterConverter extends ConverterBase<Encounter> {
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<Encounter> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
         Encounter encounter = new Encounter();
         encounter.setId(qdmDataElement.get_id());
@@ -81,7 +81,7 @@ public class EncounterConverter extends ConverterBase<Encounter> {
             log.debug("How to handle this");
         }
 
-        return QdmToFhirConversionResult.builder()
+        return QdmToFhirConversionResult.<Encounter>builder()
                 .fhirResource(encounter)
                 .conversionMessages(conversionMessages)
                 .build();

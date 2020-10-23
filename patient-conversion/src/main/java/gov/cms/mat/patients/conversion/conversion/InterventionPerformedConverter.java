@@ -34,7 +34,7 @@ public class InterventionPerformedConverter extends ConverterBase<Procedure> {
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<Procedure> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
         Procedure procedure = new Procedure();
         procedure.setId(qdmDataElement.get_id());
@@ -74,7 +74,7 @@ public class InterventionPerformedConverter extends ConverterBase<Procedure> {
             procedure.setStatus(Procedure.ProcedureStatus.COMPLETED);
         }
 
-        return QdmToFhirConversionResult.builder()
+        return QdmToFhirConversionResult.<Procedure>builder()
                 .fhirResource(procedure)
                 .conversionMessages(conversionMessages)
                 .build();

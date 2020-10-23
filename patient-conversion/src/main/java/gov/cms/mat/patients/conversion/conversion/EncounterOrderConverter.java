@@ -31,20 +31,20 @@ public class EncounterOrderConverter extends ConverterBase<ServiceRequest> imple
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<ServiceRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8113-encounter-order
         //Constrain only to “order” (include children: original-order, reflex-order, filler-order, instance-order)
-        QdmToFhirConversionResult result = convertToFhirServiceRequest(fhirPatient,
+        QdmToFhirConversionResult<ServiceRequest> result = convertToFhirServiceRequest(fhirPatient,
                 qdmDataElement,
                 this,
                 ServiceRequest.ServiceRequestIntent.ORDER);
 
 
-        if( qdmDataElement.getFacilityLocations() != null) {
+        if (qdmDataElement.getFacilityLocations() != null) {
             log.debug("HI"); //todo can it exists
         }
 
-        if( qdmDataElement.getPriority() != null) {
+        if (qdmDataElement.getPriority() != null) {
             log.debug("HI"); //todo can it exists
         }
 

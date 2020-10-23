@@ -38,7 +38,7 @@ public class CareCoalConverter extends ConverterBase<Goal> {
     }
 
     @Override
-    QdmToFhirConversionResult convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+    QdmToFhirConversionResult<Goal> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
         List<String> conversionMessages = new ArrayList<>();
         Goal goal = new Goal();
         goal.setId(qdmDataElement.get_id());
@@ -55,7 +55,7 @@ public class CareCoalConverter extends ConverterBase<Goal> {
 
         processNegation(qdmDataElement, goal);
 
-        return QdmToFhirConversionResult.builder()
+        return QdmToFhirConversionResult.<Goal>builder()
                 .fhirResource(goal)
                 .conversionMessages(conversionMessages)
                 .build();
