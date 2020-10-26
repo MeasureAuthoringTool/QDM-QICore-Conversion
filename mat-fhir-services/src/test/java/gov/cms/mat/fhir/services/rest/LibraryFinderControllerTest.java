@@ -27,45 +27,4 @@ class LibraryFinderControllerTest {
 
     @InjectMocks
     private LibraryFinderController libraryFinderController;
-
-    @Test
-    void findLibraryXmlInvalidVersion() {
-        Assertions.assertThrows(InvalidVersionException.class, () -> {
-            libraryFinderController.findLibraryXml("qdmVersion", "name", "invalid_version", "QDM");
-        });
-
-        verifyNoInteractions(cqlLibraryDataService);
-    }
-
-    @Test
-    void findLibraryXml_XmlNotFound() {
-        CqlLibrary cqlLibrary = new CqlLibrary();
-        cqlLibrary.setCqlXml(null);
-
-        when(libraryFinderService.findLibrary(any())).thenThrow(new CqlLibraryNotFoundException("oops"));
-
-        Assertions.assertThrows(CqlLibraryNotFoundException.class, () -> {
-            libraryFinderController.findLibraryXml("qdmVersion", "name", "4.0.000", "QDM");
-        });
-
-        verify(libraryFinderService).findLibrary(any());
-    }
-
-    @Test
-    void findLibraryXml_HappyCase() {
-        String xml = "</xml>";
-
-        CqlPayload cqlPayload = CqlPayload.builder()
-                .type(CqlPayloadType.XML)
-                .data(xml)
-                .build();
-
-        when(libraryFinderService.findLibrary(any())).thenReturn(cqlPayload);
-
-        CqlPayload payload = libraryFinderController.findLibraryXml("qdmVersion", "name", "3.0.000", "QDM");
-
-        assertEquals(xml, payload.getData());
-
-        verify(libraryFinderService).findLibrary(any());
-    }
 }

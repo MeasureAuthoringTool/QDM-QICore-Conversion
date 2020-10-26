@@ -22,7 +22,7 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
         MatLibrarySourceProvider.matFhirServices = matFhirServices;
     }
 
-    public static void setQdmVersion(UsingProperties usingProperties) {
+    public static void setUsing(UsingProperties usingProperties) {
         threadLocalValue.set(usingProperties);
     }
 
@@ -38,29 +38,24 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
         if (cqlLibraries.containsKey(key)) {
             return getInputStream(cqlLibraries.get(key)); // do we need to expire cache ?????
         } else {
-            return processLibrary(libraryIdentifier, usingVersion, key);
+            return processLibrary(libraryIdentifier, key);
         }
     }
 
-    public InputStream processLibrary(VersionedIdentifier libraryIdentifier, String usingVersion, String key) {
+    public InputStream processLibrary(VersionedIdentifier libraryIdentifier, String key) {
         if (threadLocalValue.get().getLibraryType().equals("QDM")) {
-            return getInputStream(libraryIdentifier, usingVersion, key, "QDM");
+            throw new RuntimeException("QDM is not supported FHIR only.");
         } else if (threadLocalValue.get().getLibraryType().equals("FHIR")) {
-            return getInputStream(libraryIdentifier, usingVersion, key, "FHIR");
+            return getInputStream(libraryIdentifier, key);
         } else {
             log.error("Cannot process Library for key: {}", key);
             return null;
         }
     }
 
-    public InputStream getInputStream(VersionedIdentifier libraryIdentifier,
-                                      String usingVersion,
-                                      String key,
-                                      String type) {
-        String cql = matFhirServices.getMatCql(libraryIdentifier.getId(),
-                libraryIdentifier.getVersion(),
-                usingVersion,
-                type);
+    public InputStream getInputStream(VersionedIdentifier libraryIdentifier, String key) {
+        String cql = matFhirServices.getHapiFhirCql(libraryIdentifier.getId(),
+                libraryIdentifier.getVersion());
         return processCqlFromService(key, cql);
     }
 

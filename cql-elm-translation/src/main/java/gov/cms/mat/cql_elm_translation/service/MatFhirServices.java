@@ -28,25 +28,20 @@ public class MatFhirServices {
         this.matXmlConversionService = matXmlConversionService;
     }
 
-    public String getMatCql(String name, String version, String qdmVersion, String libraryType) {
-        URI uri = buildFindMatUri(name, version, qdmVersion, libraryType);
-        log.info("Getting Mat library: {} ", uri);
+    public String getHapiFhirCql(String name, String version) {
+        URI uri = buildFindMatUri(name, version);
+        log.debug("Getting Mat library: {} ", uri);
 
-        ResponseEntity<CqlPayload> responseEntity = restTemplate.getForEntity(uri, CqlPayload.class);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
 
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             if (responseEntity.hasBody()) {
-                CqlPayload cqlPayload = responseEntity.getBody();
-
-                if (cqlPayload == null || cqlPayload.getType() == null) {
+                if (responseEntity.getBody() == null) {
                     log.error("cqlPayload is INVALID (null)");
                     return null;
-                } else if (cqlPayload.getType() == CqlPayloadType.XML) {
-                    log.info("cqlPayload is XML valid");
-                    return matXmlConversionService.processCqlXml(cqlPayload.getData());
                 } else {
-                    log.info("cqlPayload is valid");
-                    return cqlPayload.getData();
+                    log.debug("cqlPayload is valid");
+                    return responseEntity.getBody();
                 }
             } else {
                 log.error("cqlPayload has no Body");
@@ -58,13 +53,11 @@ public class MatFhirServices {
         }
     }
 
-    private URI buildFindMatUri(String name, String version, String qdmVersion, String type) {
+    private URI buildFindMatUri(String name, String version) {
         return UriComponentsBuilder
-                .fromHttpUrl(baseURL + "/library/find/mat")
-                .queryParam("qdmVersion", qdmVersion)
+                .fromHttpUrl(baseURL + "/library/find/hapi")
                 .queryParam("name", name)
                 .queryParam("version", version)
-                .queryParam("type", type)
                 .build()
                 .encode()
                 .toUri();
