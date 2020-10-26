@@ -34,7 +34,7 @@ public class CqlConversionService {
     public void setUpMatLibrarySourceProvider(String cql) {
         CqlTextParser cqlTextParser = new CqlTextParser(cql);
 
-        MatLibrarySourceProvider.setQdmVersion(cqlTextParser.getUsing());
+        MatLibrarySourceProvider.setUsing(cqlTextParser.getUsing());
         MatLibrarySourceProvider.setFhirServicesService(matFhirServices);
     }
 

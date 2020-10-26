@@ -29,28 +29,6 @@ public class LibraryFinderController implements CqlVersionConverter {
         this.fhirIncludeLibraryProcessor = fhirIncludeLibraryProcessor;
     }
 
-    @Operation(summary = "Find Cql-XML in mat.",
-            description = "Find Cql-XML in mat using the request params")
-    @GetMapping("/mat")
-    public CqlPayload findLibraryXml(@RequestParam String qdmVersion,
-                                     @RequestParam String name,
-                                     @RequestParam String version,
-                                     @RequestParam String type) {
-
-        Pair<BigDecimal, Integer> pair = versionToVersionAndRevision(version);
-
-        CqlLibraryFindData data = CqlLibraryFindData.builder()
-                .qdmVersion(qdmVersion)
-                .name(name)
-                .matVersion(convertVersionToBigDecimal(version))
-                .version(version)
-                .type(type)
-                .pair(pair)
-                .build();
-
-        return libraryFinderService.findLibrary(data);
-    }
-
     @Operation(summary = "Find Cql-XML in HAPI_FHIR.",
             description = "Find Cql-XML in hapi using the request params")
     @GetMapping("/hapi")
