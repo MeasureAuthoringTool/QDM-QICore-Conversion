@@ -20,8 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.BooleanType;
+import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.Extension;
+import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Procedure;
@@ -192,5 +194,13 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
         procedure.setExtension(List.of(extensionNotDoneReason));
 
         procedure.setStatusReason(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getNegationRationale()));
+    }
+
+    void convertNegationMedicationRequest(QdmDataElement qdmDataElement, MedicationRequest medicationRequest) {
+        medicationRequest.setStatus(MedicationRequest.MedicationRequestStatus.COMPLETED);
+
+        medicationRequest.setDoNotPerform(true);
+        CodeableConcept codeableConcept = convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getNegationRationale());
+        medicationRequest.setReasonCode(List.of(codeableConcept));
     }
 }

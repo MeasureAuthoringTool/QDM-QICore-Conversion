@@ -11,13 +11,14 @@ import gov.cms.mat.patients.conversion.conversion.CareCoalConverter;
 import gov.cms.mat.patients.conversion.conversion.CommunicationPerformedConverter;
 import gov.cms.mat.patients.conversion.conversion.ConverterBase;
 import gov.cms.mat.patients.conversion.conversion.DeviceAppliedConverter;
-import gov.cms.mat.patients.conversion.conversion.DeviceOrderConverter;
 import gov.cms.mat.patients.conversion.conversion.DiagnosisConverter;
 import gov.cms.mat.patients.conversion.conversion.DiagnosticStudyOrderConverter;
 import gov.cms.mat.patients.conversion.conversion.DiagnosticStudyPerformedConverter;
 import gov.cms.mat.patients.conversion.conversion.EncounterConverter;
 import gov.cms.mat.patients.conversion.conversion.EncounterOrderConverter;
 import gov.cms.mat.patients.conversion.conversion.FamilyHistoryConverter;
+import gov.cms.mat.patients.conversion.conversion.ImmunizationAdministeredConverter;
+import gov.cms.mat.patients.conversion.conversion.ImmunizationOrderConverter;
 import gov.cms.mat.patients.conversion.conversion.InterventionOrderConverter;
 import gov.cms.mat.patients.conversion.conversion.InterventionPerformedConverter;
 import gov.cms.mat.patients.conversion.conversion.InterventionRecommendedConverter;
@@ -69,7 +70,6 @@ public class PatientService implements FhirCreator {
     private final DiagnosisConverter diagnosisConverter;
     private final DiagnosticStudyOrderConverter diagnosticStudyOrderConverter;
     private final DeviceAppliedConverter deviceAppliedConverter;
-    private final DeviceOrderConverter deviceOrderConverter;
     private final DiagnosticStudyPerformedConverter diagnosticStudyPerformedConverter;
     private final EncounterOrderConverter encounterOrderConverter;
     private final FamilyHistoryConverter familyHistoryConverter;
@@ -77,6 +77,8 @@ public class PatientService implements FhirCreator {
     private final LaboratoryTestOrderConverter laboratoryTestOrderConverter;
     private final LaboratoryTestPerformedConverter laboratoryTestPerformedConverter;
     private final MedicationActiveConverter medicationActiveConverter;
+    private final ImmunizationAdministeredConverter immunizationAdministeredConverter;
+    private final ImmunizationOrderConverter immunizationOrderConverter;
 
     private final ObjectMapper objectMapper;
     private final FhirContext fhirContext;
@@ -99,12 +101,13 @@ public class PatientService implements FhirCreator {
                           FamilyHistoryConverter familyHistoryConverter,
                           InterventionRecommendedConverter interventionRecommendedConverter,
                           LaboratoryTestOrderConverter laboratoryTestOrderConverter,
+                          ImmunizationOrderConverter immunizationOrderConverter, FhirContext fhirContext,
                           DeviceAppliedConverter deviceAppliedConverter,
-                          DeviceOrderConverter deviceOrderConverter,
                           EncounterOrderConverter encounterOrderConverter,
                           LaboratoryTestPerformedConverter laboratoryTestPerformedConverter,
-                          MedicationActiveConverter medicationActiveConverter, ObjectMapper objectMapper,
-                          FhirContext fhirContext) {
+                          MedicationActiveConverter medicationActiveConverter,
+                          ImmunizationAdministeredConverter immunizationAdministeredConverter,
+                          ObjectMapper objectMapper) {
         this.patientConverter = patientConverter;
         this.encounterConverter = encounterConverter;
         this.interventionOrderConverter = interventionOrderConverter;
@@ -123,12 +126,13 @@ public class PatientService implements FhirCreator {
         this.familyHistoryConverter = familyHistoryConverter;
         this.interventionRecommendedConverter = interventionRecommendedConverter;
         this.laboratoryTestOrderConverter = laboratoryTestOrderConverter;
+        this.immunizationOrderConverter = immunizationOrderConverter;
         this.deviceAppliedConverter = deviceAppliedConverter;
         this.medicationActiveConverter = medicationActiveConverter;
         this.fhirContext = fhirContext;
-        this.deviceOrderConverter = deviceOrderConverter;
         this.encounterOrderConverter = encounterOrderConverter;
         this.laboratoryTestPerformedConverter = laboratoryTestPerformedConverter;
+        this.immunizationAdministeredConverter = immunizationAdministeredConverter;
         this.objectMapper = objectMapper;
     }
 
@@ -212,10 +216,6 @@ public class PatientService implements FhirCreator {
                 processFuture(bonniePatient, fhirPatient, deviceAppliedConverter, futures);
             }
 
-            if (qdmTypes.contains(DeviceAppliedConverter.QDM_TYPE)) {
-                processFuture(bonniePatient, fhirPatient, deviceOrderConverter, futures);
-            }
-
             if (qdmTypes.contains(EncounterOrderConverter.QDM_TYPE)) {
                 processFuture(bonniePatient, fhirPatient, encounterOrderConverter, futures);
             }
@@ -238,6 +238,14 @@ public class PatientService implements FhirCreator {
 
             if (qdmTypes.contains(MedicationActiveConverter.QDM_TYPE)) {
                 processFuture(bonniePatient, fhirPatient, medicationActiveConverter, futures);
+            }
+
+            if (qdmTypes.contains(ImmunizationAdministeredConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, immunizationAdministeredConverter, futures);
+            }
+
+            if (qdmTypes.contains(ImmunizationOrderConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, immunizationOrderConverter, futures);
             }
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();

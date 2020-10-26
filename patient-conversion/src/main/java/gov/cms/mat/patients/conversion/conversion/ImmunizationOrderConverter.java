@@ -1,6 +1,5 @@
 package gov.cms.mat.patients.conversion.conversion;
 
-
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.mat.patients.conversion.conversion.helpers.MedicationRequestConverter;
@@ -9,17 +8,17 @@ import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
-import org.hl7.fhir.r4.model.Duration;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class MedicationDischargeConverter extends ConverterBase<MedicationRequest> implements MedicationRequestConverter {
-    public static final String QDM_TYPE = "QDM::MedicationDischarge";
+public class ImmunizationOrderConverter extends ConverterBase<MedicationRequest> implements MedicationRequestConverter {
 
-    public MedicationDischargeConverter(CodeSystemEntriesService codeSystemEntriesService,
+    public static final String QDM_TYPE = "QDM::ImmunizationOrder";
+
+    public ImmunizationOrderConverter(CodeSystemEntriesService codeSystemEntriesService,
                                         FhirContext fhirContext,
                                         ObjectMapper objectMapper,
                                         ValidationService validationService) {
@@ -33,26 +32,10 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
 
     @Override
     public QdmToFhirConversionResult<MedicationRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        QdmToFhirConversionResult<MedicationRequest> medicationRequestQdmToFhirConversionResult = convertToFhirMedicationRequest(fhirPatient,
+        return convertToFhirMedicationRequest(fhirPatient,
                 qdmDataElement,
                 this,
                 MedicationRequest.MedicationRequestIntent.ORDER);
-
-        MedicationRequest medicationRequest = medicationRequestQdmToFhirConversionResult.getFhirResource();
-
-        if (qdmDataElement.getDaysSupplied() != null) {
-            MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
-            Duration duration = new Duration();
-            duration.setValue(qdmDataElement.getDaysSupplied());
-            dispenseRequest.setExpectedSupplyDuration(duration);
-        }
-
-        if (qdmDataElement.getRefills() != null) {
-            MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
-            dispenseRequest.setNumberOfRepeatsAllowed(qdmDataElement.getRefills());
-        }
-
-        return medicationRequestQdmToFhirConversionResult;
 
     }
 
