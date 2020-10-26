@@ -8,7 +8,7 @@ QDM::AssessmentRecommended,~~
 ~~QDM::CareGoal,~~
 ~~QDM::CommunicationPerformed,~~ 
 ~~QDM::DeviceApplied,~~
-~~QDM::DeviceOrder,~~
+~~QDM::DeviceOrder,~~  --> not required 
 ~~QDM::Diagnosis,~~ 
 ~~QDM::DiagnosticStudyOrder,~~
 ~~QDM::DiagnosticStudyPerformed,~~ 
