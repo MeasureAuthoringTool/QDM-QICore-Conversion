@@ -22,7 +22,7 @@ QDM::ImmunizationOrder,
 ~~QDM::InterventionRecommended,~~ 
 ~~QDM::LaboratoryTestOrder,~~ 
 ~~QDM::LaboratoryTestPerformed,~~ 
-QDM::MedicationActive, 
+~~QDM::MedicationActive,~~ 
 QDM::MedicationAdministered, 
 ~~QDM::MedicationDischarge,~~ 
 QDM::MedicationDispensed, 
