@@ -54,6 +54,10 @@ public class MedicationAdministeredConverter extends ConverterBase<MedicationAdm
             conversionMessages.add(NO_STATUS_MAPPING);
         }
 
+        if( qdmDataElement.getRelevantDatetime() != null) {
+            medicationAdministration.setEffective(new DateTimeType(qdmDataElement.getRelevantDatetime()));
+        }
+
         return QdmToFhirConversionResult.<MedicationAdministration>builder()
                 .fhirResource(medicationAdministration)
                 .conversionMessages(conversionMessages)

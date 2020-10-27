@@ -5,7 +5,7 @@ import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirConversionResult;
 import gov.cms.mat.patients.conversion.dao.QdmDataElement;
-import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
+import gov.cms.mat.patients.conversion.exceptions.InvalidUnitException;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
@@ -51,22 +51,14 @@ public class MedicationActiveConverter extends ConverterBase<MedicationRequest> 
         medicationRequest.setMedication(convertToCodeSystems(codeSystemEntriesService, qdmDataElement.getDataElementCodes()));
 
         if (qdmDataElement.getDosage() != null) {
-            Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
-
-            Quantity quantity = new Quantity();
-            quantity.setValue(qdmDataElement.getDosage().getValue());
-            quantity.setSystem("http://unitsofmeasure.org");
-
             try {
-                quantity.setCode(convertUnitToCode(qdmDataElement.getDosage().getUnit()));
-            } catch (PatientConversionException e) {
+                Quantity quantity = convertQuantity(qdmDataElement.getDosage());
+
+                Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
+                dosage.getDoseAndRateFirstRep().setDose(quantity);
+            } catch (InvalidUnitException e) {
                 conversionMessages.add(e.getMessage());
             }
-
-            Dosage.DosageDoseAndRateComponent dosageDoseAndRateComponent = dosage.getDoseAndRateFirstRep();
-            dosageDoseAndRateComponent.setDose(quantity);
-
-
         }
 
         if (qdmDataElement.getFrequency() != null) {
@@ -76,12 +68,38 @@ public class MedicationActiveConverter extends ConverterBase<MedicationRequest> 
                 Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
                 Timing timing = dosage.getTiming();
                 timing.setCode(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getFrequency()));
-
-
             }
         }
 
-        if( qdmDataElement.getRelevantPeriod() != null) {
+        if (qdmDataElement.getRoute() != null) {
+            Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
+            dosage.setRoute(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getRoute()));
+        }
+
+
+        if (qdmDataElement.getDosage() != null) {
+            Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
+            Dosage.DosageDoseAndRateComponent dosageDoseAndRateComponent = dosage.getDoseAndRateFirstRep();
+            dosageDoseAndRateComponent.setDose(convertQuantity(qdmDataElement.getDosage()));
+        }
+
+        if (qdmDataElement.getSetting() != null) {
+            log.warn("Not mapping -> qdmDataElement.getSetting()");
+        }
+
+        if (qdmDataElement.getPrescriber() != null) {
+            log.warn("Not mapping -> qdmDataElement.getPrescriber()");
+        }
+
+        if (qdmDataElement.getDispenser() != null) {
+            log.warn("Not mapping -> qdmDataElement.getDispenser() ");
+        }
+
+        if( qdmDataElement.getSupply() != null) {
+            log.warn("Not mapping -> qdmDataElement.getSupply()");
+        }
+
+        if (qdmDataElement.getRelevantPeriod() != null) {
             Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
             Timing timing = dosage.getTiming();
             Timing.TimingRepeatComponent timingRepeatComponent = timing.getRepeat();
@@ -92,6 +110,6 @@ public class MedicationActiveConverter extends ConverterBase<MedicationRequest> 
                 .fhirResource(medicationRequest)
                 .conversionMessages(conversionMessages)
                 .build();
-
     }
 }
+

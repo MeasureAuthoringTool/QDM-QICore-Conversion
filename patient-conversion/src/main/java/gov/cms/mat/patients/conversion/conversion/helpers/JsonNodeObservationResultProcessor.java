@@ -7,12 +7,12 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
+import gov.cms.mat.patients.conversion.exceptions.InvalidUnitException;
 import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.IntegerType;
-import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.Type;
 
@@ -63,37 +63,32 @@ public class JsonNodeObservationResultProcessor implements FhirCreator, DataElem
     }
 
     Type processObjectNode(ObjectNode objectNode) {
-        Type type = processValueCodeableConcept(objectNode);
+        Type type = searchForValueCodeableConcept(objectNode);
 
         if (type == null) {
-            type = processValueQuantity(objectNode);
+            type = searchForValueQuantity(objectNode);
         }
 
         return type;
     }
 
-    private Type processValueQuantity(ObjectNode objectNode) {
+    private Type searchForValueQuantity(ObjectNode objectNode) {
         JsonNode unitNode = objectNode.get("unit");
-        JsonNode valueNode = objectNode.get("value"); // oid
+        JsonNode valueNode = objectNode.get("value");
 
         if (unitNode != null && valueNode != null) {
-            Quantity quantity = new Quantity();
-            quantity.setValue(valueNode.asInt());
-            quantity.setSystem("http://unitsofmeasure.org");
-
             try {
-                quantity.setCode(convertUnitToCode(unitNode.asText()));
-            } catch (PatientConversionException e) {
+                return createQuantity(valueNode.asInt(), unitNode.asText());
+            } catch (InvalidUnitException e) {
                 conversionMessages.add(e.getMessage());
+                return null;
             }
-
-            return quantity;
         } else {
             return null;
         }
     }
 
-    private Type processValueCodeableConcept(ObjectNode objectNode) {
+    private Type searchForValueCodeableConcept(ObjectNode objectNode) {
         JsonNode codeNode = objectNode.get("code");
         JsonNode systemNode = objectNode.get("system"); // oid
 
@@ -107,7 +102,6 @@ public class JsonNodeObservationResultProcessor implements FhirCreator, DataElem
             if (displayNode != null) {
                 qdmCodeSystem.setDisplay(displayNode.asText());
             }
-
 
             return convertToCodeableConcept(codeSystemEntriesService, qdmCodeSystem);
         } else {

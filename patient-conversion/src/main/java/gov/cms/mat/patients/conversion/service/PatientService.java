@@ -27,6 +27,7 @@ import gov.cms.mat.patients.conversion.conversion.LaboratoryTestPerformedConvert
 import gov.cms.mat.patients.conversion.conversion.MedicationActiveConverter;
 import gov.cms.mat.patients.conversion.conversion.MedicationAdministeredConverter;
 import gov.cms.mat.patients.conversion.conversion.MedicationDischargeConverter;
+import gov.cms.mat.patients.conversion.conversion.MedicationDispensedConverter;
 import gov.cms.mat.patients.conversion.conversion.PatientConverter;
 import gov.cms.mat.patients.conversion.conversion.helpers.FhirCreator;
 import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirPatientResult;
@@ -79,6 +80,7 @@ public class PatientService implements FhirCreator {
     private final LaboratoryTestPerformedConverter laboratoryTestPerformedConverter;
     private final MedicationActiveConverter medicationActiveConverter;
     private final MedicationAdministeredConverter medicationAdministeredConverter;
+    private final MedicationDispensedConverter medicationDispensedConverter;
     private final ImmunizationAdministeredConverter immunizationAdministeredConverter;
     private final ImmunizationOrderConverter immunizationOrderConverter;
 
@@ -109,7 +111,7 @@ public class PatientService implements FhirCreator {
                           LaboratoryTestPerformedConverter laboratoryTestPerformedConverter,
                           MedicationActiveConverter medicationActiveConverter,
                           MedicationAdministeredConverter medicationAdministeredConverter,
-                          ImmunizationAdministeredConverter immunizationAdministeredConverter,
+                          MedicationDispensedConverter medicationDispensedConverter, ImmunizationAdministeredConverter immunizationAdministeredConverter,
                           ObjectMapper objectMapper,
                           FhirContext fhirContext) {
         this.patientConverter = patientConverter;
@@ -134,6 +136,7 @@ public class PatientService implements FhirCreator {
         this.deviceAppliedConverter = deviceAppliedConverter;
         this.medicationActiveConverter = medicationActiveConverter;
         this.medicationAdministeredConverter = medicationAdministeredConverter;
+        this.medicationDispensedConverter = medicationDispensedConverter;
         this.fhirContext = fhirContext;
         this.encounterOrderConverter = encounterOrderConverter;
         this.laboratoryTestPerformedConverter = laboratoryTestPerformedConverter;
@@ -255,6 +258,10 @@ public class PatientService implements FhirCreator {
 
             if (qdmTypes.contains(MedicationAdministeredConverter.QDM_TYPE)) {
                 processFuture(bonniePatient, fhirPatient, medicationAdministeredConverter, futures);
+            }
+
+            if (qdmTypes.contains(MedicationDispensedConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, medicationDispensedConverter, futures);
             }
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();

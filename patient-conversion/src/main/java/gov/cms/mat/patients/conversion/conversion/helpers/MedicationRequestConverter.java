@@ -4,6 +4,7 @@ import gov.cms.mat.patients.conversion.conversion.ConverterBase;
 import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirConversionResult;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
 import gov.cms.mat.patients.conversion.dao.QdmDataElement;
+import gov.cms.mat.patients.conversion.exceptions.InvalidUnitException;
 import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.MedicationRequest;
@@ -42,19 +43,12 @@ public interface MedicationRequestConverter extends FhirCreator, DataElementFind
         }
 
         if (qdmDataElement.getSupply() != null) {
-            MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
-
-            Quantity quantity = new Quantity();
-            quantity.setValue(qdmDataElement.getSupply().getValue());
-            quantity.setSystem("http://unitsofmeasure.org");
-
             try {
-                quantity.setCode(convertUnitToCode(qdmDataElement.getSupply().getUnit()));
-            } catch (PatientConversionException e) {
+                Quantity quantity = convertQuantity(qdmDataElement.getSupply());
+                medicationRequest.getDispenseRequest().setQuantity(quantity);
+            } catch (InvalidUnitException e) {
                 conversionMessages.add(e.getMessage());
             }
-
-            dispenseRequest.setQuantity(quantity);
         }
 
         if (!converterBase.processNegation(qdmDataElement, medicationRequest)) {

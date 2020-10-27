@@ -43,6 +43,8 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
         if (qdmDataElement.getDaysSupplied() != null) {
             MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
             Duration duration = new Duration();
+            duration.setUnit("d");
+            duration.setSystem("http://unitsofmeasure.org");
             duration.setValue(qdmDataElement.getDaysSupplied());
             dispenseRequest.setExpectedSupplyDuration(duration);
         }
