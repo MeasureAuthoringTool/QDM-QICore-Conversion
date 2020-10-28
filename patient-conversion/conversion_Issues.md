@@ -23,8 +23,14 @@ QDM::ImmunizationOrder,~~
 ~~QDM::LaboratoryTestOrder,~~ 
 ~~QDM::LaboratoryTestPerformed,~~ 
 ~~QDM::MedicationActive,~~ 
-~~QDM::MedicationAdministered,~~ 
+~~QDM::MedicationAdministered,~~ ``
 ~~QDM::MedicationDischarge,~~ 
+QDM::MedicationDispensed, 
+QDM::MedicationOrder, 
+~~QDM::Participation,~~
+~~QDM::PhysicalExamPerformed,~~ 
+~~QDM::ProcedureOrder,~~ 
+~~QDM::ProcedurePerformed,~~
 ~~QDM::MedicationDispensed,~~ 
 ~~QDM::MedicationOrder,~~ 
 ~~QDM::Participation,

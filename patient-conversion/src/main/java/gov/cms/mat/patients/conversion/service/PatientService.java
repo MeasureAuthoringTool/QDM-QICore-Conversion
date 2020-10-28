@@ -28,7 +28,11 @@ import gov.cms.mat.patients.conversion.conversion.MedicationActiveConverter;
 import gov.cms.mat.patients.conversion.conversion.MedicationAdministeredConverter;
 import gov.cms.mat.patients.conversion.conversion.MedicationDischargeConverter;
 import gov.cms.mat.patients.conversion.conversion.MedicationDispensedConverter;
+import gov.cms.mat.patients.conversion.conversion.ParticipationConverter;
 import gov.cms.mat.patients.conversion.conversion.PatientConverter;
+import gov.cms.mat.patients.conversion.conversion.PhysicalExamPerformedConverter;
+import gov.cms.mat.patients.conversion.conversion.ProcedureOrderConverter;
+import gov.cms.mat.patients.conversion.conversion.ProcedurePerformedConverter;
 import gov.cms.mat.patients.conversion.conversion.helpers.FhirCreator;
 import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirPatientResult;
 import gov.cms.mat.patients.conversion.dao.BonniePatient;
@@ -83,6 +87,10 @@ public class PatientService implements FhirCreator {
     private final MedicationDispensedConverter medicationDispensedConverter;
     private final ImmunizationAdministeredConverter immunizationAdministeredConverter;
     private final ImmunizationOrderConverter immunizationOrderConverter;
+    private final ParticipationConverter participationConverter;
+    private final PhysicalExamPerformedConverter physicalExamPerformedConverter;
+    private final ProcedureOrderConverter procedureOrderConverter;
+    private final ProcedurePerformedConverter procedurePerformedConverter;
 
     private final ObjectMapper objectMapper;
     private final FhirContext fhirContext;
@@ -111,8 +119,12 @@ public class PatientService implements FhirCreator {
                           LaboratoryTestPerformedConverter laboratoryTestPerformedConverter,
                           MedicationActiveConverter medicationActiveConverter,
                           MedicationAdministeredConverter medicationAdministeredConverter,
-                          MedicationDispensedConverter medicationDispensedConverter, ImmunizationAdministeredConverter immunizationAdministeredConverter,
-                          ObjectMapper objectMapper,
+                          MedicationDispensedConverter medicationDispensedConverter,
+                          ImmunizationAdministeredConverter immunizationAdministeredConverter,
+                          ParticipationConverter participationConverter,
+                          PhysicalExamPerformedConverter physicalExamPerformedConverter,
+                          ProcedureOrderConverter procedureOrderConverter,
+                          ProcedurePerformedConverter procedurePerformedConverter, ObjectMapper objectMapper,
                           FhirContext fhirContext) {
         this.patientConverter = patientConverter;
         this.encounterConverter = encounterConverter;
@@ -136,11 +148,15 @@ public class PatientService implements FhirCreator {
         this.deviceAppliedConverter = deviceAppliedConverter;
         this.medicationActiveConverter = medicationActiveConverter;
         this.medicationAdministeredConverter = medicationAdministeredConverter;
-        this.medicationDispensedConverter = medicationDispensedConverter;
+        this.procedurePerformedConverter = procedurePerformedConverter;
         this.fhirContext = fhirContext;
         this.encounterOrderConverter = encounterOrderConverter;
         this.laboratoryTestPerformedConverter = laboratoryTestPerformedConverter;
         this.immunizationAdministeredConverter = immunizationAdministeredConverter;
+        this.medicationDispensedConverter = medicationDispensedConverter;
+        this.participationConverter = participationConverter;
+        this.physicalExamPerformedConverter = physicalExamPerformedConverter;
+        this.procedureOrderConverter = procedureOrderConverter;
         this.objectMapper = objectMapper;
     }
 
@@ -262,6 +278,22 @@ public class PatientService implements FhirCreator {
 
             if (qdmTypes.contains(MedicationDispensedConverter.QDM_TYPE)) {
                 processFuture(bonniePatient, fhirPatient, medicationDispensedConverter, futures);
+            }
+
+            if (qdmTypes.contains(ParticipationConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, participationConverter, futures);
+            }
+
+            if (qdmTypes.contains(PhysicalExamPerformedConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, physicalExamPerformedConverter, futures);
+            }
+
+            if (qdmTypes.contains(ProcedureOrderConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, procedureOrderConverter, futures);
+            }
+
+            if (qdmTypes.contains(ProcedurePerformedConverter.QDM_TYPE)) {
+                processFuture(bonniePatient, fhirPatient, procedurePerformedConverter, futures);
             }
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();

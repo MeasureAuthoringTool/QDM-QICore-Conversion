@@ -1,6 +1,5 @@
 package gov.cms.mat.patients.conversion.conversion;
 
-
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.mat.patients.conversion.conversion.helpers.ProcedureConverter;
@@ -15,10 +14,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class InterventionPerformedConverter extends ConverterBase<Procedure> implements ProcedureConverter {
-    public static final String QDM_TYPE = "QDM::InterventionPerformed";
+public class ProcedurePerformedConverter extends ConverterBase<Procedure> implements ProcedureConverter {
 
-    public InterventionPerformedConverter(CodeSystemEntriesService codeSystemEntriesService,
+    public static final String QDM_TYPE = "QDM::ProcedurePerformed";
+
+    public ProcedurePerformedConverter(CodeSystemEntriesService codeSystemEntriesService,
                                           FhirContext fhirContext,
                                           ObjectMapper objectMapper,
                                           ValidationService validationService) {

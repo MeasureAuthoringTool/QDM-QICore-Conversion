@@ -34,7 +34,6 @@ public interface MedicationRequestConverter extends FhirCreator, DataElementFind
         medicationRequest.setSubject(createReference(fhirPatient));
         medicationRequest.setMedication(getMedicationCodeableConcept(qdmDataElement.getDataElementCodes(), converterBase));
         medicationRequest.setAuthoredOn(qdmDataElement.getAuthorDatetime());
-
         medicationRequest.setIntent(intent);
 
         if (qdmDataElement.getDosage() != null) {
