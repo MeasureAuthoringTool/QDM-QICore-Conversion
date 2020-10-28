@@ -30,7 +30,7 @@ QDM::MedicationOrder,
 ~~QDM::Participation,~~
 ~~QDM::PhysicalExamPerformed,~~ 
 ~~QDM::ProcedureOrder,~~ 
-QDM::ProcedurePerformed,
+~~QDM::ProcedurePerformed,~~
 QDM::SubstanceAdministered, 
 QDM::SubstanceOrder, 
 QDM::SubstanceRecommended, 

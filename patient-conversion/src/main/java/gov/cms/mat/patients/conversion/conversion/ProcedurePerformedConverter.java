@@ -32,7 +32,6 @@ public class ProcedurePerformedConverter extends ConverterBase<Procedure> implem
 
     @Override
     public QdmToFhirConversionResult<Procedure> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        //Todo test data available
         return convertToFhirProcedure(fhirPatient, qdmDataElement, this);
     }
 
