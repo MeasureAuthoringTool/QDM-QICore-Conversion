@@ -35,12 +35,12 @@ QDM::MedicationOrder,
 ~~QDM::MedicationOrder,~~ 
 ~~QDM::Participation,
 QDM::PhysicalExamPerformed,~~ 
-QDM::ProcedureOrder, 
-QDM::ProcedurePerformed,
+~~QDM::ProcedureOrder,~~ 
+~~QDM::ProcedurePerformed,~~
 QDM::SubstanceAdministered, 
 QDM::SubstanceOrder, 
 QDM::SubstanceRecommended, 
-QDM::Symptom
+~~QDM::Symptom~~
 ]
 
  [QDM::PatientCharacteristic, 
