@@ -51,9 +51,9 @@ public class FamilyHistoryConverter extends ConverterBase<FamilyMemberHistory> {
 
         if (qdmDataElement.getRelationship() != null) {
             //https://terminology.hl7.org/1.0.0/CodeSystem-v3-RoleCode.html
-            // we only have AUNT as an example, we could convert if new the input set and no system
+            // we only have AUNT as an example, we could convert if knew the input set and no system
             if (qdmDataElement.getRelationship().getSystem() == null) {
-                conversionMessages.add("Relation for code " + qdmDataElement.getRelationship().getCode() + " has no system");
+                conversionMessages.add("RelationShip for code " + qdmDataElement.getRelationship().getCode() + " has no system");
             } else {
                 familyMemberHistory.setRelationship(convertToCodeableConcept(getCodeSystemEntriesService(), qdmDataElement.getRelationship()));
             }
@@ -66,6 +66,4 @@ public class FamilyHistoryConverter extends ConverterBase<FamilyMemberHistory> {
                 .fhirResource(familyMemberHistory)
                 .conversionMessages(conversionMessages).build();
     }
-
-
 }

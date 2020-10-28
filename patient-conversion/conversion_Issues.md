@@ -25,10 +25,10 @@ QDM::ImmunizationOrder,~~
 ~~QDM::MedicationActive,~~ 
 ~~QDM::MedicationAdministered,~~ 
 ~~QDM::MedicationDischarge,~~ 
-QDM::MedicationDispensed, 
-QDM::MedicationOrder, 
-QDM::Participation,
-QDM::PhysicalExamPerformed, 
+~~QDM::MedicationDispensed,~~ 
+~~QDM::MedicationOrder,~~ 
+~~QDM::Participation,
+QDM::PhysicalExamPerformed,~~ 
 QDM::ProcedureOrder, 
 QDM::ProcedurePerformed,
 QDM::SubstanceAdministered, 
@@ -46,6 +46,8 @@ QDM::Symptom
    ~~QDM::PatientCharacteristicSex~~ ]
 
 ---
+**FIXED - uses json node and dynamically figure out the type.**
+
 cqm_patients id: 5d654a171c76ba7ea32ea080 has a bad entry in fhirDataElements[2] array concerning components[0]:
 
 It has the result as a string value 43510-06-10T08:00:00+00:00
@@ -64,6 +66,7 @@ While the vast majority of the other ones have it mapped as a code E.G. id: 5d65
                 ],
 ```
 ---
+**FIXED - uses json node and dynamically figure out the type.**
 
 cqm_patients id: 5d654a171c76ba7ea32ea080 has a bad entry in fhirDataElements[0] array concerning result it is mapped as 
 int32 69.
@@ -102,6 +105,7 @@ While the vast majority of the other ones have it mapped as a code E.G. id: 5d65
 ```
 
 ---
+**FIXED we ignore .**
 
 cqm_patients id: 5d65454c1c76ba7ea32d9874 qdmpatient.extenddata maps _**correctly_** with example below
 
@@ -120,6 +124,7 @@ cqm_patients id: 5d65454c1c76ba7ea32d9874 qdmpatient.extenddata maps _**correctl
        ],
 ```
 ---
+**FIXED we ignore .**
 
 Where patient id: 5d65454c1c76ba7ea62d9874 has it mapped as 2d array seen once where it went 7 layers deep for no 
 apparent reason:
@@ -141,6 +146,8 @@ apparent reason:
 ```
 
 ---
+
+**FIXED we use jsonNode and echo back the output exactly like received.**
 
 Where patient id: 5d65454e1c76ba7ea32d98f2 it has the OBSERV properties in expectedValues mapped as int and int array
 
@@ -278,6 +285,8 @@ Does **Patient Characteristic: Medicare ID** indicate the patient is on medicair
 ```
 ---
 
+https://trifolia-fhir.lantanagroup.com/igs/lantana_hapi_r4/vrdr/Observation-9676ae27-2a89-4295-913c-0d6847300a3a.json.html
+
 Does **Patient Characteristic: Education** How to map?
 
 - Patient Characteristic: College Education
@@ -348,3 +357,4 @@ Do we need to include.****
      
 
 ```
+~~~~

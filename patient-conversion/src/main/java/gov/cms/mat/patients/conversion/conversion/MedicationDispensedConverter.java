@@ -69,13 +69,29 @@ public class MedicationDispensedConverter extends ConverterBase<MedicationDispen
             }
         }
 
+        if (qdmDataElement.getSetting() != null) {
+            log.warn("Not mapping -> qdmDataElement.getSetting()");
+        }
+
+        if (qdmDataElement.getPrescriber() != null) {
+            log.warn("Not mapping -> qdmDataElement.getPrescriber()");
+        }
+
+        if (qdmDataElement.getDispenser() != null) {
+            log.warn("Not mapping -> qdmDataElement.getDispenser() ");
+        }
+
+        if( qdmDataElement.getSupply() != null) {
+            log.warn("Not mapping -> qdmDataElement.getSupply()");
+        }
+
 
         if (!processNegation(qdmDataElement, medicationDispense)) {
             medicationDispense.setStatus("unknown");
             conversionMessages.add(NO_STATUS_MAPPING);
         }
 
-       // Coverage
+
 
         return QdmToFhirConversionResult.<MedicationDispense>builder()
                 .fhirResource(medicationDispense)

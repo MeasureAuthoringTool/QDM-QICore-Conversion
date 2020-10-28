@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class MedicationActiveConverter extends ConverterBase<MedicationRequest> implements MedicationRequestConverter {
-    public static final String QDM_TYPE = "QDM::MedicationActive";
+public class MedicationOrderConverter extends ConverterBase<MedicationRequest> implements MedicationRequestConverter {
+    public static final String QDM_TYPE = "QDM::MedicationOrder";
 
-    public MedicationActiveConverter(CodeSystemEntriesService codeSystemEntriesService,
-                                     FhirContext fhirContext,
-                                     ObjectMapper objectMapper,
-                                     ValidationService validationService) {
+    public MedicationOrderConverter(CodeSystemEntriesService codeSystemEntriesService,
+                                    FhirContext fhirContext,
+                                    ObjectMapper objectMapper,
+                                    ValidationService validationService) {
         super(codeSystemEntriesService, fhirContext, objectMapper, validationService);
     }
 
