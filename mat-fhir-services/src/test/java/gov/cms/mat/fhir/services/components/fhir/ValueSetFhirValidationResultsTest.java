@@ -1,7 +1,7 @@
 package gov.cms.mat.fhir.services.components.fhir;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionResultsService;
-import gov.cms.mat.fhir.services.components.mongo.ThreadSessionKey;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.ValueSetValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -48,54 +48,5 @@ class ValueSetFhirValidationResultsTest {
 
         verifyNoInteractions(hapiFhirServer);
     }
-
-    @Test
-    void generate_WithValueSet_NoConversionResults() {
-//        ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService, conversionKey.getStart());
-//
-//        ConversionResult conversionResult = new ConversionResult();
-//
-//       // when(conversionResultsService.findConversionResult(conversionKey)).thenReturn(conversionResult);
-//
-//        // when(hapiFhirServer.getCtx()).thenReturn(FhirContext.forR4());
-//
-//        ValueSet valueSet = new ValueSet();
-//        valueSet.setId(MEASURE_ID);
-//
-//        FhirValueSetResourceValidationResult fhirValueSetResourceValidationResult =
-//                valueSetFhirValidationResults.generate(Collections.singletonList(valueSet), XmlSource.SIMPLE, MEASURE_ID);
-//
-//        assertEquals(XmlSource.SIMPLE, fhirValueSetResourceValidationResult.getXmlSource());
-//        assertTrue(fhirValueSetResourceValidationResult.getValueSetConversionResults().isEmpty());
-//        assertNull(fhirValueSetResourceValidationResult.getValueSetConversionType());
-
-        //verify(hapiFhirServer).getCtx();
-        //  verify(conversionResultsService).findConversionResult(conversionKey);
-    }
-
-    @Test
-    void generate_WithValueSet_HappyPath() {
-//        ConversionReporter.setInThreadLocal(MEASURE_ID, conversionResultsService, conversionKey.getStart());
-//
-//        ConversionResult conversionResult = new ConversionResult();
-//        ValueSetConversionResults valueSetConversionResults = new ValueSetConversionResults();
-//
-//        when(conversionResultsService.findConversionResult(conversionKey)).thenReturn(conversionResult);
-//
-//        // when(hapiFhirServer.getCtx()).thenReturn(FhirContext.forR4());
-//
-//        ValueSet valueSet = new ValueSet();
-//        valueSet.setId(MEASURE_ID);
-//
-//        FhirValueSetResourceValidationResult fhirValueSetResourceValidationResult =
-//                valueSetFhirValidationResults.generate(Collections.singletonList(valueSet), XmlSource.SIMPLE, MEASURE_ID);
-//
-//        assertEquals(XmlSource.SIMPLE, fhirValueSetResourceValidationResult.getXmlSource());
-//        //   assertEquals(ConversionType.VALIDATION, fhirValueSetResourceValidationResult.getValueSetConversionType());
-//
-//        // verify(hapiFhirServer).getCtx();
-//        verify(conversionResultsService).findConversionResult(conversionKey);
-    }
-
 
 }

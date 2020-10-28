@@ -24,6 +24,14 @@ public class CQLCodeSystem implements IsSerializable {
 	/** The value set OID. */
 	private String valueSetOID;
 
+	private transient int lineNumber;
+
+	/**
+	 * stores off the version uri. example:
+	 * codesystem "SNOMEDCT:2017-09": 'http://snomed.info/sct/731000124108' version 'http://snomed.info/sct/731000124108/version/201709'
+	 */
+	private String versionUri;
+
 	/**
 	 * Gets the id.
 	 *
@@ -104,5 +112,19 @@ public class CQLCodeSystem implements IsSerializable {
 		this.valueSetOID = valueSetOID;
 	}
 
+	public void setVersionUri(String versionUri) {
+		this.versionUri = versionUri;
+	}
 
+	public String getVersionUri() {
+		return versionUri;
+	}
+
+	public int getLineNumber() {
+		return lineNumber;
+	}
+
+	public void setLineNumber(int lineNumber) {
+		this.lineNumber = lineNumber;
+	}
 }

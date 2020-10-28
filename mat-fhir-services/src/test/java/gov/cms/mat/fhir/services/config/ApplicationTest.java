@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ActiveProfiles("test")
 class ApplicationTest {
     @Autowired
-    LibraryConversionFileConfig libraryConversionFileConfig;
+    ConversionLibraryLookup conversionLibraryLookup;
 
     @Test
     void contextLoads() {
-        assertFalse(libraryConversionFileConfig.getOrder().isEmpty());
+        assertFalse(conversionLibraryLookup.getMap().isEmpty());
     }
 }

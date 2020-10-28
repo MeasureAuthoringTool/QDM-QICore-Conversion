@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.rest.dto;
 
 import lombok.Data;
+import org.springframework.data.annotation.Transient;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,7 +17,9 @@ public class CqlConversionResult {
     List<String> errors = new ArrayList<>();
 
     /* QDM */
+    @Transient
     String cql;
+    @Transient
     String elm;
 
     /* results added automatically by cql-elm-translation service when translating qdm elm */
@@ -25,7 +28,9 @@ public class CqlConversionResult {
     /* results we add for exceptions cql-elm-translation service misses for some reason when translating qdm elm*/
     Set<MatCqlConversionException> matCqlConversionErrors = new HashSet<>();
 
+    @Transient
     String fhirCql;
+    @Transient
     String fhirElm;
 
     /* results added automatically by cql-elm-translation service when translating fhir elm */

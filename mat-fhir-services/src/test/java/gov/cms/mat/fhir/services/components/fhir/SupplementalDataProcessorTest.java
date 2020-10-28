@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.fhir;
 
 import gov.cms.mat.fhir.services.components.mat.MatXmlConverter;
+import gov.cms.mat.fhir.services.translate.processor.SupplementalDataProcessor;
 import mat.model.cql.CQLDefinition;
 import mat.model.cql.CQLDefinitionsWrapper;
 import org.hl7.fhir.r4.model.Measure;
@@ -32,6 +33,9 @@ class SupplementalDataProcessorTest {
     void processXml_NoSupplementalDataFound() {
         when(matXmlConverter.toCQLDefinitionsSupplementalData(XML)).thenReturn(new CQLDefinitionsWrapper());
 
+        CQLDefinitionsWrapper riskAdjs = new CQLDefinitionsWrapper();
+        when(matXmlConverter.toCQLDefinitionsRiskAdjustments(XML)).thenReturn(riskAdjs);
+
         assertTrue(supplementalDataProcessor.processXml(XML).isEmpty());
     }
 
@@ -45,6 +49,9 @@ class SupplementalDataProcessorTest {
         cqlDefinitionsWrapper.setCqlDefinitions(Collections.singletonList(cqlDefinition));
 
         when(matXmlConverter.toCQLDefinitionsSupplementalData(XML)).thenReturn(cqlDefinitionsWrapper);
+
+        CQLDefinitionsWrapper riskAdjs = new CQLDefinitionsWrapper();
+        when(matXmlConverter.toCQLDefinitionsRiskAdjustments(XML)).thenReturn(riskAdjs);
 
         List<Measure.MeasureSupplementalDataComponent> list = supplementalDataProcessor.processXml(XML);
         assertEquals(1, list.size());

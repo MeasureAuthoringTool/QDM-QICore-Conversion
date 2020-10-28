@@ -1,6 +1,10 @@
 package gov.cms.mat.fhir.services.components.mat;
 
+import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measurepackage.MeasurePackageDetail;
@@ -10,7 +14,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+
 
 class MatXmlMarshallerTest implements ResourceFileUtil {
     private MatXmlMarshaller matXmlMarshaller;
@@ -18,6 +26,17 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
     @BeforeEach
     void setUp() {
         matXmlMarshaller = new MatXmlMarshaller();
+
+        ConversionResultsService conversionResultsService = mock(ConversionResultsService.class);
+
+        ConversionReporter.setInThreadLocal("1",
+                "2",
+                conversionResultsService,
+                Instant.now(),
+                ConversionType.CONVERSION,
+                XmlSource.SIMPLE,
+                true,
+                null);
     }
 
     @Test

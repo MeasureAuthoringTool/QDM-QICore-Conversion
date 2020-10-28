@@ -1,9 +1,11 @@
+server:
+  port: 9080
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/${MAT_DB:mat}?serverTimezone=UTC&max_allowed_packet=16777216
-    username: ${MAT_DB_USER:mat}
-    password: ${MAT_DB_PASS:mat}
+    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
+    username: root
+    password: password
   jpa:
     hibernate.ddl-auto: none
     hibernate:
@@ -12,38 +14,31 @@ spring:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: false
-    show-sql: false
-  data:
-    mongodb:
-      database: mat_conversion_results
-      uri: mongodb://localhost
+    show-sql: true
 
-logging:
-  level:
-    root: WARN
-    gov.cms.mat: INFO
-    org.hl7.fhir.r4.hapi.ctx: WARN
-    org.exolab: WARN
-    org.springframework.data.mongodb.core.MongoTemplate: WARN
-  file:
-    name: mat-fhir-services.log
+mat-api-key: ${MAT_API_KEY:DISABLED}
 
 fhir:
   r4:
-    baseurl: http://localhost:6060/hapi-fhir-jpaserver/fhir/
+    baseurl: http://localhost:6060/fhir/
+    public-url: http://localhost:6060/fhir/
 
-qdmqicore:
-  conversion:
-    baseurl: http://localhost:9090
+mapping:
+  services:
+    baseUrl: ${MAPPING_SERVICES_URL:http://localhost:9090}
 
 cql:
   conversion:
-    baseurl: http://localhost:7070
-
+    baseurl: ${CQL_CONVERSION_URL:http://localhost:7070}
 
 self:
   health:
-    baseurl: http://localhost:${server.port}
+    baseurl: ${FHIR_SERVICES_URL:http://localhost:9080}
 
+json:
+  data:
+    url: https://spreadsheets.google.com/feeds/list/1_heoWR09X3UnyEvyyHLzVXT_D1Hhdt3OPztpgr1hW_k/od6/public/values?alt=json
+
+swagger-server:

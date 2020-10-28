@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
+import gov.cms.mat.cql.dto.CqlConversionPayload;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -35,13 +37,19 @@ class CqlConversionClientTest {
 
     @Test
     void getJson() {
-        when(restTemplate.exchange(any(RequestEntity.class), eq(String.class)))
-                .thenReturn(new ResponseEntity<>(JSON, HttpStatus.ACCEPTED));
+        CqlConversionPayload payload = CqlConversionPayload.builder()
+                .json(JSON)
+                .xml(XML)
+                .build();
 
-        ResponseEntity<String> entity = cqlConversionClient.getJson("CQL");
-        assertEquals(JSON, entity.getBody());
+        when(restTemplate.exchange(any(RequestEntity.class), eq(CqlConversionPayload.class)))
+                .thenReturn(new ResponseEntity<>(payload, HttpStatus.ACCEPTED));
+
+        ResponseEntity<CqlConversionPayload> entity = cqlConversionClient.getJson("CQL", true);
+        assertEquals(JSON, entity.getBody().getJson());
+        assertEquals(XML, entity.getBody().getXml());
         assertEquals(HttpStatus.ACCEPTED, entity.getStatusCode());
-        verify(restTemplate).exchange(any(RequestEntity.class), eq(String.class));
+        verify(restTemplate).exchange(any(RequestEntity.class), eq(CqlConversionPayload.class));
     }
 
     @Test
@@ -49,7 +57,7 @@ class CqlConversionClientTest {
         when(restTemplate.exchange(any(RequestEntity.class), eq(String.class)))
                 .thenReturn(new ResponseEntity<>(JSON, HttpStatus.ACCEPTED));
 
-        ResponseEntity<String> entity = cqlConversionClient.getCql(XML);
+        ResponseEntity<String> entity = cqlConversionClient.getCql(XML, true);
         assertEquals(JSON, entity.getBody());
         assertEquals(HttpStatus.ACCEPTED, entity.getStatusCode());
         verify(restTemplate).exchange(any(RequestEntity.class), eq(String.class));

@@ -1,11 +1,12 @@
 package gov.cms.mat.fhir.services.service;
 
+import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.rest.dto.CqlConversionError;
 import gov.cms.mat.fhir.rest.dto.MatCqlConversionException;
 import gov.cms.mat.fhir.services.components.cql.CqlConversionClient;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.service.support.ElmErrorExtractor;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.CQL_LIBRARY_TRANSLATION_FAILED;
@@ -38,23 +40,20 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         this.cqlConversionClient = cqlConversionClient;
     }
 
-    private boolean process(String id) {
+    private boolean process(String id, boolean showWarnings) {
         log.info("CQLLibraryTranslationService processing measure id: {}", id);
-        List<CqlLibrary> cqlLibraries = cqlLibraryRepository.getCqlLibraryByMeasureId(id);
+        CqlLibrary cqlLib = cqlLibraryRepository.getCqlLibraryByMeasureId(id);
 
-        if (cqlLibraries.isEmpty()) {
+        if (cqlLib == null) {
             return true;
         } else {
-            return processLibs(id, cqlLibraries);
+            return processMeasureLib(cqlLib, showWarnings);
         }
     }
 
-    private boolean processLibs(String id, List<CqlLibrary> cqlLibraries) {
-        log.info("CQLLibraryTranslationService processing measure id: {}", id);
-
-
+    private boolean processMeasureLib(CqlLibrary measureLib, boolean showWarnings) {
         AtomicBoolean atomicBoolean = new AtomicBoolean(Boolean.TRUE);
-        cqlLibraries.forEach(c -> processCqlLibrary(c, atomicBoolean));
+        processCqlLibrary(measureLib, atomicBoolean, showWarnings);
 
         if (!atomicBoolean.get()) {
             ConversionReporter.setTerminalMessage("CQLLibraryTranslationService failed",
@@ -62,23 +61,39 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         }
 
         return atomicBoolean.get();
-
     }
 
-    private void processCqlLibrary(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean) {
-        String cql = convertMatXmlToCql(cqlLibrary.getCqlXml(), cqlLibrary.getId());
+    private void processCqlLibrary(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean, boolean showWarnings) {
+        String cql = convertMatXmlToCql(cqlLibrary.getCqlXml(), cqlLibrary.getId(), showWarnings);
         ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
 
-        String json = convertToJson(cqlLibrary, atomicBoolean, cql, ConversionType.QDM);
+        CqlConversionPayload json = convertToJson(cqlLibrary, atomicBoolean, cql, ConversionType.QDM, showWarnings);
 
-        String cleanedJson = cleanJsonFromMatExceptions(json);
-        ConversionReporter.setElm(cleanedJson, cqlLibrary.getId());
+        String cleanedJson = cleanJsonFromMatExceptions(json.getJson());
+        ConversionReporter.setElmJson(cleanedJson, cqlLibrary.getId());
     }
 
-    public String convertToJson(CqlLibrary cqlLibrary, AtomicBoolean atomicBoolean, String cql, ConversionType type) {
-        String json = convertCqlToJson(cql);
+    public CqlConversionPayload convertToJson(CqlLibrary cqlLibrary,
+                                              AtomicBoolean atomicBoolean,
+                                              String cql,
+                                              ConversionType type,
+                                              boolean showWarnings) {
+        return convertCqlToJson(cqlLibrary == null ? null : cqlLibrary.getId(),
+                atomicBoolean,
+                cql,
+                type,
+                showWarnings);
 
-        boolean success = processJsonForError(type, json, cqlLibrary == null ? null : cqlLibrary.getId());
+    }
+
+    public CqlConversionPayload convertCqlToJson(String cqlLibraryId,
+                                                 AtomicBoolean atomicBoolean,
+                                                 String cql,
+                                                 ConversionType type,
+                                                 boolean showWarnings) {
+        CqlConversionPayload json = convertCqlToJson(cql, showWarnings);
+
+        boolean success = processJsonForError(type, json.getJson(), cqlLibraryId);
 
         if (!success) {
             atomicBoolean.set(Boolean.FALSE);
@@ -87,8 +102,8 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         return json;
     }
 
-    public String convertToJsonFromFhirCql(AtomicBoolean atomicBoolean, String cql) {
-        return convertToJson(null, atomicBoolean, cql, ConversionType.FHIR);
+    public CqlConversionPayload convertToJsonFromFhirCql(AtomicBoolean atomicBoolean, String cql, boolean showWarnings) {
+        return convertToJson(null, atomicBoolean, cql, ConversionType.FHIR, showWarnings);
     }
 
     public boolean processJsonForError(ConversionType conversionType, String json, String matLibraryId) {
@@ -96,6 +111,8 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
 
         List<CqlConversionError> cqlConversionErrors = getCqlConversionErrors(matLibraryId, extractor);
         List<MatCqlConversionException> matCqlConversionExceptions = extractor.parseForErrorExceptions();
+        Map<String, List<CqlConversionError>> map = extractor.parseForExternalErrors();
+        ConversionReporter.setExternalLibraryErrors(map, matLibraryId);
 
         if (cqlConversionErrors.isEmpty() && matCqlConversionExceptions.isEmpty()) {
             processCqlConversionResultSuccess(matLibraryId);
@@ -151,7 +168,7 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
 
     }
 
-    public String convertMatXmlToCql(String cqlXml, String matLibraryId) {
+    public String convertMatXmlToCql(String cqlXml, String matLibraryId, boolean showWarnings) {
         if (StringUtils.isEmpty(cqlXml)) {
             String message = "CqlXml is missing";
 
@@ -161,13 +178,13 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
 
             throw new CqlConversionException(message);
         } else {
-            return convertToCql(cqlXml);
+            return convertToCql(cqlXml, showWarnings);
         }
     }
 
-    public String convertToCql(String xml) {
+    public String convertToCql(String xml, boolean showWarnings) {
         try {
-            ResponseEntity<String> entity = cqlConversionClient.getCql(xml);
+            ResponseEntity<String> entity = cqlConversionClient.getCql(xml, showWarnings);
             return entity.getBody();
         } catch (Exception e) {
             log.warn("Error convertToCql", e);
@@ -176,9 +193,9 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         }
     }
 
-    private String convertCqlToJson(String cql) {
+    public CqlConversionPayload convertCqlToJson(String cql, boolean showWarnings) {
         try {
-            ResponseEntity<String> entity = cqlConversionClient.getJson(cql);
+            ResponseEntity<CqlConversionPayload> entity = cqlConversionClient.getJson(cql, showWarnings);
             return entity.getBody();
         } catch (Exception e) {
             log.warn("Error convertCqlToJson", e);
@@ -187,13 +204,13 @@ public class CQLLibraryTranslationService implements ErrorSeverityChecker, Libra
         }
     }
 
-    public boolean processOne(String measureId) {
+    public boolean processOne(String measureId, boolean showWarnings) {
         Measure measure = measureDataService.findOneValid(measureId);
-        return process(measure.getId());
+        return process(measure.getId(), showWarnings);
     }
 
     public boolean validate(OrchestrationProperties properties) {
-        return processLibs(properties.getMeasureId(), properties.getCqlLibraries());
+        return processMeasureLib(properties.getMeasureLib(), properties.isShowWarnings());
     }
 
     public enum ConversionType {QDM, FHIR}

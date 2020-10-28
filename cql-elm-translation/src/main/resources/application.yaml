@@ -14,6 +14,22 @@ management:
       exposure:
         include: "*"
 
+mat-api-key: ${MAT_API_KEY:DISABLED}
+
 info:
   app:
     name: Cql Elm Translation Services
+
+fhir:
+  conversion:
+    baseurl: ${FHIR_SERVICES_URL}
+
+springdoc:
+  swagger-ui:
+    path: /swagger
+
+logging:
+  level:
+    root: ${LOG_LEVEL:WARN}
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"

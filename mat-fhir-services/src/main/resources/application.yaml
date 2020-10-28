@@ -1,38 +1,40 @@
 server:
   port: 9080
 
-
 spring:
   profiles:
     active: local
   jpa:
     open-in-view: false
 
-vsac-client:
-  server: https://vsac.nlm.nih.gov/vsac/ws/Ticket
-  service: http://umlsks.nlm.nih.gov
-  retrieve-multi-oids-service: https://vsac.nlm.nih.gov/vsac/svs/RetrieveMultipleValueSets?
-  profile-service: https://vsac.nlm.nih.gov/vsac/profiles
-  version-service: https://vsac.nlm.nih.gov/vsac/oid/
-  vsac-server-drc-url: https://vsac.nlm.nih.gov/vsac
-  use-cache: on
-  cache-directory: /opt/vsac/cache
+vsac:
+  ticket-url-base: ${VSAC_TICKET_URL_BASE:https://utslogin.nlm.nih.gov/cas/v1}
+  url-base: ${VSAC_URL_BASE:https://vsac.nlm.nih.gov}
 
-library-files:
-  order:
-    - FHIRHelpers_FHIR4-4.0.0.cql
-    - SupplementalDataElements_FHIR4-1.0.0.cql
-    - AdultOutpatientEncounters_FHIR4-1.1.000.cql
-    - MATGlobalCommonFunctions_FHIR4-4.0.000.cql
-    - AdvancedIllnessandFrailtyExclusion_FHIR4-4.0.000.cql
-    - TJCOverall_FHIR4-4.0.000.cql
-    - VTEICU_FHIR4-3.1.000.cql
-    - Hospice_FHIR4-1.0.000.cql
+mat.codesystem.valueset.simultaneous.validations: 5
+mat.qdm.default.expansion.id: Most Recent Code System Versions in VSAC
 
+conversion-lib-lookup-4-1:
+  map:
+    FHIRHelpers: 4.0.001
+    AdultOutpatientEncounters: 2.0.000
+    AdvancedIllnessandFrailtyExclusion: 5.0.000
+    Hospice: 2.0.000
+    MATGlobalCommonFunctions: 5.0.000
+    SupplementalDataElements: 2.0.000
+    TJCOverall: 5.0.000
+    VTEICU: 4.0.000
+
+logging:
+  level:
+    root: ${LOG_LEVEL:WARN}
+    org.exolab: WARN
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
 
 measures:
   allowed:
-    versions: v5.5,v5.6,v5.7,v5.8,v5.9,v6.0
+    greater-than: 5.4
 
 management:
   endpoint:
@@ -46,3 +48,51 @@ management:
 info:
   app:
     name: Mat Fhir Services
+
+validation-pool-timeout: 31
+valueset-validation-pool-timeout: 30
+code-system-validation-pool-timeout: 30
+
+mat-fhir-base: http://ecqi.healthit.gov/ecqms
+
+mat-fhir:
+  thread-pool-configurations:
+    - name: threadPoolValidation
+      core-pool-size: 5
+      max-pool-size: 25
+      queue-capacity: 100
+    - name: valueSetTheadPoolValidation
+      core-pool-size: 5
+      max-pool-size: 5
+      queue-capacity: 100
+    - name: codeSystemTheadPoolValidation
+      core-pool-size: 5
+      max-pool-size: 5
+      queue-capacity: 100
+
+
+springdoc:
+  swagger-ui:
+    path: /swagger
+
+swagger-server: ${MAT_FHIR_SWAGGER_URL}
+
+fhir-profiles:
+  profiles:
+    - /fhir/cohort-measure-cqfm.json
+    - /fhir/computable_library_cqfm.json
+    - /fhir/cqfm-aggregateMethod.json
+    - /fhir/cqfm-allocation.json
+    - /fhir/cqfm-criteriaReference.json
+    - /fhir/cqfm-populationBasis.json
+    - /fhir/cqfm-softwaresystem.json
+    - /fhir/cv-measure-cqfm.json
+    - /fhir/device-softwaresystem-cqfm.json
+    - /fhir/executable-library-cqfm.json
+    - /fhir/library-cqfm.json
+    - /fhir/measure-cqfm.json
+    - /fhir/proportion-measure-cqfm.json
+    - /fhir/qdm-artifact-comment.json
+    - /fhir/ratio-measure-cqfm.json
+
+cache-names: codeSystemEntries, qdmToQiCoreMappingHelper, vsacCodesystemVersions, spreadSheetFhirTypes, spreadSheetResourceDefinitions, conversionDataTypes, conversionAttributes, oidToVSACDodeSystemDTO

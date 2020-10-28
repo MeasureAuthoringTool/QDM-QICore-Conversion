@@ -8,9 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.cqframework.cql.cql2elm.LibrarySourceProvider;
 import org.hl7.elm.r1.VersionedIdentifier;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -23,7 +22,7 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
         MatLibrarySourceProvider.matFhirServices = matFhirServices;
     }
 
-    public static void setQdmVersion(UsingProperties usingProperties) {
+    public static void setUsing(UsingProperties usingProperties) {
         threadLocalValue.set(usingProperties);
     }
 
@@ -39,21 +38,25 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
         if (cqlLibraries.containsKey(key)) {
             return getInputStream(cqlLibraries.get(key)); // do we need to expire cache ?????
         } else {
-            return processLibrary(libraryIdentifier, usingVersion, key);
+            return processLibrary(libraryIdentifier, key);
         }
     }
 
-    public InputStream processLibrary(VersionedIdentifier libraryIdentifier, String usingVersion, String key) {
+    public InputStream processLibrary(VersionedIdentifier libraryIdentifier, String key) {
         if (threadLocalValue.get().getLibraryType().equals("QDM")) {
-            String cql = matFhirServices.getMatCql(libraryIdentifier.getId(), libraryIdentifier.getVersion(), usingVersion);
-            return processCqlFromService(key, cql);
+            throw new RuntimeException("QDM is not supported FHIR only.");
         } else if (threadLocalValue.get().getLibraryType().equals("FHIR")) {
-            String cql = matFhirServices.getFhirCql(libraryIdentifier.getId(), libraryIdentifier.getVersion());
-            return processCqlFromService(key, cql);
+            return getInputStream(libraryIdentifier, key);
         } else {
             log.error("Cannot process Library for key: {}", key);
             return null;
         }
+    }
+
+    public InputStream getInputStream(VersionedIdentifier libraryIdentifier, String key) {
+        String cql = matFhirServices.getHapiFhirCql(libraryIdentifier.getId(),
+                libraryIdentifier.getVersion());
+        return processCqlFromService(key, cql);
     }
 
     private InputStream processCqlFromService(String key, String cql) {
@@ -67,10 +70,6 @@ public class MatLibrarySourceProvider implements LibrarySourceProvider {
     }
 
     public InputStream getInputStream(String cql) {
-        try {
-            return IOUtils.toInputStream(cql, "utf-8");
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        return IOUtils.toInputStream(cql, StandardCharsets.UTF_8);
     }
 }

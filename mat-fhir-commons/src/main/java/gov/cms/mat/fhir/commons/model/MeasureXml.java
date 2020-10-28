@@ -1,5 +1,7 @@
 package gov.cms.mat.fhir.commons.model;
 
+import lombok.ToString;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -7,9 +9,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "MEASURE_XML")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "MeasureXml.findAll", query = "SELECT m FROM MeasureXml m"),
-    @NamedQuery(name = "MeasureXml.findById", query = "SELECT m FROM MeasureXml m WHERE m.id = :id")})
+@ToString
 public class MeasureXml implements Serializable, MatXmlBytes {
 
     private static final long serialVersionUID = 1L;
@@ -20,9 +20,9 @@ public class MeasureXml implements Serializable, MatXmlBytes {
     @Lob
     @Column(name = "MEASURE_XML")
     private byte[] measureXml;
-    @JoinColumn(name = "MEASURE_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private Measure measureId;
+
+    @Column(name = "MEASURE_ID")
+    private String measureId;
 
     public MeasureXml() {
     }
@@ -47,11 +47,11 @@ public class MeasureXml implements Serializable, MatXmlBytes {
         this.measureXml = measureXml;
     }
 
-    public Measure getMeasureId() {
+    public String getMeasureId() {
         return measureId;
     }
 
-    public void setMeasureId(Measure measureId) {
+    public void setMeasureId(String measureId) {
         this.measureId = measureId;
     }
 
@@ -73,11 +73,6 @@ public class MeasureXml implements Serializable, MatXmlBytes {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "gov.cms.mat.fhir.commons.model.MeasureXml[ id=" + id + " ]";
     }
 
     @Override

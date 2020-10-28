@@ -10,13 +10,25 @@ public class HapiResourceNotFoundException extends RuntimeException {
     private static final String ID_MESSAGE = "Could not find hapi %s with id: %s";
     private static final String URL_MESSAGE = "Could not find hapi object with id: %s";
 
+    private static final String NAME_VERSION_MESSAGE = "Could not find hapi object %s with name: %s, version: %s";
+
     public HapiResourceNotFoundException(String id, String type) {
         super(String.format(ID_MESSAGE, type, id));
         log.warn(getMessage());
     }
 
+    public HapiResourceNotFoundException(String message) {
+        super(message);
+        log.warn(this.getMessage());
+    }
+
     public HapiResourceNotFoundException(String url, Exception cause) {
         super(String.format(URL_MESSAGE, url), cause);
+        log.warn(getMessage());
+    }
+
+    public HapiResourceNotFoundException(String name, String version, String type) {
+        super(String.format(NAME_VERSION_MESSAGE, type, name, version));
         log.warn(getMessage());
     }
 }

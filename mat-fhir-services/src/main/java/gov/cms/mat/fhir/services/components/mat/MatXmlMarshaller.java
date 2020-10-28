@@ -1,8 +1,8 @@
 package gov.cms.mat.fhir.services.components.mat;
 
 import gov.cms.mat.fhir.rest.dto.ConversionOutcome;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.components.mongo.ConversionResult;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResult;
 import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
@@ -18,7 +18,7 @@ import java.io.UncheckedIOException;
 
 @Component
 @Slf4j
-class MatXmlMarshaller {
+public class MatXmlMarshaller {
     private final XMLMarshalUtil xmlMarshalUtil = new XMLMarshalUtil();
 
     ManageCompositeMeasureDetailModel toCompositeMeasureDetail(String xml) {
@@ -111,6 +111,7 @@ class MatXmlMarshaller {
                     ManageCompositeMeasureDetailModel.class);
 
         } catch (Exception e) {
+            log.error("error in convertCompositeMeasureDetail:",e);
             throw new MatXmlMarshalException(e);
         }
     }

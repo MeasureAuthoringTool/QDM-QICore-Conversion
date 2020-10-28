@@ -22,8 +22,13 @@ public class CqlLibrary implements Serializable {
     @Column(name = "MEASURE_ID")
     private String measureId;
     @Basic(optional = false)
+
+    @Column(name = "LIBRARY_MODEL")
+    private String libraryModel;
+
     @Column(name = "SET_ID")
     private String setId;
+
     @Column(name = "CQL_NAME")
     private String cqlName;
     @Column(name = "DRAFT")
@@ -50,6 +55,17 @@ public class CqlLibrary implements Serializable {
     @Column(name = "LAST_MODIFIED_ON")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedOn;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
+
+    @Column(name = "EXPERIMENTAL")
+    private boolean experimental;
+
+    @JoinColumn(name = "LIBRARY_STEWARD_ID", referencedColumnName = "ORG_ID")
+    @ManyToOne
+    private Organization stewardId;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cqlLibraryId")
     private Collection<CqlLibraryShare> cqlLibraryShareCollection;
     @JoinColumn(name = "OWNER_ID", referencedColumnName = "USER_ID")
@@ -79,6 +95,14 @@ public class CqlLibrary implements Serializable {
         this.id = id;
         this.setId = setId;
         this.qdmVersion = qdmVersion;
+    }
+
+    public String getLibraryModel() {
+        return libraryModel;
+    }
+
+    public void setLibraryModel(String libraryModel) {
+        this.libraryModel = libraryModel;
     }
 
     @XmlElement
@@ -275,10 +299,31 @@ public class CqlLibrary implements Serializable {
             return false;
         }
         CqlLibrary other = (CqlLibrary) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return (this.id != null || other.id == null) && (this.id == null || this.id.equals(other.id));
+    }
+
+    public Organization getSteward() {
+        return stewardId;
+    }
+
+    public void setSteward(Organization stewardId) {
+        this.stewardId = stewardId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isExperimental() {
+        return experimental;
+    }
+
+    public void setExperimental(boolean experimental) {
+        this.experimental = experimental;
     }
 
     @Override

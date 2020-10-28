@@ -3,7 +3,16 @@ package gov.cms.mat.fhir.services.hapi;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.gclient.*;
+import ca.uhn.fhir.rest.gclient.ICriterion;
+import ca.uhn.fhir.rest.gclient.IDelete;
+import ca.uhn.fhir.rest.gclient.IDeleteTyped;
+import ca.uhn.fhir.rest.gclient.IGetPage;
+import ca.uhn.fhir.rest.gclient.IGetPageTyped;
+import ca.uhn.fhir.rest.gclient.IQuery;
+import ca.uhn.fhir.rest.gclient.ITransaction;
+import ca.uhn.fhir.rest.gclient.ITransactionTyped;
+import ca.uhn.fhir.rest.gclient.IUntypedQuery;
+import gov.cms.mat.fhir.services.config.security.SecurityFilter;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.ValueSet;
@@ -17,10 +26,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HapiFhirServerTest {
+    private static final String MAT_API_KEY = "SECRET";
 
     @Mock
     IGenericClient hapiClient;
@@ -40,6 +52,9 @@ class HapiFhirServerTest {
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(hapiFhirServer, "baseURL", "http://acme.com");
+        ReflectionTestUtils.setField(hapiFhirServer, "hapiClient", hapiClient);
+
+        ReflectionTestUtils.setField(hapiFhirServer, "matApiKey", MAT_API_KEY);
     }
 
     @Test
@@ -50,31 +65,6 @@ class HapiFhirServerTest {
     @Test
     void getHapiClient() {
         assertEquals(hapiClient, hapiFhirServer.getHapiClient());
-    }
-
-    @Test
-    void createBundle() {
-        Bundle bundleToReturn = new Bundle();
-
-        when(hapiClient.transaction()).thenReturn(iTransaction);
-        when(iTransaction.withBundle(any(Bundle.class))).thenReturn(bundleITransactionTyped);
-        when(bundleITransactionTyped.execute()).thenReturn(bundleToReturn);
-
-        Bundle bundleReturned = hapiFhirServer.createAndExecuteBundle(new ValueSet());
-        assertEquals(bundleToReturn, bundleReturned);
-
-        verify(hapiClient).transaction();
-        verify(iTransaction).withBundle(any(Bundle.class));
-        verify(bundleITransactionTyped).execute();
-    }
-
-    @Test
-    void buildBundle() {
-        ValueSet resource = new ValueSet();
-        Bundle bundle = hapiFhirServer.buildBundle(resource);
-        assertEquals(1, bundle.getEntry().size());
-
-        assertEquals(Bundle.BundleType.TRANSACTION, bundle.getType());
     }
 
     @Test
@@ -89,6 +79,7 @@ class HapiFhirServerTest {
         when(iDelete.resource(resource)).thenReturn(iDeleteTyped);
         when(iDeleteTyped.prettyPrint()).thenReturn(iDeleteTyped);
         when(iDeleteTyped.encodedJson()).thenReturn(iDeleteTyped);
+        when(iDeleteTyped.withAdditionalHeader(SecurityFilter.MAT_API_KEY, MAT_API_KEY)).thenReturn(iDeleteTyped);
         when(iDeleteTyped.execute()).thenReturn(iBaseOperationOutcomeToReturn);
 
         IBaseOperationOutcome iBaseOperationOutcomeReturned = hapiFhirServer.delete(resource);
@@ -110,6 +101,8 @@ class HapiFhirServerTest {
         when(iUntypedQuery.forResource(ValueSet.class)).thenReturn(iQuery);
         when(iQuery.where(any(ICriterion.class))).thenReturn(iQuery);
         when(iQuery.returnBundle(Bundle.class)).thenReturn(iQuery);
+        when(iQuery.withAdditionalHeader("Cache-Control", "no-cache")).thenReturn(iQuery);
+        when(iQuery.withAdditionalHeader(SecurityFilter.MAT_API_KEY, MAT_API_KEY)).thenReturn(iQuery);
         when(iQuery.execute()).thenReturn(toReturn);
 
         Bundle returned = hapiFhirServer.getValueSetBundle("OID");
@@ -131,6 +124,8 @@ class HapiFhirServerTest {
         when(iUntypedQuery.forResource(ValueSet.class)).thenReturn(iQuery);
         when(iQuery.totalMode(SearchTotalModeEnum.ACCURATE)).thenReturn(iQuery);
         when(iQuery.returnBundle(Bundle.class)).thenReturn(iQuery);
+        when(iQuery.withAdditionalHeader("Cache-Control", "no-cache")).thenReturn(iQuery);
+        when(iQuery.withAdditionalHeader(SecurityFilter.MAT_API_KEY, MAT_API_KEY)).thenReturn(iQuery);
         when(iQuery.execute()).thenReturn(toReturn);
 
         assertEquals(Integer.MAX_VALUE, hapiFhirServer.count(ValueSet.class));
@@ -149,6 +144,8 @@ class HapiFhirServerTest {
         when(hapiClient.search()).thenReturn(iUntypedQuery);
         when(iUntypedQuery.forResource(ValueSet.class)).thenReturn(iQuery);
         when(iQuery.returnBundle(Bundle.class)).thenReturn(iQuery);
+        when(iQuery.withAdditionalHeader("Cache-Control", "no-cache")).thenReturn(iQuery);
+        when(iQuery.withAdditionalHeader(SecurityFilter.MAT_API_KEY, MAT_API_KEY)).thenReturn(iQuery);
         when(iQuery.execute()).thenReturn(toReturn);
 
         Bundle returned = hapiFhirServer.getAll(ValueSet.class);
@@ -170,6 +167,7 @@ class HapiFhirServerTest {
 
         when(hapiClient.loadPage()).thenReturn(iGetPage);
         when(iGetPage.next(param)).thenReturn(iBaseBundle);
+        when(iBaseBundle.withAdditionalHeader(SecurityFilter.MAT_API_KEY, MAT_API_KEY)).thenReturn(iBaseBundle);
         when(iBaseBundle.execute()).thenReturn(toReturn);
 
         Bundle returned = hapiFhirServer.getNextPage(param);

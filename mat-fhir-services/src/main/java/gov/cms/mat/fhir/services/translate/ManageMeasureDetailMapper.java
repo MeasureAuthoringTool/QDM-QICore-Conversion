@@ -94,6 +94,7 @@ public class ManageMeasureDetailMapper {
         model.setMeasureName(measure.getDescription());
         model.setShortName(measure.getAbbrName());
         model.setMeasScoring(measure.getScoring());
+        model.setPopulationBasis(measure.getPopulationBasis());
 
         if (measure.getMeasureSetId() != null) {
             model.setMeasureSetId(measure.getMeasureSetId().getId());

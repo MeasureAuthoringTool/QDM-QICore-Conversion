@@ -67,20 +67,21 @@ public class CqlExceptionErrorProcessor {
 
     private List<MatCqlConversionException> buildMatErrors() {
         return cqlErrors.stream()
-                .filter(this::filterByMessage)
+                //.filter(this::filterByMessage)
                 .map(this::createDto)
                 .collect(Collectors.toList());
     }
 
     private boolean filterByMessage(CqlTranslatorException cqlTranslatorException) {
-        List<Object> objectList = library.getAnnotation();
+        List<Object> objectList = library.getAnnotation(); //todo revisit
 
-        if( CollectionUtils.isEmpty(objectList)) {
+        if (CollectionUtils.isEmpty(objectList)) {
             return true;
         } else {
             var optional = objectList.stream()
                     .filter(o -> o instanceof CqlToElmError)
                     .map(CqlToElmError.class::cast)
+                    .filter(m -> m.getMessage() != null)
                     .map(CqlToElmError::getMessage)
                     .filter(m -> m.equals(cqlTranslatorException.getMessage()))
                     .findFirst();

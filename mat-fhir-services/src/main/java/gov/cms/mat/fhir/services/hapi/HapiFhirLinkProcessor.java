@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -13,7 +14,9 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class HapiFhirLinkProcessor {
+    @Qualifier("internalRestTemplate")
     private final RestTemplate restTemplate;
+
     private final HapiFhirServer hapiFhirServer;
 
     public HapiFhirLinkProcessor(RestTemplate restTemplate, HapiFhirServer hapiFhirServer) {
@@ -41,7 +44,7 @@ public class HapiFhirLinkProcessor {
         log.debug("Fetching HAPI_FHIR {} url: {}", resourceClass.getSimpleName(), url);
         Optional<String> optionalJson = fetchJson(url);
 
-        if (!optionalJson.isPresent()) {
+        if (optionalJson.isEmpty()) {
             return Optional.empty();
         }
 

@@ -6,19 +6,23 @@ import gov.cms.mat.cql.elements.SymbolicProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public interface DefineParser extends SymbolicParser {
+public interface DefineParser extends SymbolicParser, CommentParser {
     String[] getLines();
 
     default List<DefineProperties> getDefines() {
         List<DefineProperties> properties = new ArrayList<>();
         Iterator<String> iterator = Arrays.stream(getLines()).iterator();
+        AtomicBoolean isInComment = new AtomicBoolean(false);
 
         while (iterator.hasNext()) {
             String line = iterator.next();
 
-            if (line.startsWith("define ")) {
-                properties.add(buildDefineProperties(line, iterator));
+            if (!lineComment(line, isInComment)) {
+                if (line.startsWith("define ")) {
+                    properties.add(buildDefineProperties(line, iterator));
+                }
             }
         }
 

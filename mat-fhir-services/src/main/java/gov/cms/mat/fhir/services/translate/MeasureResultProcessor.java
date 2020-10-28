@@ -1,6 +1,6 @@
 package gov.cms.mat.fhir.services.translate;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.model.MeasureType;
@@ -48,25 +48,6 @@ public class MeasureResultProcessor {
         if (matCompositeMeasureModel.getFinalizedDate() == null) {
             ConversionReporter.setMeasureResult("MAT.finalizedDate", "Measure.approvalDate", "Finalized Date is NULL");
         }
-
-
-//     TODO talk to Duane
-//        Identifier cms = null;
-//        Identifier nqf = null;
-//        if (matCompositeMeasureModel.geteMeasureId() != 0) {
-//            cms = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms", new Integer(matCompositeMeasureModel.geteMeasureId()).toString());
-//            idList.add(cms);
-//        }
-//        if (matCompositeMeasureModel.getEndorseByNQF()) {
-//            nqf = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf", new String(matCompositeMeasureModel.getNqfId()));
-//            idList.add(nqf);
-//        }
-//        fhirMeasure.setIdentifier(idList);
-//        if (idList.isEmpty()) {
-//            ConversionReporter.setMeasureResult("MAT.eMeasureId", "Measure.identifier", "Not Available");
-//            ConversionReporter.setMeasureResult("MAT.nqfId", "Measure.identifier", "Not Available");
-//        }
-
 
         if (CollectionUtils.isEmpty(fhirMeasure.getIdentifier())) {
             ConversionReporter.setMeasureResult("MAT.eMeasureId", "Measure.identifier", "Not Available");

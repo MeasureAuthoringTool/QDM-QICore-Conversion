@@ -361,17 +361,26 @@ public class XmlProcessor {
 		String returnVar = null;
 		Node node = originalDoc.getElementsByTagName(tagName).getLength() > 0 ? originalDoc
 				.getElementsByTagName(tagName).item(0) : null;
-				if (null != node) {
-					returnVar = transform(node);
-				}
-				return returnVar;
+		if (null != node) {
+			returnVar = transform(node);
+		}
+		return returnVar;
 	}
-	
+
+	public String getValueByTagName(String tagName) {
+		String returnVar = null;
+		Node node = originalDoc.getElementsByTagName(tagName).getLength() > 0 ? originalDoc
+				.getElementsByTagName(tagName).item(0) : null;
+		if (null != node) {
+			returnVar = node.getTextContent();
+		}
+		return returnVar;
+	}
+
 	/**
 	 * Adds the parent node.
-	 * 
-	 * @param parentTagName
-	 *            the parent tag name
+	 *
+	 * @param parentTagName the parent tag name
 	 */
 	public void addParentNode(String parentTagName) {
 		if (originalDoc.hasChildNodes()) {
@@ -732,42 +741,42 @@ public class XmlProcessor {
 		if (supplementaDataElementsElement == null) {
 			supplementaDataElementsElement = originalDoc
 					.createElement("supplementalDataElements");
-			((Element) measureStratificationsNode.getParentNode())
-			.insertBefore(supplementaDataElementsElement,
-					measureStratificationsNode.getNextSibling());
+			measureStratificationsNode.getParentNode()
+					.insertBefore(supplementaDataElementsElement,
+							measureStratificationsNode.getNextSibling());
 		}
 		// Create elementLookUp node
 		if (findNode(originalDoc, XPATH_MEASURE_ELEMENT_LOOKUP) == null) {
 			Element elementLookUpElement = originalDoc
 					.createElement("elementLookUp");
-			((Element) supplementaDataElementsElement.getParentNode())
-			.insertBefore(elementLookUpElement,
-					supplementaDataElementsElement.getNextSibling());
+			supplementaDataElementsElement.getParentNode()
+					.insertBefore(elementLookUpElement,
+							supplementaDataElementsElement.getNextSibling());
 		}
 		if (findNode(originalDoc, XPATH_MEASURE_SUBTREE_LOOKUP) == null) {
 			Element subTreeLookUpElement = originalDoc
 					.createElement("subTreeLookUp");
-			((Element) supplementaDataElementsElement.getParentNode())
-			.insertBefore(subTreeLookUpElement,
-					supplementaDataElementsElement.getNextSibling());
+			supplementaDataElementsElement.getParentNode()
+					.insertBefore(subTreeLookUpElement,
+							supplementaDataElementsElement.getNextSibling());
 		}
 		// create Measure Grouping node
 		if (findNode(originalDoc, XPATH_MEASURE_GROUPING) == null) {
 			Element measureGroupingElement = originalDoc
 					.createElement("measureGrouping");
-			((Element) supplementaDataElementsElement.getParentNode())
-			.insertBefore(measureGroupingElement,
-					supplementaDataElementsElement.getNextSibling());
+			supplementaDataElementsElement.getParentNode()
+					.insertBefore(measureGroupingElement,
+							supplementaDataElementsElement.getNextSibling());
 		}
-		
+
 		Node riskAdjustmentVariablesElement = findNode(originalDoc,
 				XPATH_MEASURE_RAV_ELEMENTS);
 		if (riskAdjustmentVariablesElement == null) {
 			riskAdjustmentVariablesElement = originalDoc
 					.createElement("riskAdjustmentVariables");
-			((Element) supplementaDataElementsElement.getParentNode())
-			.insertBefore(riskAdjustmentVariablesElement,
-					supplementaDataElementsElement.getNextSibling());
+			supplementaDataElementsElement.getParentNode()
+					.insertBefore(riskAdjustmentVariablesElement,
+							supplementaDataElementsElement.getNextSibling());
 		}
 
 		System.out.println("Original Doc: "+originalDoc.toString());
@@ -1119,18 +1128,18 @@ public class XmlProcessor {
 		String cleanedString = "";	
 		for(int i=0;i<originalString.length();i++){
 			char c = originalString.charAt(i);
-			int intc = (int)c;
-			
-			if(c == '_' || (intc >= 48 && intc <= 57) || (intc >= 65 && intc <= 90) || (intc >= 97 && intc <= 122)){
-				
-				if(!(cleanedString.isEmpty() && Character.isDigit(c))){
+			int intc = c;
+
+			if (c == '_' || (intc >= 48 && intc <= 57) || (intc >= 65 && intc <= 90) || (intc >= 97 && intc <= 122)) {
+
+				if (!(cleanedString.isEmpty() && Character.isDigit(c))) {
 					cleanedString = cleanedString + "" + c;
 				}
-				
-			} 
+
+			}
 
 		}
-		
+
 		return cleanedString;
 	}
 	
@@ -1209,8 +1218,8 @@ public class XmlProcessor {
 				Node currentNode = nodeList.item(i);
 				String codeSystemOID = currentNode.getAttributes().getNamedItem(ATTRIBUTE_CODE_SYSTEM_OID).getNodeValue();
 				if(codeSystemOIDsToRemove.contains(codeSystemOID)) {
-					codeSystemOIDsToRemove.remove(codeSystemOIDsToRemove.indexOf(codeSystemOID));
-				}		
+					codeSystemOIDsToRemove.remove(codeSystemOID);
+				}
 			}
 			
 			for(String codeSystemOID: codeSystemOIDsToRemove) {

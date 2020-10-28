@@ -5,15 +5,15 @@ import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.services.repository.MeasureExportRepository;
 import gov.cms.mat.fhir.services.repository.MeasureRepository;
 import gov.cms.mat.fhir.services.repository.MeasureXmlRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
+@Slf4j
 public class MatXmlProcessor {
     private final MeasureExportRepository measureExportRepo;
     private final MeasureRepository measureRepository;
-    private MeasureXmlRepository measureXmlRepository;
+    private final MeasureXmlRepository measureXmlRepository;
 
     public MatXmlProcessor(MeasureXmlRepository measureXmlRepository,
                            MeasureExportRepository measureExportRepo,
@@ -45,18 +45,20 @@ public class MatXmlProcessor {
 
     byte[] getSimpleXml(Measure measure) {
         var optionalMeasureExport = measureExportRepo.findByMeasureId(measure.getId());
-        return processBytes(optionalMeasureExport);
-    }
+        log.trace("SIMPLE_XML row: " + measure);
 
-    byte[] getMeasureXml(Measure measure) {
-        var optionalMeasureXml = measureXmlRepository.findByMeasureId(measure);
-        return processBytes(optionalMeasureXml);
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private byte[] processBytes(Optional<? extends MatXmlBytes> optionalMatXmlBytes) {
-        return optionalMatXmlBytes
+        return optionalMeasureExport
                 .map(MatXmlBytes::getXmlBytes)
                 .orElse(null);
     }
+
+    byte[] getMeasureXml(Measure measure) {
+        var optionalMeasureXml = measureXmlRepository.findByMeasureId(measure.getId());
+        log.trace("MEASURE_XML row: {}", optionalMeasureXml);
+        return optionalMeasureXml
+                .map(MatXmlBytes::getXmlBytes)
+                .orElse(null);
+    }
+
+
 }

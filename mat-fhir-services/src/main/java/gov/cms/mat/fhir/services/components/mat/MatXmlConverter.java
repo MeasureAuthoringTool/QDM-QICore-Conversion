@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.components.mat;
 
 import gov.cms.mat.fhir.services.components.mat.util.XmlString;
+import lombok.extern.slf4j.Slf4j;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
 import mat.client.measurepackage.MeasurePackageDetail;
 import mat.model.cql.CQLDefinitionsWrapper;
@@ -11,7 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class MatXmlConverter {
+    String XML_ERROR_MESSAGE = "Error processing xml: \n {}";
 
     private final MatXpath matXpath;
     private final MatXmlMarshaller matXmlMarshaller;
@@ -35,6 +38,7 @@ public class MatXmlConverter {
             String xpathXml = matXpath.toMeasureGrouping(xml);
             return matXmlMarshaller.toMeasureGrouping(xpathXml);
         } catch (Exception e) {
+            log.debug(XML_ERROR_MESSAGE, xml);
             throw new MatXmlException(e);
         }
     }
@@ -44,8 +48,10 @@ public class MatXmlConverter {
             String xpathXml = matXpath.toCompositeMeasureDetail(xml);
             return matXmlMarshaller.toCompositeMeasureDetail(xpathXml);
         } catch (MatXmlException e) {
+            log.debug(XML_ERROR_MESSAGE, xml);
             throw e;
         } catch (Exception  e) {
+            log.debug(XML_ERROR_MESSAGE, xml);
             throw new MatXmlException(e);
         }
     }
@@ -55,6 +61,7 @@ public class MatXmlConverter {
             String xpathXml = matXpath.toQualityData(xml);
             return matXmlMarshaller.toQualityData(xpathXml);
         } catch (Exception e) {
+            log.debug(XML_ERROR_MESSAGE, xml);
             throw new MatXmlException(e);
         }
     }
@@ -64,6 +71,7 @@ public class MatXmlConverter {
             String xpathXml = matXpath.toCQLDefinitionsSupplementalData(xml);
             return matXmlMarshaller.toCQLDefinitionsSupplementalData(xpathXml);
         } catch (Exception e) {
+            log.debug(XML_ERROR_MESSAGE, xml);
             throw new MatXmlException(e);
         }
     }
@@ -73,6 +81,7 @@ public class MatXmlConverter {
             String xpathXml = matXpath.toCQLDefinitionsRiskAdjustments(xml);
             return matXmlMarshaller.toCQLDefinitionsRiskAdjustments(xpathXml);
         } catch (Exception e) {
+            log.debug(XML_ERROR_MESSAGE, xml);
             throw new MatXmlException(e);
         }
     }

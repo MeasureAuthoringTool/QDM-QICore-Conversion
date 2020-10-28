@@ -1,9 +1,12 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
+import gov.cms.mat.fhir.rest.dto.cql.CqlPayload;
+import gov.cms.mat.fhir.rest.dto.cql.CqlPayloadType;
 import gov.cms.mat.fhir.services.exceptions.CqlLibraryNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.InvalidVersionException;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
+import gov.cms.mat.fhir.services.service.LibraryFinderService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,44 +22,9 @@ import static org.mockito.Mockito.*;
 class LibraryFinderControllerTest {
     @Mock
     private CqlLibraryDataService cqlLibraryDataService;
+    @Mock
+    private LibraryFinderService libraryFinderService;
+
     @InjectMocks
     private LibraryFinderController libraryFinderController;
-
-    @Test
-    void findLibraryXmlInvalidVersion() {
-        Assertions.assertThrows(InvalidVersionException.class, () -> {
-            libraryFinderController.findLibraryXml("qdmVersion", "name", "invalid_version");
-        });
-
-        verifyNoInteractions(cqlLibraryDataService);
-    }
-
-    @Test
-    void findLibraryXml_XmlNotFound() {
-        CqlLibrary cqlLibrary = new CqlLibrary();
-        cqlLibrary.setCqlXml(null);
-
-        when(cqlLibraryDataService.findCqlLibrary(any())).thenReturn(cqlLibrary);
-
-        Assertions.assertThrows(CqlLibraryNotFoundException.class, () -> {
-            libraryFinderController.findLibraryXml("qdmVersion", "name", "4.0.000");
-        });
-
-        verify(cqlLibraryDataService).findCqlLibrary(any());
-    }
-
-    @Test
-    void findLibraryXml_HappyCase() {
-        String xml = "</xml>";
-        CqlLibrary cqlLibrary = new CqlLibrary();
-        cqlLibrary.setCqlXml(xml);
-
-        when(cqlLibraryDataService.findCqlLibrary(any())).thenReturn(cqlLibrary);
-
-        String libraryXml = libraryFinderController.findLibraryXml("qdmVersion", "name", "3.0.000");
-
-        assertEquals(xml, libraryXml);
-
-        verify(cqlLibraryDataService).findCqlLibrary(any());
-    }
 }

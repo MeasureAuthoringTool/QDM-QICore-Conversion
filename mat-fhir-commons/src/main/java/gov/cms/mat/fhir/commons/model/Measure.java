@@ -112,6 +112,13 @@ public class Measure implements Serializable {
     private Date measurementPeriodTo;
     @Column(name = "CQL_NAME")
     private String cqlName;
+
+    @Column(name = "SOURCE_MEASURE_ID")
+    private String sourceMeasureId;
+
+    @Column(name = "POPULATION_BASIS")
+    private String populationBasis;
+
     @JoinColumn(name = "LOCKED_USER_ID", referencedColumnName = "USER_ID")
     @ManyToOne
     private User lockedUserId;
@@ -153,6 +160,15 @@ public class Measure implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @XmlElement
+    public String getSourceMeasureId() {
+        return sourceMeasureId;
+    }
+
+    public void setSourceMeasureId(String sourceMeasureId) {
+        this.sourceMeasureId = sourceMeasureId;
     }
 
     @XmlElement
@@ -596,5 +612,12 @@ public class Measure implements Serializable {
 
 
     }
-    
+
+    public String getPopulationBasis() {
+        return populationBasis;
+    }
+
+    public void setPopulationBasis(String populationBasis) {
+        this.populationBasis = populationBasis;
+    }
 }

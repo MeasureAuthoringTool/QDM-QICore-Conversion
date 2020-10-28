@@ -1,57 +1,78 @@
 version: '3.6'
 
 services:
-
-  hapi-fhir-mysql:
-    image: mysql:latest
-    container_name: hapi-fhir-mysql
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'hapi'
-      MYSQL_USER: 'admin'
-      MYSQL_PASSWORD: 'admin'
-      MYSQL_ROOT_PASSWORD: 'admin'
-    ports:
-      - 3307:3306
-    volumes:
-      - hapi-fhir-mysql:/var/lib/mysql
-
-  mongo:
-    image: mongo
-    container_name: mongo
-    restart: always
-    ports:
-      - 27018:27017
-
   hapi-fhir-jpaserver:
-    image: greenemcg/hapi-fhir-jpaserver
-    container_name: hapi-fhir-jpaserver
+    image: hapi-fhir-jpaserver_spring_boot
+    container_name: hapi-fhir-jpaserver_spring_boot
+    build:
+      context: hapi-fhir-jpaserver
+      dockerfile: Dockerfile
+      args:
+        ENV: ${ENV}
+    environment:
+      HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
+      HAPI_DB_URL: ${HAPI_DB_URL}
+      HAPI_DB_USER: ${HAPI_DB_USER}
+      HAPI_DB_PASS: ${HAPI_DB_PASS}
+      MAT_API_KEY: ${MAT_API_KEY}
+      LOG_LEVEL: ${LOG_LEVEL}
     ports:
       - 6060:6060
 
   cql-elm-translation:
-    image: greenemcg/cql-elm-translation
+    image: cql-elm-translation
     container_name: cql-elm-translation
+    build:
+      context: cql-elm-translation
+      dockerfile: Dockerfile
+    environment:
+      FHIR_SERVICES_URL: ${FHIR_SERVICES_URL}
+      CQL_ELM_SWAGGER_URL: ${CQL_ELM_SWAGGER_URL}
+      MAT_API_KEY: ${MAT_API_KEY}
+      LOG_LEVEL: ${LOG_LEVEL}
     ports:
       - 7070:7070
 
-  qdm-qicore-mapping-services:
-    image: greenemcg/qdm-qicore-mapping-services
-    container_name: qdm-qicore-mapping-services
+  mapping-services:
+    image: mapping-services
+    container_name: mapping-services
+    build:
+      context: mapping-services
+      dockerfile: Dockerfile
+    environment:
+      GOOGLE_MAT_ATTRIBUTES_URL: ${GOOGLE_MAT_ATTRIBUTES_URL}
+      GOOGLE_QDM_QI_CORE_MAPPING_URL: ${GOOGLE_QDM_QI_CORE_MAPPING_URL}
+      GOOGLE_DATA_TYPES_URL: ${GOOGLE_DATA_TYPES_URL}
+      GOOGLE_REQUIRED_MEASURE_FIELDS_URL: ${GOOGLE_REQUIRED_MEASURE_FIELDS_URL}
+      GOOGLE_RESOURCE_DEFINITION_URL: ${GOOGLE_RESOURCE_DEFINITION_URL}
+      MAPPING_SWAGGER_URL: ${MAPPING_SWAGGER_URL}
+      MAT_API_KEY: ${MAT_API_KEY}
+      LOG_LEVEL: ${LOG_LEVEL}
     ports:
       - 9090:9090
 
   mat-fhir-services:
-    image: greenemcg/mat-fhir-services
+    image: mat-fhir-services
     container_name: mat-fhir-services
+    build:
+      context: mat-fhir-services
+      dockerfile: Dockerfile
+      args:
+        ENV: ${ENV}
     environment:
-      VSAC_USER: ${VSAC_USER}
-      VSAC_PASS: ${VSAC_PASS}
-      MAT_DB: ${MAT_DB}
+      VSAC_TICKET_URL_BASE: ${VSAC_TICKET_URL_BASE}
+      VSAC_URL_BASE: ${VSAC_URL_BASE}
+      MAT_DB_URL: ${MAT_DB_URL}
       MAT_DB_PASS: ${MAT_DB_PASS}
       MAT_DB_USER: ${MAT_DB_USER}
+      HAPI_FHIR_URL: ${HAPI_FHIR_URL}
+      CQL_CONVERSION_URL: ${CQL_CONVERSION_URL}
+      FHIR_SERVICES_URL: ${FHIR_SERVICES_URL}
+      CODESYSTEM_SHEET_URL: ${CODESYSTEM_SHEET_URL}
+      HAPI_FHIR_URL_PUBLIC: ${HAPI_FHIR_URL_PUBLIC}
+      MAT_FHIR_SWAGGER_URL: ${MAT_FHIR_SWAGGER_URL}
+      MAPPING_SERVICES_URL: ${MAPPING_SERVICES_URL}
+      MAT_API_KEY: ${MAT_API_KEY}
+      LOG_LEVEL: ${LOG_LEVEL}
     ports:
       - 9080:9080
-
-volumes:
-  hapi-fhir-mysql:

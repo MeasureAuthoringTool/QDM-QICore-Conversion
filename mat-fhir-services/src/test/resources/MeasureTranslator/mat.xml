@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<measure>
+    <populations displayName="Populations">
+        <initialPopulations displayName="Initial Populations">
+            <clause displayName="Initial Population 1" type="initialPopulation"
+                    uuid="6F6F65BF-792F-4FBC-ACFD-C98C8B483A7A">
+                <cqldefinition displayName="Initial Population" uuid="9ed40ae0-21b1-4bce-9321-550bb8e0eba4"/>
+            </clause>
+        </initialPopulations>
+        <numerators displayName="Numerators">
+            <clause displayName="Numerator 1" type="numerator" uuid="BA630DD0-53D9-4BC6-A18B-5488593DE5F0">
+                <cqldefinition displayName="Numerator" uuid="4986bfcd-a634-4744-b08b-cb559c1f1e07"/>
+            </clause>
+        </numerators>
+        <numeratorExclusions displayName="Numerator Exclusions">
+            <clause displayName="Numerator Exclusions 1" type="numeratorExclusions"
+                    uuid="6172D869-6939-4576-9B3E-863A10A3C3AD"/>
+        </numeratorExclusions>
+        <denominators displayName="Denominators">
+            <clause displayName="Denominator 1" type="denominator" uuid="2DBA5C32-C550-41E3-817A-53269AFC2616">
+                <cqldefinition displayName="Denominator" uuid="1b2ab546-e4be-4667-b908-1c6ec7e8c4fb"/>
+            </clause>
+        </denominators>
+        <denominatorExclusions displayName="Denominator Exclusions">
+            <clause displayName="Denominator Exclusions 1" type="denominatorExclusions"
+                    uuid="6F769BED-770D-44F2-A1E9-9DCB9123AFB9">
+                <cqldefinition displayName="Denominator Exclusions" uuid="96255bb6-955a-416a-98d1-e8a98585fe45"/>
+            </clause>
+        </denominatorExclusions>
+        <denominatorExceptions displayName="Denominator Exceptions">
+            <clause displayName="Denominator Exceptions 1" type="denominatorExceptions"
+                    uuid="FC5260C7-5022-47DB-8718-A0EFDBB48C86"/>
+        </denominatorExceptions>
+    </populations>
+    <strata displayName="Stratification">
+        <stratification displayName="Stratification 1" type="stratification"
+                        uuid="940B1B70-2DB0-45F3-BB0F-EABDDE0300E1">
+            <clause displayName="Stratum 1" type="stratum" uuid="23B1EEDF-2E52-43E4-A3E7-9D06504A0151"/>
+        </stratification>
+    </strata>
+    <supplementalDataElements>
+        <cqldefinition displayName="SDE Ethnicity" uuid="10DA8CDA-2407-4154-8AFC-25DFD72E2A1C"/>
+        <cqldefinition displayName="SDE Payer" uuid="317312C1-6E80-4A98-B782-593D9F8FF500"/>
+        <cqldefinition displayName="SDE Race" uuid="33166F4E-95A6-4E44-A26C-42BEBC2D0153"/>
+        <cqldefinition displayName="SDE Sex" uuid="2241150C-5CA0-4442-AD98-4F1927350950"/>
+    </supplementalDataElements>
+    <riskAdjustmentVariables/>
+    <measureGrouping>
+        <group sequence="1">
+            <packageClause isInGrouping="false" name="Initial Population 1" type="initialPopulation"
+                           uuid="6F6F65BF-792F-4FBC-ACFD-C98C8B483A7A"/>
+            <packageClause isInGrouping="false" name="Denominator 1" type="denominator"
+                           uuid="2DBA5C32-C550-41E3-817A-53269AFC2616"/>
+            <packageClause isInGrouping="false" name="Numerator 1" type="numerator"
+                           uuid="BA630DD0-53D9-4BC6-A18B-5488593DE5F0"/>
+        </group>
+    </measureGrouping>
+    <subTreeLookUp>
+        <subTree displayName="IP Diagnosis" qdmVariable="false" uuid="600C4130-B9C4-4897-8186-23BEBFD825F4">
+            <setOp displayName="Union" type="union">
+                <subTreeRef displayName="SepticShock" id="9B02DD4E-1918-4FC0-B1D1-2A7C9456128B" type="subTree"/>
+            </setOp>
+        </subTree>
+        <subTree displayName="ED_Encounter" instance="A" instanceOf="C7058548-2628-4C60-A8BB-6FE3CFF8EC41"
+                 qdmVariable="true" uuid="2BF42154-777B-46AA-9C7E-207208C12E48"/>
+        <subTree displayName="ED_Encounter" qdmVariable="true" uuid="C7058548-2628-4C60-A8BB-6FE3CFF8EC41">
+            <relationalOp displayName="During" type="DURING">
+                <elementRef displayName="Emergency Department Visit : Encounter, Performed"
+                            id="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" type="qdm"/>
+                <elementRef displayName="Measurement Period : Timing Element" id="391a41a9-4d74-43fb-9351-a120745e4c10"
+                            type="qdm"/>
+            </relationalOp>
+        </subTree>
+        <subTree displayName="Hypotension" qdmVariable="false" uuid="B20441E3-156D-4003-AA94-8A2AFDE196D9">
+            <relationalOp displayName="Starts During" type="SDU">
+                <elementRef displayName="Acute Hypotension : Diagnosis" id="036788d8-cad9-4efb-b3f7-b15c930b2de9"
+                            type="qdm"/>
+                <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                            type="subTree"/>
+            </relationalOp>
+        </subTree>
+        <subTree displayName="Infection Ends During" qdmVariable="false" uuid="50431840-06B3-4DFD-87B7-0A9ED594E483">
+            <relationalOp displayName="Ends During" type="EDU">
+                <elementRef displayName="Occurrence A of Infection : Diagnosis"
+                            id="5e60f35c-126e-4ad7-ba74-78331c6020a7" type="qdm"/>
+                <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                            type="subTree"/>
+            </relationalOp>
+        </subTree>
+        <subTree displayName="Infection Overlaps" qdmVariable="false" uuid="6A94D7B2-B841-418A-8A87-6DFD3FCC3394">
+            <relationalOp displayName="Overlaps" type="Overlap">
+                <elementRef displayName="Occurrence A of Infection : Diagnosis"
+                            id="5e60f35c-126e-4ad7-ba74-78331c6020a7" type="qdm"/>
+                <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                            type="subTree"/>
+            </relationalOp>
+        </subTree>
+        <subTree displayName="Sepsis" qdmVariable="false" uuid="1FD0C7CA-C74D-4C4C-BD2B-A07AB4E571A0">
+            <relationalOp displayName="Starts During" type="SDU">
+                <elementRef displayName="Sepsis : Diagnosis" id="31442a1d-c536-4dc6-b3df-825a367c5d77" type="qdm"/>
+                <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                            type="subTree"/>
+            </relationalOp>
+        </subTree>
+        <subTree displayName="SepticShock" qdmVariable="false" uuid="9B02DD4E-1918-4FC0-B1D1-2A7C9456128B">
+            <relationalOp displayName="Starts During" type="SDU">
+                <elementRef displayName="Septic Shock : Diagnosis" id="e5b7780a-c853-4e6d-937d-2c1d1c1c7df4"
+                            type="qdm"/>
+                <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                            type="subTree"/>
+            </relationalOp>
+        </subTree>
+        <subTree displayName="Intersection Discharges" qdmVariable="false" uuid="B0C1CC01-5174-4C7D-9E3C-7D3759F99DFD">
+            <setOp displayName="Intersection" type="intersection">
+                <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                            type="subTree"/>
+                <functionalOp displayName="Satisfies Any" type="SATISFIES ANY">
+                    <elementRef displayName="Emergency Department Visit : Encounter, Performed"
+                                id="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" type="qdm"/>
+                    <elementRef displayName="Emergency Department Visit : Encounter, Performed"
+                                id="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" type="qdm">
+                        <attribute mode="Value Set" name="discharge status"
+                                   qdmUUID="04efae35-9ed6-4684-8049-44d5793986e6"/>
+                    </elementRef>
+                    <elementRef displayName="Emergency Department Visit : Encounter, Performed"
+                                id="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" type="qdm">
+                        <attribute mode="Value Set" name="discharge status"
+                                   qdmUUID="08a5f92e-ae3f-4ce6-b87e-1342531dbc22"/>
+                    </elementRef>
+                </functionalOp>
+            </setOp>
+        </subTree>
+        <subTree displayName="EXCLUtransfer" qdmVariable="false" uuid="724AE651-36E8-4E40-AB7B-E8469DBB33BD">
+            <functionalOp displayName="Satisfies Any" type="SATISFIES ANY">
+                <elementRef displayName="Acute Care or Inpatient Facility : Transfer From"
+                            id="afff5e22-c8fa-44fb-8044-f977f3db646d" type="qdm"/>
+                <relationalOp displayName="&lt;= 6 hours Starts Before Or Concurrent With Start Of"
+                              operatorType="Less Than or Equal To" quantity="6" type="SBSORSCW" unit="hours">
+                    <elementRef displayName="Acute Care or Inpatient Facility : Transfer From"
+                                id="afff5e22-c8fa-44fb-8044-f977f3db646d" type="qdm"/>
+                    <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                                type="subTree"/>
+                </relationalOp>
+                <relationalOp displayName="Starts During" type="SDU">
+                    <elementRef displayName="Acute Care or Inpatient Facility : Transfer From"
+                                id="afff5e22-c8fa-44fb-8044-f977f3db646d" type="qdm"/>
+                    <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                                type="subTree"/>
+                </relationalOp>
+            </functionalOp>
+        </subTree>
+        <subTree displayName="EXCLUstartsduring" qdmVariable="false" uuid="BF763637-23B1-40C9-A22F-A65F78037D73">
+            <relationalOp displayName="Starts During" type="SDU">
+                <setOp displayName="Union" type="union">
+                    <elementRef displayName="Comfort Measures : Intervention, Order"
+                                id="b7d40684-64b2-4cff-8dc5-243b65c4e0db" type="qdm"/>
+                    <elementRef displayName="Comfort Measures : Intervention, Performed"
+                                id="5dba6790-7f34-4b74-80ac-5858e044b92f" type="qdm"/>
+                    <elementRef displayName="Declined Sepsis Care : Communication: From Patient to Provider"
+                                id="47ae3ddc-d142-40e6-8f01-98098eda6d07" type="qdm"/>
+                    <elementRef displayName="Cardiac Arrest : Diagnosis" id="f0919fab-a235-460a-9643-e4274bcf92a7"
+                                type="qdm"/>
+                    <elementRef displayName="Second and Third Degree Burn : Diagnosis"
+                                id="754f6dd6-7417-41b9-bb33-1b16e57eb749" type="qdm"/>
+                    <elementRef displayName="Seizure : Diagnosis" id="4197e3e0-e452-443c-b960-1b0849f7700d" type="qdm"/>
+                    <elementRef displayName="Acute Gastrointestinal Hemorrhage : Diagnosis"
+                                id="16655050-3a3a-4100-8219-51a9c4cd02b9" type="qdm"/>
+                    <elementRef displayName="Acute Pulmonary Hemorrhage : Diagnosis"
+                                id="460e839e-f685-4b96-a5ab-51fa18565ac8" type="qdm"/>
+                    <elementRef displayName="Hemorrhagic Stroke : Diagnosis" id="286056e9-adf6-4276-8ea7-603b8cf54e34"
+                                type="qdm"/>
+                    <elementRef displayName="Ischemic Stroke : Diagnosis" id="abfd1963-ac50-4735-97d7-563161d6710e"
+                                type="qdm"/>
+                    <elementRef displayName="Myocardial Infarction : Diagnosis"
+                                id="7aa3c4ff-2b08-445e-999c-ed7a2b0e2167" type="qdm"/>
+                    <elementRef displayName="Toxicological Emergency : Diagnosis"
+                                id="1c86de5c-8d4d-4ffb-906f-0f8634d02176" type="qdm"/>
+                    <elementRef displayName="Trauma : Diagnosis" id="3e208ce6-4e0e-4c7f-ab06-e25cefea9f7e" type="qdm"/>
+                </setOp>
+                <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                            type="subTree"/>
+            </relationalOp>
+        </subTree>
+        <subTree displayName="NUM" qdmVariable="false" uuid="FCBFCBED-B518-402A-A6E4-B0EE998A6093">
+            <relationalOp displayName="During" type="DURING">
+                <elementRef displayName="IV Antibiotics for Sepsis : Medication, Order"
+                            id="b2ee0641-780f-4018-9e6e-43413dd98b30" type="qdm"/>
+                <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                            type="subTree"/>
+            </relationalOp>
+        </subTree>
+        <subTree displayName="AGE" qdmVariable="false" uuid="25C1CAED-119D-4CD0-BAE3-2AB82B62338E">
+            <functionalOp displayName="Age&gt;= 18 years at" operatorType="Greater Than or Equal To" quantity="18"
+                          type="AGE AT" unit="years">
+                <subTreeRef displayName="Occurrence A of ED_Encounter" id="2BF42154-777B-46AA-9C7E-207208C12E48"
+                            type="subTree"/>
+            </functionalOp>
+        </subTree>
+    </subTreeLookUp>
+    <elementLookUp vsacExpIdentifier="Most Recent Code System Versions in VSAC">
+        <qdm datatype="Transfer From" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="7e6e3eb2e5474d7183d4f59f8ec7253e" name="Acute Care or Inpatient Facility"
+             oid="2.16.840.1.113883.17.4077.3.2056" suppDataElement="false" taxonomy="Grouping"
+             uuid="afff5e22-c8fa-44fb-8044-f977f3db646d" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="2d090daf2c6a4bd8aac621c027ada26e" name="Acute Gastrointestinal Hemorrhage"
+             oid="2.16.840.1.113883.17.4077.3.2051" suppDataElement="false" taxonomy="Grouping"
+             uuid="16655050-3a3a-4100-8219-51a9c4cd02b9" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="89e38b42bddb4ab98f380e1a1b3ffb61" name="Acute Hypotension" oid="2.16.840.1.113883.17.4077.3.2011"
+             suppDataElement="false" taxonomy="Grouping" uuid="036788d8-cad9-4efb-b3f7-b15c930b2de9" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="e1f578d1662948f3803a03fa23d8e37a" name="Acute Pulmonary Hemorrhage"
+             oid="2.16.840.1.113883.17.4077.3.2052" suppDataElement="false" taxonomy="Grouping"
+             uuid="460e839e-f685-4b96-a5ab-51fa18565ac8" version="1.0"/>
+        <qdm datatype="Patient Characteristic Birthdate" id="8a4d8c81309da15201309e46126DA2E0" name="Birthdate"
+             oid="21112-8" suppDataElement="false" taxonomy="SNOMED-CT" uuid="47b7e60f-1d14-4aac-9221-034bcbbf6e53"
+             version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="bc61930252b941bfbb65635b0d4e3b17" name="Second and Third Degree Burn"
+             oid="2.16.840.1.113883.17.4077.3.2053" suppDataElement="false" taxonomy="Grouping"
+             uuid="754f6dd6-7417-41b9-bb33-1b16e57eb749" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="bbaf42a859c541acac51358428ab760f" name="Cardiac Arrest" oid="2.16.840.1.113883.17.4077.3.2032"
+             suppDataElement="false" taxonomy="Grouping" uuid="f0919fab-a235-460a-9643-e4274bcf92a7" version="1.0"/>
+        <qdm datatype="Intervention, Performed" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="7a5cd6d4e2da4c2ca6721350b7f4c399" name="Comfort Measures" oid="1.3.6.1.4.1.33895.1.3.0.45"
+             suppDataElement="false" taxonomy="SNOMEDCT" uuid="5dba6790-7f34-4b74-80ac-5858e044b92f" version="1.0"/>
+        <qdm datatype="Intervention, Order" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="21e55ae27ae54b9287169ef92b21e966" name="Comfort Measures" oid="1.3.6.1.4.1.33895.1.3.0.45"
+             suppDataElement="false" taxonomy="SNOMEDCT" uuid="b7d40684-64b2-4cff-8dc5-243b65c4e0db" version="1.0"/>
+        <qdm datatype="Communication: From Patient to Provider"
+             expansionIdentifier="Most Recent Code System Versions in VSAC" id="49340eceb4ad4090b77e7c8567e598c9"
+             name="Declined Sepsis Care" oid="2.16.840.1.113883.17.4077.3.2047" suppDataElement="false"
+             taxonomy="Grouping" uuid="47ae3ddc-d142-40e6-8f01-98098eda6d07" version="1.0"/>
+        <qdm datatype="Encounter, Performed" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="b766070371124970b6432c36f839b4de" name="Emergency Department Visit"
+             oid="2.16.840.1.113883.3.526.3.1520" suppDataElement="false" taxonomy="Grouping"
+             uuid="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" version="1.0"/>
+        <qdm datatype="Patient Characteristic Ethnicity" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="bae86046267111e1a17a78acc0b65c43" name="Ethnicity" oid="2.16.840.1.114222.4.11.837"
+             suppDataElement="true" taxonomy="CDCREC" uuid="112b1d26-37b4-4c29-8b57-99251df16b96" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="ba6cf973613342359101219c75bef0ba" name="Hemorrhagic Stroke" oid="2.16.840.1.113883.3.117.1.7.1.212"
+             suppDataElement="false" taxonomy="Grouping" uuid="286056e9-adf6-4276-8ea7-603b8cf54e34" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="467f10aa715e4259bfe6a21014d327b3" name="Ischemic Stroke" oid="2.16.840.1.113883.3.117.1.7.1.247"
+             suppDataElement="false" taxonomy="Grouping" uuid="abfd1963-ac50-4735-97d7-563161d6710e" version="1.0"/>
+        <qdm datatype="Medication, Order" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="e44affae181145c096f57ac1a487d80c" name="IV Antibiotics for Sepsis"
+             oid="2.16.840.1.113883.17.4077.3.2045" suppDataElement="false" taxonomy="Grouping"
+             uuid="b2ee0641-780f-4018-9e6e-43413dd98b30" version="1.0"/>
+        <qdm datatype="attribute" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="e86dd046fd864c29b50a1a58b340ebf8" name="Left Before Treatment Completion"
+             oid="2.16.840.1.113883.17.4077.3.2049" suppDataElement="false" taxonomy="Grouping"
+             uuid="04efae35-9ed6-4684-8049-44d5793986e6" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="67d47b428c5d44acbe3fba2ff74193ed" name="Myocardial Infarction" oid="2.16.840.1.113883.3.526.3.403"
+             suppDataElement="false" taxonomy="Grouping" uuid="7aa3c4ff-2b08-445e-999c-ed7a2b0e2167" version="1.0"/>
+        <qdm datatype="Patient Characteristic Sex" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="bae50f18267111e1a17a78acc0b65c43" name="ONC Administrative Sex" oid="2.16.840.1.113762.1.4.1"
+             suppDataElement="true" taxonomy="AdministrativeGender" uuid="afd6ff97-62b9-4c5d-b218-21b8b9ae94ae"
+             version="1.0"/>
+        <qdm datatype="attribute" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="bdf8f9b96da44353b95f48cdd000886f" name="Patient Expired" oid="2.16.840.1.113883.17.4077.3.2012"
+             suppDataElement="false" taxonomy="Grouping" uuid="08a5f92e-ae3f-4ce6-b87e-1342531dbc22" version="1.0"/>
+        <qdm datatype="Patient Characteristic Payer" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="bae86261267111e1a17a78acc0b65c43" name="Payer" oid="2.16.840.1.114222.4.11.3591" suppDataElement="true"
+             taxonomy="SOP" uuid="97a2dc71-632b-4c35-9dee-2dc040c67bab" version="1.0"/>
+        <qdm datatype="Patient Characteristic Race" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="bae85d87267111e1a17a78acc0b65c43" name="Race" oid="2.16.840.1.114222.4.11.836" suppDataElement="true"
+             taxonomy="CDCREC" uuid="fddbb9dd-231b-4a0f-8a33-f81a2269cd2f" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="bd51fce9006846849afd8f36dfc239c4" name="Seizure" oid="2.16.840.1.113883.17.4077.3.2015"
+             suppDataElement="false" taxonomy="Grouping" uuid="4197e3e0-e452-443c-b960-1b0849f7700d" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="9662dffcab374e7a8d9b946f30cd4da1" name="Sepsis" oid="2.16.840.1.113883.17.4077.3.2033"
+             suppDataElement="false" taxonomy="Grouping" uuid="31442a1d-c536-4dc6-b3df-825a367c5d77" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="2a69708ad4454808a3bb823071ef818a" name="Septic Shock" oid="2.16.840.1.113883.17.4077.3.2046"
+             suppDataElement="false" taxonomy="Grouping" uuid="e5b7780a-c853-4e6d-937d-2c1d1c1c7df4" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="4e134dd85b4740f7b048ded848ff5198" name="Toxicological Emergency" oid="2.16.840.1.113883.17.4077.3.2055"
+             suppDataElement="false" taxonomy="Grouping" uuid="1c86de5c-8d4d-4ffb-906f-0f8634d02176" version="1.0"/>
+        <qdm datatype="Diagnosis" expansionIdentifier="Most Recent Code System Versions in VSAC"
+             id="eb2d7c20cda04c5ca6bfb2e75d36e42f" name="Trauma" oid="2.16.840.1.113883.3.464.1003.113.12.1036"
+             suppDataElement="false" taxonomy="Grouping" uuid="3e208ce6-4e0e-4c7f-ab06-e25cefea9f7e" version="1.0"/>
+    </elementLookUp>
+    <cqlLookUp>
+        <library>CDAYTest</library>
+        <version>1.0.000</version>
+        <usingModel>QDM</usingModel>
+        <usingModelVersion>5.5</usingModelVersion>
+        <cqlContext>Patient</cqlContext>
+        <codeSystems>
+            <codeSystem codeSystem="2.16.840.1.113883.6.12" codeSystemName="CPT" codeSystemVersion="2018"
+                        id="7f6559878a7044a58891bd168456a7cd"/>
+            <codeSystem codeSystem="2.16.840.1.113883.12.112" codeSystemName="DischargeDisposition"
+                        codeSystemVersion="HL7V2.5" id="4044b525812b4af5a27a125a884f3228"/>
+            <codeSystem codeSystem="2.16.840.1.113883.6.12" codeSystemName="CPT" codeSystemVersion="2019"
+                        id="164b199fff8a412fa33b33d859982cf9"/>
+            <codeSystem codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.66"
+                        id="5eb1b1b988154824bc9f84223f8f7888"/>
+            <codeSystem codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMEDCT" codeSystemVersion="2019-03"
+                        id="9cc8c38214c24201bc27a16ba4353c84"/>
+        </codeSystems>
+        <valuesets>
+            <valueset id="7e6e3eb2e5474d7183d4f59f8ec7253e" name="Acute Care or Inpatient Facility"
+                      oid="2.16.840.1.113883.17.4077.3.2056" originalName="Acute Care or Inpatient Facility" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="afff5e22-c8fa-44fb-8044-f977f3db646d" version=""/>
+            <valueset id="89e38b42bddb4ab98f380e1a1b3ffb61" name="Acute Hypotension"
+                      oid="2.16.840.1.113883.17.4077.3.2011" originalName="Acute Hypotension" program="" release=""
+                      suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="036788d8-cad9-4efb-b3f7-b15c930b2de9" version=""/>
+            <valueset id="bbaf42a859c541acac51358428ab760f" name="Cardiac Arrest" oid="2.16.840.1.113883.17.4077.3.2032"
+                      originalName="Cardiac Arrest" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                      type="Grouping" uuid="f0919fab-a235-460a-9643-e4274bcf92a7" version=""/>
+            <valueset id="7a5cd6d4e2da4c2ca6721350b7f4c399" name="Comfort Measures" oid="1.3.6.1.4.1.33895.1.3.0.45"
+                      originalName="Comfort Measures" program="" release="" suppDataElement="false" taxonomy="SNOMEDCT"
+                      type="Extensional" uuid="5dba6790-7f34-4b74-80ac-5858e044b92f" version=""/>
+            <valueset id="49340eceb4ad4090b77e7c8567e598c9" name="Declined Sepsis Care"
+                      oid="2.16.840.1.113883.17.4077.3.2047" originalName="Declined Sepsis Care" program="" release=""
+                      suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="47ae3ddc-d142-40e6-8f01-98098eda6d07" version=""/>
+            <valueset id="b766070371124970b6432c36f839b4de" name="Emergency Department Visit"
+                      oid="2.16.840.1.113883.3.526.3.1520" originalName="Emergency Department Visit" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="07b1cfe3-fccb-46bf-aa77-078e0213fb4c" version=""/>
+            <valueset datatype="Patient Characteristic Ethnicity" id="084cf7d0-38d4-4f35-b1b7-a4937a456fa3"
+                      name="Ethnicity" oid="2.16.840.1.114222.4.11.837" originalName="Ethnicity" program="" release=""
+                      suffix="" suppDataElement="true" taxonomy="CDCREC" type="Extensional"
+                      uuid="af1ea5aa-376a-435e-8327-7a4272e246c2" version=""/>
+            <valueset id="2d090daf2c6a4bd8aac621c027ada26e" name="Gastrointestinal Hemorrhage"
+                      oid="2.16.840.1.113883.17.4077.3.2051" originalName="Gastrointestinal Hemorrhage" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="16655050-3a3a-4100-8219-51a9c4cd02b9" version=""/>
+            <valueset id="ba6cf973613342359101219c75bef0ba" name="Hemorrhagic Stroke"
+                      oid="2.16.840.1.113883.3.117.1.7.1.212" originalName="Hemorrhagic Stroke" program="" release=""
+                      suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="286056e9-adf6-4276-8ea7-603b8cf54e34" version=""/>
+            <valueset id="315bacf207d04d0291cd447b754ab0df" name="Hospital Admission or Observation"
+                      oid="2.16.840.1.113883.17.4077.3.2001" originalName="Hospital Admission or Observation" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="8bdc10b1-c378-4c42-b65d-7af881e410ff" version=""/>
+            <valueset id="af0aee34040a4c5694c44ce22d5df397" name="Infection" oid="2.16.840.1.113883.17.4077.3.2054"
+                      originalName="Infection" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                      type="Grouping" uuid="1c09a559-51aa-4d9b-a7cf-8cc0ca7b270c" version=""/>
+            <valueset id="467f10aa715e4259bfe6a21014d327b3" name="Ischemic Stroke"
+                      oid="2.16.840.1.113883.3.117.1.7.1.247" originalName="Ischemic Stroke" program="" release=""
+                      suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="abfd1963-ac50-4735-97d7-563161d6710e" version=""/>
+            <valueset id="e44affae181145c096f57ac1a487d80c" name="IV Antibiotics for Sepsis"
+                      oid="2.16.840.1.113883.17.4077.3.2045" originalName="IV Antibiotics for Sepsis" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="b2ee0641-780f-4018-9e6e-43413dd98b30" version=""/>
+            <valueset id="e86dd046fd864c29b50a1a58b340ebf8" name="Left Before Treatment Completion"
+                      oid="2.16.840.1.113883.17.4077.3.2049" originalName="Left Before Treatment Completion" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="04efae35-9ed6-4684-8049-44d5793986e6" version=""/>
+            <valueset id="67d47b428c5d44acbe3fba2ff74193ed" name="Myocardial Infarction"
+                      oid="2.16.840.1.113883.3.526.3.403" originalName="Myocardial Infarction" program="" release=""
+                      suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="7aa3c4ff-2b08-445e-999c-ed7a2b0e2167" version=""/>
+            <valueset datatype="Patient Characteristic Sex" id="9bf98c70-5086-48a1-8709-c1107799f9d1"
+                      name="ONC Administrative Sex" oid="2.16.840.1.113762.1.4.1" originalName="ONC Administrative Sex"
+                      program="" release="" suffix="" suppDataElement="true" taxonomy="AdministrativeGender"
+                      type="Extensional" uuid="32abdbb2-332d-4f1f-a32c-61763413c6a1" version=""/>
+            <valueset datatype="Patient Characteristic Payer" id="4e560568-5393-4587-985b-895dacd24585" name="Payer"
+                      oid="2.16.840.1.114222.4.11.3591" originalName="Payer" program="" release="" suffix=""
+                      suppDataElement="true" taxonomy="SOP" type="Extensional"
+                      uuid="b9679785-0250-4b1b-b80f-21967178abe2" version=""/>
+            <valueset datatype="Patient Characteristic Race" id="d86a7acf-6853-460f-beba-46ef8daa1571" name="Race"
+                      oid="2.16.840.1.114222.4.11.836" originalName="Race" program="" release="" suffix=""
+                      suppDataElement="true" taxonomy="CDCREC" type="Extensional"
+                      uuid="46098af7-78bf-451a-9e24-1f39627607cc" version=""/>
+            <valueset id="bc61930252b941bfbb65635b0d4e3b17" name="Second and Third Degree Burn"
+                      oid="2.16.840.1.113883.17.4077.3.2053" originalName="Second and Third Degree Burn" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="754f6dd6-7417-41b9-bb33-1b16e57eb749" version=""/>
+            <valueset id="bd51fce9006846849afd8f36dfc239c4" name="Seizure" oid="2.16.840.1.113883.17.4077.3.2015"
+                      originalName="Seizure" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                      type="Grouping" uuid="4197e3e0-e452-443c-b960-1b0849f7700d" version=""/>
+            <valueset id="9662dffcab374e7a8d9b946f30cd4da1" name="Sepsis" oid="2.16.840.1.113883.17.4077.3.2033"
+                      originalName="Sepsis" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                      type="Grouping" uuid="31442a1d-c536-4dc6-b3df-825a367c5d77" version=""/>
+            <valueset id="2a69708ad4454808a3bb823071ef818a" name="Septic Shock" oid="2.16.840.1.113883.17.4077.3.2046"
+                      originalName="Septic Shock" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                      type="Grouping" uuid="e5b7780a-c853-4e6d-937d-2c1d1c1c7df4" version=""/>
+            <valueset id="4e134dd85b4740f7b048ded848ff5198" name="Toxicological Emergency"
+                      oid="2.16.840.1.113883.17.4077.3.2055" originalName="Toxicological Emergency" program=""
+                      release="" suppDataElement="false" taxonomy="Grouping" type="Grouping"
+                      uuid="1c86de5c-8d4d-4ffb-906f-0f8634d02176" version=""/>
+            <valueset id="eb2d7c20cda04c5ca6bfb2e75d36e42f" name="Trauma" oid="2.16.840.1.113883.3.464.1003.113.12.1036"
+                      originalName="Trauma" program="" release="" suppDataElement="false" taxonomy="Grouping"
+                      type="Grouping" uuid="3e208ce6-4e0e-4c7f-ab06-e25cefea9f7e" version=""/>
+        </valuesets>
+        <codes>
+            <code codeIdentifier="CODE:/CodeSystem/LOINC/Version/2.66/Code/21112-8/Info" codeName="Birth date"
+                  codeOID="21112-8" codeSystemName="LOINC" codeSystemOID="2.16.840.1.113883.6.1"
+                  codeSystemVersion="2.66" displayName="Birth date" id="ba4e69d1d56d4323af34faa42af3a3c8"
+                  isCodeSystemVersionIncluded="false" readOnly="false"/>
+            <code codeIdentifier="CODE:/CodeSystem/CPT/Version/2019/Code/99291/Info"
+                  codeName="Critical care, evaluation and management of the critically ill or critically injured patient; first 30-74 minutes"
+                  codeOID="99291" codeSystemName="CPT" codeSystemOID="2.16.840.1.113883.6.12" codeSystemVersion="2019"
+                  displayName="Critical care, evaluation and management of the critically ill or critically injured patient; first 30-74 minutes"
+                  id="7ccb067320c24c3a8fe0e10ccc8938d2" isCodeSystemVersionIncluded="false" readOnly="false"/>
+            <code codeIdentifier="CODE:/CodeSystem/DischargeDisposition/Version/HL7V2.5/Code/20/Info"
+                  codeName="Expired (i.e. dead)" codeOID="20" codeSystemName="DischargeDisposition"
+                  codeSystemOID="2.16.840.1.113883.12.112" codeSystemVersion="HL7V2.5" displayName="Expired (i.e. dead)"
+                  id="f4128cdc3c0547b5b582afc09ca9b67d" isCodeSystemVersionIncluded="false" readOnly="false"/>
+            <code codeIdentifier="CODE:/CodeSystem/SNOMEDCT/Version/2019-03/Code/371828006/Info"
+                  codeName="Patient deceased during stay (discharge status = dead) (finding)" codeOID="371828006"
+                  codeSystemName="SNOMEDCT" codeSystemOID="2.16.840.1.113883.6.96" codeSystemVersion="2019-03"
+                  displayName="Patient deceased during stay (discharge status = dead) (finding)"
+                  id="8b8c95ccfed84687b2498b651a4e281f" isCodeSystemVersionIncluded="false" readOnly="false"/>
+        </codes>
+        <parameters>
+            <parameter id="c7876c2e-0e35-4154-92c7-21c0adf11cfe" name="Measurement Period" readOnly="true">
+                <comment/>
+                <logic>Interval&lt;DateTime&gt;</logic>
+            </parameter>
+        </parameters>
+        <definitions>
+            <definition context="Patient" id="10DA8CDA-2407-4154-8AFC-25DFD72E2A1C" name="SDE Ethnicity"
+                        popDefinition="false" supplDataElement="true">
+                <logic>["Patient Characteristic Ethnicity": "Ethnicity"]</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="317312C1-6E80-4A98-B782-593D9F8FF500" name="SDE Payer"
+                        popDefinition="false" supplDataElement="true">
+                <logic>["Patient Characteristic Payer": "Payer"]</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="33166F4E-95A6-4E44-A26C-42BEBC2D0153" name="SDE Race"
+                        popDefinition="false" supplDataElement="true">
+                <logic>["Patient Characteristic Race": "Race"]</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="2241150C-5CA0-4442-AD98-4F1927350950" name="SDE Sex" popDefinition="false"
+                        supplDataElement="true">
+                <logic>["Patient Characteristic Sex": "ONC Administrative Sex"]</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="846d538f-4693-4a4b-af51-38b4dc8b98d5"
+                        name="Emergency Department Visit During Measurement Period With Order for Admission"
+                        popDefinition="false" supplDataElement="false">
+                <logic>( ["Encounter, Performed": "Emergency Department Visit"]
+                    union ["Encounter, Performed": "Critical care, evaluation and management of the critically ill or
+                    critically injured patient; first 30-74 minutes"] ) EDVisit
+                    with ["Encounter, Order": "Hospital Admission or Observation"] OrderForAdmission
+                    such that EDVisit.relevantPeriod during "Measurement Period"
+                    and OrderForAdmission.authorDatetime during EDVisit.relevantPeriod
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="d83908e8-96ce-4274-a3b7-783638f94345"
+                        name="Emergency Department Visit for Septic Shock" popDefinition="false"
+                        supplDataElement="false">
+                <logic>"Emergency Department Visit with Septic Shock Diagnosis"
+                    union "Emergency Department Visit with Acute Hypotension and Sepsis or Infection Diagnoses"
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="1b2ab546-e4be-4667-b908-1c6ec7e8c4fb" name="Denominator"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Initial Population"</logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="32f32ad5-1b16-4993-a933-b589da4c8187" name="Patient Declined Sepsis Care"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    with ["Assessment, Performed": "Declined Sepsis Care"] DeclinedSepsisCare
+                    such that DeclinedSepsisCare.authorDatetime during SepticShockEDVisit.relevantPeriod
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="0941b79e-d2b8-4239-873f-4226700ba01b"
+                        name="Patient Receiving Comfort Measures" popDefinition="false" supplDataElement="false">
+                <logic>( "Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    with ["Intervention, Order": "Comfort Measures"] OrderForComfortMeasures
+                    such that OrderForComfortMeasures.authorDatetime during SepticShockEDVisit.relevantPeriod
+                    )
+                    union ( "Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    with ["Intervention, Performed": "Comfort Measures"] ReceivingComfortMeasures
+                    such that ReceivingComfortMeasures.relevantPeriod overlaps after SepticShockEDVisit.relevantPeriod
+                    )
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="11e89545-b1d7-4a2d-bc85-4f15739c7a6c"
+                        name="Patient Left Before Treatment Completion" popDefinition="false" supplDataElement="false">
+                <logic>"Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    where SepticShockEDVisit.dischargeDisposition in "Left Before Treatment Completion"
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="9ed40ae0-21b1-4bce-9321-550bb8e0eba4" name="Initial Population"
+                        popDefinition="false" supplDataElement="false">
+                <logic>( "Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    with ["Patient Characteristic Birthdate": "Birth date"] BirthDate
+                    such that Global."CalendarAgeInYearsAt" ( BirthDate.birthDatetime, start of
+                    SepticShockEDVisit.relevantPeriod ) &gt;= 18
+                    )
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="921e72e0-e036-4c1f-a21f-63e78cb240a8"
+                        name="Emergency Department Visit for Septic Shock with Other Secondary Diagnosis"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    where exists ( SepticShockEDVisit.diagnoses SepticShockEDVisitDiagnosis
+                    where ( SepticShockEDVisitDiagnosis.code in "Cardiac Arrest"
+                    or SepticShockEDVisitDiagnosis.code in "Second and Third Degree Burn"
+                    or SepticShockEDVisitDiagnosis.code in "Seizure"
+                    or SepticShockEDVisitDiagnosis.code in "Gastrointestinal Hemorrhage"
+                    or SepticShockEDVisitDiagnosis.code in "Hemorrhagic Stroke"
+                    or SepticShockEDVisitDiagnosis.code in "Ischemic Stroke"
+                    or SepticShockEDVisitDiagnosis.code in "Myocardial Infarction"
+                    or SepticShockEDVisitDiagnosis.code in "Toxicological Emergency"
+                    or SepticShockEDVisitDiagnosis.code in "Trauma"
+                    )
+                    )
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="0a2de8f0-2713-420f-8331-54bac7e0109b"
+                        name="Emergency Department Visit with Acute Hypotension and Sepsis or Infection Diagnoses"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Emergency Department Visit During Measurement Period With Order for Admission" EDEncounter
+                    where exists ( EDEncounter.diagnoses EDEncounterDiagnosis
+                    where EDEncounterDiagnosis.code in "Acute Hypotension"
+                    and ( EDEncounterDiagnosis.code in "Infection"
+                    or EDEncounterDiagnosis.code in "Sepsis"
+                    )
+                    )
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="4932674c-b900-4750-b56d-a20ba16acdd7"
+                        name="Emergency Department Visit with Septic Shock Diagnosis" popDefinition="false"
+                        supplDataElement="false">
+                <logic>"Emergency Department Visit During Measurement Period With Order for Admission" EDEncounter
+                    where exists ( EDEncounter.diagnoses EDEncounterDiagnosis
+                    where EDEncounterDiagnosis.code in "Septic Shock"
+                    )
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="4986bfcd-a634-4744-b08b-cb559c1f1e07" name="Numerator"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    with ["Medication, Order": "IV Antibiotics for Sepsis"] SepsisAntibioticsOrder
+                    such that SepsisAntibioticsOrder.authorDatetime during SepticShockEDVisit.relevantPeriod
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="96255bb6-955a-416a-98d1-e8a98585fe45" name="Denominator Exclusions"
+                        popDefinition="false" supplDataElement="false">
+                <logic>"Patient Transferred from Acute Care or Inpatient Facility"
+                    union "Patient Left Before Treatment Completion"
+                    union "Patient Died During Emergency Department Visit for Septic Shock"
+                    union "Patient Receiving Comfort Measures"
+                    union "Patient Declined Sepsis Care"
+                    union "Emergency Department Visit for Septic Shock with Other Secondary Diagnosis"
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="65b13916-7808-40cc-ad04-e2887f63419e"
+                        name="Patient Transferred from Acute Care or Inpatient Facility" popDefinition="false"
+                        supplDataElement="false">
+                <logic>"Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    where SepticShockEDVisit.admissionSource in "Acute Care or Inpatient Facility"
+                </logic>
+                <comment/>
+            </definition>
+            <definition context="Patient" id="ef3f1e17-aba4-481c-9bea-f5a1ea120e89"
+                        name="Patient Died During Emergency Department Visit for Septic Shock" popDefinition="false"
+                        supplDataElement="false">
+                <logic>"Emergency Department Visit for Septic Shock" SepticShockEDVisit
+                    where ( SepticShockEDVisit.dischargeDisposition ~ "Patient deceased during stay (discharge status =
+                    dead) (finding)"
+                    or SepticShockEDVisit.dischargeDisposition ~ "Expired (i.e. dead)"
+                    )
+                </logic>
+                <comment/>
+            </definition>
+        </definitions>
+        <includeLibrarys>
+            <includeLibrary cqlLibRefId="402803826c7bec34016c96675130052a" cqlLibRefName="MATGlobalCommonFunctions"
+                            cqlVersion="4.1.000" id="72e952ee-2b09-4163-bdfe-a59310d96174" name="Global"
+                            qdmVersion="5.5"/>
+        </includeLibrarys>
+    </cqlLookUp>
+</measure>

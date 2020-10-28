@@ -1,0 +1,13 @@
+{
+  "message": "Errors getting code...",
+  "errors": {
+    "errorCount": 1,
+    "resultSet": [
+      {
+        "errDesc": "CodeSystem not found.",
+        "errCode": "800"
+      }
+    ]
+  },
+  "status": "error"
+}

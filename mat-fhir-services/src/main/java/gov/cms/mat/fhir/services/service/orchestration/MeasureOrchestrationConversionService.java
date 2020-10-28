@@ -1,19 +1,24 @@
 package gov.cms.mat.fhir.services.service.orchestration;
 
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
-import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateException;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResult;
+import gov.cms.mat.fhir.services.exceptions.HapiFhirCreateMeasureException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.r4.model.CanonicalType;
 import org.hl7.fhir.r4.model.Measure;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_CONVERSION_FAILED;
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.CREATED;
-import static gov.cms.mat.fhir.services.components.mongo.HapiResourcePersistedState.EXISTS;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.CREATED;
+import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersistedState.EXISTS;
 
 @Component
 @Slf4j
@@ -39,17 +44,9 @@ public class MeasureOrchestrationConversionService {
         }
     }
 
-    boolean convert(OrchestrationProperties properties) {
-        if (ConversionReporter.getConversionResult().measureExistsInHapi()) {
-            log.info("No Conversion performed already in hapi measureId: {}", properties.getMeasureId());
-            return true;
-        } else {
-            log.info("Converting measure hapi measureId: {}", properties.getMeasureId());
-            return persistToFhir(properties);
-        }
-    }
+    public boolean convert(OrchestrationProperties properties) {
+        log.debug("Converting measure hapi measureId: {}", properties.getMeasureId());
 
-    private boolean persistToFhir(OrchestrationProperties properties) {
         try {
             String link = hapiFhirServer.persist(properties.getFhirMeasure());
 
@@ -58,9 +55,10 @@ public class MeasureOrchestrationConversionService {
             Optional<Measure> optional = hapiFhirLinkProcessor.fetchMeasureByUrl(link);
 
             if (optional.isPresent()) {
-                ConversionReporter.setFhirMeasureJson(hapiFhirServer.toJson(optional.get()));
+                Measure fhirMeasure = optional.get();
+                ConversionReporter.setFhirMeasureJson(hapiFhirServer.toJson(fhirMeasure));
             } else {
-                throw new HapiFhirCreateException("Cannot find Measure json for url: " + link);
+                throw new HapiFhirCreateMeasureException("Cannot find Measure json for url: " + link);
             }
 
             return true;
@@ -69,6 +67,33 @@ public class MeasureOrchestrationConversionService {
             ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, MEASURE_CONVERSION_FAILED);
 
             return false;
+        }
+    }
+
+    private void addLibrariesLinkToMeasures(Measure fhirMeasure) {
+        ConversionResult conversionResult = ConversionReporter.getConversionResult();
+
+        List<CanonicalType> theLibrary = conversionResult.getLibraryConversionResults()
+                .stream()
+                .filter(result -> StringUtils.isNotEmpty(result.getLink()))
+                .map(result -> makeLibraryLinkRelative(result.getLink()))
+                .map(CanonicalType::new)
+                .collect(Collectors.toList());
+
+        log.debug("Lib size = {}", theLibrary.size());
+
+        fhirMeasure.setLibrary(theLibrary);
+    }
+
+    private String makeLibraryLinkRelative(String fullLink) {
+        //  "http://localhost:6060/hapi-fhir-jpaserver/fhir/Library/9a2a67acf9fc407eb5bd9c06e2d84fa1"
+
+        int start = fullLink.indexOf("/Library/");
+
+        if (start == -1) {
+            return fullLink;
+        } else {
+            return fullLink.substring(start + 1);
         }
     }
 }

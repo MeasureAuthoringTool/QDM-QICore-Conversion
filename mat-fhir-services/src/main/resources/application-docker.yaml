@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://host.docker.internal:3306/${MAT_DB}?serverTimezone=UTC&max_allowed_packet=16777216
+    url: ${MAT_DB_URL}
     username: ${MAT_DB_USER}
     password: ${MAT_DB_PASS}
   jpa:
@@ -16,36 +16,35 @@ spring:
     generate-ddl: false
     show-sql: false
 
-
-
-  data:
-    mongodb:
-      database: mat_conversion_results
-      uri: mongodb://mongo
-
 logging:
-  level:
-    root: INFO
-    gov.cms.mat: DEBUG
-    org.hl7.fhir.r4.hapi.ctx: WARN
-    org.exolab: WARN
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+  pattern:
+    file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %mdc %logger{36}.%M - %msg%n"
   file:
     name: mat-fhir-services.log
+    clean-history-on-start: true
+    max-history: 1
+
+mat-api-key: ${MAT_API_KEY}
 
 fhir:
   r4:
-    baseurl: http://hapi-fhir-jpaserver:6060/hapi-fhir-jpaserver/fhir/
-
-qdmqicore:
-  conversion:
-    baseurl: http://qdm-qicore-mapping-services:9090
+    baseurl: ${HAPI_FHIR_URL}
+    public-url: ${HAPI_FHIR_URL_PUBLIC}
 
 cql:
   conversion:
-    baseurl: http://cql-elm-translation:7070
+    baseurl: ${CQL_CONVERSION_URL}
 
 self:
   health:
-    baseurl: http://docker.for.mac.localhost:${server.port}
+    baseurl: ${FHIR_SERVICES_URL}
 
+json:
+  data:
+    url: ${CODESYSTEM_SHEET_URL}
+
+mapping:
+  services:
+    baseUrl: ${MAPPING_SERVICES_URL}
+
+swagger-server: ${MAT_FHIR_SWAGGER_URL}

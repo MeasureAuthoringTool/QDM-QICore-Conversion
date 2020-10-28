@@ -1,8 +1,11 @@
 package gov.cms.mat.fhir.services.translate.creators;
 
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
 import gov.cms.mat.cql.elements.LibraryProperties;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -19,7 +22,7 @@ public interface FhirCreator {
     default Attachment createAttachment(String contentType, byte[] rawData) {
         return new Attachment()
                 .setContentType(contentType)
-                .setData(rawData == null ? null : encodeBase64(rawData));
+                .setData(rawData == null ? null : rawData);
     }
 
     default byte[] encodeBase64(byte[] src) {
@@ -48,10 +51,10 @@ public interface FhirCreator {
                 .setDisplay(display);
     }
 
-    default Period buildPeriod(Date startDate, Date endDate) {
+    default Period buildPeriodDayResolution(Date startDate, Date endDate) {
         return new Period()
-                .setStart(startDate)
-                .setEnd(endDate);
+                .setStart(startDate, TemporalPrecisionEnum.DAY)
+                .setEnd(endDate, TemporalPrecisionEnum.DAY);
     }
 
     default String createLibraryUuid(LibraryProperties properties) {
@@ -60,5 +63,18 @@ public interface FhirCreator {
 
     default String createLibraryUuid(String name, String version) {
         return name.replace('_', '-') + "-" + version.replace('.', '-');
+    }
+
+    default String createVersion(BigDecimal version, Integer revision) {
+        String[] parts = version.toString().split("\\.");
+
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Cannot parse version: " + version);
+        } else {
+
+            return parts[0] + '.' +
+                    Integer.parseInt(parts[1]) + '.' + //Remove leading zeros here.
+                    StringUtils.leftPad(revision.toString(),3,'0'); //Force leading 0s on revision.
+        }
     }
 }

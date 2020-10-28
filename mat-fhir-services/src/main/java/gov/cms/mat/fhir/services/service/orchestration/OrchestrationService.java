@@ -2,43 +2,39 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.services.components.mat.DraftMeasureXmlProcessor;
 import gov.cms.mat.fhir.services.components.mat.MatXmlException;
-import gov.cms.mat.fhir.services.components.mongo.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.*;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Slf4j
 public class OrchestrationService {
-    private final ValueSetOrchestrationValidationService valueSetOrchestrationValidationService;
-    private final ValueSetOrchestrationConversionService valueSetOrchestrationConversionService;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
     private final LibraryOrchestrationConversionService libraryOrchestrationConversionService;
     private final LibraryOrchestrationValidationService libraryOrchestrationValidationService;
     private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
     private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
+    private final DraftMeasureXmlProcessor draftMeasureXmlProcessor;
 
-    public OrchestrationService(ValueSetOrchestrationValidationService valueSetOrchestrationValidationService,
-                                ValueSetOrchestrationConversionService valueSetOrchestrationConversionService,
-                                CQLLibraryTranslationService cqlLibraryTranslationService,
+    public OrchestrationService(CQLLibraryTranslationService cqlLibraryTranslationService,
                                 LibraryOrchestrationConversionService libraryOrchestrationConversionService,
                                 LibraryOrchestrationValidationService libraryOrchestrationValidationService,
                                 MeasureOrchestrationValidationService measureOrchestrationValidationService,
-                                MeasureOrchestrationConversionService measureOrchestrationConversionService) {
-        this.valueSetOrchestrationValidationService = valueSetOrchestrationValidationService;
-        this.valueSetOrchestrationConversionService = valueSetOrchestrationConversionService;
+                                MeasureOrchestrationConversionService measureOrchestrationConversionService,
+                                DraftMeasureXmlProcessor draftMeasureXmlProcessor) {
+
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
         this.libraryOrchestrationConversionService = libraryOrchestrationConversionService;
         this.libraryOrchestrationValidationService = libraryOrchestrationValidationService;
         this.measureOrchestrationValidationService = measureOrchestrationValidationService;
         this.measureOrchestrationConversionService = measureOrchestrationConversionService;
+        this.draftMeasureXmlProcessor = draftMeasureXmlProcessor;
     }
 
     public boolean process(OrchestrationProperties properties) {
@@ -47,22 +43,23 @@ public class OrchestrationService {
         if (!processPrerequisitesFlag) {
             log.debug("Conversion Stopped due to Prerequisites failures measureId: {}", properties.getMeasureId());
             return false;
-        } else if (!processValidation(properties)) {
+        } else if (!processConversion(properties)) {
             log.debug("Conversion Stopped due to validation errors measureId: {}", properties.getMeasureId());
             return false;
         } else {
-            return processConversion(properties);
+            return properties.isPush() ?
+                    processPersistToHapiFhir(properties) : true;
         }
     }
 
     public boolean processPrerequisites(OrchestrationProperties properties) {
         try {
-            processAndGetValueSets(properties);
-            processAndGetCqlLibraries(properties);
+            processAndGetMeasureLib(properties);
             processFhirMeasure(properties);
             return true;
-        } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException |
+        } catch (LibraryConversionException | ValueSetConversionException | MeasureNotFoundException | NoCqlLibrariesFoundException |
                 CqlLibraryNotFoundException | MatXmlMarshalException | MatXmlException e) {
+            log.info("Error for id: " + properties.getMeasureId(), e);
             return false;
         } catch (Exception e) {
             log.info("Error for id: {}", properties.getMeasureId(), e);
@@ -74,37 +71,31 @@ public class OrchestrationService {
         measureOrchestrationConversionService.processExistingFhirMeasure(properties);
     }
 
-    public void processAndGetCqlLibraries(OrchestrationProperties properties) {
-        List<CqlLibrary> cqlLibraries = libraryOrchestrationConversionService.getCqlLibrariesNotInHapi(properties);
+    public void processAndGetMeasureLib(OrchestrationProperties properties) {
 
-        cqlLibraries.forEach(this::processCqlLibrary);
+        CqlLibrary cqlLib = libraryOrchestrationConversionService.getCqlLibRequired(properties);
 
-        properties.getCqlLibraries()
-                .addAll(cqlLibraries);
+        processCqlLibrary(cqlLib, properties.isShowWarnings());
+
+        properties.setMeasureLib(cqlLib);
     }
 
-    private void processCqlLibrary(CqlLibrary cqlLibrary) {
+    public String processCqlLibrary(CqlLibrary cqlLibrary, boolean showWarnings) {
 
         if (StringUtils.isEmpty(cqlLibrary.getCqlXml())) {
-            throw new CqlConversionException("oops");
+            throw new CqlConversionException("Cql Xml is blank for library : " + cqlLibrary.getCqlName());
         }
 
-        String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml());
+        String cql = cqlLibraryTranslationService.convertToCql(cqlLibrary.getCqlXml(), showWarnings);
+
         ConversionReporter.setCql(cql, cqlLibrary.getCqlName(), cqlLibrary.getVersion(), cqlLibrary.getId());
 
-        libraryOrchestrationValidationService.processIncludes(cql);
+        return cql;
     }
 
-
-    public void processAndGetValueSets(OrchestrationProperties properties) {
-        List<ValueSet> valueSets = valueSetOrchestrationValidationService.getValueSetsNotInHapi(properties);
-
-        properties.getValueSets()
-                .addAll(valueSets);
-    }
 
     /* Should be called only when validation has succeeded */
-    public boolean processConversion(OrchestrationProperties properties) {
+    public boolean processPersistToHapiFhir(OrchestrationProperties properties) {
         if (properties.getConversionType().equals(ConversionType.VALIDATION)) {
             log.debug("Conversion not requested for measureId: {}", properties.getMeasureId());
             return true;
@@ -124,7 +115,7 @@ public class OrchestrationService {
         }
     }
 
-    public boolean processValidation(OrchestrationProperties properties) {
+    public boolean processConversion(OrchestrationProperties properties) {
         log.debug("Validation has started for measureId: {}, xmlSource: {} and conversionType: {}",
                 properties.getMeasureId(), properties.getXmlSource(), properties.getConversionType());
 
@@ -141,14 +132,12 @@ public class OrchestrationService {
     }
 
     public boolean convert(OrchestrationProperties properties) {
-        return valueSetOrchestrationConversionService.convert(properties) &&
-                libraryOrchestrationConversionService.convert(properties) &&
+        return libraryOrchestrationConversionService.convert(properties) &&
                 measureOrchestrationConversionService.convert(properties);
     }
 
     public boolean validate(OrchestrationProperties properties) {
-        return valueSetOrchestrationValidationService.validate(properties) &
-                cqlLibraryTranslationService.validate(properties) &
+        return cqlLibraryTranslationService.validate(properties) &
                 libraryOrchestrationValidationService.validate(properties) &
                 measureOrchestrationValidationService.validate(properties);
     }

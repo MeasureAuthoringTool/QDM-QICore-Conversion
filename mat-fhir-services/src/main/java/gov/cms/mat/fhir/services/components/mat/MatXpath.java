@@ -4,7 +4,7 @@ import mat.server.util.XmlProcessor;
 import org.springframework.stereotype.Component;
 
 @Component
-class MatXpath {
+public class MatXpath {
     static final String MEASURE_DETAILS_TAG = "measureDetails";
     static final String CQL_LOOK_UP_TAG = "cqlLookUp";
     static final String SUPPLEMENTAL_DATA_TAG = "supplementalDataElements";
@@ -31,8 +31,12 @@ class MatXpath {
         return processXmlTag(xml, MEASURE_GROUPING_TAG);
     }
 
-    private String processXmlTag(String xml, String tag) {
+    String processXmlTag(String xml, String tag) {
         return new XmlProcessor(xml).getXmlByTagName(tag);
     }
 
+
+    String processXmlValue(String xml, String tag) {
+        return new XmlProcessor(xml).getValueByTagName(tag);
+    }
 }

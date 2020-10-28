@@ -23,29 +23,35 @@ logging:
     root: INFO
     gov.cms.mat: DEBUG
 
-vsac-client:
-  server: https://vsac.nlm.nih.gov/vsac/ws/Ticket
-  service: http://umlsks.nlm.nih.gov
-  retrieve-multi-oids-service: https://vsac.nlm.nih.gov/vsac/svs/RetrieveMultipleValueSets?
-  profile-service: https://vsac.nlm.nih.gov/vsac/profiles
-  version-service: https://vsac.nlm.nih.gov/vsac/oid/
-  vsac-server-drc-url: https://vsac.nlm.nih.gov/vsac
-  use-cache: true
-  cache-directory: /opt/vsac/cache
+measures:
+  allowed:
+    greater-than: 5.4
+
+vsac:
+  ticket-url-base: ${VSAC_TICKET_URL_BASE:https://utslogin.nlm.nih.gov/cas/v1}
+  url-base: ${VSAC_URL_BASE:https://vsac.nlm.nih.gov}
+
+mat-api-key: ${MAT_API_KEY:LOCAL_KEY}
 
 fhir:
   r4:
-    baseurl: http://localhost:8080/hapi-fhir-jpaserver/fhir/
+    baseurl: http://localhost:6060/fhir/
+    public-url: http://localhost:6060/fhir/
 
-qdmqicore:
-  conversion:
-    baseurl: http://localhost:9090
+mapping:
+  services:
+    baseUrl: ${MAPPING_SERVICES_URL:http://localhost:9090}
 
 cql:
   conversion:
-    baseurl: http://localhost:7070
+    baseurl: ${CQL_CONVERSION_URL:http://localhost:7070}
 
 self:
   health:
-    baseurl: http://localhost:${server.port}
+    baseurl: ${FHIR_SERVICES_URL:http://localhost:9080}
 
+json:
+  data:
+    url: https://spreadsheets.google.com/feeds/list/1_heoWR09X3UnyEvyyHLzVXT_D1Hhdt3OPztpgr1hW_k/od6/public/values?alt=json
+
+swagger-server:

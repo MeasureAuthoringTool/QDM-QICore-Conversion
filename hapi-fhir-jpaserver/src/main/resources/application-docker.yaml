@@ -1,0 +1,5 @@
+logging:
+  file:
+    name: hapi-fhir-jpaserver.log
+  pattern:
+    file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %mdc %logger{36}.%M - %msg%n"

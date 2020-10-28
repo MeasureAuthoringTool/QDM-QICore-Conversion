@@ -1,6 +1,5 @@
 package gov.cms.mat.cql.elements;
 
-import gov.cms.mat.fhir.rest.dto.ConversionMapping;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 @Builder
 @Getter
@@ -18,13 +16,15 @@ import java.util.Optional;
 @EqualsAndHashCode(callSuper = false)
 @Slf4j
 public class DefineProperties extends BaseProperties {
+    public static final String DEFINE_SDE = "define \"SDE ";
+
     String defineData;
     String line;
     List<SymbolicProperty> symbolicProperties;
 
     @Override
     public void setToFhir() {
-        if (line.contains("define \"SDE ")) {
+        if (line.contains(DEFINE_SDE)) {
             log.debug("Define is SDE");
         } else {
             if (CollectionUtils.isEmpty(symbolicProperties)) {
@@ -36,8 +36,9 @@ public class DefineProperties extends BaseProperties {
     }
 
     private void process(SymbolicProperty symbolicProperty) {
-        defineData = StringUtils.replace(defineData, '"' + symbolicProperty.getMatDataTypeDescription() + '"',
-                '"' + symbolicProperty.findFhirResource() + '"');
+        defineData = StringUtils.replace(defineData,
+                '"' + symbolicProperty.getMatDataTypeDescription() + '"',
+                '"' + symbolicProperty.getHelper().convertType(symbolicProperty.getMatDataTypeDescription()) + '"');
 
         if (CollectionUtils.isNotEmpty(symbolicProperty.getAttributePropertySet())) {
             symbolicProperty.getAttributePropertySet()
@@ -48,30 +49,17 @@ public class DefineProperties extends BaseProperties {
 
     private void processAttribute(SymbolicAttributeProperty symbolicAttributeProperty,
                                   SymbolicProperty symbolicProperty) {
+        String qdmType = symbolicAttributeProperty.getSymbolicName();
+        String qdmAttrib = symbolicAttributeProperty.getMatAttributeName();
 
-        String matAttributeName = symbolicAttributeProperty.getMatAttributeName();
-
-        Optional<ConversionMapping> optional = symbolicProperty.getConversionMappings().stream()
-                .filter(c -> c.getMatAttributeName().equals(matAttributeName))
-                .findFirst();
-
-        if (optional.isPresent()) {
-            defineData =
-                    defineData.replace(symbolicAttributeProperty.getUsing(),
-                            symbolicAttributeProperty.getSymbolicName() + '.' + optional.get().getFhirElement());
-        } else {
-            log.warn("Cannot find with matDataTypeDescription: {} - matAttributeName: {}",
-                    symbolicProperty.getMatDataTypeDescription(), matAttributeName);
-
-            defineData =
-                    defineData.replace(symbolicAttributeProperty.getUsing(), symbolicAttributeProperty.getSymbolicName() + ".Unknown");
-        }
+        defineData = defineData.replace(symbolicAttributeProperty.getUsing(),
+                symbolicProperty.getHelper().convertTypeAndAttribute(qdmType, qdmAttrib));
     }
 
 
     @Override
     public String createCql() {
-        return defineData.toString();
+        return defineData;
     }
 
 }

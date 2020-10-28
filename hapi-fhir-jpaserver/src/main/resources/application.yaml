@@ -1,0 +1,66 @@
+server:
+  port: 6060
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: ${HAPI_DB_URL}
+    username: ${HAPI_DB_USER}
+    password: ${HAPI_DB_PASS}
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: gov.mat.hapi.MySqlUpperCaseTableNameStrategy
+    properties:
+      hibernate.jdbc.batch_size: 20
+      hibernate.cache.use_query_cache: false
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_structured_entries: false
+      hibernate.cache.use_minimal_puts: false
+      hibernate.search.default.directory_provider: filesystem
+      hibernate.search.default.indexBase: target/lucenefiles
+      hibernate.search.lucene_version: LUCENE_CURRENT
+      hibernate.search.model_mapping: ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+    show-sql: false
+
+mat-api-key: ${MAT-API-KEY}
+
+hapi:
+  fhir:
+    version: r4
+    server:
+      path: /fhir/*
+      url: ${HAPI_FHIR_URL_PUBLIC}
+    rest:
+      server-name: mat-hapi-fhir
+      server-version: 1.0.0
+      implementation-description: Mat Hapi Fhir
+      default-response-encoding: json
+      e-tag-support: enabled
+      default-pretty-print: true
+    validation:
+      enabled: false
+      request-only: false
+    jpa:
+      scheduling-disabled: true
+      subscription-enabled: false
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      group:
+        custom:
+          include: diskSpace,ping,db
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    root: ${LOG_LEVEL:WARN}
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"

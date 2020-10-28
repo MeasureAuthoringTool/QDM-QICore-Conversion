@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.4.RELEASE</version>
+        <version>2.3.3.RELEASE</version>
         <relativePath/>
     </parent>
     <groupId>gov.cms.mat</groupId>
@@ -17,6 +17,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <mat.microservices.version>0.0.1-SNAPSHOT</mat.microservices.version>
+        <hapi.fhir.version>4.1.0</hapi.fhir.version>
+        <swagger.version>1.4.1</swagger.version>
+        <commons.collections.version>4.1</commons.collections.version>
+        <cqframework.version>1.5.0-SNAPSHOT</cqframework.version>
     </properties>
 
     <dependencies>
@@ -45,6 +49,26 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-client</artifactId>
+                <version>${hapi.fhir.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-structures-r4</artifactId>
+                <version>${hapi.fhir.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-validation</artifactId>
+                <version>${hapi.fhir.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-validation-resources-r4</artifactId>
+                <version>${hapi.fhir.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>gov.cms.mat</groupId>
                 <artifactId>mat-fhir-commons</artifactId>
                 <version>${mat.microservices.version}</version>
@@ -56,24 +80,67 @@
             </dependency>
             <dependency>
                 <groupId>gov.cms.mat</groupId>
+                <artifactId>cql-elm-wrapper</artifactId>
+                <version>${mat.microservices.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.cms.mat</groupId>
                 <artifactId>mat-server-commons</artifactId>
                 <version>${mat.microservices.version}</version>
             </dependency>
             <dependency>
                 <groupId>gov.cms.mat</groupId>
-                <artifactId>vsac-mat-conversion</artifactId>
+                <artifactId>vsac</artifactId>
                 <version>${mat.microservices.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cqframework</groupId>
+                <artifactId>cql</artifactId>
+                <version>${cqframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cqframework</groupId>
+                <artifactId>model</artifactId>
+                <version>${cqframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cqframework</groupId>
+                <artifactId>cql-to-elm</artifactId>
+                <version>${cqframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cqframework</groupId>
+                <artifactId>elm</artifactId>
+                <version>${cqframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cqframework</groupId>
+                <artifactId>quick</artifactId>
+                <version>${cqframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cqframework</groupId>
+                <artifactId>qdm</artifactId>
+                <version>${cqframework.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.20</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
+        <module>hapi-fhir-jpaserver</module>
+        <module>cql-elm-wrapper</module>
+        <module>vsac</module>
         <module>mat-fhir-commons</module>
         <module>mat-fhir-services</module>
         <module>mat-server-commons</module>
         <module>mat-rest-commons</module>
-        <module>vsac-mat-conversion</module>
-        <module>qdm-qicore-mapping-services</module>
+        <module>mapping-services</module>
         <module>cql-elm-translation</module>
     </modules>
 
