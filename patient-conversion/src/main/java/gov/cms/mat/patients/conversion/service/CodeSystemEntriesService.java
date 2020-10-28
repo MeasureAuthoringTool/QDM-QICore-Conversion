@@ -33,7 +33,7 @@ public class CodeSystemEntriesService {
 
         if (optional.isEmpty()) {
             String errorMessage = "Cannot find CodeSystemEntry with oid: " + oid;
-            log.warn(errorMessage);
+            log.info(errorMessage);
             throw new PatientConversionException(errorMessage);
         }
 

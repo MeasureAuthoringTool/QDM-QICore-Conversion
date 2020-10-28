@@ -9,11 +9,9 @@ import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coverage;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.Dosage;
 import org.hl7.fhir.r4.model.Extension;
-import org.hl7.fhir.r4.model.MedicationAdministration;
 import org.hl7.fhir.r4.model.MedicationDispense;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Quantity;
@@ -50,12 +48,12 @@ public class MedicationDispensedConverter extends ConverterBase<MedicationDispen
 
         medicationDispense.setMedication(convertToCodeSystems(codeSystemEntriesService, qdmDataElement.getDataElementCodes()));
 
-        if( qdmDataElement.getRelevantDatetime() != null) {
+        if (qdmDataElement.getRelevantDatetime() != null) {
             medicationDispense.setWhenHandedOver(qdmDataElement.getRelevantDatetime());
         }
 
-        if( qdmDataElement.getDaysSupplied() != null) {
-            Quantity quantity = createQuantity( qdmDataElement.getDaysSupplied(), "d");
+        if (qdmDataElement.getDaysSupplied() != null) {
+            Quantity quantity = createQuantity(qdmDataElement.getDaysSupplied(), "d");
             medicationDispense.setDaysSupply(quantity);
         }
 
@@ -75,14 +73,17 @@ public class MedicationDispensedConverter extends ConverterBase<MedicationDispen
 
         if (qdmDataElement.getPrescriber() != null) {
             log.warn("Not mapping -> qdmDataElement.getPrescriber()");
+             // todo ashok how to map
+            // medicationDispense.addAuthorizingPrescription()
         }
 
         if (qdmDataElement.getDispenser() != null) {
+            // todo ashok how to map
             log.warn("Not mapping -> qdmDataElement.getDispenser() ");
         }
 
-        if( qdmDataElement.getSupply() != null) {
-            log.warn("Not mapping -> qdmDataElement.getSupply()");
+        if (qdmDataElement.getSupply() != null) {
+            medicationDispense.setQuantity(convertQuantity(qdmDataElement.getSupply()));
         }
 
 
@@ -90,7 +91,6 @@ public class MedicationDispensedConverter extends ConverterBase<MedicationDispen
             medicationDispense.setStatus("unknown");
             conversionMessages.add(NO_STATUS_MAPPING);
         }
-
 
 
         return QdmToFhirConversionResult.<MedicationDispense>builder()

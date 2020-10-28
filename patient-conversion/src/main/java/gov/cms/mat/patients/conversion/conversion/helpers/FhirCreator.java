@@ -4,7 +4,6 @@ import ca.uhn.fhir.context.FhirContext;
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
 import gov.cms.mat.patients.conversion.dao.QdmPeriod;
 import gov.cms.mat.patients.conversion.dao.QdmQuantity;
-import gov.cms.mat.patients.conversion.exceptions.InvalidUnitException;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.CodeableConcept;
@@ -72,7 +71,12 @@ public interface FhirCreator {
 
     default Quantity createQuantity(Integer value, String unit) {
         Quantity quantity = new Quantity();
-        quantity.setValue(value);
+
+        if (value != null)
+            quantity.setValue(value);
+        else
+            System.out.println("Hi");
+
         quantity.setSystem("http://unitsofmeasure.org");
 
         quantity.setCode(convertUnitToCode(unit)); // will throw if bad unit
@@ -85,7 +89,7 @@ public interface FhirCreator {
         // Let bonnie decide what valid
 
         if (StringUtils.isBlank(unit)) {
-          //  throw new InvalidUnitException("Cannot convert unit, unit is blank");
+            //  throw new InvalidUnitException("Cannot convert unit, unit is blank");
             return unit;
         } else {
             return unit;

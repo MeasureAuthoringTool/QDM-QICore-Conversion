@@ -113,7 +113,8 @@ public interface MedicationRequestConverter extends FhirCreator, DataElementFind
         }
 
         if( qdmDataElement.getSupply() != null) {
-            throw new PatientConversionException("Not mapping -> qdmDataElement.getSupply()");
+            MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
+            dispenseRequest.setQuantity(convertQuantity(qdmDataElement.getSupply()));
         }
 
         return QdmToFhirConversionResult.<MedicationRequest>builder()

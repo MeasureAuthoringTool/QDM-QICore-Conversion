@@ -25,9 +25,9 @@ swagger-server:
 bonnie-thread-pools:
   thread-pool-configurations:
     - name: threadPoolConversion
-      core-pool-size: 25
-      max-pool-size: 50
-      queue-capacity: 100
+      core-pool-size: 50
+      max-pool-size: 100
+      queue-capacity: 150
 
 mat-api-key: ${MAT_API_KEY}
 

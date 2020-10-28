@@ -117,7 +117,7 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
 
             extension.setValue(new CodeType(qdmCodeSystem.getCode()));
         } catch (PatientConversionException e) {
-            log.warn(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -128,7 +128,7 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
 
             extension.setValue(new CodeType(qdmCodeSystem.getCode()));
         } catch (PatientConversionException e) {
-            log.warn(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -147,7 +147,7 @@ public class PatientConverter implements DataElementFinder, FhirCreator {
 
             return value;
         } catch (PatientConversionException e) {
-            log.warn(e.getMessage());
+            log.info(e.getMessage());
             return null;
         }
     }
