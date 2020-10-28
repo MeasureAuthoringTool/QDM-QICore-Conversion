@@ -1,24 +1,24 @@
 package gov.cms.mat.patients.conversion.conversion;
 
-
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.cms.mat.patients.conversion.conversion.helpers.ProcedureConverter;
+import gov.cms.mat.patients.conversion.conversion.helpers.ObservationConverter;
 import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirConversionResult;
 import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
+import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Procedure;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class InterventionPerformedConverter extends ConverterBase<Procedure> implements ProcedureConverter {
-    public static final String QDM_TYPE = "QDM::InterventionPerformed";
+public class PhysicalExamPerformedConverter extends ConverterBase<Observation> implements ObservationConverter {
 
-    public InterventionPerformedConverter(CodeSystemEntriesService codeSystemEntriesService,
+    public static final String QDM_TYPE = "QDM::PhysicalExamPerformed";
+
+    public PhysicalExamPerformedConverter(CodeSystemEntriesService codeSystemEntriesService,
                                           FhirContext fhirContext,
                                           ObjectMapper objectMapper,
                                           ValidationService validationService) {
@@ -31,12 +31,13 @@ public class InterventionPerformedConverter extends ConverterBase<Procedure> imp
     }
 
     @Override
-    public QdmToFhirConversionResult<Procedure> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        return convertToFhirProcedure(fhirPatient, qdmDataElement, this);
+    public QdmToFhirConversionResult<Observation> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+        //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8192-physical-exam-performed
+        return convertToFhirObservation(fhirPatient, qdmDataElement, this);
     }
 
     @Override
-    void convertNegation(QdmDataElement qdmDataElement, Procedure procedure) {
-        convertNegationProcedure(qdmDataElement, procedure);
+    void convertNegation(QdmDataElement qdmDataElement, Observation observation) {
+        convertNegationObservation(qdmDataElement, observation);
     }
 }

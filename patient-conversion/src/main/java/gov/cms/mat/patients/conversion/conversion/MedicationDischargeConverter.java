@@ -36,7 +36,7 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
         QdmToFhirConversionResult<MedicationRequest> medicationRequestQdmToFhirConversionResult = convertToFhirMedicationRequest(fhirPatient,
                 qdmDataElement,
                 this,
-                MedicationRequest.MedicationRequestIntent.ORDER);
+                null);
 
         MedicationRequest medicationRequest = medicationRequestQdmToFhirConversionResult.getFhirResource();
 
