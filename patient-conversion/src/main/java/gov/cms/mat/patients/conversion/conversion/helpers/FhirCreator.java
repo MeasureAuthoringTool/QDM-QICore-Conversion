@@ -49,7 +49,7 @@ public interface FhirCreator {
         }
     }
 
-    default Period createFhirPeriod(QdmPeriod relevantPeriod) {
+    default Period convertPeriod(QdmPeriod relevantPeriod) {
         if (relevantPeriod == null) {
             return null;
         } else {
@@ -72,10 +72,9 @@ public interface FhirCreator {
     default Quantity createQuantity(Integer value, String unit) {
         Quantity quantity = new Quantity();
 
-        if (value != null)
+        if (value != null) {
             quantity.setValue(value);
-        else
-            System.out.println("Hi");
+        }
 
         quantity.setSystem("http://unitsofmeasure.org");
 

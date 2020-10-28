@@ -22,7 +22,7 @@ public interface ProcedureConverter extends DataElementFinder, FhirCreator {
         procedure.setSubject(createReference(fhirPatient));
 
 
-        procedure.setPerformed(createFhirPeriod(qdmDataElement.getRelevantPeriod()));
+        procedure.setPerformed(convertPeriod(qdmDataElement.getRelevantPeriod()));
         /**
          * {
          * "dataTypeDescription": "Intervention, Performed",

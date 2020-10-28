@@ -52,7 +52,7 @@ public class EncounterConverter extends ConverterBase<Encounter> {
         // 	consider constraint to - arrived, triaged, in-progress, on-leave, finished
         encounter.setStatus(Encounter.EncounterStatus.UNKNOWN);
         conversionMessages.add(NO_STATUS_MAPPING);
-        encounter.setPeriod(createFhirPeriod(qdmDataElement.getRelevantPeriod()));
+        encounter.setPeriod(convertPeriod(qdmDataElement.getRelevantPeriod()));
 
         encounter.setDiagnosis(createDiagnoses(qdmDataElement));
 
@@ -74,11 +74,12 @@ public class EncounterConverter extends ConverterBase<Encounter> {
         }
 
         if (processNegation(qdmDataElement, encounter)) {
-            //todo stan
+            //todo stan we have many with data right now
             // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8114-encounter-performed
             //	There is no current use case for an eCQM to request a reason for failure to perform an encounter.
 
-            log.debug("How to handle this");
+            conversionMessages.add("There is no current use case for an eCQM to request a reason for failure to perform an encounter.");
+
         }
 
         return QdmToFhirConversionResult.<Encounter>builder()
@@ -90,12 +91,7 @@ public class EncounterConverter extends ConverterBase<Encounter> {
 
     @Override
     void convertNegation(QdmDataElement qdmDataElement, Encounter encounter) {
-        //todo remove me
-        try {
-            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(qdmDataElement));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        // nothing to do
     }
 
 

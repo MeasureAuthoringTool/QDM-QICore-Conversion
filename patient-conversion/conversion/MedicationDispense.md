@@ -82,7 +82,7 @@
       <td>setting</td>
       <td>MedicationDispense.category</td>
       <td>Inpatient, Outpatient, Community, Discharge</td>
-       <td>No Data in for element for qdmDataElement.getSetting() </td>
+       <td>No Data in for element for qdmDataElement.getSetting() & and not present in qdm-modelinfo  </td>
     </tr>
     <tr>
       <td>reason</td>

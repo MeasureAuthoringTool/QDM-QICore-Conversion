@@ -25,8 +25,8 @@ QDM::ImmunizationOrder,~~
 ~~QDM::MedicationActive,~~ 
 ~~QDM::MedicationAdministered,~~ ``
 ~~QDM::MedicationDischarge,~~ 
-QDM::MedicationDispensed, 
-QDM::MedicationOrder, 
+~~QDM::MedicationDispensed, 
+QDM::MedicationOrder,~~ 
 ~~QDM::Participation,~~
 ~~QDM::PhysicalExamPerformed,~~ 
 ~~QDM::ProcedureOrder,~~ 
@@ -37,9 +37,9 @@ QDM::MedicationOrder,
 QDM::PhysicalExamPerformed,~~ 
 ~~QDM::ProcedureOrder,~~ 
 ~~QDM::ProcedurePerformed,~~
-QDM::SubstanceAdministered, 
-QDM::SubstanceOrder, 
-QDM::SubstanceRecommended, 
+~~QDM::SubstanceAdministered,~~ 
+QDM::SubstanceOrder, -- Not done cannot convert 
+QDM::SubstanceRecommended, -- Not done cannot convert only contains one
 ~~QDM::Symptom~~
 ]
 

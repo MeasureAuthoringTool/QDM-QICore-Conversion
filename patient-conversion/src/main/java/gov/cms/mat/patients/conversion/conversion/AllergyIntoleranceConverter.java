@@ -49,7 +49,7 @@ public class AllergyIntoleranceConverter extends ConverterBase<AllergyIntoleranc
         }
 
         if (qdmDataElement.getPrevalencePeriod() != null) {
-            allergyIntolerance.setOnset(createFhirPeriod(qdmDataElement.getPrevalencePeriod()));
+            allergyIntolerance.setOnset(convertPeriod(qdmDataElement.getPrevalencePeriod()));
         }
 
         if (qdmDataElement.getType() != null) {

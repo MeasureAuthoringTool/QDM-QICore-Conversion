@@ -45,9 +45,11 @@ public class SymptomConverter extends ConverterBase<Observation> implements Obse
         //Todo qdmDataElement.getSeverity() is always null. Do we need to implement?
 //        observation.setInterpretation(convertToCodeSystems(getCodeSystemEntriesService(), qdmDataElement.getSeverity());
 
-        if (qdmDataElement.getRelevantPeriod() != null) {
-            observation.setEffective(createFhirPeriod(qdmDataElement.getRelevantPeriod()));
+        if (qdmDataElement.getPrevalencePeriod()!= null) {
+            observation.setEffective(convertPeriod(qdmDataElement.getPrevalencePeriod()));
         }
+
+        processNegation(qdmDataElement, observation);
 
         return QdmToFhirConversionResult.<Observation>builder()
                 .fhirResource(observation)

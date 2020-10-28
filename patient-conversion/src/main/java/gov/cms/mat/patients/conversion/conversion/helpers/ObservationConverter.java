@@ -37,7 +37,7 @@ public interface ObservationConverter extends FhirCreator, DataElementFinder {
         }
 
         if (qdmDataElement.getRelevantPeriod() != null) {
-            observation.setEffective(createFhirPeriod(qdmDataElement.getRelevantPeriod()));
+            observation.setEffective(convertPeriod(qdmDataElement.getRelevantPeriod()));
         }
 
         if (!converterBase.processNegation(qdmDataElement, observation)) {

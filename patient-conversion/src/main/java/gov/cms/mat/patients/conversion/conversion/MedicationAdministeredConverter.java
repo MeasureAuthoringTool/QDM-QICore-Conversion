@@ -46,7 +46,7 @@ public class MedicationAdministeredConverter extends ConverterBase<MedicationAdm
         medicationAdministration.setMedication(convertToCodeSystems(codeSystemEntriesService, qdmDataElement.getDataElementCodes()));
 
         if (qdmDataElement.getRelevantPeriod() != null) {
-            medicationAdministration.setEffective(createFhirPeriod(qdmDataElement.getRelevantPeriod()));
+            medicationAdministration.setEffective(convertPeriod(qdmDataElement.getRelevantPeriod()));
         }
 
         if (!processNegation(qdmDataElement, medicationAdministration)) {

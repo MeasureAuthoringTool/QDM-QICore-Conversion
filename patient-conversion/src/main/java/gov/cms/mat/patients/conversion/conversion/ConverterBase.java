@@ -107,13 +107,13 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
         if (StringUtils.isBlank(description)) {
             return description;
         } else {
-            String[] splits = description.split(":");
+            int index = description.indexOf(":");
 
-            if (splits.length != 2) {
+            if (index < 0) {
                 log.warn("Cannot find valueSetTitle in description: {}", description);
                 return description;
             } else {
-                return splits[1].trim();
+                return description.substring(index+1);
             }
         }
     }
@@ -148,7 +148,6 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
     void convertNegation(QdmDataElement qdmDataElement, T resource) {
         log.warn("Negation not handled - implement this method");
 
-        //todo remove me
         try {
             log.debug(resource.getClass().getName());
             log.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(qdmDataElement));
@@ -165,7 +164,6 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
         extensionDoNotPerformReason.setValue(convertToCoding(codeSystemEntriesService, qdmDataElement.getNegationRationale()));
         serviceRequest.setExtension(List.of(extensionDoNotPerformReason));
     }
-
 
     void convertNegationObservation(QdmDataElement qdmDataElement, Observation observation) {
         observation.setStatus(Observation.ObservationStatus.FINAL);

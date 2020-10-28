@@ -45,7 +45,7 @@ public class DiagnosisConverter extends ConverterBase<Condition> {
 
         condition.setRecordedDate(qdmDataElement.getAuthorDatetime()); // usually comes in as null
 
-        condition.setOnset(createFhirPeriod(qdmDataElement.getPrevalencePeriod()));
+        condition.setOnset(convertPeriod(qdmDataElement.getPrevalencePeriod()));
 
         if (CollectionUtils.isNotEmpty(qdmDataElement.getFacilityLocations())) {
             log.debug("We have FacilityLocations");

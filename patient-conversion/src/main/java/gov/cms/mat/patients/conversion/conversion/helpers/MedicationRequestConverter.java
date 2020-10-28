@@ -13,8 +13,6 @@ import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Timing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +54,7 @@ public interface MedicationRequestConverter extends FhirCreator, DataElementFind
             Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
             Timing timing = dosage.getTiming();
             Timing.TimingRepeatComponent timingRepeatComponent = timing.getRepeat();
-            timingRepeatComponent.setBounds(createFhirPeriod(qdmDataElement.getRelevantPeriod()));
+            timingRepeatComponent.setBounds(convertPeriod(qdmDataElement.getRelevantPeriod()));
         }
 
         if (qdmDataElement.getSupply() != null) {
