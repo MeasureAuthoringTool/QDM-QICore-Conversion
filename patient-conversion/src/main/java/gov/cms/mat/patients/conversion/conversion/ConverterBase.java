@@ -88,7 +88,7 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
 
             String valueSetTitle = findValueSetTitle(dataElement.getDescription());
 
-            String description = qdmToFhirConversionResult.getFhirResource().getClass().getSimpleName() + "::" + valueSetTitle;
+            String description = qdmToFhirConversionResult.getFhirResource().getClass().getSimpleName() + ":" + valueSetTitle;
 
             return FhirDataElement.builder()
                     .codeListId(dataElement.getCodeListId())
