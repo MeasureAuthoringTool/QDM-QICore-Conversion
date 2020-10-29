@@ -86,9 +86,9 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
                     .validationMessages(validationResult.getMessages())
                     .build();
 
-            String valueSetTitle = findValueSetTitle(dataElement.getDescription());
+            String valueSetTitle = findValueSetTitle(dataElement.getDescription()).trim();
 
-            String description = qdmToFhirConversionResult.getFhirResource().getClass().getSimpleName() + ":" + valueSetTitle;
+            String description = qdmToFhirConversionResult.getFhirResource().getClass().getSimpleName() + ": " + valueSetTitle;
 
             return FhirDataElement.builder()
                     .codeListId(dataElement.getCodeListId())
@@ -113,7 +113,7 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
                 log.warn("Cannot find valueSetTitle in description: {}", description);
                 return description;
             } else {
-                return description.substring(index+1);
+                return description.substring(index + 1);
             }
         }
     }
