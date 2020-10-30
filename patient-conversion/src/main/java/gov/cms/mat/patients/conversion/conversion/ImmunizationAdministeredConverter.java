@@ -7,6 +7,7 @@ import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.service.CodeSystemEntriesService;
 import gov.cms.mat.patients.conversion.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
+import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
@@ -17,13 +18,12 @@ import java.util.List;
 @Component
 @Slf4j
 public class ImmunizationAdministeredConverter extends ConverterBase<Immunization> {
-
     public static final String QDM_TYPE = "QDM::ImmunizationAdministered";
 
     public ImmunizationAdministeredConverter(CodeSystemEntriesService codeSystemEntriesService,
-                                FhirContext fhirContext,
-                                ObjectMapper objectMapper,
-                                ValidationService validationService) {
+                                             FhirContext fhirContext,
+                                             ObjectMapper objectMapper,
+                                             ValidationService validationService) {
         super(codeSystemEntriesService, fhirContext, objectMapper, validationService);
     }
 
@@ -34,34 +34,56 @@ public class ImmunizationAdministeredConverter extends ConverterBase<Immunizatio
 
     @Override
     public QdmToFhirConversionResult<Immunization> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        Immunization immunization = new Immunization();
         List<String> conversionMessages = new ArrayList<>();
 
-        immunization.setPatient(createReference(fhirPatient));
-        immunization.setId(qdmDataElement.get_id());
-//        Dosage	Immunization.doseQuantity
-//        immunization.setDoseQuantity(qdmDataElement.getDosage());
+        Immunization immunization = new Immunization();
+
+        // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8131-immunization-administered
+        // Constrain to Completed, entered-in-error, not-done
+        immunization.setStatus(Immunization.ImmunizationStatus.NULL);
+        conversionMessages.add(NO_STATUS_MAPPING);
+
         immunization.setVaccineCode(convertToCodeSystems(getCodeSystemEntriesService(), qdmDataElement.getDataElementCodes()));
-        if(qdmDataElement.getReason() != null) {
-            immunization.setReasonCode(List.of(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getReason())));
+
+        immunization.setId(qdmDataElement.get_id());
+
+        if (qdmDataElement.getDosage() != null) {
+            immunization.setDoseQuantity(convertQuantity(qdmDataElement.getDosage()));
         }
 
-//        Route	Immunization.route
-//        Relevant dateTime	Immunization.occurrence[x]
-//        author dateTime	Immunization.recorded
-//        Performer	Immunization.performer.actor
+        processNegation(qdmDataElement, immunization);
 
-        //Todo Negation for Immunization Administered is of type MedicationRequest.
-        /*if (!processNegation(qdmDataElement, immunization)) {
-            // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8131-immunization-administered
-            // 	Constrain to active, completed, on-hold
-            immunization.setStatus(Immunization.ImmunizationStatus.COMPLETED);
-            conversionMessages.add(NO_STATUS_MAPPING);
-        }*/
+        if (qdmDataElement.getRoute() != null) {
+            immunization.setRoute(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getRoute()));
+        }
+
+//        if (qdmDataElement.getReason() != null) {
+//            // No data todo can we expect data
+//            immunization.setReasonCode(List.of(convertToCodeableConcept(codeSystemEntriesService, qdmDataElement.getReason())));
+//        }
+
+        if (qdmDataElement.getRelevantDatetime() != null) {
+            immunization.setOccurrence(new DateTimeType(qdmDataElement.getRelevantDatetime()));
+        }
+
+        immunization.setRecorded(qdmDataElement.getAuthorDatetime());
+
+//        if( qdmDataElement.getPerformer() != null) {
+//             // No data todo can we expect data
+//        }
+
+        immunization.setPatient(createReference(fhirPatient));
 
         return QdmToFhirConversionResult.<Immunization>builder()
                 .fhirResource(immunization)
                 .conversionMessages(conversionMessages)
                 .build();
+    }
+
+    @Override
+    void convertNegation(QdmDataElement qdmDataElement, Immunization immunization) {
+        // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8131-immunization-administered
+        log.warn("QdmDataElement id: {} - for converting {} to Fhir Immunization,  Will create a MedicationRequest in another class.",
+                qdmDataElement.get_id(), qdmDataElement.get_type());
     }
 }

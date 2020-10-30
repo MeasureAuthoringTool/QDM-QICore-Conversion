@@ -146,14 +146,8 @@ public abstract class ConverterBase<T extends IBaseResource> implements FhirCrea
     }
 
     void convertNegation(QdmDataElement qdmDataElement, T resource) {
-        log.warn("Negation not handled - implement this method");
-
-        try {
-            log.debug(resource.getClass().getName());
-            log.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(qdmDataElement));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        log.warn("Negation not handled for qdmDataElement id: {} - for converting {} to Fhir {}",
+                qdmDataElement.get_id(), qdmDataElement.get_type(), resource.getClass().getSimpleName());
     }
 
     void convertNegationServiceRequest(QdmDataElement qdmDataElement, ServiceRequest serviceRequest) {

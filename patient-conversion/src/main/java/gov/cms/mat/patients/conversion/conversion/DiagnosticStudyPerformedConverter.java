@@ -40,5 +40,4 @@ public class DiagnosticStudyPerformedConverter extends ConverterBase<Observation
     void convertNegation(QdmDataElement qdmDataElement, Observation observation) {
         convertNegationObservation(qdmDataElement, observation);
     }
-
 }

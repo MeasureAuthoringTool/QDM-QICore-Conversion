@@ -32,10 +32,13 @@ public class MedicationOrderConverter extends ConverterBase<MedicationRequest> i
 
     @Override
     public QdmToFhirConversionResult<MedicationRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
+        //http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8175-medication-order
+        // status	Constrain to active, completed, on-hold
         return convertToFhirMedicationRequest(fhirPatient,
                 qdmDataElement,
                 this,
-                MedicationRequest.MedicationRequestIntent.ORDER);
+                MedicationRequest.MedicationRequestIntent.ORDER,
+                true);
     }
 }
 

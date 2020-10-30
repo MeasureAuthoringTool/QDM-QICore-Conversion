@@ -32,10 +32,16 @@ public class MedicationActiveConverter extends ConverterBase<MedicationRequest> 
 
     @Override
     public QdmToFhirConversionResult<MedicationRequest> convertToFhir(Patient fhirPatient, QdmDataElement qdmDataElement) {
-        return convertToFhirMedicationRequest(fhirPatient,
+        var result = convertToFhirMedicationRequest(fhirPatient,
                 qdmDataElement,
                 this,
-                MedicationRequest.MedicationRequestIntent.ORDER);
+                MedicationRequest.MedicationRequestIntent.ORDER,
+                false);
+
+        //MedicationRequest.status	Constrain to “active”
+        result.getFhirResource().setStatus(MedicationRequest.MedicationRequestStatus.ACTIVE);
+
+        return result;
     }
 }
 

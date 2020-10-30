@@ -35,7 +35,8 @@ public class MedicationDischargeConverter extends ConverterBase<MedicationReques
         return convertToFhirMedicationRequest(fhirPatient,
                 qdmDataElement,
                 this,
-                null);
+                null,
+                false);
     }
 
     @Override

@@ -5,8 +5,8 @@ import gov.cms.mat.patients.conversion.conversion.results.QdmToFhirConversionRes
 import gov.cms.mat.patients.conversion.dao.QdmCodeSystem;
 import gov.cms.mat.patients.conversion.dao.QdmDataElement;
 import gov.cms.mat.patients.conversion.exceptions.InvalidUnitException;
-import gov.cms.mat.patients.conversion.exceptions.PatientConversionException;
 import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.Dosage;
 import org.hl7.fhir.r4.model.Duration;
 import org.hl7.fhir.r4.model.MedicationRequest;
@@ -24,15 +24,17 @@ public interface MedicationRequestConverter extends FhirCreator, DataElementFind
     default QdmToFhirConversionResult<MedicationRequest> convertToFhirMedicationRequest(Patient fhirPatient,
                                                                                         QdmDataElement qdmDataElement,
                                                                                         ConverterBase<MedicationRequest> converterBase,
-                                                                                        MedicationRequest.MedicationRequestIntent intent) {
+                                                                                        MedicationRequest.MedicationRequestIntent intent,
+                                                                                        boolean setStatusToUnknown) {
         List<String> conversionMessages = new ArrayList<>();
 
         MedicationRequest medicationRequest = new MedicationRequest();
-        medicationRequest.setId(qdmDataElement.get_id());
         medicationRequest.setSubject(createReference(fhirPatient));
-        medicationRequest.setMedication(getMedicationCodeableConcept(qdmDataElement.getDataElementCodes(), converterBase));
-        medicationRequest.setAuthoredOn(qdmDataElement.getAuthorDatetime());
+
         medicationRequest.setIntent(intent);
+        medicationRequest.setMedication(getMedicationCodeableConcept(qdmDataElement.getDataElementCodes(), converterBase));
+
+        medicationRequest.setId(qdmDataElement.get_id());
 
         if (qdmDataElement.getDosage() != null) {
             try {
@@ -45,18 +47,6 @@ public interface MedicationRequestConverter extends FhirCreator, DataElementFind
             }
         }
 
-        if (qdmDataElement.getRoute() != null) {
-            Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
-            dosage.setRoute(convertToCodeableConcept(converterBase.getCodeSystemEntriesService(), qdmDataElement.getRoute()));
-        }
-
-        if (qdmDataElement.getRelevantPeriod() != null) {
-            Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
-            Timing timing = dosage.getTiming();
-            Timing.TimingRepeatComponent timingRepeatComponent = timing.getRepeat();
-            timingRepeatComponent.setBounds(convertPeriod(qdmDataElement.getRelevantPeriod()));
-        }
-
         if (qdmDataElement.getSupply() != null) {
             try {
                 Quantity quantity = convertQuantity(qdmDataElement.getSupply());
@@ -64,6 +54,15 @@ public interface MedicationRequestConverter extends FhirCreator, DataElementFind
             } catch (InvalidUnitException e) {
                 conversionMessages.add(e.getMessage());
             }
+        }
+
+        if (qdmDataElement.getDaysSupplied() != null) {
+            MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
+            Duration duration = new Duration();
+            duration.setUnit("d");
+            duration.setSystem("http://unitsofmeasure.org");
+            duration.setValue(qdmDataElement.getDaysSupplied());
+            dispenseRequest.setExpectedSupplyDuration(duration);
         }
 
         if (qdmDataElement.getFrequency() != null) {
@@ -76,44 +75,62 @@ public interface MedicationRequestConverter extends FhirCreator, DataElementFind
             }
         }
 
-        if (!converterBase.processNegation(qdmDataElement, medicationRequest)) {
-            // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8173-medication-discharge
-            // 	Constrain to active, completed, on-hold
-            medicationRequest.setStatus(MedicationRequest.MedicationRequestStatus.UNKNOWN);
-            conversionMessages.add(NO_STATUS_MAPPING);
-        }
-
-        if (qdmDataElement.getDaysSupplied() != null) {
-            MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
-            Duration duration = new Duration();
-            duration.setUnit("d");
-            duration.setSystem("http://unitsofmeasure.org");
-            duration.setValue(qdmDataElement.getDaysSupplied());
-            dispenseRequest.setExpectedSupplyDuration(duration);
-        }
-
         if (qdmDataElement.getRefills() != null) {
             MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
             dispenseRequest.setNumberOfRepeatsAllowed(qdmDataElement.getRefills());
         }
 
-
-        if (qdmDataElement.getSetting() != null) {
-            throw new PatientConversionException("Not mapping -> qdmDataElement.getSetting()");
+        if (qdmDataElement.getRoute() != null) {
+            Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
+            dosage.setRoute(convertToCodeableConcept(converterBase.getCodeSystemEntriesService(), qdmDataElement.getRoute()));
         }
 
+        /* Missing data awaiting confirmation that it will never appear
+        if (qdmDataElement.getSetting() != null) {
+            // NO data Found
+        }
+        if (qdmDataElement.getReason() != null) {
+            // NO data Found
+        }
+        */
+
+
+        if (qdmDataElement.getRelevantDatetime() != null) {
+            Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
+
+            dosage.getTiming().setEvent(List.of(new DateTimeType(qdmDataElement.getRelevantDatetime())));
+        }
+
+
+        if (qdmDataElement.getRelevantPeriod() != null) {
+            Dosage dosage = medicationRequest.getDosageInstructionFirstRep();
+            Timing timing = dosage.getTiming();
+            Timing.TimingRepeatComponent timingRepeatComponent = timing.getRepeat();
+            timingRepeatComponent.setBounds(convertPeriod(qdmDataElement.getRelevantPeriod()));
+        }
+
+        medicationRequest.setAuthoredOn(qdmDataElement.getAuthorDatetime());
+
+
+        if (!converterBase.processNegation(qdmDataElement, medicationRequest)) {
+            // http://hl7.org/fhir/us/qicore/qdm-to-qicore.html#8173-medication-discharge
+            // 	Constrain to active, completed, on-hold
+
+            if (setStatusToUnknown) {
+                medicationRequest.setStatus(MedicationRequest.MedicationRequestStatus.UNKNOWN);
+                conversionMessages.add(NO_STATUS_MAPPING);
+            }
+        }
+
+        /* Missing data awaiting confirmation that it will never appear
         if (qdmDataElement.getPrescriber() != null) {
-            throw new PatientConversionException("Not mapping -> qdmDataElement.getPrescriber()");
+            // NO data Found
         }
 
         if (qdmDataElement.getDispenser() != null) {
-            throw new PatientConversionException("Not mapping -> qdmDataElement.getDispenser() ");
+            // NO data Found
         }
-
-        if( qdmDataElement.getSupply() != null) {
-            MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequest = medicationRequest.getDispenseRequest();
-            dispenseRequest.setQuantity(convertQuantity(qdmDataElement.getSupply()));
-        }
+        */
 
         return QdmToFhirConversionResult.<MedicationRequest>builder()
                 .fhirResource(medicationRequest)
