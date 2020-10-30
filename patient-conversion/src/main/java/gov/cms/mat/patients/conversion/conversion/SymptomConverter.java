@@ -41,9 +41,8 @@ public class SymptomConverter extends ConverterBase<Observation> implements Obse
 
         observation.setId(qdmDataElement.get_id());
         observation.setSubject(createReference(fhirPatient));
+        observation.setStatus(Observation.ObservationStatus.UNKNOWN);
         observation.setValue(convertToCodeSystems(getCodeSystemEntriesService(), qdmDataElement.getDataElementCodes()));
-        //Todo qdmDataElement.getSeverity() is always null. Do we need to implement?
-//        observation.setInterpretation(convertToCodeSystems(getCodeSystemEntriesService(), qdmDataElement.getSeverity());
 
         if (qdmDataElement.getPrevalencePeriod()!= null) {
             observation.setEffective(convertPeriod(qdmDataElement.getPrevalencePeriod()));
