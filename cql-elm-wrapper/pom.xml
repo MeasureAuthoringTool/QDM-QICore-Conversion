@@ -85,7 +85,7 @@
 		<dependency>
 			<groupId>info.cqframework</groupId>
 			<artifactId>cql-formatter</artifactId>
-			<version>1.4.8</version>
+			<version>1.5.0</version>
 		</dependency>
 	</dependencies>
 	<build>
