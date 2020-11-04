@@ -17,7 +17,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <mat.microservices.version>0.0.1-SNAPSHOT</mat.microservices.version>
-        <hapi.fhir.version>4.1.0</hapi.fhir.version>
+        <hapi.fhir.version>5.1.0</hapi.fhir.version>
         <swagger.version>1.4.8</swagger.version>
         <commons.collections.version>4.1</commons.collections.version>
         <cqframework.version>1.5.0-SNAPSHOT</cqframework.version>
