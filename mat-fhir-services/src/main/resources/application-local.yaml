@@ -42,3 +42,10 @@ json:
     url: https://spreadsheets.google.com/feeds/list/1_heoWR09X3UnyEvyyHLzVXT_D1Hhdt3OPztpgr1hW_k/od6/public/values?alt=json
 
 swagger-server:
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+    org.exolab: WARN
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
