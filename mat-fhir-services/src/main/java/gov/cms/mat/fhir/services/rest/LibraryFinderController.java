@@ -33,14 +33,23 @@ public class LibraryFinderController implements CqlVersionConverter {
             description = "Find Cql-XML in hapi using the request params")
     @GetMapping("/hapi")
     public String findLibraryHapiCql(@RequestParam String name, @RequestParam String version) {
-        return libraryFinderService.getCqlFromFire(name, version);
+        try {
+            return libraryFinderService.getCqlFromFire(name, version);
+        } catch (RuntimeException r) {
+            log.error("findLibraryHapiCql", r);
+            throw r;
+        }
     }
 
     @Operation(summary = "Find Include Library in FHIR.",
             description = "Finding included FHIR libraries using the main measure library")
     @PostMapping(path = "/includeLibrarySearch", consumes = "text/plain", produces = "application/json")
     public FhirIncludeLibraryResult findIncludedFhirLibraries(@RequestBody String cqlContent) { // for fhr cql only
-        return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(cqlContent);
+        try {
+            return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(cqlContent);
+        } catch (RuntimeException r) {
+            log.error("findLibraryHapiCql", r);
+            throw r;
+        }
     }
-
 }

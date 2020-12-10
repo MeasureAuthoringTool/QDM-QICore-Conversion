@@ -36,7 +36,12 @@ public class LibraryPackagerController {
     @GetMapping(value = "/minimum/json", produces = {"application/json"})
     @ResponseBody
     public String packageMinimumJson(@RequestParam String id) {
-        return packageLibraryMinimum(id, JSON);
+        try {
+            return packageLibraryMinimum(id, JSON);
+        } catch (RuntimeException r) {
+            log.error("packageMinimumJson", r);
+            throw r;
+        }
     }
 
     @Operation(summary = "Full json Package of FHIR  Library",
@@ -44,7 +49,12 @@ public class LibraryPackagerController {
     @GetMapping(value = "/full/json")
     @ResponseBody
     public LibraryPackageFullData packageFullJson(@RequestParam String id) {
-        return packageLibraryFull(id, JSON);
+        try {
+            return packageLibraryFull(id, JSON);
+        } catch (RuntimeException r) {
+            log.error("packageFullJson", r);
+            throw r;
+        }
     }
 
     @Operation(summary = "Full xml Package of FHIR  Library",
@@ -52,7 +62,12 @@ public class LibraryPackagerController {
     @GetMapping(value = "/full/xml")
     @ResponseBody
     public LibraryPackageFullData packageFullXml(@RequestParam String id) {
-        return packageLibraryFull(id, XML);
+        try {
+            return packageLibraryFull(id, XML);
+        } catch (RuntimeException r) {
+            log.error("packageFullXml", r);
+            throw r;
+        }
     }
 
     @Operation(summary = "Minimum Package of FHIR  Library",
@@ -60,7 +75,12 @@ public class LibraryPackagerController {
     @GetMapping(value = "/minimum/xml", produces = {"application/json"})
     @ResponseBody
     public String packageMinimumXML(@RequestParam String id) {
-        return packageLibraryMinimum(id, XML);
+        try {
+            return packageLibraryMinimum(id, XML);
+        } catch (RuntimeException r) {
+            log.error("packageMinimumXML", r);
+            throw r;
+        }
     }
 
     private String packageLibraryMinimum(String id, PackageFormat format) {

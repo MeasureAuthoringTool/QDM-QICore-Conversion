@@ -38,17 +38,26 @@ public class LibraryController implements FhirValidatorProcessor {
                     @ApiResponse(responseCode = "404", description = "Measure is not found in the mat db using the id")})
     @GetMapping(path = "/findOne")
     public String findOne(String id) {
-        Library library = hapiFhirServer.fetchHapiLibrary(id)
-                .orElseThrow(() -> new HapiResourceNotFoundException(id, "Library"));
-
-        return hapiFhirServer.toJson(library);
+        try {
+            Library library = hapiFhirServer.fetchHapiLibrary(id)
+                    .orElseThrow(() -> new HapiResourceNotFoundException(id, "Library"));
+            return hapiFhirServer.toJson(library);
+        } catch (RuntimeException r) {
+            log.error("findOne", r);
+            throw r;
+        }
     }
 
     @Operation(summary = "Count of persisted FHIR Libraries.",
             description = "The count of all the Libraries in the HAPI FHIR Database.")
     @GetMapping(path = "/count")
     public int countValueSets() {
-        return libraryMapper.count();
+        try {
+            return libraryMapper.count();
+        } catch (RuntimeException r) {
+            log.error("countValueSets", r);
+            throw r;
+        }
     }
 
     @Operation(summary = "Delete all persisted FHIR Libraries.",
@@ -56,6 +65,11 @@ public class LibraryController implements FhirValidatorProcessor {
                     "Returns the count of resources deleted.")
     @DeleteMapping(path = "/deleteAll")
     public int deleteValueSets() {
-        return libraryMapper.deleteAll();
+        try {
+            return libraryMapper.deleteAll();
+        } catch (RuntimeException r) {
+            log.error("deleteValueSets", r);
+            throw r;
+        }
     }
 }

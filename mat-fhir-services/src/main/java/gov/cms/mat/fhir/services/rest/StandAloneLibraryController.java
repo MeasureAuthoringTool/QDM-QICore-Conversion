@@ -6,6 +6,7 @@ import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
+import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.orchestration.PushLibraryService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.hl7.fhir.r4.model.Measure;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,12 +49,15 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
             @RequestParam(required = false, defaultValue = "LIBRARY-QDM-ORCHESTRATION") String batchId) {
 
-        ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, conversionType, showWarnings, batchId);
-
-        OrchestrationProperties orchestrationProperties =
-                buildProperties(conversionType, false, showWarnings, threadSessionKey);
-
-        return pushLibraryService.convertQdmToFhir(id, orchestrationProperties);
+        try {
+            ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, conversionType, showWarnings, batchId);
+            OrchestrationProperties orchestrationProperties =
+                    buildProperties(conversionType, false, showWarnings, threadSessionKey);
+            return pushLibraryService.convertQdmToFhir(id, orchestrationProperties);
+        } catch (RuntimeException r) {
+            log.error("convertQdmToFhir", r);
+            throw r;
+        }
     }
 
     @Operation(summary = "Orchestrate Stand alone Hapi FHIR Library with the id",
@@ -64,13 +69,15 @@ public class StandAloneLibraryController implements FhirValidatorProcessor {
     public String convertStandAloneFromMatToFhir(
             @RequestParam @Min(10) String id,
             @RequestParam(required = false, defaultValue = "LIBRARY-STANDALONE-ORCHESTRATION") String batchId) {
-        ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, ConversionType.CONVERSION, Boolean.FALSE, batchId);
-
-        OrchestrationProperties orchestrationProperties =
-                buildProperties(ConversionType.CONVERSION, true, Boolean.FALSE, threadSessionKey);
-
-
-        return pushLibraryService.convertStandAloneFromMatToFhir(id, orchestrationProperties);
+        try {
+            ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, ConversionType.CONVERSION, Boolean.FALSE, batchId);
+            OrchestrationProperties orchestrationProperties =
+                    buildProperties(ConversionType.CONVERSION, true, Boolean.FALSE, threadSessionKey);
+            return pushLibraryService.convertStandAloneFromMatToFhir(id, orchestrationProperties);
+        } catch (RuntimeException r) {
+            log.error("pushStandAloneLibrary", r);
+            throw r;
+        }
     }
 
 
