@@ -21,10 +21,7 @@ import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Getter
@@ -135,7 +132,7 @@ public class LibraryTranslator extends TranslatorBase {
                 result.add(a);
             }
         });
-        result.sort((ra1,ra2) -> ra1.getUrl().compareTo(ra2.getUrl()));
+        result.sort(Comparator.comparing(RelatedArtifact::getUrl));
         return result;
     }
 
