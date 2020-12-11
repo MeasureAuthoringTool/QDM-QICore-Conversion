@@ -3,7 +3,6 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
-import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.support.ErrorSeverityChecker;
@@ -63,7 +62,7 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
         return atomicBoolean.get();
     }
 
-    public void verify(OrchestrationProperties properties) {
+    public List<FhirValidationResult> verify(OrchestrationProperties properties) {
         log.info("Validating measure hapi measureId: {}", properties.getMeasureId());
 
         FhirMeasureResourceValidationResult response =
@@ -91,8 +90,9 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
 
         if (!atomicBoolean.get()) {
             ConversionReporter.setTerminalMessage(FAILURE_MESSAGE, MEASURE_VALIDATION_FAILED);
-            throw new HapiResourceValidationException("Validation failed for measure " + properties.getMeasureId() + " " + validationError);
+            return list;
         }
+        return null;
     }
 
     private org.hl7.fhir.r4.model.Measure processFhirMeasure(OrchestrationProperties properties) {

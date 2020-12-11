@@ -1,5 +1,6 @@
 package gov.cms.mat.fhir.services.rest;
 
+import gov.cms.mat.fhir.rest.dto.PushValidationResult;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.service.orchestration.PushMeasureService;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PushMeasureControllerTest {
     private final static String ID = "id";
-    private final static  String URL = "http://hapi.com/Measure/2";
+
     @Mock
     private PushMeasureService pushMeasureService;
+
     @Mock
     private ConversionResultsService conversionResultsService;
 
@@ -27,10 +29,11 @@ class PushMeasureControllerTest {
 
     @Test
     void convertStandAloneFromMatToFhir() {
-        when(pushMeasureService.convert(anyString(), any())).thenReturn(URL);
+        PushValidationResult pushValidationResult = new PushValidationResult();
+        when(pushMeasureService.convert(anyString(), any())).thenReturn(pushValidationResult);
 
-        String result = pushMeasureController.pushMeasure(ID, "batchId");
+        PushValidationResult result = pushMeasureController.pushMeasure(ID, "batchId");
 
-        assertEquals(URL, result);
+        assertEquals(pushValidationResult, result);
     }
 }
