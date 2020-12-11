@@ -14,5 +14,6 @@ public class HumanReadableArtifacts {
     private Set<HumanReadableCodeModel> terminologyCodeModels = new HashSet<>();
     private Set<HumanReadableValuesetModel> terminologyValueSetModels = new HashSet<>();
     private Set<HumanReadableCodeModel> dataReqCodes = new HashSet<>();
+    private Set<HumanReadableTypeModel> dataReqTypes = new HashSet<>();
     private Set<HumanReadableValuesetModel> dataReqValueSets = new HashSet<>();
 }

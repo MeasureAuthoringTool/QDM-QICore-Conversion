@@ -2,6 +2,7 @@ package gov.cms.mat.fhir.services.cql;
 
 import gov.cms.mat.fhir.commons.model.HumanReadableArtifacts;
 import gov.cms.mat.fhir.commons.model.HumanReadableCodeModel;
+import gov.cms.mat.fhir.commons.model.HumanReadableTypeModel;
 import gov.cms.mat.fhir.commons.model.HumanReadableValuesetModel;
 import gov.cms.mat.fhir.services.cql.parser.CqlUtils;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -180,15 +181,14 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
             handleDataRequirement(trimQuotes(ctx.getChild(1).getText()),
                     "code",
                     trimQuotes(ctx.getChild(3).getText()));
-        } else {
-            // We do not add dataRequirements non retrieves like this:
-            // define FirstInpatientEncounter:
-            //   First([Encounter] E where E.class = 'inpatient' sort by period.start desc)
-            log.debug("Skipping retrieve it is not a dataRequirement: " + ctx.getText());
+        } else if (matchesTypeRetrieve(ctx)) {
+            handleTypeDataRequirement(trimQuotes(ctx.getChild(1).getText()));
+            log.debug("Added type retrieve: " + ctx.getText());
         }
 
         return null;
     }
+
 
     public HumanReadableCodeModel getCode(String codeName) {
         HumanReadableCodeModel result = null;
@@ -255,6 +255,18 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
      * @param ctx the retrieve.
      * @return Returns true if the retrieve is a valueset retrieve.
      */
+    private boolean matchesTypeRetrieve(cqlParser.RetrieveContext ctx) {
+        // define FirstInpatientEncounter:
+        //   First([Encounter] E where E.class = 'inpatient' sort by period.start desc)
+        return ctx.getChildCount() == 3 &&
+                ctx.getChild(0).getText().equals("[") &&
+                ctx.getChild(2).getText().equals("]");
+    }
+
+    /**
+     * @param ctx the retrieve.
+     * @return Returns true if the retrieve is a valueset retrieve.
+     */
     private boolean matchesPathRetrieve(cqlParser.RetrieveContext ctx) {
         return ctx.getChildCount() == 7 &&
                 ctx.getChild(0).getText().equals("[") &&
@@ -272,6 +284,16 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                 ctx.getChild(0).getText().equals("[") &&
                 ctx.getChild(2).getText().equals(":") &&
                 ctx.getChild(4).getText().equals("]");
+    }
+
+    private void handleTypeDataRequirement(String type) {
+        // define FirstInpatientEncounter:
+        //   First([Encounter] E where E.class = 'inpatient' sort by period.start desc)
+        var result = new DataRequirement();
+        result.setType(type);
+        dataRequirements.add(result);
+        humanReadableArtifacts.getDataReqTypes().add(HumanReadableTypeModel.builder()
+                .type(type).build());
     }
 
     private void handleDataRequirement(String type, String path, String valueSetOrCodeName) {
@@ -302,7 +324,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                         .datatype(null).
                                 build());
             } else {
-                log.warn("Could not find a value set or code matching name " + valueSetOrCodeName + ". " +
+                log.info("Could not find a value set or code matching name " + valueSetOrCodeName + ". " +
                         "This is likely a FHIR type with attribute and we don't know how to handle those yet :(.");
             }
         }
