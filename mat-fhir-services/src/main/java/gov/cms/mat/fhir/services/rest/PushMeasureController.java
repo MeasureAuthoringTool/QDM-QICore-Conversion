@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.rest.dto.ConversionType;
+import gov.cms.mat.fhir.rest.dto.PushValidationResult;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
@@ -41,7 +42,7 @@ public class PushMeasureController implements FhirValidatorProcessor {
                     @ApiResponse(responseCode = "200", description = "Measure is found in mat and updated in hapi and json returned"),
                     @ApiResponse(responseCode = "404", description = "Measure is not found in the mat db using the id")})
     @PostMapping("/pushMeasure")
-    public String pushMeasure(
+    public PushValidationResult pushMeasure (
             @RequestParam @Min(10) String id,
             @RequestParam(required = false, defaultValue = "PUSH-MEASURE-ORCHESTRATION") String batchId) {
         try {
