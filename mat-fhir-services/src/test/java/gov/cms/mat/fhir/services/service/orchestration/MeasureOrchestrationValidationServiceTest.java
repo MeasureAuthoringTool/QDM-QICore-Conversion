@@ -8,6 +8,7 @@ import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.config.HapiFhirConfig;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.MeasureTranslator;
 import org.hl7.fhir.r4.model.Enumerations;
@@ -32,6 +33,8 @@ class MeasureOrchestrationValidationServiceTest {
 
     private final static String ID = "123";
 
+    @Mock
+    private FhirValidatorProcessor fhirValidatorProcessor;
     @Mock
     private HapiFhirServer hapiFhirServer;
     @Mock
@@ -95,14 +98,14 @@ class MeasureOrchestrationValidationServiceTest {
         when(measureTranslator.translateToFhir(ID)).thenReturn(fhirMeasure);
 
         boolean result = measureOrchestrationValidationService.validate(properties);
-        assertFalse(result);
+        assertTrue(result);
     }
 
     private OrchestrationProperties setUpPush() {
         HapiFhirConfig hapiFhirConfig = new HapiFhirConfig();
         //ReflectionTestUtils.setField(hapiFhirConfig,"profiles",new ArrayList<>());
         FhirContext ctx =  hapiFhirConfig.buildFhirContext();
-        when(hapiFhirServer.getCtx()).thenReturn(ctx);
+       // when(hapiFhirServer.getCtx()).thenReturn(ctx);
 
         return OrchestrationProperties.builder()
                 .matMeasure(matMeasure)

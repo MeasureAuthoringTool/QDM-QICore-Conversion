@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.hapi;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.ICriterion;
@@ -73,7 +74,7 @@ class HapiFhirServerTest {
         IDelete iDelete = mock(IDelete.class);
         IDeleteTyped iDeleteTyped = mock(IDeleteTyped.class);
 
-        IBaseOperationOutcome iBaseOperationOutcomeToReturn = mock(IBaseOperationOutcome.class);
+        MethodOutcome iBaseOperationOutcomeToReturn = mock(MethodOutcome.class);
 
         when(hapiClient.delete()).thenReturn(iDelete);
         when(iDelete.resource(resource)).thenReturn(iDeleteTyped);
@@ -82,7 +83,7 @@ class HapiFhirServerTest {
         when(iDeleteTyped.withAdditionalHeader(SecurityFilter.MAT_API_KEY, MAT_API_KEY)).thenReturn(iDeleteTyped);
         when(iDeleteTyped.execute()).thenReturn(iBaseOperationOutcomeToReturn);
 
-        IBaseOperationOutcome iBaseOperationOutcomeReturned = hapiFhirServer.delete(resource);
+        MethodOutcome iBaseOperationOutcomeReturned = hapiFhirServer.delete(resource);
         assertEquals(iBaseOperationOutcomeToReturn, iBaseOperationOutcomeReturned);
 
         verify(hapiClient).delete();

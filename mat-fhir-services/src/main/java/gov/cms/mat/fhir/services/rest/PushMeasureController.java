@@ -25,7 +25,7 @@ import java.time.Instant;
 @RequestMapping(path = "/measure")
 @Tag(name = "Measure-Controller", description = "API for Measures")
 @Slf4j
-public class PushMeasureController implements FhirValidatorProcessor {
+public class PushMeasureController {
     private final ConversionResultsService conversionResultsService;
     private final PushMeasureService pushMeasureService;
 

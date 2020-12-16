@@ -18,22 +18,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class MeasurePackagerService implements FhirValidatorProcessor {
+public class MeasurePackagerService  {
 
     private static final String LIBRARY_CANONICAL_BASE = "http://ecqi.healthit.gov/ecqms/Library/";
 
     private static final String MEASURE_URL_TOKEN = "/Measure/";
     private final HapiFhirServer hapiFhirServer;
-    private final HapiFhirLinkProcessor hapiFhirLinkProcessor;
     private final LibraryPackagerService libraryPackagerService;
     private final CqlLibraryRepository cqlLibRepository;
 
     public MeasurePackagerService(HapiFhirServer hapiFhirServer,
-                                  HapiFhirLinkProcessor hapiFhirLinkProcessor,
                                   LibraryPackagerService libraryPackagerService,
                                   CqlLibraryRepository cqlLibRepository) {
         this.hapiFhirServer = hapiFhirServer;
-        this.hapiFhirLinkProcessor = hapiFhirLinkProcessor;
         this.libraryPackagerService = libraryPackagerService;
         this.cqlLibRepository = cqlLibRepository;
     }

@@ -6,17 +6,19 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FhirValidatorService implements FhirValidatorProcessor {
+public class FhirValidatorService  {
+    private final FhirValidatorProcessor fhirValidatorProcessor;
     private final HapiFhirServer hapiFhirServer;
 
-    public FhirValidatorService(HapiFhirServer hapiFhirServer) {
+    public FhirValidatorService(FhirValidatorProcessor fhirValidatorProcessor, HapiFhirServer hapiFhirServer) {
+        this.fhirValidatorProcessor = fhirValidatorProcessor;
         this.hapiFhirServer = hapiFhirServer;
     }
 
     public FhirResourceValidationResult validate(IBaseResource resource) {
         FhirResourceValidationResult fhirResourceValidationResult = new FhirResourceValidationResult();
 
-        validateResource(fhirResourceValidationResult, resource, hapiFhirServer.getCtx());
+        fhirValidatorProcessor.validateResource(fhirResourceValidationResult, resource);
 
         return fhirResourceValidationResult;
     }

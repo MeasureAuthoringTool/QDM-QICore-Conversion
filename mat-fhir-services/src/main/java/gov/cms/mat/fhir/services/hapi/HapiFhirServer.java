@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.hapi;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
@@ -161,7 +162,7 @@ public class HapiFhirServer {
         return loggingInterceptor;
     }
 
-    public IBaseOperationOutcome delete(IBaseResource resource) {
+    public MethodOutcome delete(IBaseResource resource) {
         return hapiClient.delete()
                 .resource(resource)
                 .prettyPrint()

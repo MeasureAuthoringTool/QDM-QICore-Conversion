@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @RequestMapping(path = "/library")
 @Tag(name = "Library-Controller", description = "API for converting MAT Libraries to FHIR")
 @Slf4j
-public class LibraryController implements FhirValidatorProcessor {
+public class LibraryController {
     private final HapiFhirServer hapiFhirServer;
     private final LibraryMapper libraryMapper;
 

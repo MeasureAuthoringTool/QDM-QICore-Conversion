@@ -19,11 +19,13 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class ValueSetFhirValidationResults implements FhirValidatorProcessor {
+public class ValueSetFhirValidationResults  {
     private final HapiFhirServer hapiFhirServer;
+    private final FhirValidatorProcessor fhirValidatorProcessor;
 
-    public ValueSetFhirValidationResults(HapiFhirServer hapiFhirServer) {
+    public ValueSetFhirValidationResults(HapiFhirServer hapiFhirServer, FhirValidatorProcessor fhirValidatorProcessor) {
         this.hapiFhirServer = hapiFhirServer;
+        this.fhirValidatorProcessor = fhirValidatorProcessor;
     }
 
     public FhirValueSetResourceValidationResult generate(List<ValueSet> valueSets,
@@ -55,7 +57,7 @@ public class ValueSetFhirValidationResults implements FhirValidatorProcessor {
         log.debug("Validating oid: {} for measureId: {}", valueSet.getId(), measureId);
         FhirResourceValidationResult res = new FhirResourceValidationResult();
 
-        validateResource(res, valueSet, hapiFhirServer.getCtx());
+        fhirValidatorProcessor.validateResource(res, valueSet);
 
         res.setId(valueSet.getId());
         res.setType("ValueSet");
@@ -70,7 +72,7 @@ public class ValueSetFhirValidationResults implements FhirValidatorProcessor {
         if (CollectionUtils.isEmpty(res.getValidationErrorList())) {
             return Collections.emptyList();
         } else {
-            return buildResults(res);
+            return fhirValidatorProcessor.buildResults(res);
         }
     }
 }

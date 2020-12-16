@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.components.mat;
 import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
+import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
@@ -13,6 +14,7 @@ import gov.cms.mat.fhir.services.config.HapiFhirConfig;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
+import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.CQLLibraryTranslationService;
 import gov.cms.mat.fhir.services.service.orchestration.LibraryOrchestrationValidationService;
 import gov.cms.mat.fhir.services.translate.LibraryTranslator;
@@ -59,6 +61,8 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil, FhirCreator {
     private CqlConversionPayload payload;
 
     @Mock
+    private FhirValidatorProcessor fhirValidatorProcessor;
+    @Mock
     private HapiFhirServer hapiFhirServer;
     @Mock
     private MatXmlProcessor matXmlProcessor;
@@ -98,6 +102,7 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil, FhirCreator {
 
         when(libraryTranslator.translateToFhir(LIBRARY_ID, convertedCql, XML, JSON)).thenReturn(library);
 
+        when(fhirValidatorProcessor.validateResource(library)).thenThrow(new HapiResourceValidationException("You found Waldo. " + LIBRARY_ID));
 
         Exception exception = assertThrows(HapiResourceValidationException.class, () -> {
             draftMeasureXmlProcessor.pushStandAlone(LIBRARY_ID, matXml);
@@ -120,6 +125,7 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil, FhirCreator {
         when(libraryTranslator.translateToFhir(LIBRARY_ID, convertedCql, XML, JSON)).thenReturn(library);
 
         when(hapiFhirServer.persist(library)).thenReturn(LIBRARY_ID);
+        when(fhirValidatorProcessor.validateResource(library)).thenReturn(new FhirResourceValidationResult());
 
         String result = draftMeasureXmlProcessor.pushStandAlone(LIBRARY_ID, matXml);
 
@@ -129,7 +135,7 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil, FhirCreator {
     public String setUpStandAlone() {
         HapiFhirConfig hapiFhirConfig = new HapiFhirConfig();
 
-        when(hapiFhirServer.getCtx()).thenReturn(hapiFhirConfig.buildFhirContext());
+//        when(hapiFhirServer.getCtx()).thenReturn(hapiFhirConfig.buildFhirContext());
 
         String matXml = getStringFromResource("/MeasureTranslator/fhir-simple.xml");
         when(matXpath.processXmlValue(matXml, "library")).thenCallRealMethod();
