@@ -64,42 +64,6 @@ public class MatXmlController {
     private final ValidationOrchestrationService validationOrchestrationService;
     private final MeasureDataService measureDataService;
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @ToString
-    public static class MatXmlResponse {
-        @NotNull
-        private List<LibraryErrors> errors = new ArrayList<>();
-        @NotNull
-        private CQLModel cqlModel;
-        @NotBlank
-        private String cql;
-        @NotNull
-        private CQLObject cqlObject;
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @ToString
-    public static class MatCqlXmlReq extends MatXmlReq {
-        @NotBlank
-        private String cql;
-        private CQLModel sourceModel;
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @ToString
-    public static class MatXmlReq {
-        //Currently not functional.
-        private boolean isLinting = true;
-        @Valid
-        private ValidationRequest validationRequest;
-    }
-
     public MatXmlController(MeasureXmlRepository measureXmlRepo,
                             CqlLibraryRepository cqlLibRepo,
                             CqlVisitorFactory visitorFactory,
@@ -118,36 +82,28 @@ public class MatXmlController {
     MatXmlResponse fromStandaloneLib(@RequestHeader(value = "UMLS-TOKEN", required = false) String ulmsToken,
                                      @NotBlank @PathVariable("id") String libId,
                                      @Valid @RequestBody MatXmlReq matXmlReq) {
-        try {
-            Optional<CqlLibrary> optionalLib = cqlLibRepo.findById(libId);
+        Optional<CqlLibrary> optionalLib = cqlLibRepo.findById(libId);
 
-            if (optionalLib.isPresent()) {
-                CqlLibrary lib = optionalLib.get();
-                if (StringUtils.isBlank(lib.getCqlXml())) {
-                    throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "CQL_LIBRARY.CQL_XML does not exist for CQL_LIBRARY.id " + libId + "."
-                    );
-                }
-
-                CQLModel model = CQLUtilityClass.getCQLModelFromXML(lib.getCqlXml());
-                String cql = CQLUtilityClass.getCqlString(model, "").getLeft();
-
-                return run(ulmsToken,
-                        cql,
-                        model,
-                        matXmlReq,
-                        null);
-            } else {
+        if (optionalLib.isPresent()) {
+            CqlLibrary lib = optionalLib.get();
+            if (StringUtils.isBlank(lib.getCqlXml())) {
                 throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "CQL_LIBRARY not found for CQL_LIBRARY.id " + libId + "."
+                        HttpStatus.BAD_REQUEST, "CQL_LIBRARY.CQL_XML does not exist for CQL_LIBRARY.id " + libId + "."
                 );
             }
-        } catch (RuntimeException e) {
-            log.error("fromStandaloneLib", e);
+
+            CQLModel model = CQLUtilityClass.getCQLModelFromXML(lib.getCqlXml());
+            String cql = CQLUtilityClass.getCqlString(model, "").getLeft();
+
+            return run(ulmsToken,
+                    cql,
+                    model,
+                    matXmlReq,
+                    null);
+        } else {
             throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Unexpected error in fromStandaloneLib(" + ulmsToken + "," + libId + "," + matXmlReq,
-                    e);
+                    HttpStatus.NOT_FOUND, "CQL_LIBRARY not found for CQL_LIBRARY.id " + libId + "."
+            );
         }
     }
 
@@ -156,38 +112,28 @@ public class MatXmlController {
     MatXmlResponse fromMeasure(@RequestHeader(value = "UMLS-TOKEN", required = false) String ulmsToken,
                                @NotBlank @PathVariable("id") String measureId,
                                @Valid @RequestBody MatXmlReq matXmlReq) {
-        try {
+        Optional<MeasureXml> optMeasureXml = measureXmlRepo.findByMeasureId(measureId);
 
-
-            Optional<MeasureXml> optMeasureXml = measureXmlRepo.findByMeasureId(measureId);
-
-            if (optMeasureXml.isPresent()) {
-                byte[] measureXmlBytes = optMeasureXml.get().getMeasureXml();
-                if (measureXmlBytes == null) {
-                    throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "MEASURE_XML.XML does not exist for MEASURE.ID " + measureId + "."
-                    );
-                }
-                String matXml = new String(measureXmlBytes, StandardCharsets.UTF_8);
-                CQLModel model = CQLUtilityClass.getCQLModelFromXML(matXml);
-                String cql = CQLUtilityClass.getCqlString(model, "").getLeft();
-
-                return run(ulmsToken,
-                        cql,
-                        model,
-                        matXmlReq,
-                        measureId);
-            } else {
+        if (optMeasureXml.isPresent()) {
+            byte[] measureXmlBytes = optMeasureXml.get().getMeasureXml();
+            if (measureXmlBytes == null) {
                 throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "MEASURE not found for MEASURE.id " + measureId + "."
+                        HttpStatus.BAD_REQUEST, "MEASURE_XML.XML does not exist for MEASURE.ID " + measureId + "."
                 );
             }
-        } catch (RuntimeException e) {
-            log.error("fromMeasure", e);
+            String matXml = new String(measureXmlBytes, StandardCharsets.UTF_8);
+            CQLModel model = CQLUtilityClass.getCQLModelFromXML(matXml);
+            String cql = CQLUtilityClass.getCqlString(model, "").getLeft();
+
+            return run(ulmsToken,
+                    cql,
+                    model,
+                    matXmlReq,
+                    measureId);
+        } else {
             throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Unexpected error in fromMeasure(" + ulmsToken + "," + measureId + "," + measureId,
-                    e);
+                    HttpStatus.NOT_FOUND, "MEASURE not found for MEASURE.id " + measureId + "."
+            );
         }
     }
 
@@ -196,22 +142,15 @@ public class MatXmlController {
     MatXmlResponse fromCql(@RequestHeader(value = "UMLS-TOKEN", required = false) String umlsToken,
                            @Valid @RequestBody MatCqlXmlReq matCqlXmlReq) {
         log.trace("MatXmlController::fromCql -> enter {}", matCqlXmlReq);
-        String cql = matCqlXmlReq.getCql();
-        try {
-            MatXmlResponse resp = run(umlsToken,
-                    matCqlXmlReq.getCql(),
-                    matCqlXmlReq.getSourceModel(),
-                    matCqlXmlReq,
-                    null);
-            log.trace("MatXmlController::fromCql -> exit {}", resp);
-            return resp;
-        } catch (RuntimeException e) {
-            log.error("fromCql", e);
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Unexpected error in fromMeasure(" + umlsToken + "," + cql + "," + matCqlXmlReq,
-                    e);
-        }
+
+        MatXmlResponse resp = run(umlsToken,
+                matCqlXmlReq.getCql(),
+                matCqlXmlReq.getSourceModel(),
+                matCqlXmlReq,
+                null);
+        log.trace("MatXmlController::fromCql -> exit {}", resp);
+        return resp;
+
     }
 
     private MatXmlResponse run(String umlsToken,
@@ -321,6 +260,42 @@ public class MatXmlController {
         e.setStartErrorInLine(lineNumber);
         e.setEndErrorInLine(lineNumber);
         return e;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public static class MatXmlResponse {
+        @NotNull
+        private List<LibraryErrors> errors = new ArrayList<>();
+        @NotNull
+        private CQLModel cqlModel;
+        @NotBlank
+        private String cql;
+        @NotNull
+        private CQLObject cqlObject;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public static class MatCqlXmlReq extends MatXmlReq {
+        @NotBlank
+        private String cql;
+        private CQLModel sourceModel;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public static class MatXmlReq {
+        //Currently not functional.
+        private boolean isLinting = true;
+        @Valid
+        private ValidationRequest validationRequest;
     }
 
 }

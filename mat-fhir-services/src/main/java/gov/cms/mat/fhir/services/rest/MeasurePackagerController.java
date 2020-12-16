@@ -49,7 +49,6 @@ public class MeasurePackagerController {
     @GetMapping
     @ResponseBody
     public MeasurePackageFullData packageFullJson(@RequestParam String id) {
-        try {
         MeasurePackageFullHapi fullHapi = measurePackagerService.packageFull(id);
 
         return MeasurePackageFullData.builder()
@@ -57,10 +56,6 @@ public class MeasurePackagerController {
                 .library(hapiFhirServer.toJson(fullHapi.getLibrary()))
                 .includeBundle(hapiFhirServer.toJson(fullHapi.getIncludeBundle()))
                 .build();
-        } catch (RuntimeException r) {
-            log.error("getHumanReadableArtifacts",r);
-            throw r;
-        }
     }
 
     @Operation(summary = "Returns human readable artifacts for a packaged measure.",
@@ -69,19 +64,14 @@ public class MeasurePackagerController {
     @GetMapping
     @ResponseBody
     public HumanReadableArtifacts getHumanReadableArtifacts(@PathVariable("measureId") String measureId) {
-        try {
-            CqlLibrary matLib = cqlLibRepository.getCqlLibraryByMeasureId(measureId);
-            if (matLib != null) {
-                var lib = hapiFhirServer.fetchHapiLibrary(matLib.getId()).
-                        orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Could not find Hapi Fhir Library " + matLib.getId()));
-                return cqlVisitorFactory.visitAndCollateHumanReadable(cqlAntlrUtils.getCql(lib)).getRight();
-            } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find measure lib in MAT DB for measureId " + measureId);
-            }
-        } catch (RuntimeException r) {
-            log.error("getHumanReadableArtifacts",r);
-            throw r;
+        CqlLibrary matLib = cqlLibRepository.getCqlLibraryByMeasureId(measureId);
+        if (matLib != null) {
+            var lib = hapiFhirServer.fetchHapiLibrary(matLib.getId()).
+                    orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Could not find Hapi Fhir Library " + matLib.getId()));
+            return cqlVisitorFactory.visitAndCollateHumanReadable(cqlAntlrUtils.getCql(lib)).getRight();
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find measure lib in MAT DB for measureId " + measureId);
         }
     }
 }

@@ -2,18 +2,18 @@ package gov.cms.mat.fhir.services.rest;
 
 
 import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
-import gov.cms.mat.fhir.rest.dto.cql.CqlPayload;
 import gov.cms.mat.fhir.services.components.fhir.FhirIncludeLibraryProcessor;
 import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.service.LibraryFinderService;
-import gov.cms.mat.fhir.services.summary.CqlLibraryFindData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/library/find")
@@ -33,23 +33,13 @@ public class LibraryFinderController implements CqlVersionConverter {
             description = "Find Cql-XML in hapi using the request params")
     @GetMapping("/hapi")
     public String findLibraryHapiCql(@RequestParam String name, @RequestParam String version) {
-        try {
-            return libraryFinderService.getCqlFromFire(name, version);
-        } catch (RuntimeException r) {
-            log.error("findLibraryHapiCql", r);
-            throw r;
-        }
+        return libraryFinderService.getCqlFromFire(name, version);
     }
 
     @Operation(summary = "Find Include Library in FHIR.",
             description = "Finding included FHIR libraries using the main measure library")
     @PostMapping(path = "/includeLibrarySearch", consumes = "text/plain", produces = "application/json")
     public FhirIncludeLibraryResult findIncludedFhirLibraries(@RequestBody String cqlContent) { // for fhr cql only
-        try {
-            return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(cqlContent);
-        } catch (RuntimeException r) {
-            log.error("findLibraryHapiCql", r);
-            throw r;
-        }
+        return fhirIncludeLibraryProcessor.findIncludedFhirLibraries(cqlContent);
     }
 }
