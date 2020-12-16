@@ -34,24 +34,24 @@ import static gov.cms.mat.fhir.services.service.CQLLibraryTranslationService.Con
 
 @Component
 @Slf4j
-public class LibraryOrchestrationValidationService extends LibraryOrchestrationBase
-        implements FhirValidatorProcessor,
+public class LibraryOrchestrationValidationService extends LibraryOrchestrationBase implements
         ErrorSeverityChecker,
         CqlVersionConverter,
         FhirLibraryHelper,
         IdGenerator,
         FhirCreator {
-
+    private final FhirValidatorProcessor fhirValidatorProcessor;
     private final CQLLibraryTranslationService cqlLibraryTranslationService;
     private final CqlLibraryConverter cqlLibraryConverter;
     private final LibraryTranslator libTranslator;
 
     public LibraryOrchestrationValidationService(HapiFhirServer hapiFhirServer,
-                                                 CQLLibraryTranslationService cqlLibraryTranslationService,
+                                                 FhirValidatorProcessor fhirValidatorProcessor, CQLLibraryTranslationService cqlLibraryTranslationService,
                                                  CqlLibraryConverter cqlLibraryConverter,
                                                  LibraryTranslator libTranslator) {
 
         super(hapiFhirServer);
+        this.fhirValidatorProcessor = fhirValidatorProcessor;
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
         this.cqlLibraryConverter = cqlLibraryConverter;
         this.libTranslator = libTranslator;
@@ -139,9 +139,9 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
         FhirLibraryResourceValidationResult response = new FhirLibraryResourceValidationResult(matCqlLibraryId);
         response.setMeasureId(measureId);
 
-        validateResource(response, fhirLibrary, hapiFhirServer.getCtx());
+        fhirValidatorProcessor.validateResource(response, fhirLibrary);
 
-        List<FhirValidationResult> list = buildResults(response);
+        List<FhirValidationResult> list = fhirValidatorProcessor.buildResults(response);
         ConversionReporter.setFhirLibraryValidationResults(list, matCqlLibraryId);
 
         if (list.isEmpty()) {
@@ -171,7 +171,7 @@ public class LibraryOrchestrationValidationService extends LibraryOrchestrationB
     }
 
     private Optional<LibraryConversionResults> find(List<LibraryConversionResults> libraryConversionResults, String matLibId) {
-        return libraryConversionResults.stream().filter(t -> StringUtils.equals(t.getMatLibraryId(),matLibId)).findFirst();
+        return libraryConversionResults.stream().filter(t -> StringUtils.equals(t.getMatLibraryId(), matLibId)).findFirst();
     }
 
     private boolean processValidation(FhirValidationResult validationResult, AtomicBoolean atomicBoolean, String matLibId) {

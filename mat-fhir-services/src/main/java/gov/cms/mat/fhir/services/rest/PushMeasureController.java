@@ -6,7 +6,6 @@ import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
-import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.orchestration.PushMeasureService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +24,7 @@ import java.time.Instant;
 @RequestMapping(path = "/measure")
 @Tag(name = "Measure-Controller", description = "API for Measures")
 @Slf4j
-public class PushMeasureController implements FhirValidatorProcessor {
+public class PushMeasureController {
     private final ConversionResultsService conversionResultsService;
     private final PushMeasureService pushMeasureService;
 

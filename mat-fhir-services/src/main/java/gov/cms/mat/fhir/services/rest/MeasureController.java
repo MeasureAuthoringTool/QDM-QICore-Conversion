@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat.XML;
-
 @RestController
 @RequestMapping(path = "/measure")
 @Tag(name = "Measure-Controller", description = "API for converting MAT Measures to FHIR")
 @Slf4j
-public class MeasureController implements FhirValidatorProcessor {
+public class MeasureController {
     private final HapiFhirServer hapiFhirServer;
     private final MeasureMapper measureMapper;
 

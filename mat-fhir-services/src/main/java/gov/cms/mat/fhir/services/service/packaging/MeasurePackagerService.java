@@ -4,10 +4,8 @@ import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
-import gov.cms.mat.fhir.services.hapi.HapiFhirLinkProcessor;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.packaging.dto.MeasurePackageFullHapi;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,22 +16,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class MeasurePackagerService implements FhirValidatorProcessor {
+public class MeasurePackagerService  {
 
     private static final String LIBRARY_CANONICAL_BASE = "http://ecqi.healthit.gov/ecqms/Library/";
 
     private static final String MEASURE_URL_TOKEN = "/Measure/";
     private final HapiFhirServer hapiFhirServer;
-    private final HapiFhirLinkProcessor hapiFhirLinkProcessor;
     private final LibraryPackagerService libraryPackagerService;
     private final CqlLibraryRepository cqlLibRepository;
 
     public MeasurePackagerService(HapiFhirServer hapiFhirServer,
-                                  HapiFhirLinkProcessor hapiFhirLinkProcessor,
                                   LibraryPackagerService libraryPackagerService,
                                   CqlLibraryRepository cqlLibRepository) {
         this.hapiFhirServer = hapiFhirServer;
-        this.hapiFhirLinkProcessor = hapiFhirLinkProcessor;
         this.libraryPackagerService = libraryPackagerService;
         this.cqlLibRepository = cqlLibRepository;
     }

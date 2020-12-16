@@ -1,5 +1,7 @@
 package gov.cms.mat.fhir.commons.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -324,6 +326,17 @@ public class CqlLibrary implements Serializable {
 
     public void setExperimental(boolean experimental) {
         this.experimental = experimental;
+    }
+
+    public String getMatVersionFormat() {
+        String version = getVersion().toString();
+        String revision = getRevisionNumber().toString();
+
+        String[] split = version.split("\\.");
+
+        return "" + Integer.parseInt(split[0]) + "." +
+                Integer.parseInt(split[1]) + "." +
+                StringUtils.leftPad(revision,3,'0');
     }
 
     @Override

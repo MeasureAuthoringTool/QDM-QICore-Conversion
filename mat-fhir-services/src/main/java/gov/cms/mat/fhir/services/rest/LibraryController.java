@@ -2,7 +2,6 @@ package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.services.exceptions.HapiResourceNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
-import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.translate.LibraryMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +19,7 @@ import javax.validation.Valid;
 @RequestMapping(path = "/library")
 @Tag(name = "Library-Controller", description = "API for converting MAT Libraries to FHIR")
 @Slf4j
-public class LibraryController implements FhirValidatorProcessor {
+public class LibraryController {
     private final HapiFhirServer hapiFhirServer;
     private final LibraryMapper libraryMapper;
 
