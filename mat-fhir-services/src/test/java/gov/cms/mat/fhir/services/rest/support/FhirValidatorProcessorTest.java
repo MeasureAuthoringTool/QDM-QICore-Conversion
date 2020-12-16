@@ -7,7 +7,6 @@ import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.config.HapiFhirConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
-import org.hl7.fhir.r4.model.Meta;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

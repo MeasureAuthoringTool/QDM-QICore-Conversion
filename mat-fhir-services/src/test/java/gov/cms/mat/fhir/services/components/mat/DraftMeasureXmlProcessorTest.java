@@ -10,7 +10,6 @@ import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.xml.MatXmlProcessor;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
-import gov.cms.mat.fhir.services.config.HapiFhirConfig;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
@@ -33,17 +32,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gov.cms.mat.fhir.services.translate.LibraryTranslator.SYSTEM_CODE;
 import static gov.cms.mat.fhir.services.translate.LibraryTranslator.SYSTEM_TYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -133,8 +124,6 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil, FhirCreator {
     }
 
     public String setUpStandAlone() {
-        HapiFhirConfig hapiFhirConfig = new HapiFhirConfig();
-
 //        when(hapiFhirServer.getCtx()).thenReturn(hapiFhirConfig.buildFhirContext());
 
         String matXml = getStringFromResource("/MeasureTranslator/fhir-simple.xml");

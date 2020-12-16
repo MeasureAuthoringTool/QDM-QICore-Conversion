@@ -19,13 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Measure-Controller", description = "API for converting MAT Measures to FHIR")
 @Slf4j
 public class MeasureController {
-    private final FhirValidatorProcessor fhirValidationProcessor;
     private final HapiFhirServer hapiFhirServer;
     private final MeasureMapper measureMapper;
 
-    public MeasureController(FhirValidatorProcessor fhirValidationProcessor, HapiFhirServer hapiFhirServer,
+    public MeasureController(HapiFhirServer hapiFhirServer,
                              MeasureMapper measureMapper) {
-        this.fhirValidationProcessor = fhirValidationProcessor;
         this.hapiFhirServer = hapiFhirServer;
         this.measureMapper = measureMapper;
     }

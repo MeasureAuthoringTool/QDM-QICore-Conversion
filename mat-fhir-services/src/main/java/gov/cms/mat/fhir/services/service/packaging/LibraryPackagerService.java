@@ -31,19 +31,17 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class LibraryPackagerService implements FhirLibraryHelper {
-    private final FhirValidatorProcessor fhirValidatorProcessor;
     private final HapiFhirServer hapiFhirServer;
     private final FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor;
     private final FhirValidatorService fhirValidatorService;
     private final CQLAntlrUtils cqlAntlrUtils;
     private final LibraryCqlVisitorFactory libVisitorFactory;
 
-    public LibraryPackagerService(FhirValidatorProcessor fhirValidatorProcessor, HapiFhirServer hapiFhirServer,
+    public LibraryPackagerService(HapiFhirServer hapiFhirServer,
                                   FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor,
                                   FhirValidatorService fhirValidatorService,
                                   CQLAntlrUtils cqlAntlrUtils,
                                   LibraryCqlVisitorFactory libVisitorFactory) {
-        this.fhirValidatorProcessor = fhirValidatorProcessor;
         this.hapiFhirServer = hapiFhirServer;
         this.fhirIncludeLibraryProcessor = fhirIncludeLibraryProcessor;
         this.fhirValidatorService = fhirValidatorService;
