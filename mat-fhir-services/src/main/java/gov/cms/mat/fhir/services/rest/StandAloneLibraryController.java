@@ -13,7 +13,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Min;
 import java.time.Instant;
@@ -49,15 +54,10 @@ public class StandAloneLibraryController {
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
             @RequestParam(required = false, defaultValue = "LIBRARY-QDM-ORCHESTRATION") String batchId) {
 
-        try {
-            ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, conversionType, showWarnings, batchId);
-            OrchestrationProperties orchestrationProperties =
-                    buildProperties(conversionType, false, showWarnings, threadSessionKey);
-            return pushLibraryService.convertQdmToFhir(id, orchestrationProperties);
-        } catch (RuntimeException r) {
-            log.error("convertQdmToFhir", r);
-            throw r;
-        }
+        ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, conversionType, showWarnings, batchId);
+        OrchestrationProperties orchestrationProperties =
+                buildProperties(conversionType, false, showWarnings, threadSessionKey);
+        return pushLibraryService.convertQdmToFhir(id, orchestrationProperties);
     }
 
     @Operation(summary = "Orchestrate Stand alone Hapi FHIR Library with the id",
@@ -69,22 +69,18 @@ public class StandAloneLibraryController {
     public String pushStandAloneFromMatToFhir(
             @RequestParam @Min(10) String id,
             @RequestParam(required = false, defaultValue = "LIBRARY-STANDALONE-ORCHESTRATION") String batchId) {
-        try {
-            ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, ConversionType.CONVERSION, Boolean.FALSE, batchId);
-            OrchestrationProperties orchestrationProperties =
-                    buildProperties(ConversionType.CONVERSION, true, Boolean.FALSE, threadSessionKey);
-            return pushLibraryService.convertStandAloneFromMatToFhir(id, orchestrationProperties);
-        } catch (RuntimeException r) {
-            log.error("pushStandAloneLibrary", r);
-            throw r;
-        }
+
+        ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, ConversionType.CONVERSION, Boolean.FALSE, batchId);
+        OrchestrationProperties orchestrationProperties =
+                buildProperties(ConversionType.CONVERSION, true, Boolean.FALSE, threadSessionKey);
+        return pushLibraryService.convertStandAloneFromMatToFhir(id, orchestrationProperties);
     }
 
     @Operation(summary = "Pushes all versioned fhir libs in the mat DB into the hapi fhir db.",
             description = "Pushes all versioned fhir libs in the mat DB into the hapi fhir db. Returns a list of lib , names, and versions and the order they were pushed.")
     @GetMapping("/pushAllVersionedLibs")
-    public @ResponseBody List<String> pushAllVersionedLibs() {
-        try {
+    public @ResponseBody
+    List<String> pushAllVersionedLibs() {
             var libs = cqlLibraryRepository.getAllVersionedCqlFhirLibs();
             var result = new ArrayList<String>();
             libs.forEach(lib -> result.add(lib.getId() + " " +
@@ -92,12 +88,8 @@ public class StandAloneLibraryController {
                     lib.getLibraryModel() + " v" +
                     lib.getMatVersionFormat()));
             log.info("Pushing the following libs to hapi-fhir db: " + libs);
-            libs.forEach(lib -> pushStandAloneFromMatToFhir(lib.getId(),null));
+            libs.forEach(lib -> pushStandAloneFromMatToFhir(lib.getId(), null));
             return result;
-        } catch (RuntimeException r) {
-            log.error("getVersionedLibIds", r);
-            throw r;
-        }
     }
 
     public OrchestrationProperties buildProperties(ConversionType conversionType,

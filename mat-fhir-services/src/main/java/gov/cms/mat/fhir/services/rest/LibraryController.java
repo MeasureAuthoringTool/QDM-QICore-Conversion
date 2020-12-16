@@ -37,14 +37,9 @@ public class LibraryController {
                     @ApiResponse(responseCode = "404", description = "Measure is not found in the mat db using the id")})
     @GetMapping(path = "/findOne")
     public String findOne(String id) {
-        try {
-            Library library = hapiFhirServer.fetchHapiLibrary(id)
-                    .orElseThrow(() -> new HapiResourceNotFoundException(id, "Library"));
-            return hapiFhirServer.toJson(library);
-        } catch (RuntimeException r) {
-            log.error("findOne", r);
-            throw r;
-        }
+        Library library = hapiFhirServer.fetchHapiLibrary(id)
+                .orElseThrow(() -> new HapiResourceNotFoundException(id, "Library"));
+        return hapiFhirServer.toJson(library);
     }
 
     @Operation(summary = "Count of persisted FHIR Libraries.",
@@ -64,11 +59,6 @@ public class LibraryController {
                     "Returns the count of resources deleted.")
     @DeleteMapping(path = "/deleteAll")
     public int deleteValueSets() {
-        try {
-            return libraryMapper.deleteAll();
-        } catch (RuntimeException r) {
-            log.error("deleteValueSets", r);
-            throw r;
-        }
+        return libraryMapper.deleteAll();
     }
 }

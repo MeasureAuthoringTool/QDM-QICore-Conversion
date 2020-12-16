@@ -13,4 +13,6 @@ public class BatchIdConflictException extends RuntimeException {
         super(String.format(MESSAGE, batchId));
         log.info(getMessage());
     }
+
+
 }

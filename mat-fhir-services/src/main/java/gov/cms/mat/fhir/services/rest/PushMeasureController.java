@@ -41,19 +41,14 @@ public class PushMeasureController {
                     @ApiResponse(responseCode = "200", description = "Measure is found in mat and updated in hapi and json returned"),
                     @ApiResponse(responseCode = "404", description = "Measure is not found in the mat db using the id")})
     @PostMapping("/pushMeasure")
-    public PushValidationResult pushMeasure (
+    public PushValidationResult pushMeasure(
             @RequestParam @Min(10) String id,
             @RequestParam(required = false, defaultValue = "PUSH-MEASURE-ORCHESTRATION") String batchId) {
-        try {
 
-            ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, batchId);
-            OrchestrationProperties orchestrationProperties = buildProperties(threadSessionKey);
+        ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, batchId);
+        OrchestrationProperties orchestrationProperties = buildProperties(threadSessionKey);
 
-            return pushMeasureService.convert(id, orchestrationProperties);
-        } catch (RuntimeException e) {
-            log.error("pushMeasure",e);
-            throw e;
-        }
+        return pushMeasureService.convert(id, orchestrationProperties);
     }
 
     private OrchestrationProperties buildProperties(ThreadSessionKey threadSessionKey) {

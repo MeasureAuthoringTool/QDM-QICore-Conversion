@@ -94,13 +94,6 @@ public class OrchestrationController implements OrchestrationParameterChecker {
                 return process(orchestrationProperties);
             }
 
-        } catch (RuntimeException e) {
-            log.error("Internal Server Error", e);
-            if (orchestrationProperties != null) {
-                return buildErrorDto(e, orchestrationProperties);
-            } else {
-                throw e;
-            }
         } finally {
             ConversionReporter.removeInThreadLocalAndComplete();
         }
@@ -116,15 +109,6 @@ public class OrchestrationController implements OrchestrationParameterChecker {
             ConversionReporter.setTerminalMessage(e.getMessage(), MEASURE_NOT_FOUND);
             return null;
         }
-    }
-
-    private ConversionResultDto buildErrorDto(RuntimeException e, OrchestrationProperties orchestrationProperties) {
-        if (ConversionReporter.getConversionResult().getOutcome() == null) {
-            log.warn("Missing outcome: {}", orchestrationProperties.getThreadSessionKey());
-            ConversionReporter.setTerminalMessage(e.getMessage(), ConversionOutcome.INTERNAL_SERVER_ERROR);
-        }
-
-        return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());
     }
 
     public ConversionResultDto process(OrchestrationProperties orchestrationProperties) {
