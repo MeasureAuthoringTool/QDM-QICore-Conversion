@@ -1,13 +1,11 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "MEASURE_EXPORT")
-@XmlRootElement
+
 public class MeasureExport implements Serializable, MatXmlBytes {
 
     @Lob
@@ -53,7 +51,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.simpleXml = simpleXml;
     }
 
-    @XmlElement
+
     public String getMeasureExportId() {
         return measureExportId;
     }
@@ -62,7 +60,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.measureExportId = measureExportId;
     }
 
-    @XmlElement
+
     public byte[] getSimpleXml() {
         return simpleXml;
     }
@@ -71,7 +69,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.simpleXml = simpleXml;
     }
 
-    @XmlElement
+
     public byte[] getCodeList() {
         return codeList;
     }
@@ -80,7 +78,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.codeList = codeList;
     }
 
-    @XmlElement
+
     public byte[] getHumanReadable() {
         return humanReadable;
     }
@@ -89,7 +87,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.humanReadable = humanReadable;
     }
 
-    @XmlElement
+
     public byte[] getHqmf() {
         return hqmf;
     }
@@ -98,7 +96,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.hqmf = hqmf;
     }
 
-    @XmlElement
+
     public byte[] getCql() {
         return cql;
     }
@@ -107,7 +105,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.cql = cql;
     }
 
-    @XmlElement
+
     public byte[] getElm() {
         return elm;
     }
@@ -116,7 +114,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.elm = elm;
     }
 
-    @XmlElement
+
     public byte[] getJson() {
         return json;
     }
@@ -125,7 +123,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.json = json;
     }
 
-    @XmlElement
+
     public String getMeasureId() {
         return measureId;
     }
@@ -156,7 +154,7 @@ public class MeasureExport implements Serializable, MatXmlBytes {
 
     @Override
     public String toString() {
-        return "gov.cms.mat.fhir.commons.model.MeasureExport[ measureExportId=" +measureExportId + " ]";
+        return "gov.cms.mat.fhir.commons.model.MeasureExport[ measureExportId=" + measureExportId + " ]";
     }
 
     @Override

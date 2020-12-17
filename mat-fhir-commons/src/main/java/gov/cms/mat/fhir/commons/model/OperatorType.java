@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "OPERATOR_TYPE")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "OperatorType.findAll", query = "SELECT o FROM OperatorType o"),
-    @NamedQuery(name = "OperatorType.findById", query = "SELECT o FROM OperatorType o WHERE o.id = :id"),
-    @NamedQuery(name = "OperatorType.findByName", query = "SELECT o FROM OperatorType o WHERE o.name = :name")})
+        @NamedQuery(name = "OperatorType.findAll", query = "SELECT o FROM OperatorType o"),
+        @NamedQuery(name = "OperatorType.findById", query = "SELECT o FROM OperatorType o WHERE o.id = :id"),
+        @NamedQuery(name = "OperatorType.findByName", query = "SELECT o FROM OperatorType o WHERE o.name = :name")})
 public class OperatorType implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,7 +48,7 @@ public class OperatorType implements Serializable {
         this.name = name;
     }
 
-    @XmlTransient
+
     public Collection<Operator> getOperatorCollection() {
         return operatorCollection;
     }
@@ -81,5 +81,5 @@ public class OperatorType implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.OperatorType[ id=" + id + " ]";
     }
-    
+
 }

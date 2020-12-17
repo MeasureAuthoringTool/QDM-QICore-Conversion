@@ -1,19 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "DATABASECHANGELOGLOCK")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Databasechangeloglock.findAll", query = "SELECT d FROM Databasechangeloglock d"),
-    @NamedQuery(name = "Databasechangeloglock.findById", query = "SELECT d FROM Databasechangeloglock d WHERE d.id = :id"),
-    @NamedQuery(name = "Databasechangeloglock.findByLocked", query = "SELECT d FROM Databasechangeloglock d WHERE d.locked = :locked"),
-    @NamedQuery(name = "Databasechangeloglock.findByLockgranted", query = "SELECT d FROM Databasechangeloglock d WHERE d.lockgranted = :lockgranted"),
-    @NamedQuery(name = "Databasechangeloglock.findByLockedby", query = "SELECT d FROM Databasechangeloglock d WHERE d.lockedby = :lockedby")})
+        @NamedQuery(name = "Databasechangeloglock.findAll", query = "SELECT d FROM Databasechangeloglock d"),
+        @NamedQuery(name = "Databasechangeloglock.findById", query = "SELECT d FROM Databasechangeloglock d WHERE d.id = :id"),
+        @NamedQuery(name = "Databasechangeloglock.findByLocked", query = "SELECT d FROM Databasechangeloglock d WHERE d.locked = :locked"),
+        @NamedQuery(name = "Databasechangeloglock.findByLockgranted", query = "SELECT d FROM Databasechangeloglock d WHERE d.lockgranted = :lockgranted"),
+        @NamedQuery(name = "Databasechangeloglock.findByLockedby", query = "SELECT d FROM Databasechangeloglock d WHERE d.lockedby = :lockedby")})
 public class Databasechangeloglock implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -98,5 +98,5 @@ public class Databasechangeloglock implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Databasechangeloglock[ id=" + id + " ]";
     }
-    
+
 }

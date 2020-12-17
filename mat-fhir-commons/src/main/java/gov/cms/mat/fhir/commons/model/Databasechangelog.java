@@ -1,29 +1,29 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "DATABASECHANGELOG")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Databasechangelog.findAll", query = "SELECT d FROM Databasechangelog d"),
-    @NamedQuery(name = "Databasechangelog.findById", query = "SELECT d FROM Databasechangelog d WHERE d.databasechangelogPK.id = :id"),
-    @NamedQuery(name = "Databasechangelog.findByAuthor", query = "SELECT d FROM Databasechangelog d WHERE d.databasechangelogPK.author = :author"),
-    @NamedQuery(name = "Databasechangelog.findByFilename", query = "SELECT d FROM Databasechangelog d WHERE d.databasechangelogPK.filename = :filename"),
-    @NamedQuery(name = "Databasechangelog.findByDateexecuted", query = "SELECT d FROM Databasechangelog d WHERE d.dateexecuted = :dateexecuted"),
-    @NamedQuery(name = "Databasechangelog.findByOrderexecuted", query = "SELECT d FROM Databasechangelog d WHERE d.orderexecuted = :orderexecuted"),
-    @NamedQuery(name = "Databasechangelog.findByExectype", query = "SELECT d FROM Databasechangelog d WHERE d.exectype = :exectype"),
-    @NamedQuery(name = "Databasechangelog.findByMd5sum", query = "SELECT d FROM Databasechangelog d WHERE d.md5sum = :md5sum"),
-    @NamedQuery(name = "Databasechangelog.findByDescription", query = "SELECT d FROM Databasechangelog d WHERE d.description = :description"),
-    @NamedQuery(name = "Databasechangelog.findByComments", query = "SELECT d FROM Databasechangelog d WHERE d.comments = :comments"),
-    @NamedQuery(name = "Databasechangelog.findByTag", query = "SELECT d FROM Databasechangelog d WHERE d.tag = :tag"),
-    @NamedQuery(name = "Databasechangelog.findByLiquibase", query = "SELECT d FROM Databasechangelog d WHERE d.liquibase = :liquibase"),
-    @NamedQuery(name = "Databasechangelog.findByContexts", query = "SELECT d FROM Databasechangelog d WHERE d.contexts = :contexts"),
-    @NamedQuery(name = "Databasechangelog.findByLabels", query = "SELECT d FROM Databasechangelog d WHERE d.labels = :labels"),
-    @NamedQuery(name = "Databasechangelog.findByDeploymentId", query = "SELECT d FROM Databasechangelog d WHERE d.deploymentId = :deploymentId")})
+        @NamedQuery(name = "Databasechangelog.findAll", query = "SELECT d FROM Databasechangelog d"),
+        @NamedQuery(name = "Databasechangelog.findById", query = "SELECT d FROM Databasechangelog d WHERE d.databasechangelogPK.id = :id"),
+        @NamedQuery(name = "Databasechangelog.findByAuthor", query = "SELECT d FROM Databasechangelog d WHERE d.databasechangelogPK.author = :author"),
+        @NamedQuery(name = "Databasechangelog.findByFilename", query = "SELECT d FROM Databasechangelog d WHERE d.databasechangelogPK.filename = :filename"),
+        @NamedQuery(name = "Databasechangelog.findByDateexecuted", query = "SELECT d FROM Databasechangelog d WHERE d.dateexecuted = :dateexecuted"),
+        @NamedQuery(name = "Databasechangelog.findByOrderexecuted", query = "SELECT d FROM Databasechangelog d WHERE d.orderexecuted = :orderexecuted"),
+        @NamedQuery(name = "Databasechangelog.findByExectype", query = "SELECT d FROM Databasechangelog d WHERE d.exectype = :exectype"),
+        @NamedQuery(name = "Databasechangelog.findByMd5sum", query = "SELECT d FROM Databasechangelog d WHERE d.md5sum = :md5sum"),
+        @NamedQuery(name = "Databasechangelog.findByDescription", query = "SELECT d FROM Databasechangelog d WHERE d.description = :description"),
+        @NamedQuery(name = "Databasechangelog.findByComments", query = "SELECT d FROM Databasechangelog d WHERE d.comments = :comments"),
+        @NamedQuery(name = "Databasechangelog.findByTag", query = "SELECT d FROM Databasechangelog d WHERE d.tag = :tag"),
+        @NamedQuery(name = "Databasechangelog.findByLiquibase", query = "SELECT d FROM Databasechangelog d WHERE d.liquibase = :liquibase"),
+        @NamedQuery(name = "Databasechangelog.findByContexts", query = "SELECT d FROM Databasechangelog d WHERE d.contexts = :contexts"),
+        @NamedQuery(name = "Databasechangelog.findByLabels", query = "SELECT d FROM Databasechangelog d WHERE d.labels = :labels"),
+        @NamedQuery(name = "Databasechangelog.findByDeploymentId", query = "SELECT d FROM Databasechangelog d WHERE d.deploymentId = :deploymentId")})
 public class Databasechangelog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -194,5 +194,5 @@ public class Databasechangelog implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Databasechangelog[ databasechangelogPK=" + databasechangelogPK + " ]";
     }
-    
+
 }

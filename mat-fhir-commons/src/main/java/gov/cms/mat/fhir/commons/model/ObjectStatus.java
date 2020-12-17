@@ -1,16 +1,16 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "OBJECT_STATUS")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "ObjectStatus.findAll", query = "SELECT o FROM ObjectStatus o"),
-    @NamedQuery(name = "ObjectStatus.findByObjectStatusId", query = "SELECT o FROM ObjectStatus o WHERE o.objectStatusId = :objectStatusId"),
-    @NamedQuery(name = "ObjectStatus.findByDescription", query = "SELECT o FROM ObjectStatus o WHERE o.description = :description")})
+        @NamedQuery(name = "ObjectStatus.findAll", query = "SELECT o FROM ObjectStatus o"),
+        @NamedQuery(name = "ObjectStatus.findByObjectStatusId", query = "SELECT o FROM ObjectStatus o WHERE o.objectStatusId = :objectStatusId"),
+        @NamedQuery(name = "ObjectStatus.findByDescription", query = "SELECT o FROM ObjectStatus o WHERE o.description = :description")})
 public class ObjectStatus implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -74,5 +74,5 @@ public class ObjectStatus implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.ObjectStatus[ objectStatusId=" + objectStatusId + " ]";
     }
-    
+
 }

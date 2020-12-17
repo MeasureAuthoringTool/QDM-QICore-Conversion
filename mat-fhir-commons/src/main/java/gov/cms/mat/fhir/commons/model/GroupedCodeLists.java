@@ -1,16 +1,16 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "GROUPED_CODE_LISTS")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "GroupedCodeLists.findAll", query = "SELECT g FROM GroupedCodeLists g"),
-    @NamedQuery(name = "GroupedCodeLists.findByGroupedCodeListsId", query = "SELECT g FROM GroupedCodeLists g WHERE g.groupedCodeListsId = :groupedCodeListsId"),
-    @NamedQuery(name = "GroupedCodeLists.findByDescription", query = "SELECT g FROM GroupedCodeLists g WHERE g.description = :description")})
+        @NamedQuery(name = "GroupedCodeLists.findAll", query = "SELECT g FROM GroupedCodeLists g"),
+        @NamedQuery(name = "GroupedCodeLists.findByGroupedCodeListsId", query = "SELECT g FROM GroupedCodeLists g WHERE g.groupedCodeListsId = :groupedCodeListsId"),
+        @NamedQuery(name = "GroupedCodeLists.findByDescription", query = "SELECT g FROM GroupedCodeLists g WHERE g.description = :description")})
 public class GroupedCodeLists implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -96,5 +96,5 @@ public class GroupedCodeLists implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.GroupedCodeLists[ groupedCodeListsId=" + groupedCodeListsId + " ]";
     }
-    
+
 }

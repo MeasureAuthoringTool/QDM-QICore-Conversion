@@ -1,25 +1,22 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
 @Entity
 @Table(name = "AUDIT_LOG")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "AuditLog.findAll", query = "SELECT a FROM AuditLog a"),
-    @NamedQuery(name = "AuditLog.findByAuditLogId", query = "SELECT a FROM AuditLog a WHERE a.auditLogId = :auditLogId"),
-    @NamedQuery(name = "AuditLog.findByCreateDate", query = "SELECT a FROM AuditLog a WHERE a.createDate = :createDate"),
-    @NamedQuery(name = "AuditLog.findByUpdateDate", query = "SELECT a FROM AuditLog a WHERE a.updateDate = :updateDate"),
-    @NamedQuery(name = "AuditLog.findByActivityType", query = "SELECT a FROM AuditLog a WHERE a.activityType = :activityType"),
-    @NamedQuery(name = "AuditLog.findByMeasureId", query = "SELECT a FROM AuditLog a WHERE a.measureId = :measureId"),
-    @NamedQuery(name = "AuditLog.findByListObjectId", query = "SELECT a FROM AuditLog a WHERE a.listObjectId = :listObjectId"),
-    @NamedQuery(name = "AuditLog.findByClauseId", query = "SELECT a FROM AuditLog a WHERE a.clauseId = :clauseId"),
-    @NamedQuery(name = "AuditLog.findByQdmId", query = "SELECT a FROM AuditLog a WHERE a.qdmId = :qdmId")})
+        @NamedQuery(name = "AuditLog.findAll", query = "SELECT a FROM AuditLog a"),
+        @NamedQuery(name = "AuditLog.findByAuditLogId", query = "SELECT a FROM AuditLog a WHERE a.auditLogId = :auditLogId"),
+        @NamedQuery(name = "AuditLog.findByCreateDate", query = "SELECT a FROM AuditLog a WHERE a.createDate = :createDate"),
+        @NamedQuery(name = "AuditLog.findByUpdateDate", query = "SELECT a FROM AuditLog a WHERE a.updateDate = :updateDate"),
+        @NamedQuery(name = "AuditLog.findByActivityType", query = "SELECT a FROM AuditLog a WHERE a.activityType = :activityType"),
+        @NamedQuery(name = "AuditLog.findByMeasureId", query = "SELECT a FROM AuditLog a WHERE a.measureId = :measureId"),
+        @NamedQuery(name = "AuditLog.findByListObjectId", query = "SELECT a FROM AuditLog a WHERE a.listObjectId = :listObjectId"),
+        @NamedQuery(name = "AuditLog.findByClauseId", query = "SELECT a FROM AuditLog a WHERE a.clauseId = :clauseId"),
+        @NamedQuery(name = "AuditLog.findByQdmId", query = "SELECT a FROM AuditLog a WHERE a.qdmId = :qdmId")})
 public class AuditLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -145,7 +142,7 @@ public class AuditLog implements Serializable {
         this.updateUser = updateUser;
     }
 
-    @XmlTransient
+
     public Collection<User> getUserCollection() {
         return userCollection;
     }
@@ -178,5 +175,5 @@ public class AuditLog implements Serializable {
     public String toString() {
         return "gov.cms.mat.qdm.qicore.commons.model.AuditLog[ auditLogId=" + auditLogId + " ]";
     }
-    
+
 }

@@ -1,18 +1,17 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "CQL_LIBRARY_HISTORY")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CqlLibraryHistory.findAll", query = "SELECT c FROM CqlLibraryHistory c"),
-    @NamedQuery(name = "CqlLibraryHistory.findById", query = "SELECT c FROM CqlLibraryHistory c WHERE c.id = :id"),
-    @NamedQuery(name = "CqlLibraryHistory.findByLastModifiedOn", query = "SELECT c FROM CqlLibraryHistory c WHERE c.lastModifiedOn = :lastModifiedOn"),
-    @NamedQuery(name = "CqlLibraryHistory.findByFreeTextEditorUsed", query = "SELECT c FROM CqlLibraryHistory c WHERE c.freeTextEditorUsed = :freeTextEditorUsed")})
+        @NamedQuery(name = "CqlLibraryHistory.findAll", query = "SELECT c FROM CqlLibraryHistory c"),
+        @NamedQuery(name = "CqlLibraryHistory.findById", query = "SELECT c FROM CqlLibraryHistory c WHERE c.id = :id"),
+        @NamedQuery(name = "CqlLibraryHistory.findByLastModifiedOn", query = "SELECT c FROM CqlLibraryHistory c WHERE c.lastModifiedOn = :lastModifiedOn"),
+        @NamedQuery(name = "CqlLibraryHistory.findByFreeTextEditorUsed", query = "SELECT c FROM CqlLibraryHistory c WHERE c.freeTextEditorUsed = :freeTextEditorUsed")})
 public class CqlLibraryHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -132,5 +131,5 @@ public class CqlLibraryHistory implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CqlLibraryHistory[ id=" + id + " ]";
     }
-    
+
 }

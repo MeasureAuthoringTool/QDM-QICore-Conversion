@@ -1,17 +1,17 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "OPERATOR")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Operator.findAll", query = "SELECT o FROM Operator o"),
-    @NamedQuery(name = "Operator.findById", query = "SELECT o FROM Operator o WHERE o.id = :id"),
-    @NamedQuery(name = "Operator.findByLongName", query = "SELECT o FROM Operator o WHERE o.longName = :longName"),
-    @NamedQuery(name = "Operator.findByShortName", query = "SELECT o FROM Operator o WHERE o.shortName = :shortName")})
+        @NamedQuery(name = "Operator.findAll", query = "SELECT o FROM Operator o"),
+        @NamedQuery(name = "Operator.findById", query = "SELECT o FROM Operator o WHERE o.id = :id"),
+        @NamedQuery(name = "Operator.findByLongName", query = "SELECT o FROM Operator o WHERE o.longName = :longName"),
+        @NamedQuery(name = "Operator.findByShortName", query = "SELECT o FROM Operator o WHERE o.shortName = :shortName")})
 public class Operator implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -90,5 +90,5 @@ public class Operator implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Operator[ id=" + id + " ]";
     }
-    
+
 }

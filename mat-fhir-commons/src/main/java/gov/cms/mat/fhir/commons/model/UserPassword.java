@@ -1,24 +1,24 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "USER_PASSWORD")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "UserPassword.findAll", query = "SELECT u FROM UserPassword u"),
-    @NamedQuery(name = "UserPassword.findByUserPasswordId", query = "SELECT u FROM UserPassword u WHERE u.userPasswordId = :userPasswordId"),
-    @NamedQuery(name = "UserPassword.findByPwdLockCounter", query = "SELECT u FROM UserPassword u WHERE u.pwdLockCounter = :pwdLockCounter"),
-    @NamedQuery(name = "UserPassword.findByForgotPwdLockCounter", query = "SELECT u FROM UserPassword u WHERE u.forgotPwdLockCounter = :forgotPwdLockCounter"),
-    @NamedQuery(name = "UserPassword.findByPassword", query = "SELECT u FROM UserPassword u WHERE u.password = :password"),
-    @NamedQuery(name = "UserPassword.findBySalt", query = "SELECT u FROM UserPassword u WHERE u.salt = :salt"),
-    @NamedQuery(name = "UserPassword.findByInitialPwd", query = "SELECT u FROM UserPassword u WHERE u.initialPwd = :initialPwd"),
-    @NamedQuery(name = "UserPassword.findByCreateDate", query = "SELECT u FROM UserPassword u WHERE u.createDate = :createDate"),
-    @NamedQuery(name = "UserPassword.findByFirstFailedAttemptTime", query = "SELECT u FROM UserPassword u WHERE u.firstFailedAttemptTime = :firstFailedAttemptTime"),
-    @NamedQuery(name = "UserPassword.findByTempPwd", query = "SELECT u FROM UserPassword u WHERE u.tempPwd = :tempPwd")})
+        @NamedQuery(name = "UserPassword.findAll", query = "SELECT u FROM UserPassword u"),
+        @NamedQuery(name = "UserPassword.findByUserPasswordId", query = "SELECT u FROM UserPassword u WHERE u.userPasswordId = :userPasswordId"),
+        @NamedQuery(name = "UserPassword.findByPwdLockCounter", query = "SELECT u FROM UserPassword u WHERE u.pwdLockCounter = :pwdLockCounter"),
+        @NamedQuery(name = "UserPassword.findByForgotPwdLockCounter", query = "SELECT u FROM UserPassword u WHERE u.forgotPwdLockCounter = :forgotPwdLockCounter"),
+        @NamedQuery(name = "UserPassword.findByPassword", query = "SELECT u FROM UserPassword u WHERE u.password = :password"),
+        @NamedQuery(name = "UserPassword.findBySalt", query = "SELECT u FROM UserPassword u WHERE u.salt = :salt"),
+        @NamedQuery(name = "UserPassword.findByInitialPwd", query = "SELECT u FROM UserPassword u WHERE u.initialPwd = :initialPwd"),
+        @NamedQuery(name = "UserPassword.findByCreateDate", query = "SELECT u FROM UserPassword u WHERE u.createDate = :createDate"),
+        @NamedQuery(name = "UserPassword.findByFirstFailedAttemptTime", query = "SELECT u FROM UserPassword u WHERE u.firstFailedAttemptTime = :firstFailedAttemptTime"),
+        @NamedQuery(name = "UserPassword.findByTempPwd", query = "SELECT u FROM UserPassword u WHERE u.tempPwd = :tempPwd")})
 public class UserPassword implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -169,5 +169,5 @@ public class UserPassword implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.UserPassword[ userPasswordId=" + userPasswordId + " ]";
     }
-    
+
 }

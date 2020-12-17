@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "STATUS")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Status.findAll", query = "SELECT s FROM Status s"),
-    @NamedQuery(name = "Status.findByStatusId", query = "SELECT s FROM Status s WHERE s.statusId = :statusId"),
-    @NamedQuery(name = "Status.findByDescription", query = "SELECT s FROM Status s WHERE s.description = :description")})
+        @NamedQuery(name = "Status.findAll", query = "SELECT s FROM Status s"),
+        @NamedQuery(name = "Status.findByStatusId", query = "SELECT s FROM Status s WHERE s.statusId = :statusId"),
+        @NamedQuery(name = "Status.findByDescription", query = "SELECT s FROM Status s WHERE s.description = :description")})
 public class Status implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class Status implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
+
     public Collection<User> getUserCollection() {
         return userCollection;
     }
@@ -87,5 +87,5 @@ public class Status implements Serializable {
     public String toString() {
         return "gov.cms.mat.qdm.qicore.commons.model.Status[ statusId=" + statusId + " ]";
     }
-    
+
 }

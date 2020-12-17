@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "SECURITY_ROLE")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "SecurityRole.findAll", query = "SELECT s FROM SecurityRole s"),
-    @NamedQuery(name = "SecurityRole.findBySecurityRoleId", query = "SELECT s FROM SecurityRole s WHERE s.securityRoleId = :securityRoleId"),
-    @NamedQuery(name = "SecurityRole.findByDescription", query = "SELECT s FROM SecurityRole s WHERE s.description = :description")})
+        @NamedQuery(name = "SecurityRole.findAll", query = "SELECT s FROM SecurityRole s"),
+        @NamedQuery(name = "SecurityRole.findBySecurityRoleId", query = "SELECT s FROM SecurityRole s WHERE s.securityRoleId = :securityRoleId"),
+        @NamedQuery(name = "SecurityRole.findByDescription", query = "SELECT s FROM SecurityRole s WHERE s.description = :description")})
 public class SecurityRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class SecurityRole implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
+
     public Collection<User> getUserCollection() {
         return userCollection;
     }
@@ -87,5 +87,5 @@ public class SecurityRole implements Serializable {
     public String toString() {
         return "gov.cms.mat.qdm.qicore.commons.model.SecurityRole[ securityRoleId=" + securityRoleId + " ]";
     }
-    
+
 }

@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "QDM_ATTRIBUTES")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "QdmAttributes.findAll", query = "SELECT q FROM QdmAttributes q"),
-    @NamedQuery(name = "QdmAttributes.findById", query = "SELECT q FROM QdmAttributes q WHERE q.id = :id"),
-    @NamedQuery(name = "QdmAttributes.findByName", query = "SELECT q FROM QdmAttributes q WHERE q.name = :name"),
-    @NamedQuery(name = "QdmAttributes.findByDataTypeId", query = "SELECT q FROM QdmAttributes q WHERE q.dataTypeId = :dataTypeId"),
-    @NamedQuery(name = "QdmAttributes.findByQdmAttributeType", query = "SELECT q FROM QdmAttributes q WHERE q.qdmAttributeType = :qdmAttributeType")})
+        @NamedQuery(name = "QdmAttributes.findAll", query = "SELECT q FROM QdmAttributes q"),
+        @NamedQuery(name = "QdmAttributes.findById", query = "SELECT q FROM QdmAttributes q WHERE q.id = :id"),
+        @NamedQuery(name = "QdmAttributes.findByName", query = "SELECT q FROM QdmAttributes q WHERE q.name = :name"),
+        @NamedQuery(name = "QdmAttributes.findByDataTypeId", query = "SELECT q FROM QdmAttributes q WHERE q.dataTypeId = :dataTypeId"),
+        @NamedQuery(name = "QdmAttributes.findByQdmAttributeType", query = "SELECT q FROM QdmAttributes q WHERE q.qdmAttributeType = :qdmAttributeType")})
 public class QdmAttributes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -101,5 +101,5 @@ public class QdmAttributes implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.QdmAttributes[ id=" + id + " ]";
     }
-    
+
 }

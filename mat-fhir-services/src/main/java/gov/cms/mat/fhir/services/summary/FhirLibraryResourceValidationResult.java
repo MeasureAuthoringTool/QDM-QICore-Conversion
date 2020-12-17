@@ -4,7 +4,7 @@ import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.rest.dto.LibraryConversionResults;
 
-import javax.xml.bind.annotation.XmlElement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class FhirLibraryResourceValidationResult extends FhirResourceValidationR
         super(id, "Library");
     }
 
-    @XmlElement
+
     public List<LibraryConversionResults> getLibraryConversionResults() {
         return libraryConversionResults;
     }
@@ -26,7 +26,7 @@ public class FhirLibraryResourceValidationResult extends FhirResourceValidationR
         this.libraryConversionResults = libraryConversionResults;
     }
 
-    @XmlElement
+
     public ConversionType getLibraryConversionType() {
         return libraryConversionType;
     }

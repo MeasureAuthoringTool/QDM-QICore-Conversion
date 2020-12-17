@@ -1,15 +1,15 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "QUALITY_DATA_MODEL_OID_GEN")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "QualityDataModelOidGen.findAll", query = "SELECT q FROM QualityDataModelOidGen q"),
-    @NamedQuery(name = "QualityDataModelOidGen.findByOidGenId", query = "SELECT q FROM QualityDataModelOidGen q WHERE q.oidGenId = :oidGenId")})
+        @NamedQuery(name = "QualityDataModelOidGen.findAll", query = "SELECT q FROM QualityDataModelOidGen q"),
+        @NamedQuery(name = "QualityDataModelOidGen.findByOidGenId", query = "SELECT q FROM QualityDataModelOidGen q WHERE q.oidGenId = :oidGenId")})
 public class QualityDataModelOidGen implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -58,5 +58,5 @@ public class QualityDataModelOidGen implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.QualityDataModelOidGen[ oidGenId=" + oidGenId + " ]";
     }
-    
+
 }

@@ -1,17 +1,17 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "USER_BONNIE_ACCESS_INFO")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "UserBonnieAccessInfo.findAll", query = "SELECT u FROM UserBonnieAccessInfo u"),
-    @NamedQuery(name = "UserBonnieAccessInfo.findById", query = "SELECT u FROM UserBonnieAccessInfo u WHERE u.id = :id"),
-    @NamedQuery(name = "UserBonnieAccessInfo.findByRefreshToken", query = "SELECT u FROM UserBonnieAccessInfo u WHERE u.refreshToken = :refreshToken"),
-    @NamedQuery(name = "UserBonnieAccessInfo.findByAccessToken", query = "SELECT u FROM UserBonnieAccessInfo u WHERE u.accessToken = :accessToken")})
+        @NamedQuery(name = "UserBonnieAccessInfo.findAll", query = "SELECT u FROM UserBonnieAccessInfo u"),
+        @NamedQuery(name = "UserBonnieAccessInfo.findById", query = "SELECT u FROM UserBonnieAccessInfo u WHERE u.id = :id"),
+        @NamedQuery(name = "UserBonnieAccessInfo.findByRefreshToken", query = "SELECT u FROM UserBonnieAccessInfo u WHERE u.refreshToken = :refreshToken"),
+        @NamedQuery(name = "UserBonnieAccessInfo.findByAccessToken", query = "SELECT u FROM UserBonnieAccessInfo u WHERE u.accessToken = :accessToken")})
 public class UserBonnieAccessInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -99,5 +99,5 @@ public class UserBonnieAccessInfo implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.UserBonnieAccessInfo[ id=" + id + " ]";
     }
-    
+
 }

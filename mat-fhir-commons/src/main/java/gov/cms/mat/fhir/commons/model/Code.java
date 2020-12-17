@@ -1,17 +1,15 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "CODE")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Code.findAll", query = "SELECT c FROM Code c"),
-    @NamedQuery(name = "Code.findByCodeId", query = "SELECT c FROM Code c WHERE c.codeId = :codeId"),
-    @NamedQuery(name = "Code.findByCode", query = "SELECT c FROM Code c WHERE c.code = :code"),
-    @NamedQuery(name = "Code.findByDescription", query = "SELECT c FROM Code c WHERE c.description = :description")})
+        @NamedQuery(name = "Code.findAll", query = "SELECT c FROM Code c"),
+        @NamedQuery(name = "Code.findByCodeId", query = "SELECT c FROM Code c WHERE c.codeId = :codeId"),
+        @NamedQuery(name = "Code.findByCode", query = "SELECT c FROM Code c WHERE c.code = :code"),
+        @NamedQuery(name = "Code.findByDescription", query = "SELECT c FROM Code c WHERE c.description = :description")})
 public class Code implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -98,5 +96,5 @@ public class Code implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Code[ codeId=" + codeId + " ]";
     }
-    
+
 }

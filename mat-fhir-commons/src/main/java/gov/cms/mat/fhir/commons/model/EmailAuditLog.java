@@ -1,19 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "EMAIL_AUDIT_LOG")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "EmailAuditLog.findAll", query = "SELECT e FROM EmailAuditLog e"),
-    @NamedQuery(name = "EmailAuditLog.findById", query = "SELECT e FROM EmailAuditLog e WHERE e.id = :id"),
-    @NamedQuery(name = "EmailAuditLog.findByLoginId", query = "SELECT e FROM EmailAuditLog e WHERE e.loginId = :loginId"),
-    @NamedQuery(name = "EmailAuditLog.findByTimestamp", query = "SELECT e FROM EmailAuditLog e WHERE e.timestamp = :timestamp"),
-    @NamedQuery(name = "EmailAuditLog.findByActivityType", query = "SELECT e FROM EmailAuditLog e WHERE e.activityType = :activityType")})
+        @NamedQuery(name = "EmailAuditLog.findAll", query = "SELECT e FROM EmailAuditLog e"),
+        @NamedQuery(name = "EmailAuditLog.findById", query = "SELECT e FROM EmailAuditLog e WHERE e.id = :id"),
+        @NamedQuery(name = "EmailAuditLog.findByLoginId", query = "SELECT e FROM EmailAuditLog e WHERE e.loginId = :loginId"),
+        @NamedQuery(name = "EmailAuditLog.findByTimestamp", query = "SELECT e FROM EmailAuditLog e WHERE e.timestamp = :timestamp"),
+        @NamedQuery(name = "EmailAuditLog.findByActivityType", query = "SELECT e FROM EmailAuditLog e WHERE e.activityType = :activityType")})
 public class EmailAuditLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -100,5 +100,5 @@ public class EmailAuditLog implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.EmailAuditLog[ id=" + id + " ]";
     }
-    
+
 }

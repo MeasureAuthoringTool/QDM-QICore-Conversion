@@ -3,9 +3,6 @@ package gov.cms.mat.fhir.commons.model;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -13,7 +10,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "CQL_LIBRARY")
-@XmlRootElement
 public class CqlLibrary implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -107,7 +103,6 @@ public class CqlLibrary implements Serializable {
         this.libraryModel = libraryModel;
     }
 
-    @XmlElement
     public String getId() {
         return id;
     }
@@ -116,7 +111,6 @@ public class CqlLibrary implements Serializable {
         this.id = id;
     }
 
-    @XmlElement
     public String getMeasureId() {
         return measureId;
     }
@@ -125,7 +119,6 @@ public class CqlLibrary implements Serializable {
         this.measureId = measureId;
     }
 
-    @XmlElement
     public String getSetId() {
         return setId;
     }
@@ -134,7 +127,6 @@ public class CqlLibrary implements Serializable {
         this.setId = setId;
     }
 
-    @XmlElement
     public String getCqlName() {
         return cqlName;
     }
@@ -143,7 +135,6 @@ public class CqlLibrary implements Serializable {
         this.cqlName = cqlName;
     }
 
-    @XmlElement
     public Boolean getDraft() {
         return draft;
     }
@@ -152,7 +143,6 @@ public class CqlLibrary implements Serializable {
         this.draft = draft;
     }
 
-    @XmlElement
     public BigDecimal getVersion() {
         return version;
     }
@@ -161,7 +151,6 @@ public class CqlLibrary implements Serializable {
         this.version = version;
     }
 
-    @XmlElement
     public Date getFinalizedDate() {
         return finalizedDate;
     }
@@ -170,7 +159,6 @@ public class CqlLibrary implements Serializable {
         this.finalizedDate = finalizedDate;
     }
 
-    @XmlElement
     public String getReleaseVersion() {
         return releaseVersion;
     }
@@ -179,7 +167,6 @@ public class CqlLibrary implements Serializable {
         this.releaseVersion = releaseVersion;
     }
 
-    @XmlElement
     public Date getLockedOutDate() {
         return lockedOutDate;
     }
@@ -188,7 +175,6 @@ public class CqlLibrary implements Serializable {
         this.lockedOutDate = lockedOutDate;
     }
 
-    @XmlElement
     public String getCqlXml() {
         return cqlXml;
     }
@@ -197,7 +183,6 @@ public class CqlLibrary implements Serializable {
         this.cqlXml = cqlXml;
     }
 
-    @XmlElement
     public Integer getRevisionNumber() {
         return revisionNumber;
     }
@@ -206,7 +191,6 @@ public class CqlLibrary implements Serializable {
         this.revisionNumber = revisionNumber;
     }
 
-    @XmlElement
     public String getQdmVersion() {
         return qdmVersion;
     }
@@ -215,7 +199,6 @@ public class CqlLibrary implements Serializable {
         this.qdmVersion = qdmVersion;
     }
 
-    @XmlElement
     public Date getLastModifiedOn() {
         return lastModifiedOn;
     }
@@ -224,7 +207,6 @@ public class CqlLibrary implements Serializable {
         this.lastModifiedOn = lastModifiedOn;
     }
 
-    @XmlTransient
     public Collection<CqlLibraryShare> getCqlLibraryShareCollection() {
         return cqlLibraryShareCollection;
     }
@@ -233,7 +215,7 @@ public class CqlLibrary implements Serializable {
         this.cqlLibraryShareCollection = cqlLibraryShareCollection;
     }
 
-    @XmlElement
+
     public User getOwnerId() {
         return ownerId;
     }
@@ -242,7 +224,6 @@ public class CqlLibrary implements Serializable {
         this.ownerId = ownerId;
     }
 
-    @XmlElement
     public User getLockedUser() {
         return lockedUser;
     }
@@ -251,7 +232,6 @@ public class CqlLibrary implements Serializable {
         this.lockedUser = lockedUser;
     }
 
-    @XmlElement
     public User getLastModifiedBy() {
         return lastModifiedBy;
     }
@@ -260,7 +240,6 @@ public class CqlLibrary implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    @XmlTransient
     public Collection<RecentCqlActivityLog> getRecentCqlActivityLogCollection() {
         return recentCqlActivityLogCollection;
     }
@@ -269,7 +248,6 @@ public class CqlLibrary implements Serializable {
         this.recentCqlActivityLogCollection = recentCqlActivityLogCollection;
     }
 
-    @XmlTransient
     public Collection<CqlLibraryExport> getCqlLibraryExportCollection() {
         return cqlLibraryExportCollection;
     }
@@ -278,7 +256,6 @@ public class CqlLibrary implements Serializable {
         this.cqlLibraryExportCollection = cqlLibraryExportCollection;
     }
 
-    @XmlTransient
     public Collection<CqlLibraryHistory> getCqlLibraryHistoryCollection() {
         return cqlLibraryHistoryCollection;
     }
@@ -336,12 +313,12 @@ public class CqlLibrary implements Serializable {
 
         return "" + Integer.parseInt(split[0]) + "." +
                 Integer.parseInt(split[1]) + "." +
-                StringUtils.leftPad(revision,3,'0');
+                StringUtils.leftPad(revision, 3, '0');
     }
 
     @Override
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CqlLibrary[ id=" + id + " ]";
     }
-    
+
 }

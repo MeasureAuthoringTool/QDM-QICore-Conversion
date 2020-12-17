@@ -1,17 +1,17 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "RECENT_CQL_ACTIVITY_LOG")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "RecentCqlActivityLog.findAll", query = "SELECT r FROM RecentCqlActivityLog r"),
-    @NamedQuery(name = "RecentCqlActivityLog.findById", query = "SELECT r FROM RecentCqlActivityLog r WHERE r.id = :id"),
-    @NamedQuery(name = "RecentCqlActivityLog.findByTimestamp", query = "SELECT r FROM RecentCqlActivityLog r WHERE r.timestamp = :timestamp")})
+        @NamedQuery(name = "RecentCqlActivityLog.findAll", query = "SELECT r FROM RecentCqlActivityLog r"),
+        @NamedQuery(name = "RecentCqlActivityLog.findById", query = "SELECT r FROM RecentCqlActivityLog r WHERE r.id = :id"),
+        @NamedQuery(name = "RecentCqlActivityLog.findByTimestamp", query = "SELECT r FROM RecentCqlActivityLog r WHERE r.timestamp = :timestamp")})
 public class RecentCqlActivityLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -98,5 +98,5 @@ public class RecentCqlActivityLog implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.RecentCqlActivityLog[ id=" + id + " ]";
     }
-    
+
 }

@@ -1,21 +1,21 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "USER_AUDIT_LOG")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "UserAuditLog.findAll", query = "SELECT u FROM UserAuditLog u"),
-    @NamedQuery(name = "UserAuditLog.findById", query = "SELECT u FROM UserAuditLog u WHERE u.id = :id"),
-    @NamedQuery(name = "UserAuditLog.findByActionType", query = "SELECT u FROM UserAuditLog u WHERE u.actionType = :actionType"),
-    @NamedQuery(name = "UserAuditLog.findByActivityType", query = "SELECT u FROM UserAuditLog u WHERE u.activityType = :activityType"),
-    @NamedQuery(name = "UserAuditLog.findByUserEmail", query = "SELECT u FROM UserAuditLog u WHERE u.userEmail = :userEmail"),
-    @NamedQuery(name = "UserAuditLog.findByTimestamp", query = "SELECT u FROM UserAuditLog u WHERE u.timestamp = :timestamp"),
-    @NamedQuery(name = "UserAuditLog.findByAddlInfo", query = "SELECT u FROM UserAuditLog u WHERE u.addlInfo = :addlInfo")})
+        @NamedQuery(name = "UserAuditLog.findAll", query = "SELECT u FROM UserAuditLog u"),
+        @NamedQuery(name = "UserAuditLog.findById", query = "SELECT u FROM UserAuditLog u WHERE u.id = :id"),
+        @NamedQuery(name = "UserAuditLog.findByActionType", query = "SELECT u FROM UserAuditLog u WHERE u.actionType = :actionType"),
+        @NamedQuery(name = "UserAuditLog.findByActivityType", query = "SELECT u FROM UserAuditLog u WHERE u.activityType = :activityType"),
+        @NamedQuery(name = "UserAuditLog.findByUserEmail", query = "SELECT u FROM UserAuditLog u WHERE u.userEmail = :userEmail"),
+        @NamedQuery(name = "UserAuditLog.findByTimestamp", query = "SELECT u FROM UserAuditLog u WHERE u.timestamp = :timestamp"),
+        @NamedQuery(name = "UserAuditLog.findByAddlInfo", query = "SELECT u FROM UserAuditLog u WHERE u.addlInfo = :addlInfo")})
 public class UserAuditLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -137,5 +137,5 @@ public class UserAuditLog implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.UserAuditLog[ id=" + id + " ]";
     }
-    
+
 }

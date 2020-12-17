@@ -3,12 +3,12 @@ package gov.cms.mat.fhir.commons.model;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "MEASURE_XML")
-@XmlRootElement
+
 @ToString
 public class MeasureXml implements Serializable, MatXmlBytes {
 

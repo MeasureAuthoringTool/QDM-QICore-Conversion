@@ -1,16 +1,16 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "CQL_LIBRARY_SET")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "CqlLibrarySet.findAll", query = "SELECT c FROM CqlLibrarySet c"),
-    @NamedQuery(name = "CqlLibrarySet.findById", query = "SELECT c FROM CqlLibrarySet c WHERE c.id = :id"),
-    @NamedQuery(name = "CqlLibrarySet.findByName", query = "SELECT c FROM CqlLibrarySet c WHERE c.name = :name")})
+        @NamedQuery(name = "CqlLibrarySet.findAll", query = "SELECT c FROM CqlLibrarySet c"),
+        @NamedQuery(name = "CqlLibrarySet.findById", query = "SELECT c FROM CqlLibrarySet c WHERE c.id = :id"),
+        @NamedQuery(name = "CqlLibrarySet.findByName", query = "SELECT c FROM CqlLibrarySet c WHERE c.name = :name")})
 public class CqlLibrarySet implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -68,5 +68,5 @@ public class CqlLibrarySet implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CqlLibrarySet[ id=" + id + " ]";
     }
-    
+
 }

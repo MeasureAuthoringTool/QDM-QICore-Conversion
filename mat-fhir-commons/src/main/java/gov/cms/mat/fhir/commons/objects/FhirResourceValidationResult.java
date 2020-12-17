@@ -1,11 +1,11 @@
 package gov.cms.mat.fhir.commons.objects;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement
+
 public class FhirResourceValidationResult {
     private String type;
     private String id;
@@ -24,7 +24,7 @@ public class FhirResourceValidationResult {
      * @return the type
      *
      */
-    @XmlElement
+
     public String getType() {
         return type;
     }
@@ -39,7 +39,7 @@ public class FhirResourceValidationResult {
     /**
      * @return the id
      */
-    @XmlElement
+
     public String getId() {
         return id;
     }
@@ -54,12 +54,12 @@ public class FhirResourceValidationResult {
     /**
      * @return the errorList
      */
-    @XmlElement
+
     public List<FhirResourceValidationError> getValidationErrorList() {
         return validationErrorList;
     }
 
-    @XmlElement
+
     public String getMeasureId() {
         return measureId;
     }

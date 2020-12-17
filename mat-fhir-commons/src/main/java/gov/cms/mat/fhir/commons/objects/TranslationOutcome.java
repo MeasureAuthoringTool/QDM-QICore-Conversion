@@ -1,9 +1,6 @@
 package gov.cms.mat.fhir.commons.objects;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
 public class TranslationOutcome {
     private Boolean successful = Boolean.TRUE;
     private String message = "";
@@ -12,7 +9,6 @@ public class TranslationOutcome {
     /**
      * @return the successful
      */
-    @XmlElement(name = "successful")
     public Boolean getSuccessful() {
         return successful;
     }
@@ -27,7 +23,6 @@ public class TranslationOutcome {
     /**
      * @return the message
      */
-    @XmlElement(name = "message")
     public String getMessage() {
         return message;
     }

@@ -1,28 +1,28 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
 @Entity
 @Table(name = "LIST_OBJECT")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "ListObject.findAll", query = "SELECT l FROM ListObject l"),
-    @NamedQuery(name = "ListObject.findByListObjectId", query = "SELECT l FROM ListObject l WHERE l.listObjectId = :listObjectId"),
-    @NamedQuery(name = "ListObject.findByName", query = "SELECT l FROM ListObject l WHERE l.name = :name"),
-    @NamedQuery(name = "ListObject.findByOid", query = "SELECT l FROM ListObject l WHERE l.oid = :oid"),
-    @NamedQuery(name = "ListObject.findByRationale", query = "SELECT l FROM ListObject l WHERE l.rationale = :rationale"),
-    @NamedQuery(name = "ListObject.findByComment", query = "SELECT l FROM ListObject l WHERE l.comment = :comment"),
-    @NamedQuery(name = "ListObject.findByCodeSysVersion", query = "SELECT l FROM ListObject l WHERE l.codeSysVersion = :codeSysVersion"),
-    @NamedQuery(name = "ListObject.findByStewardOther", query = "SELECT l FROM ListObject l WHERE l.stewardOther = :stewardOther"),
-    @NamedQuery(name = "ListObject.findByCodeListDeveloper", query = "SELECT l FROM ListObject l WHERE l.codeListDeveloper = :codeListDeveloper"),
-    @NamedQuery(name = "ListObject.findByCodeListContext", query = "SELECT l FROM ListObject l WHERE l.codeListContext = :codeListContext"),
-    @NamedQuery(name = "ListObject.findByLastModified", query = "SELECT l FROM ListObject l WHERE l.lastModified = :lastModified"),
-    @NamedQuery(name = "ListObject.findByDraft", query = "SELECT l FROM ListObject l WHERE l.draft = :draft")})
+        @NamedQuery(name = "ListObject.findAll", query = "SELECT l FROM ListObject l"),
+        @NamedQuery(name = "ListObject.findByListObjectId", query = "SELECT l FROM ListObject l WHERE l.listObjectId = :listObjectId"),
+        @NamedQuery(name = "ListObject.findByName", query = "SELECT l FROM ListObject l WHERE l.name = :name"),
+        @NamedQuery(name = "ListObject.findByOid", query = "SELECT l FROM ListObject l WHERE l.oid = :oid"),
+        @NamedQuery(name = "ListObject.findByRationale", query = "SELECT l FROM ListObject l WHERE l.rationale = :rationale"),
+        @NamedQuery(name = "ListObject.findByComment", query = "SELECT l FROM ListObject l WHERE l.comment = :comment"),
+        @NamedQuery(name = "ListObject.findByCodeSysVersion", query = "SELECT l FROM ListObject l WHERE l.codeSysVersion = :codeSysVersion"),
+        @NamedQuery(name = "ListObject.findByStewardOther", query = "SELECT l FROM ListObject l WHERE l.stewardOther = :stewardOther"),
+        @NamedQuery(name = "ListObject.findByCodeListDeveloper", query = "SELECT l FROM ListObject l WHERE l.codeListDeveloper = :codeListDeveloper"),
+        @NamedQuery(name = "ListObject.findByCodeListContext", query = "SELECT l FROM ListObject l WHERE l.codeListContext = :codeListContext"),
+        @NamedQuery(name = "ListObject.findByLastModified", query = "SELECT l FROM ListObject l WHERE l.lastModified = :lastModified"),
+        @NamedQuery(name = "ListObject.findByDraft", query = "SELECT l FROM ListObject l WHERE l.draft = :draft")})
 public class ListObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -190,7 +190,7 @@ public class ListObject implements Serializable {
         this.codeList = codeList;
     }
 
-    @XmlTransient
+
     public Collection<QualityDataModel> getQualityDataModelCollection() {
         return qualityDataModelCollection;
     }
@@ -199,7 +199,7 @@ public class ListObject implements Serializable {
         this.qualityDataModelCollection = qualityDataModelCollection;
     }
 
-    @XmlTransient
+
     public Collection<GroupedCodeLists> getGroupedCodeListsCollection() {
         return groupedCodeListsCollection;
     }
@@ -272,5 +272,5 @@ public class ListObject implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.ListObject[ listObjectId=" + listObjectId + " ]";
     }
-    
+
 }

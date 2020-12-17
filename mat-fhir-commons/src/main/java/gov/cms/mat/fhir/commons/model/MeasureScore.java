@@ -1,16 +1,16 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "MEASURE_SCORE")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "MeasureScore.findAll", query = "SELECT m FROM MeasureScore m"),
-    @NamedQuery(name = "MeasureScore.findById", query = "SELECT m FROM MeasureScore m WHERE m.id = :id"),
-    @NamedQuery(name = "MeasureScore.findByScore", query = "SELECT m FROM MeasureScore m WHERE m.score = :score")})
+        @NamedQuery(name = "MeasureScore.findAll", query = "SELECT m FROM MeasureScore m"),
+        @NamedQuery(name = "MeasureScore.findById", query = "SELECT m FROM MeasureScore m WHERE m.id = :id"),
+        @NamedQuery(name = "MeasureScore.findByScore", query = "SELECT m FROM MeasureScore m WHERE m.score = :score")})
 public class MeasureScore implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -74,5 +74,5 @@ public class MeasureScore implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.MeasureScore[ id=" + id + " ]";
     }
-    
+
 }

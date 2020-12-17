@@ -1,21 +1,21 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "MEASURE_AUDIT_LOG")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "MeasureAuditLog.findAll", query = "SELECT m FROM MeasureAuditLog m"),
-    @NamedQuery(name = "MeasureAuditLog.findById", query = "SELECT m FROM MeasureAuditLog m WHERE m.id = :id"),
-    @NamedQuery(name = "MeasureAuditLog.findByMeasureId", query = "SELECT m FROM MeasureAuditLog m WHERE m.measureId = :measureId"),
-    @NamedQuery(name = "MeasureAuditLog.findByActivityType", query = "SELECT m FROM MeasureAuditLog m WHERE m.activityType = :activityType"),
-    @NamedQuery(name = "MeasureAuditLog.findByUserId", query = "SELECT m FROM MeasureAuditLog m WHERE m.userId = :userId"),
-    @NamedQuery(name = "MeasureAuditLog.findByTimestamp", query = "SELECT m FROM MeasureAuditLog m WHERE m.timestamp = :timestamp"),
-    @NamedQuery(name = "MeasureAuditLog.findByAddlInfo", query = "SELECT m FROM MeasureAuditLog m WHERE m.addlInfo = :addlInfo")})
+        @NamedQuery(name = "MeasureAuditLog.findAll", query = "SELECT m FROM MeasureAuditLog m"),
+        @NamedQuery(name = "MeasureAuditLog.findById", query = "SELECT m FROM MeasureAuditLog m WHERE m.id = :id"),
+        @NamedQuery(name = "MeasureAuditLog.findByMeasureId", query = "SELECT m FROM MeasureAuditLog m WHERE m.measureId = :measureId"),
+        @NamedQuery(name = "MeasureAuditLog.findByActivityType", query = "SELECT m FROM MeasureAuditLog m WHERE m.activityType = :activityType"),
+        @NamedQuery(name = "MeasureAuditLog.findByUserId", query = "SELECT m FROM MeasureAuditLog m WHERE m.userId = :userId"),
+        @NamedQuery(name = "MeasureAuditLog.findByTimestamp", query = "SELECT m FROM MeasureAuditLog m WHERE m.timestamp = :timestamp"),
+        @NamedQuery(name = "MeasureAuditLog.findByAddlInfo", query = "SELECT m FROM MeasureAuditLog m WHERE m.addlInfo = :addlInfo")})
 public class MeasureAuditLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -126,5 +126,5 @@ public class MeasureAuditLog implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.MeasureAuditLog[ id=" + id + " ]";
     }
-    
+
 }
