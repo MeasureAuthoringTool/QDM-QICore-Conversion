@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "SHARE_LEVEL")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "ShareLevel.findAll", query = "SELECT s FROM ShareLevel s"),
-    @NamedQuery(name = "ShareLevel.findByShareLevelId", query = "SELECT s FROM ShareLevel s WHERE s.shareLevelId = :shareLevelId"),
-    @NamedQuery(name = "ShareLevel.findByDescription", query = "SELECT s FROM ShareLevel s WHERE s.description = :description")})
+        @NamedQuery(name = "ShareLevel.findAll", query = "SELECT s FROM ShareLevel s"),
+        @NamedQuery(name = "ShareLevel.findByShareLevelId", query = "SELECT s FROM ShareLevel s WHERE s.shareLevelId = :shareLevelId"),
+        @NamedQuery(name = "ShareLevel.findByDescription", query = "SELECT s FROM ShareLevel s WHERE s.description = :description")})
 public class ShareLevel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +50,7 @@ public class ShareLevel implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
+
     public Collection<MeasureShare> getMeasureShareCollection() {
         return measureShareCollection;
     }
@@ -59,7 +59,7 @@ public class ShareLevel implements Serializable {
         this.measureShareCollection = measureShareCollection;
     }
 
-    @XmlTransient
+
     public Collection<CqlLibraryShare> getCqlLibraryShareCollection() {
         return cqlLibraryShareCollection;
     }
@@ -92,5 +92,5 @@ public class ShareLevel implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.ShareLevel[ shareLevelId=" + shareLevelId + " ]";
     }
-    
+
 }

@@ -1,20 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "MEASURE_VALIDATION_LOG")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "MeasureValidationLog.findAll", query = "SELECT m FROM MeasureValidationLog m"),
-    @NamedQuery(name = "MeasureValidationLog.findById", query = "SELECT m FROM MeasureValidationLog m WHERE m.id = :id"),
-    @NamedQuery(name = "MeasureValidationLog.findByMeasureId", query = "SELECT m FROM MeasureValidationLog m WHERE m.measureId = :measureId"),
-    @NamedQuery(name = "MeasureValidationLog.findByActivityType", query = "SELECT m FROM MeasureValidationLog m WHERE m.activityType = :activityType"),
-    @NamedQuery(name = "MeasureValidationLog.findByUserId", query = "SELECT m FROM MeasureValidationLog m WHERE m.userId = :userId"),
-    @NamedQuery(name = "MeasureValidationLog.findByTimestamp", query = "SELECT m FROM MeasureValidationLog m WHERE m.timestamp = :timestamp")})
+        @NamedQuery(name = "MeasureValidationLog.findAll", query = "SELECT m FROM MeasureValidationLog m"),
+        @NamedQuery(name = "MeasureValidationLog.findById", query = "SELECT m FROM MeasureValidationLog m WHERE m.id = :id"),
+        @NamedQuery(name = "MeasureValidationLog.findByMeasureId", query = "SELECT m FROM MeasureValidationLog m WHERE m.measureId = :measureId"),
+        @NamedQuery(name = "MeasureValidationLog.findByActivityType", query = "SELECT m FROM MeasureValidationLog m WHERE m.activityType = :activityType"),
+        @NamedQuery(name = "MeasureValidationLog.findByUserId", query = "SELECT m FROM MeasureValidationLog m WHERE m.userId = :userId"),
+        @NamedQuery(name = "MeasureValidationLog.findByTimestamp", query = "SELECT m FROM MeasureValidationLog m WHERE m.timestamp = :timestamp")})
 public class MeasureValidationLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -126,5 +125,5 @@ public class MeasureValidationLog implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.MeasureValidationLog[ id=" + id + " ]";
     }
-    
+
 }

@@ -10,26 +10,26 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HumanReadableValuesetModel {
-	private String name;
-	private String oid;
-	private String version;
-	private String datatype;
+    private String name;
+    private String oid;
+    private String version;
+    private String datatype;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-		HumanReadableValuesetModel that = (HumanReadableValuesetModel) o;
+        HumanReadableValuesetModel that = (HumanReadableValuesetModel) o;
 
-		if (oid != null ? !oid.equals(that.oid) : that.oid != null) return false;
-		return version != null ? version.equals(that.version) : that.version == null;
-	}
+        if (oid != null ? !oid.equals(that.oid) : that.oid != null) return false;
+        return version != null ? version.equals(that.version) : that.version == null;
+    }
 
-	@Override
-	public int hashCode() {
-		int result = oid != null ? oid.hashCode() : 0;
-		result = 31 * result + (version != null ? version.hashCode() : 0);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        int result = oid != null ? oid.hashCode() : 0;
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        return result;
+    }
 }

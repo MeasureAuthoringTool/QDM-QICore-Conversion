@@ -83,5 +83,5 @@ public class DatabasechangelogPK implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.DatabasechangelogPK[ id=" + id + ", author=" + author + ", filename=" + filename + " ]";
     }
-    
+
 }

@@ -1,21 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "CODE_LIST_AUDIT_LOG")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CodeListAuditLog.findAll", query = "SELECT c FROM CodeListAuditLog c"),
-    @NamedQuery(name = "CodeListAuditLog.findById", query = "SELECT c FROM CodeListAuditLog c WHERE c.id = :id"),
-    @NamedQuery(name = "CodeListAuditLog.findByCodeListId", query = "SELECT c FROM CodeListAuditLog c WHERE c.codeListId = :codeListId"),
-    @NamedQuery(name = "CodeListAuditLog.findByActivityType", query = "SELECT c FROM CodeListAuditLog c WHERE c.activityType = :activityType"),
-    @NamedQuery(name = "CodeListAuditLog.findByUserId", query = "SELECT c FROM CodeListAuditLog c WHERE c.userId = :userId"),
-    @NamedQuery(name = "CodeListAuditLog.findByTimestamp", query = "SELECT c FROM CodeListAuditLog c WHERE c.timestamp = :timestamp"),
-    @NamedQuery(name = "CodeListAuditLog.findByAddlInfo", query = "SELECT c FROM CodeListAuditLog c WHERE c.addlInfo = :addlInfo")})
+        @NamedQuery(name = "CodeListAuditLog.findAll", query = "SELECT c FROM CodeListAuditLog c"),
+        @NamedQuery(name = "CodeListAuditLog.findById", query = "SELECT c FROM CodeListAuditLog c WHERE c.id = :id"),
+        @NamedQuery(name = "CodeListAuditLog.findByCodeListId", query = "SELECT c FROM CodeListAuditLog c WHERE c.codeListId = :codeListId"),
+        @NamedQuery(name = "CodeListAuditLog.findByActivityType", query = "SELECT c FROM CodeListAuditLog c WHERE c.activityType = :activityType"),
+        @NamedQuery(name = "CodeListAuditLog.findByUserId", query = "SELECT c FROM CodeListAuditLog c WHERE c.userId = :userId"),
+        @NamedQuery(name = "CodeListAuditLog.findByTimestamp", query = "SELECT c FROM CodeListAuditLog c WHERE c.timestamp = :timestamp"),
+        @NamedQuery(name = "CodeListAuditLog.findByAddlInfo", query = "SELECT c FROM CodeListAuditLog c WHERE c.addlInfo = :addlInfo")})
 public class CodeListAuditLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -126,5 +124,5 @@ public class CodeListAuditLog implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CodeListAuditLog[ id=" + id + " ]";
     }
-    
+
 }

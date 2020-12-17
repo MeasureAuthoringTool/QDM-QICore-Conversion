@@ -1,19 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "USER_PASSWORD_HISTORY")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "UserPasswordHistory.findAll", query = "SELECT u FROM UserPasswordHistory u"),
-    @NamedQuery(name = "UserPasswordHistory.findByUserPasswordHistoryId", query = "SELECT u FROM UserPasswordHistory u WHERE u.userPasswordHistoryId = :userPasswordHistoryId"),
-    @NamedQuery(name = "UserPasswordHistory.findByPassword", query = "SELECT u FROM UserPasswordHistory u WHERE u.password = :password"),
-    @NamedQuery(name = "UserPasswordHistory.findBySalt", query = "SELECT u FROM UserPasswordHistory u WHERE u.salt = :salt"),
-    @NamedQuery(name = "UserPasswordHistory.findByCreateDate", query = "SELECT u FROM UserPasswordHistory u WHERE u.createDate = :createDate")})
+        @NamedQuery(name = "UserPasswordHistory.findAll", query = "SELECT u FROM UserPasswordHistory u"),
+        @NamedQuery(name = "UserPasswordHistory.findByUserPasswordHistoryId", query = "SELECT u FROM UserPasswordHistory u WHERE u.userPasswordHistoryId = :userPasswordHistoryId"),
+        @NamedQuery(name = "UserPasswordHistory.findByPassword", query = "SELECT u FROM UserPasswordHistory u WHERE u.password = :password"),
+        @NamedQuery(name = "UserPasswordHistory.findBySalt", query = "SELECT u FROM UserPasswordHistory u WHERE u.salt = :salt"),
+        @NamedQuery(name = "UserPasswordHistory.findByCreateDate", query = "SELECT u FROM UserPasswordHistory u WHERE u.createDate = :createDate")})
 public class UserPasswordHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -113,5 +113,5 @@ public class UserPasswordHistory implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.UserPasswordHistory[ userPasswordHistoryId=" + userPasswordHistoryId + " ]";
     }
-    
+
 }

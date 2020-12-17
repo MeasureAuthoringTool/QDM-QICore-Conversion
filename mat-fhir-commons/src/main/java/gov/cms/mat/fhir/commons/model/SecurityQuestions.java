@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "SECURITY_QUESTIONS")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "SecurityQuestions.findAll", query = "SELECT s FROM SecurityQuestions s"),
-    @NamedQuery(name = "SecurityQuestions.findByQuestionId", query = "SELECT s FROM SecurityQuestions s WHERE s.questionId = :questionId"),
-    @NamedQuery(name = "SecurityQuestions.findByQuestion", query = "SELECT s FROM SecurityQuestions s WHERE s.question = :question")})
+        @NamedQuery(name = "SecurityQuestions.findAll", query = "SELECT s FROM SecurityQuestions s"),
+        @NamedQuery(name = "SecurityQuestions.findByQuestionId", query = "SELECT s FROM SecurityQuestions s WHERE s.questionId = :questionId"),
+        @NamedQuery(name = "SecurityQuestions.findByQuestion", query = "SELECT s FROM SecurityQuestions s WHERE s.question = :question")})
 public class SecurityQuestions implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class SecurityQuestions implements Serializable {
         this.question = question;
     }
 
-    @XmlTransient
+
     public Collection<UserSecurityQuestions> getUserSecurityQuestionsCollection() {
         return userSecurityQuestionsCollection;
     }
@@ -87,5 +87,5 @@ public class SecurityQuestions implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.SecurityQuestions[ questionId=" + questionId + " ]";
     }
-    
+
 }

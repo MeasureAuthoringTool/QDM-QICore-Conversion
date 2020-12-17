@@ -1,15 +1,15 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "MEASURE_TYPE_ASSOCIATION")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "MeasureTypeAssociation.findAll", query = "SELECT m FROM MeasureTypeAssociation m"),
-    @NamedQuery(name = "MeasureTypeAssociation.findById", query = "SELECT m FROM MeasureTypeAssociation m WHERE m.id = :id")})
+        @NamedQuery(name = "MeasureTypeAssociation.findAll", query = "SELECT m FROM MeasureTypeAssociation m"),
+        @NamedQuery(name = "MeasureTypeAssociation.findById", query = "SELECT m FROM MeasureTypeAssociation m WHERE m.id = :id")})
 public class MeasureTypeAssociation implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -80,5 +80,5 @@ public class MeasureTypeAssociation implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.MeasureTypeAssociation[ id=" + id + " ]";
     }
-    
+
 }

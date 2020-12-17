@@ -1,15 +1,15 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "CQL_LIBRARY_SHARE")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "CqlLibraryShare.findAll", query = "SELECT c FROM CqlLibraryShare c"),
-    @NamedQuery(name = "CqlLibraryShare.findByCqlLibraryShareId", query = "SELECT c FROM CqlLibraryShare c WHERE c.cqlLibraryShareId = :cqlLibraryShareId")})
+        @NamedQuery(name = "CqlLibraryShare.findAll", query = "SELECT c FROM CqlLibraryShare c"),
+        @NamedQuery(name = "CqlLibraryShare.findByCqlLibraryShareId", query = "SELECT c FROM CqlLibraryShare c WHERE c.cqlLibraryShareId = :cqlLibraryShareId")})
 public class CqlLibraryShare implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -101,5 +101,5 @@ public class CqlLibraryShare implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CqlLibraryShare[ cqlLibraryShareId=" + cqlLibraryShareId + " ]";
     }
-    
+
 }

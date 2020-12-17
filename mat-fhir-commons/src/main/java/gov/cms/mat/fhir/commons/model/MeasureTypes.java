@@ -1,19 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "MEASURE_TYPES")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "MeasureTypes.findAll", query = "SELECT m FROM MeasureTypes m"),
-    @NamedQuery(name = "MeasureTypes.findById", query = "SELECT m FROM MeasureTypes m WHERE m.id = :id"),
-    @NamedQuery(name = "MeasureTypes.findByName", query = "SELECT m FROM MeasureTypes m WHERE m.name = :name"),
-    @NamedQuery(name = "MeasureTypes.findByAbbrName", query = "SELECT m FROM MeasureTypes m WHERE m.abbrName = :abbrName")})
+        @NamedQuery(name = "MeasureTypes.findAll", query = "SELECT m FROM MeasureTypes m"),
+        @NamedQuery(name = "MeasureTypes.findById", query = "SELECT m FROM MeasureTypes m WHERE m.id = :id"),
+        @NamedQuery(name = "MeasureTypes.findByName", query = "SELECT m FROM MeasureTypes m WHERE m.name = :name"),
+        @NamedQuery(name = "MeasureTypes.findByAbbrName", query = "SELECT m FROM MeasureTypes m WHERE m.abbrName = :abbrName")})
 public class MeasureTypes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,7 +65,7 @@ public class MeasureTypes implements Serializable {
         this.abbrName = abbrName;
     }
 
-    @XmlTransient
+
     public Collection<MeasureTypeAssociation> getMeasureTypeAssociationCollection() {
         return measureTypeAssociationCollection;
     }
@@ -98,5 +98,5 @@ public class MeasureTypes implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.MeasureTypes[ id=" + id + " ]";
     }
-    
+
 }

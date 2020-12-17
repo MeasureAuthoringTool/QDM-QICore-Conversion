@@ -1,19 +1,16 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "CODE_SYSTEM")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CodeSystem.findAll", query = "SELECT c FROM CodeSystem c"),
-    @NamedQuery(name = "CodeSystem.findByCodeSystemId", query = "SELECT c FROM CodeSystem c WHERE c.codeSystemId = :codeSystemId"),
-    @NamedQuery(name = "CodeSystem.findByDescription", query = "SELECT c FROM CodeSystem c WHERE c.description = :description"),
-    @NamedQuery(name = "CodeSystem.findByAbbreviation", query = "SELECT c FROM CodeSystem c WHERE c.abbreviation = :abbreviation")})
+        @NamedQuery(name = "CodeSystem.findAll", query = "SELECT c FROM CodeSystem c"),
+        @NamedQuery(name = "CodeSystem.findByCodeSystemId", query = "SELECT c FROM CodeSystem c WHERE c.codeSystemId = :codeSystemId"),
+        @NamedQuery(name = "CodeSystem.findByDescription", query = "SELECT c FROM CodeSystem c WHERE c.description = :description"),
+        @NamedQuery(name = "CodeSystem.findByAbbreviation", query = "SELECT c FROM CodeSystem c WHERE c.abbreviation = :abbreviation")})
 public class CodeSystem implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -76,7 +73,7 @@ public class CodeSystem implements Serializable {
         this.categoryId = categoryId;
     }
 
-    @XmlTransient
+
     public Collection<ListObject> getListObjectCollection() {
         return listObjectCollection;
     }
@@ -109,5 +106,5 @@ public class CodeSystem implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CodeSystem[ codeSystemId=" + codeSystemId + " ]";
     }
-    
+
 }

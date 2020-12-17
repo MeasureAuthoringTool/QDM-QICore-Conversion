@@ -1,17 +1,14 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "CODE_LIST")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CodeList.findAll", query = "SELECT c FROM CodeList c"),
-    @NamedQuery(name = "CodeList.findByCodeListId", query = "SELECT c FROM CodeList c WHERE c.codeListId = :codeListId")})
+        @NamedQuery(name = "CodeList.findAll", query = "SELECT c FROM CodeList c"),
+        @NamedQuery(name = "CodeList.findByCodeListId", query = "SELECT c FROM CodeList c WHERE c.codeListId = :codeListId")})
 public class CodeList implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +47,7 @@ public class CodeList implements Serializable {
         this.listObject = listObject;
     }
 
-    @XmlTransient
+
     public Collection<GroupedCodeLists> getGroupedCodeListsCollection() {
         return groupedCodeListsCollection;
     }
@@ -59,7 +56,7 @@ public class CodeList implements Serializable {
         this.groupedCodeListsCollection = groupedCodeListsCollection;
     }
 
-    @XmlTransient
+
     public Collection<Code> getCodeCollection() {
         return codeCollection;
     }
@@ -92,5 +89,5 @@ public class CodeList implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CodeList[ codeListId=" + codeListId + " ]";
     }
-    
+
 }

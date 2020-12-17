@@ -1,19 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "QUALITY_DATA_MODEL")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "QualityDataModel.findAll", query = "SELECT q FROM QualityDataModel q"),
-    @NamedQuery(name = "QualityDataModel.findByQualityDataModelId", query = "SELECT q FROM QualityDataModel q WHERE q.qualityDataModelId = :qualityDataModelId"),
-    @NamedQuery(name = "QualityDataModel.findByVersion", query = "SELECT q FROM QualityDataModel q WHERE q.version = :version"),
-    @NamedQuery(name = "QualityDataModel.findByOid", query = "SELECT q FROM QualityDataModel q WHERE q.oid = :oid"),
-    @NamedQuery(name = "QualityDataModel.findByOccurrence", query = "SELECT q FROM QualityDataModel q WHERE q.occurrence = :occurrence"),
-    @NamedQuery(name = "QualityDataModel.findByIsSuppDataElement", query = "SELECT q FROM QualityDataModel q WHERE q.isSuppDataElement = :isSuppDataElement")})
+        @NamedQuery(name = "QualityDataModel.findAll", query = "SELECT q FROM QualityDataModel q"),
+        @NamedQuery(name = "QualityDataModel.findByQualityDataModelId", query = "SELECT q FROM QualityDataModel q WHERE q.qualityDataModelId = :qualityDataModelId"),
+        @NamedQuery(name = "QualityDataModel.findByVersion", query = "SELECT q FROM QualityDataModel q WHERE q.version = :version"),
+        @NamedQuery(name = "QualityDataModel.findByOid", query = "SELECT q FROM QualityDataModel q WHERE q.oid = :oid"),
+        @NamedQuery(name = "QualityDataModel.findByOccurrence", query = "SELECT q FROM QualityDataModel q WHERE q.occurrence = :occurrence"),
+        @NamedQuery(name = "QualityDataModel.findByIsSuppDataElement", query = "SELECT q FROM QualityDataModel q WHERE q.isSuppDataElement = :isSuppDataElement")})
 public class QualityDataModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -142,5 +142,5 @@ public class QualityDataModel implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.QualityDataModel[ qualityDataModelId=" + qualityDataModelId + " ]";
     }
-    
+
 }

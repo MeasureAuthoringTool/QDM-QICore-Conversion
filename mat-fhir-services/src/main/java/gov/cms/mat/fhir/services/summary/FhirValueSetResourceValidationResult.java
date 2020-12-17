@@ -4,7 +4,7 @@ import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.rest.dto.ValueSetConversionResults;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 
-import javax.xml.bind.annotation.XmlElement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class FhirValueSetResourceValidationResult {
     private ConversionType valueSetConversionType;
     private XmlSource xmlSource;
 
-    @XmlElement
+
     public XmlSource getXmlSource() {
         return xmlSource;
     }
@@ -24,7 +24,7 @@ public class FhirValueSetResourceValidationResult {
     }
 
 
-    @XmlElement
+
     public List<ValueSetConversionResults> getValueSetConversionResults() {
         return valueSetConversionResults;
     }
@@ -33,7 +33,7 @@ public class FhirValueSetResourceValidationResult {
         this.valueSetConversionResults = valueSetConversionResults;
     }
 
-    @XmlElement
+
     public ConversionType getValueSetConversionType() {
         return valueSetConversionType;
     }

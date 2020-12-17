@@ -1,16 +1,16 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "PACKAGER")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Packager.findAll", query = "SELECT p FROM Packager p"),
-    @NamedQuery(name = "Packager.findByPackagerId", query = "SELECT p FROM Packager p WHERE p.packagerId = :packagerId"),
-    @NamedQuery(name = "Packager.findBySequence", query = "SELECT p FROM Packager p WHERE p.sequence = :sequence")})
+        @NamedQuery(name = "Packager.findAll", query = "SELECT p FROM Packager p"),
+        @NamedQuery(name = "Packager.findByPackagerId", query = "SELECT p FROM Packager p WHERE p.packagerId = :packagerId"),
+        @NamedQuery(name = "Packager.findBySequence", query = "SELECT p FROM Packager p WHERE p.sequence = :sequence")})
 public class Packager implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -96,5 +96,5 @@ public class Packager implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Packager[ packagerId=" + packagerId + " ]";
     }
-    
+
 }

@@ -1,15 +1,13 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "CQL_DATA")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CqlData.findAll", query = "SELECT c FROM CqlData c"),
-    @NamedQuery(name = "CqlData.findById", query = "SELECT c FROM CqlData c WHERE c.id = :id")})
+        @NamedQuery(name = "CqlData.findAll", query = "SELECT c FROM CqlData c"),
+        @NamedQuery(name = "CqlData.findById", query = "SELECT c FROM CqlData c WHERE c.id = :id")})
 public class CqlData implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -79,5 +77,5 @@ public class CqlData implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CqlData[ id=" + id + " ]";
     }
-    
+
 }

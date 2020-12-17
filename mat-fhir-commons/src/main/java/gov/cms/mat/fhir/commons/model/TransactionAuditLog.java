@@ -1,22 +1,22 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "TRANSACTION_AUDIT_LOG")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "TransactionAuditLog.findAll", query = "SELECT t FROM TransactionAuditLog t"),
-    @NamedQuery(name = "TransactionAuditLog.findById", query = "SELECT t FROM TransactionAuditLog t WHERE t.id = :id"),
-    @NamedQuery(name = "TransactionAuditLog.findByPrimaryId", query = "SELECT t FROM TransactionAuditLog t WHERE t.primaryId = :primaryId"),
-    @NamedQuery(name = "TransactionAuditLog.findBySecondaryId", query = "SELECT t FROM TransactionAuditLog t WHERE t.secondaryId = :secondaryId"),
-    @NamedQuery(name = "TransactionAuditLog.findByActivityType", query = "SELECT t FROM TransactionAuditLog t WHERE t.activityType = :activityType"),
-    @NamedQuery(name = "TransactionAuditLog.findByUserId", query = "SELECT t FROM TransactionAuditLog t WHERE t.userId = :userId"),
-    @NamedQuery(name = "TransactionAuditLog.findByTimestamp", query = "SELECT t FROM TransactionAuditLog t WHERE t.timestamp = :timestamp"),
-    @NamedQuery(name = "TransactionAuditLog.findByAddlInfo", query = "SELECT t FROM TransactionAuditLog t WHERE t.addlInfo = :addlInfo")})
+        @NamedQuery(name = "TransactionAuditLog.findAll", query = "SELECT t FROM TransactionAuditLog t"),
+        @NamedQuery(name = "TransactionAuditLog.findById", query = "SELECT t FROM TransactionAuditLog t WHERE t.id = :id"),
+        @NamedQuery(name = "TransactionAuditLog.findByPrimaryId", query = "SELECT t FROM TransactionAuditLog t WHERE t.primaryId = :primaryId"),
+        @NamedQuery(name = "TransactionAuditLog.findBySecondaryId", query = "SELECT t FROM TransactionAuditLog t WHERE t.secondaryId = :secondaryId"),
+        @NamedQuery(name = "TransactionAuditLog.findByActivityType", query = "SELECT t FROM TransactionAuditLog t WHERE t.activityType = :activityType"),
+        @NamedQuery(name = "TransactionAuditLog.findByUserId", query = "SELECT t FROM TransactionAuditLog t WHERE t.userId = :userId"),
+        @NamedQuery(name = "TransactionAuditLog.findByTimestamp", query = "SELECT t FROM TransactionAuditLog t WHERE t.timestamp = :timestamp"),
+        @NamedQuery(name = "TransactionAuditLog.findByAddlInfo", query = "SELECT t FROM TransactionAuditLog t WHERE t.addlInfo = :addlInfo")})
 public class TransactionAuditLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -135,5 +135,5 @@ public class TransactionAuditLog implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.TransactionAuditLog[ id=" + id + " ]";
     }
-    
+
 }

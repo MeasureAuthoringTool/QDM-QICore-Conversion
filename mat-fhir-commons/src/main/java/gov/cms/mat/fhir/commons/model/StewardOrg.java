@@ -1,19 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "STEWARD_ORG")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "StewardOrg.findAll", query = "SELECT s FROM StewardOrg s"),
-    @NamedQuery(name = "StewardOrg.findById", query = "SELECT s FROM StewardOrg s WHERE s.id = :id"),
-    @NamedQuery(name = "StewardOrg.findByOrgName", query = "SELECT s FROM StewardOrg s WHERE s.orgName = :orgName"),
-    @NamedQuery(name = "StewardOrg.findByOrgOid", query = "SELECT s FROM StewardOrg s WHERE s.orgOid = :orgOid")})
+        @NamedQuery(name = "StewardOrg.findAll", query = "SELECT s FROM StewardOrg s"),
+        @NamedQuery(name = "StewardOrg.findById", query = "SELECT s FROM StewardOrg s WHERE s.id = :id"),
+        @NamedQuery(name = "StewardOrg.findByOrgName", query = "SELECT s FROM StewardOrg s WHERE s.orgName = :orgName"),
+        @NamedQuery(name = "StewardOrg.findByOrgOid", query = "SELECT s FROM StewardOrg s WHERE s.orgOid = :orgOid")})
 public class StewardOrg implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,7 +65,7 @@ public class StewardOrg implements Serializable {
         this.orgOid = orgOid;
     }
 
-    @XmlTransient
+
     public Collection<ListObject> getListObjectCollection() {
         return listObjectCollection;
     }
@@ -98,5 +98,5 @@ public class StewardOrg implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.StewardOrg[ id=" + id + " ]";
     }
-    
+
 }

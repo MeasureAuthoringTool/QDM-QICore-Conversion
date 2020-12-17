@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "UNIT_TYPE")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "UnitType.findAll", query = "SELECT u FROM UnitType u"),
-    @NamedQuery(name = "UnitType.findById", query = "SELECT u FROM UnitType u WHERE u.id = :id"),
-    @NamedQuery(name = "UnitType.findByName", query = "SELECT u FROM UnitType u WHERE u.name = :name")})
+        @NamedQuery(name = "UnitType.findAll", query = "SELECT u FROM UnitType u"),
+        @NamedQuery(name = "UnitType.findById", query = "SELECT u FROM UnitType u WHERE u.id = :id"),
+        @NamedQuery(name = "UnitType.findByName", query = "SELECT u FROM UnitType u WHERE u.name = :name")})
 public class UnitType implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,7 +48,7 @@ public class UnitType implements Serializable {
         this.name = name;
     }
 
-    @XmlTransient
+
     public Collection<UnitTypeMatrix> getUnitTypeMatrixCollection() {
         return unitTypeMatrixCollection;
     }
@@ -81,5 +81,5 @@ public class UnitType implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.UnitType[ id=" + id + " ]";
     }
-    
+
 }

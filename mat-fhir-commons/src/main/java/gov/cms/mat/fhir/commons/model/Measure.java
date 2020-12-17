@@ -1,9 +1,7 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -11,7 +9,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "MEASURE")
-@XmlRootElement
+
 public class Measure implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "measureId")
@@ -153,7 +151,7 @@ public class Measure implements Serializable {
         this.isCompositeMeasure = isCompositeMeasure;
     }
 
-    @XmlElement
+
     public String getId() {
         return id;
     }
@@ -162,7 +160,7 @@ public class Measure implements Serializable {
         this.id = id;
     }
 
-    @XmlElement
+
     public String getSourceMeasureId() {
         return sourceMeasureId;
     }
@@ -171,7 +169,7 @@ public class Measure implements Serializable {
         this.sourceMeasureId = sourceMeasureId;
     }
 
-    @XmlElement
+
     public String getAbbrName() {
         return abbrName;
     }
@@ -180,7 +178,7 @@ public class Measure implements Serializable {
         this.abbrName = abbrName;
     }
 
-    @XmlElement
+
     public String getDescription() {
         return description;
     }
@@ -189,7 +187,7 @@ public class Measure implements Serializable {
         this.description = description;
     }
 
-    @XmlElement
+
     public String getMeasureStatus() {
         return measureStatus;
     }
@@ -198,7 +196,7 @@ public class Measure implements Serializable {
         this.measureStatus = measureStatus;
     }
 
-    @XmlElement
+
     public Date getExportTs() {
         return exportTs;
     }
@@ -207,7 +205,7 @@ public class Measure implements Serializable {
         this.exportTs = exportTs;
     }
 
-    @XmlElement
+
     public Date getLockedOutDate() {
         return lockedOutDate;
     }
@@ -216,7 +214,7 @@ public class Measure implements Serializable {
         this.lockedOutDate = lockedOutDate;
     }
 
-    @XmlElement
+
     public String getScoring() {
         return scoring;
     }
@@ -225,7 +223,7 @@ public class Measure implements Serializable {
         this.scoring = scoring;
     }
 
-    @XmlElement
+
     public Date getFinalizedDate() {
         return finalizedDate;
     }
@@ -234,7 +232,7 @@ public class Measure implements Serializable {
         this.finalizedDate = finalizedDate;
     }
 
-    @XmlElement
+
     public boolean getDraft() {
         return draft;
     }
@@ -243,7 +241,7 @@ public class Measure implements Serializable {
         this.draft = draft;
     }
 
-    @XmlElement
+
     public BigDecimal getVersion() {
         return version;
     }
@@ -252,7 +250,7 @@ public class Measure implements Serializable {
         this.version = version;
     }
 
-    @XmlElement
+
     public Date getValueSetDate() {
         return valueSetDate;
     }
@@ -261,7 +259,7 @@ public class Measure implements Serializable {
         this.valueSetDate = valueSetDate;
     }
 
-    @XmlElement
+
     public Integer getEmeasureId() {
         return emeasureId;
     }
@@ -270,7 +268,7 @@ public class Measure implements Serializable {
         this.emeasureId = emeasureId;
     }
 
-    @XmlElement
+
     public boolean getPrivate1() {
         return private1;
     }
@@ -279,7 +277,7 @@ public class Measure implements Serializable {
         this.private1 = private1;
     }
 
-    @XmlElement
+
     public String getDeleted() {
         return deleted;
     }
@@ -288,7 +286,7 @@ public class Measure implements Serializable {
         this.deleted = deleted;
     }
 
-    @XmlElement
+
     public Integer getRevisionNumber() {
         return revisionNumber;
     }
@@ -297,7 +295,7 @@ public class Measure implements Serializable {
         this.revisionNumber = revisionNumber;
     }
 
-    @XmlElement
+
     public String getReleaseVersion() {
         return releaseVersion;
     }
@@ -306,7 +304,7 @@ public class Measure implements Serializable {
         this.releaseVersion = releaseVersion;
     }
 
-    @XmlElement
+
     public Date getLastModifiedOn() {
         return lastModifiedOn;
     }
@@ -315,7 +313,7 @@ public class Measure implements Serializable {
         this.lastModifiedOn = lastModifiedOn;
     }
 
-    @XmlElement
+
     public Boolean getPatientBased() {
         return patientBased;
     }
@@ -324,7 +322,7 @@ public class Measure implements Serializable {
         this.patientBased = patientBased;
     }
 
-    @XmlElement
+
     public String getQdmVersion() {
         return qdmVersion;
     }
@@ -333,17 +331,17 @@ public class Measure implements Serializable {
         this.qdmVersion = qdmVersion;
     }
 
-    @XmlElement
+
     public boolean getIsCompositeMeasure() {
         return isCompositeMeasure;
     }
 
-    
+
     public void setIsCompositeMeasure(boolean isCompositeMeasure) {
         this.isCompositeMeasure = isCompositeMeasure;
     }
 
-    @XmlElement
+
     public String getCompositeScoring() {
         return compositeScoring;
     }
@@ -352,7 +350,7 @@ public class Measure implements Serializable {
         this.compositeScoring = compositeScoring;
     }
 
-    @XmlElement
+
     public byte[] getNqfNumber() {
         return nqfNumber;
     }
@@ -361,7 +359,7 @@ public class Measure implements Serializable {
         this.nqfNumber = nqfNumber;
     }
 
-    @XmlElement
+
     public Date getMeasurementPeriodFrom() {
         return measurementPeriodFrom;
     }
@@ -370,7 +368,7 @@ public class Measure implements Serializable {
         this.measurementPeriodFrom = measurementPeriodFrom;
     }
 
-    @XmlElement
+
     public Date getMeasurementPeriodTo() {
         return measurementPeriodTo;
     }
@@ -379,7 +377,7 @@ public class Measure implements Serializable {
         this.measurementPeriodTo = measurementPeriodTo;
     }
 
-    @XmlElement
+
     public String getCqlName() {
         return cqlName;
     }
@@ -388,7 +386,7 @@ public class Measure implements Serializable {
         this.cqlName = cqlName;
     }
 
-    @XmlElement
+
     public User getLockedUserId() {
         return lockedUserId;
     }
@@ -397,7 +395,7 @@ public class Measure implements Serializable {
         this.lockedUserId = lockedUserId;
     }
 
-    @XmlElement
+
     public User getMeasureOwnerId() {
         return measureOwnerId;
     }
@@ -406,7 +404,7 @@ public class Measure implements Serializable {
         this.measureOwnerId = measureOwnerId;
     }
 
-    @XmlElement
+
     public MeasureSet getMeasureSetId() {
         return measureSetId;
     }
@@ -415,7 +413,7 @@ public class Measure implements Serializable {
         this.measureSetId = measureSetId;
     }
 
-    @XmlElement
+
     public User getLastModifiedBy() {
         return lastModifiedBy;
     }
@@ -424,7 +422,7 @@ public class Measure implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    @XmlElement
+
     public Organization getMeasureStewardId() {
         return measureStewardId;
     }
@@ -433,7 +431,7 @@ public class Measure implements Serializable {
         this.measureStewardId = measureStewardId;
     }
 
-    @XmlTransient
+
     public Collection<MeasureExport> getMeasureExportCollection() {
         return measureExportCollection;
     }
@@ -464,10 +462,10 @@ public class Measure implements Serializable {
 
     @Override
     public String toString() {
-        return "gov.cms.mat.fhir.commons.model.Measure[ id=" +id+ " ]";
+        return "gov.cms.mat.fhir.commons.model.Measure[ id=" + id + " ]";
     }
 
-    @XmlTransient
+
     public Collection<MeasureDeveloperAssociation> getMeasureDeveloperAssociationCollection() {
         return measureDeveloperAssociationCollection;
     }
@@ -476,7 +474,7 @@ public class Measure implements Serializable {
         this.measureDeveloperAssociationCollection = measureDeveloperAssociationCollection;
     }
 
-    @XmlTransient
+
     public Collection<Packager> getPackagerCollection() {
         return packagerCollection;
     }
@@ -485,7 +483,7 @@ public class Measure implements Serializable {
         this.packagerCollection = packagerCollection;
     }
 
-    @XmlTransient
+
     public Collection<ComponentMeasures> getComponentMeasuresCollection() {
         return componentMeasuresCollection;
     }
@@ -494,7 +492,7 @@ public class Measure implements Serializable {
         this.componentMeasuresCollection = componentMeasuresCollection;
     }
 
-    @XmlTransient
+
     public Collection<ComponentMeasures> getComponentMeasuresCollection1() {
         return componentMeasuresCollection1;
     }
@@ -503,7 +501,7 @@ public class Measure implements Serializable {
         this.componentMeasuresCollection1 = componentMeasuresCollection1;
     }
 
-    @XmlTransient
+
     public Collection<RecentMsrActivityLog> getRecentMsrActivityLogCollection() {
         return recentMsrActivityLogCollection;
     }
@@ -512,7 +510,7 @@ public class Measure implements Serializable {
         this.recentMsrActivityLogCollection = recentMsrActivityLogCollection;
     }
 
-    @XmlTransient
+
     public Collection<MeasureShare> getMeasureShareCollection() {
         return measureShareCollection;
     }
@@ -521,7 +519,7 @@ public class Measure implements Serializable {
         this.measureShareCollection = measureShareCollection;
     }
 
-    @XmlTransient
+
     public Collection<MeasureDetails> getMeasureDetailsCollection() {
         return measureDetailsCollection;
     }
@@ -530,7 +528,7 @@ public class Measure implements Serializable {
         this.measureDetailsCollection = measureDetailsCollection;
     }
 
-    @XmlTransient
+
     public Collection<MeasureXml> getMeasureXmlCollection() {
         return measureXmlCollection;
     }
@@ -539,7 +537,7 @@ public class Measure implements Serializable {
         this.measureXmlCollection = measureXmlCollection;
     }
 
-    @XmlTransient
+
     public Collection<QualityDataModel> getQualityDataModelCollection() {
         return qualityDataModelCollection;
     }
@@ -548,7 +546,7 @@ public class Measure implements Serializable {
         this.qualityDataModelCollection = qualityDataModelCollection;
     }
 
-    @XmlTransient
+
     public Collection<Clause> getClauseCollection() {
         return clauseCollection;
     }
@@ -557,7 +555,7 @@ public class Measure implements Serializable {
         this.clauseCollection = clauseCollection;
     }
 
-    @XmlTransient
+
     public Collection<MeasureTypeAssociation> getMeasureTypeAssociationCollection() {
         return measureTypeAssociationCollection;
     }
@@ -566,7 +564,7 @@ public class Measure implements Serializable {
         this.measureTypeAssociationCollection = measureTypeAssociationCollection;
     }
 
-    @XmlTransient
+
     public Collection<ListObject> getListObjectCollection() {
         return listObjectCollection;
     }
@@ -575,7 +573,7 @@ public class Measure implements Serializable {
         this.listObjectCollection = listObjectCollection;
     }
 
-    @XmlTransient
+
     public Collection<CqlLibraryHistory> getCqlLibraryHistoryCollection() {
         return cqlLibraryHistoryCollection;
     }
@@ -584,7 +582,7 @@ public class Measure implements Serializable {
         this.cqlLibraryHistoryCollection = cqlLibraryHistoryCollection;
     }
 
-    @XmlTransient
+
     public Collection<CqlData> getCqlDataCollection() {
         return cqlDataCollection;
     }
@@ -593,7 +591,7 @@ public class Measure implements Serializable {
         this.cqlDataCollection = cqlDataCollection;
     }
 
-    @XmlTransient
+
     public Collection<Metadata> getMetadataCollection() {
         return metadataCollection;
     }
@@ -603,8 +601,8 @@ public class Measure implements Serializable {
     }
 
     @Transient
-    public double getVersionNumber(){
-        if( version == null)  {
+    public double getVersionNumber() {
+        if (version == null) {
             return 0.0;
         } else {
             return version.doubleValue();
