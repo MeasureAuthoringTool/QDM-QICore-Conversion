@@ -7,13 +7,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import mat.server.CQLUtilityClass;
 import mat.shared.CQLError;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -27,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -81,6 +74,10 @@ public class AntlCqlParser implements CqlParser {
         private static final String DEFINE = "define";
         private static final String CONTEXT = "context";
         private static final String PARAMETER = "parameter";
+        private static final String CODESYSTEM = "codesystem";
+        private static final String CODE = "code";
+        private static final String VALUESET = "valueset";
+
         private CqlVisitor visitor;
         private CommonTokenStream tokens;
 
@@ -308,7 +305,8 @@ public class AntlCqlParser implements CqlParser {
             // find the next define statement
             boolean startAdding = false;
             for (Token t : ts) {
-                if ((t.getText().equals(DEFINE) || t.getText().contentEquals(PARAMETER) || t.getText().equals(CONTEXT)) && startAdding) {
+                if ((t.getText().equals(DEFINE) || t.getText().contentEquals(PARAMETER) || t.getText().equals(CONTEXT) ||
+                        t.getText().equals(CODESYSTEM) || t.getText().equals(VALUESET) || t.getText().equals(CODE)) && startAdding) {
                     index = t.getTokenIndex();
                     break;
                 }

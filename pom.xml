@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.3.RELEASE</version>
+        <version>2.4.0</version>
         <relativePath/>
     </parent>
     <groupId>gov.cms.mat</groupId>
@@ -18,9 +18,9 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <mat.microservices.version>0.0.1-SNAPSHOT</mat.microservices.version>
         <hapi.fhir.version>4.1.0</hapi.fhir.version>
-        <swagger.version>1.4.1</swagger.version>
+        <swagger.version>1.5.0</swagger.version>
         <commons.collections.version>4.1</commons.collections.version>
-        <cqframework.version>1.5.0-SNAPSHOT</cqframework.version>
+        <cqframework.version>1.5.1</cqframework.version>
     </properties>
 
     <dependencies>
@@ -37,12 +37,12 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>2.3.0.1</version>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.4.0-b180830.0438</version>
+            <version>3.0.0</version>
         </dependency>
     </dependencies>
 
@@ -127,7 +127,7 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.20</version>
+                <version>8.0.22</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -3,6 +3,8 @@ package gov.cms.mat.fhir.services.service.orchestration;
 import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
+import gov.cms.mat.fhir.rest.dto.FhirValidationResult;
+import gov.cms.mat.fhir.rest.dto.PushValidationResult;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.HapiResourceValidationException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
@@ -13,9 +15,11 @@ import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import gov.cms.mat.fhir.services.translate.LibraryTranslator;
 import gov.cms.mat.fhir.services.translate.creators.FhirCreator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -48,7 +52,7 @@ public class PushMeasureService implements FhirCreator {
         this.libTranslator = libTranslator;
     }
 
-    public String convert(String id, OrchestrationProperties orchestrationProperties) {
+    public PushValidationResult convert(String id, OrchestrationProperties orchestrationProperties) {
         Measure measure = measureDataService.findOneValid(id);
         orchestrationProperties.setMatMeasure(measure);
 
@@ -63,20 +67,25 @@ public class PushMeasureService implements FhirCreator {
         return pushMeasure(id, orchestrationProperties);
     }
 
-    private String pushMeasure(String id, OrchestrationProperties orchestrationProperties) {
-        measureOrchestrationValidationService.verify(orchestrationProperties);
-
-
-        org.hl7.fhir.r4.model.Measure fhirMeasure = orchestrationProperties.getFhirMeasure();
-        boolean persisted = measureOrchestrationConversionService.convert(orchestrationProperties);
-
-        if (!persisted) {
-            throw new HapiResourceValidationException(id, "Measure");
+    private PushValidationResult pushMeasure(String id, OrchestrationProperties orchestrationProperties) {
+        PushValidationResult pushValidationResult = new PushValidationResult();
+        List<FhirValidationResult> validationResultList = measureOrchestrationValidationService.verify(orchestrationProperties);
+        if (CollectionUtils.isNotEmpty(validationResultList)) {
+            pushValidationResult.setFhirValidationResults(validationResultList);
+            pushValidationResult.setValid(false);
         } else {
-            log.debug("Measure {} is valid", id);
-        }
+            org.hl7.fhir.r4.model.Measure fhirMeasure = orchestrationProperties.getFhirMeasure();
+            boolean persisted = measureOrchestrationConversionService.convert(orchestrationProperties);
 
-        return fhirMeasure.getUrl();
+            if (!persisted) {
+                throw new HapiResourceValidationException(id, "Measure");
+            } else {
+                log.debug("Measure {} is valid", id);
+            }
+            pushValidationResult.setUrl(fhirMeasure.getUrl());
+            pushValidationResult.setValid(true);
+        }
+        return pushValidationResult;
     }
 
     private void pushLibrary(CqlLibrary cqlLib, String id) {

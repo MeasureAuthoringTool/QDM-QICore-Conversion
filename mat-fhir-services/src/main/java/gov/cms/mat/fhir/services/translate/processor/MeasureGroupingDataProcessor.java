@@ -100,12 +100,12 @@ public class MeasureGroupingDataProcessor implements FhirCreator {
                         c.getCode().hasCoding(MEASURE_POPULATION_CODE_SYSTEM,"measure-population")).findFirst();
 
         if (measurePopulation.isPresent()) {
-            Optional<Measure.MeasureGroupPopulationComponent> measureObservation = group.stream().
-                    filter(c -> !c.getCode().isEmpty() &&
+            group.stream()
+                    .filter(c -> !c.getCode().isEmpty() &&
                             !c.getCode().getCoding().isEmpty() &&
-                            c.getCode().hasCoding(MEASURE_POPULATION_CODE_SYSTEM,"measure-observation")).findFirst();
-            measureObservation.ifPresent(measureGroupPopulationComponent -> measureGroupPopulationComponent.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-criteriaReference"
-                    , new StringType(measurePopulation.get().getId())));
+                            c.getCode().hasCoding(MEASURE_POPULATION_CODE_SYSTEM,"measure-observation"))
+                    .forEach(measureGroupPopulationComponent -> measureGroupPopulationComponent.addExtension("http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-criteriaReference",
+                                    new StringType(measurePopulation.get().getId())));
         }
     }
 
