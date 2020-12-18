@@ -138,7 +138,7 @@ public class MeasureTranslator extends TranslatorBase {
 
         result.setPublisher(StringUtils.isBlank(simpleXmlModel.getStewardValue()) ? FHIR_UNKNOWN  : simpleXmlModel.getStewardValue());
 
-        result.setPurpose(FHIR_UNKNOWN );
+        result.setPurpose(FHIR_UNKNOWN);
         result.setCopyright(simpleXmlModel.getCopyright());
         result.setDisclaimer(simpleXmlModel.getDisclaimer());
         result.setLibrary(Collections.singletonList(new CanonicalType(matFhirBaseUrl + "/Library/" + matMeasure.getCqlName())));
