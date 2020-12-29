@@ -4,12 +4,12 @@
 <mapping>
     <class name="gov.cms.mat.vsac.model.ValueSetWrapper">
         <map-to xml="RetrieveMultipleValueSetsResponse" ns-uri="urn:ihe:iti:svs:2008"/>
-        <field name="valueSetList" type="gov.cms.mat.vsac.model.ValueSet"
+        <field name="vsacValueSetList" type="gov.cms.mat.vsac.model.VsacValueSet"
                collection="arraylist">
             <bind-xml name="DescribedValueSet" QName-prefix="ns0"/>
         </field>
     </class>
-    <class name="gov.cms.mat.vsac.model.ValueSet">
+    <class name="gov.cms.mat.vsac.model.VsacValueSet">
         <map-to xml="DescribedValueSet" ns-uri="urn:ihe:iti:svs:2008"/>
         <field name="ID" type="java.lang.String">
             <bind-xml name="ID" node="attribute"/>

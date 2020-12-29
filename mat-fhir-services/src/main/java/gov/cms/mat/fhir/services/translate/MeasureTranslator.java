@@ -129,8 +129,8 @@ public class MeasureTranslator extends TranslatorBase {
         result.setGuidance(simpleXmlModel.getGuidance());
         result.setVersion(createVersion(matMeasure));
 
-        result.setName(simpleXmlModel.getShortName());
-        result.setTitle(simpleXmlModel.getMeasureName());
+        result.setName(simpleXmlModel.getMeasureName()); //cqlName
+        result.setTitle(simpleXmlModel.getShortName());  //name with spaces
 
         result.setExperimental(simpleXmlModel.isExperimental());
         result.setDescription(StringUtils.isBlank(simpleXmlModel.getDescription()) ? FHIR_UNKNOWN  :

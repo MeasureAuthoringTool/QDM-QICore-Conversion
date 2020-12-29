@@ -12,24 +12,24 @@ public class ValueSetWrapper {
     /**
      * List of MatValueSet.
      **/
-    private ArrayList<ValueSet> valueSetList;
+    private ArrayList<VsacValueSet> vsacValueSetList;
 
     /**
      * Getter Method.
      *
      * @return valueSetList.
      **/
-    public final ArrayList<ValueSet> getValueSetList() {
-        return valueSetList;
+    public final ArrayList<VsacValueSet> getVsacValueSetList() {
+        return vsacValueSetList;
     }
 
     /**
      * Setter Method.
      *
-     * @param valueSet - List of MatValueSet.
+     * @param vsacValueSet - List of MatValueSet.
      **/
-    public final void setValueSetList(final ArrayList<ValueSet> valueSet) {
-        this.valueSetList = valueSet;
+    public final void setVsacValueSetList(final ArrayList<VsacValueSet> vsacValueSet) {
+        this.vsacValueSetList = vsacValueSet;
     }
 
 }
