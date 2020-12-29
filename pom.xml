@@ -144,6 +144,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>cqf-ruler-r4-sandbox</module>
         <module>hapi-fhir-jpaserver</module>
         <module>cql-elm-wrapper</module>
         <module>vsac</module>

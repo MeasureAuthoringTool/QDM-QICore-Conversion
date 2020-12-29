@@ -431,8 +431,8 @@ public class CqlUtils {
         return comment.toString();
     }
 
-    public static String parseMatVersionFromCodeSystemUri(CQLCode c) {
-        String result = c.getCodeSystemVersionUri();
+    public static String parseMatVersionFromCodeSystemUri(String codeSystemUri) {
+        String result = codeSystemUri;
         if (StringUtils.startsWith(result, SNOWMED_URL)) {
             String version = StringUtils.substringAfter(result, "/version/");
             if (StringUtils.isEmpty(version)) {
