@@ -1,0 +1,93 @@
+{
+  "resourceType": "Bundle",
+  "id": "Bonnie2134234",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "extension": [
+          {
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "1002-5",
+                  "display": "American Indian or Alaska Native",
+                  "userSelected": true
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "American Indian or Alaska Native"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+          },
+          {
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2",
+                  "display": "Hispanic or Latino",
+                  "userSelected": true
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "Hispanic or Latino"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+          }
+        ],
+        "name": [
+          {
+            "family": "john",
+            "given": [
+              "doe"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1985-01-01",
+        "id": "5fda67a66c207a3b2de89bc8"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/5fda67a66c207a3b2de89bc8"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "status": "finished",
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "version": "2019-09",
+                "code": "183452005",
+                "display": "Emergency hospital admission (procedure)",
+                "userSelected": true
+              }
+            ]
+          }
+        ],
+        "period": {
+          "start": "2020-11-17T08:00:00.000+00:00",
+          "end": "2020-11-17T08:15:00.000+00:00"
+        },
+        "id": "5fb41031f00224624d8636dd"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/5fb41031f00224624d8636dd"
+      }
+    }
+  ]
+}
