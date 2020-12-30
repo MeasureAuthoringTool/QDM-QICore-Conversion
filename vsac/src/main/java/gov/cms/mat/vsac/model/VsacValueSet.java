@@ -9,7 +9,7 @@ import java.util.List;
  * Container for holding VSAC value set.
  **/
 @ToString
-public class ValueSet {
+public class VsacValueSet {
     /**
      * VSAC value set ID.
      **/
@@ -61,7 +61,7 @@ public class ValueSet {
     /**
      * VSAC value set Grouped Value Set.
      **/
-    private List<ValueSet> groupedValueSet;
+    private List<VsacValueSet> groupedVsacValueSet;
 
     private String expansionProfile;
 
@@ -311,17 +311,17 @@ public class ValueSet {
      *
      * @return groupedValueSet.
      **/
-    public final List<ValueSet> getGroupedValueSet() {
-        return groupedValueSet;
+    public final List<VsacValueSet> getGroupedValueSet() {
+        return groupedVsacValueSet;
     }
 
     /**
      * Setter for groupedValueSet.
      *
-     * @param groupedValueSets - MatValueSet.
+     * @param groupedVsacValueSets - MatValueSet.
      **/
-    public final void setGroupedValueSet(final List<ValueSet> groupedValueSets) {
-        this.groupedValueSet = groupedValueSets;
+    public final void setGroupedValueSet(final List<VsacValueSet> groupedVsacValueSets) {
+        this.groupedVsacValueSet = groupedVsacValueSets;
     }
 
     /**

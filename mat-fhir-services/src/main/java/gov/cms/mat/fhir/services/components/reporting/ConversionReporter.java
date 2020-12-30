@@ -157,16 +157,12 @@ public class ConversionReporter {
     public static ConversionReporter getConversionReporter() {
         ConversionReporter conversionReporter = getFromThreadLocal();
 
-        if (conversionReporter == null) {
-            throw new ThreadLocalNotFoundException(NOT_FOUND_THREAD_LOCAL_MESSAGE);
-        }
-
         return conversionReporter;
     }
 
     public static ConversionResult getConversionResult() {
         ConversionReporter conversionReporter = getConversionReporter();
-        return conversionReporter.findConversionResult();
+        return conversionReporter != null ? conversionReporter.findConversionResult() : null;
     }
 
     public static void setValueSetInit(String oid, String reason, Boolean success) {
