@@ -19,14 +19,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class LibraryPackagerControllerTest {
     private static final String ID = "id";
-
+    @InjectMocks
+    LibraryPackagerController libraryPackagerController;
     @Mock
     private LibraryPackagerService libraryPackagerService;
     @Mock
     private HapiFhirServer hapiFhirServer;
-
-    @InjectMocks
-    LibraryPackagerController libraryPackagerController;
 
     @Test
     void packageMinimumJson() {
@@ -38,6 +36,35 @@ class LibraryPackagerControllerTest {
         String libJson = libraryPackagerController.packageMinimumJson(ID);
 
         assertEquals("LIBRARY_JSON", libJson);
+    }
+
+    @Test
+    void packageFullXml() {
+        Library library = new Library();
+        Bundle includeBundle = new Bundle();
+
+        LibraryPackageFullHapi libraryPackageFullHapi = LibraryPackageFullHapi.builder()
+                .library(library)
+                .includeBundle(includeBundle)
+                .build();
+
+        when(libraryPackagerService.packageFull(ID)).thenReturn(libraryPackageFullHapi);
+        when(hapiFhirServer.formatResource(library, PackageFormat.XML)).thenReturn("LIBRARY");
+        when(hapiFhirServer.formatResource(includeBundle, PackageFormat.XML)).thenReturn("INCLUDE_BUNDLE");
+
+        LibraryPackageFullData result = libraryPackagerController.packageFullXml(ID);
+
+        assertEquals("LIBRARY", result.getLibrary());
+        assertEquals("INCLUDE_BUNDLE", result.getIncludeBundle());
+    }
+
+    @Test
+    void packageMinimumXML() {
+        Library library = new Library();
+        when(libraryPackagerService.packageMinimum(ID)).thenReturn(library);
+        when(hapiFhirServer.formatResource(library, PackageFormat.XML)).thenReturn("XML");
+
+        assertEquals("XML", libraryPackagerController.packageMinimumXML(ID));
     }
 
     @Test

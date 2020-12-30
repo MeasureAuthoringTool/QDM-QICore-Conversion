@@ -57,21 +57,21 @@ import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSIO
 @Controller
 public class MatXmlController {
 
-    private final MeasureXmlRepository measureXmlRepo;
-    private final CqlLibraryRepository cqlLibRepo;
-    private final CqlVisitorFactory visitorFactory;
+    private final MeasureXmlRepository measureXmlRepository;
+    private final CqlLibraryRepository cqlLibraryRepository;
+    private final CqlVisitorFactory cqlVisitorFactory;
     private final CqlParser cqlParser;
     private final ValidationOrchestrationService validationOrchestrationService;
     private final MeasureDataService measureDataService;
 
-    public MatXmlController(MeasureXmlRepository measureXmlRepo,
-                            CqlLibraryRepository cqlLibRepo,
-                            CqlVisitorFactory visitorFactory,
+    public MatXmlController(MeasureXmlRepository measureXmlRepository,
+                            CqlLibraryRepository cqlLibraryRepository,
+                            CqlVisitorFactory cqlVisitorFactory,
                             CqlParser cqlParser,
                             ValidationOrchestrationService validationOrchestrationService, MeasureDataService measureDataService) {
-        this.measureXmlRepo = measureXmlRepo;
-        this.cqlLibRepo = cqlLibRepo;
-        this.visitorFactory = visitorFactory;
+        this.measureXmlRepository = measureXmlRepository;
+        this.cqlLibraryRepository = cqlLibraryRepository;
+        this.cqlVisitorFactory = cqlVisitorFactory;
         this.cqlParser = cqlParser;
         this.validationOrchestrationService = validationOrchestrationService;
         this.measureDataService = measureDataService;
@@ -82,7 +82,7 @@ public class MatXmlController {
     MatXmlResponse fromStandaloneLib(@RequestHeader(value = "UMLS-TOKEN", required = false) String ulmsToken,
                                      @NotBlank @PathVariable("id") String libId,
                                      @Valid @RequestBody MatXmlReq matXmlReq) {
-        Optional<CqlLibrary> optionalLib = cqlLibRepo.findById(libId);
+        Optional<CqlLibrary> optionalLib = cqlLibraryRepository.findById(libId);
 
         if (optionalLib.isPresent()) {
             CqlLibrary lib = optionalLib.get();
@@ -112,7 +112,7 @@ public class MatXmlController {
     MatXmlResponse fromMeasure(@RequestHeader(value = "UMLS-TOKEN", required = false) String ulmsToken,
                                @NotBlank @PathVariable("id") String measureId,
                                @Valid @RequestBody MatXmlReq matXmlReq) {
-        Optional<MeasureXml> optMeasureXml = measureXmlRepo.findByMeasureId(measureId);
+        Optional<MeasureXml> optMeasureXml = measureXmlRepository.findByMeasureId(measureId);
 
         if (optMeasureXml.isPresent()) {
             byte[] measureXmlBytes = optMeasureXml.get().getMeasureXml();
@@ -156,10 +156,10 @@ public class MatXmlController {
     private MatXmlResponse run(String umlsToken,
                                String cql,
                                @Null CQLModel sourceModel,
-                               MatXmlReq req,
+                               MatXmlReq matXmlReq,
                                String measureId) {
         MatXmlResponse matXmlResponse = new MatXmlResponse();
-        CqlToMatXml cqlToMatXml = visitorFactory.getCqlToMatXmlVisitor();
+        CqlToMatXml cqlToMatXml = cqlVisitorFactory.getCqlToMatXmlVisitor();
         cqlToMatXml.setSourceModel(sourceModel);
         cqlToMatXml.setUmlsToken(umlsToken);
         cqlParser.parse(cql, cqlToMatXml);
@@ -207,10 +207,10 @@ public class MatXmlController {
                             matXmlResponse.getCqlModel(),
                             umlsToken,
                             Collections.singletonList(preexistingErrors),
-                            req.getValidationRequest());
+                            matXmlReq.getValidationRequest());
             matXmlResponse.getErrors().addAll(libraryErrors);
 
-            if (req.getValidationRequest().isValidateReturnType()) {
+            if (matXmlReq.getValidationRequest().isValidateReturnType()) {
                 matXmlResponse.setCqlObject(validationOrchestrationService.buildCqlObject(sourceModel));
             }
         }
