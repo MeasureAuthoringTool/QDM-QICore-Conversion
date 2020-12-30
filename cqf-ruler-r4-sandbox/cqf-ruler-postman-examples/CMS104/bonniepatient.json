@@ -15,7 +15,6 @@
                   "system": "urn:oid:2.16.840.1.113883.6.238",
                   "code": "1002-5",
                   "display": "American Indian or Alaska Native",
-                  "userSelected": true
                 }
               },
               {
@@ -33,7 +32,6 @@
                   "system": "urn:oid:2.16.840.1.113883.6.238",
                   "code": "2135-2",
                   "display": "Hispanic or Latino",
-                  "userSelected": true
                 }
               },
               {
