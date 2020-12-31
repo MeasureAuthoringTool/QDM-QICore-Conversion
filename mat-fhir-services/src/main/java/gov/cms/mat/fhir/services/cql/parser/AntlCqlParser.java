@@ -20,11 +20,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @Service
 public class AntlCqlParser implements CqlParser {
+
 
     public AntlCqlParser() {
     }
@@ -77,6 +79,9 @@ public class AntlCqlParser implements CqlParser {
         private static final String CODESYSTEM = "codesystem";
         private static final String CODE = "code";
         private static final String VALUESET = "valueset";
+
+        private static final List<String> defineFunctionStopTokens = Arrays.asList(DEFINE,PARAMETER,CONTEXT);
+        private static final List<String> paramStopTokens = Arrays.asList(DEFINE,PARAMETER,CONTEXT,CODESYSTEM,VALUESET,CODE);
 
         private CqlVisitor visitor;
         private CommonTokenStream tokens;
@@ -261,7 +266,7 @@ public class AntlCqlParser implements CqlParser {
         }
 
         private String getDefinitionAndFunctionLogic(ParserRuleContext ctx) {
-            return getTextBetweenTokenIndexes(ctx.start.getTokenIndex(), findExpressionLogicStop(ctx));
+            return getTextBetweenTokenIndexes(ctx.start.getTokenIndex(), findExpressionLogicStop(ctx,defineFunctionStopTokens));
         }
 
         private String getTextBetweenTokenIndexes(int startTokenIndex, int stopTokenIndex) {
@@ -282,7 +287,7 @@ public class AntlCqlParser implements CqlParser {
         }
 
         private String getParameterLogic(cqlParser.ParameterDefinitionContext ctx, String identifier) {
-            List<Token> ts = tokens.getTokens(ctx.start.getTokenIndex(), findExpressionLogicStop(ctx));
+            List<Token> ts = tokens.getTokens(ctx.start.getTokenIndex(), findExpressionLogicStop(ctx,paramStopTokens));
             StringBuilder builder = new StringBuilder();
             for (Token t : ts) {
                 builder.append(t.getText());
@@ -298,15 +303,14 @@ public class AntlCqlParser implements CqlParser {
          * @param ctx the context to find the end of the body of
          * @return the index of the last token in the body
          */
-        private int findExpressionLogicStop(ParserRuleContext ctx) {
+        private int findExpressionLogicStop(ParserRuleContext ctx, List<String> stopTokens) {
             int index = tokens.size() - 1; // Initialize to the last token
             List<Token> ts = tokens.getTokens(ctx.start.getTokenIndex(), tokens.size() - 1);
 
             // find the next define statement
             boolean startAdding = false;
             for (Token t : ts) {
-                if ((t.getText().equals(DEFINE) || t.getText().contentEquals(PARAMETER) || t.getText().equals(CONTEXT) ||
-                        t.getText().equals(CODESYSTEM) || t.getText().equals(VALUESET) || t.getText().equals(CODE)) && startAdding) {
+                if (stopTokens.contains(t.getText()) && startAdding) {
                     index = t.getTokenIndex();
                     break;
                 }
