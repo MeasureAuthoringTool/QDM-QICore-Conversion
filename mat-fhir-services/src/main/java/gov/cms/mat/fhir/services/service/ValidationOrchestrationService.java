@@ -17,6 +17,7 @@ import mat.model.cql.CQLParameter;
 import mat.server.CQLUtilityClass;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hl7.cql.model.DataType;
+import org.hl7.elm.r1.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -160,9 +161,12 @@ public class ValidationOrchestrationService {
         for (CQLDefinition definition : sourceModel.getDefinitionList()) {
             String definitionName = definition.getName();
             CQLExpressionObject expression = new CQLExpressionObject("Definition", definitionName);
-            DataType result = cqlToELM.getExpression(definitionName).getResultType();
-            if (result != null) {
-                expression.setReturnType(cqlToELM.getExpression(definitionName).getResultType().toString());
+            Element returnType = cqlToELM.getExpression(definitionName);
+            if (returnType != null) {
+                DataType result = returnType.getResultType();
+                if (result != null) {
+                    expression.setReturnType(cqlToELM.getExpression(definitionName).getResultType().toString());
+                }
             }
             cqlObject.getCqlDefinitionObjectList().add(expression);
         }
