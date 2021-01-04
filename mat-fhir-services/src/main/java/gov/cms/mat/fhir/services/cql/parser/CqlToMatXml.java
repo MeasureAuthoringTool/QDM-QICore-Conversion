@@ -178,6 +178,9 @@ public class CqlToMatXml implements CqlVisitor {
                 handleError(severErrorAtLine("Could not find library " + libName + " " + version, lineNumber));
             }
         }
+        if (isDuplicate(lib)) {
+            handleError(errorAtLine(lib.getAliasName() + " is already used in this library.",lineNumber));
+        }
         destinationModel.getCqlIncludeLibrarys().add(lib);
 
     }
@@ -210,9 +213,16 @@ public class CqlToMatXml implements CqlVisitor {
             updateCodeSystemVersionFromVersionUri(cs);
 
             cs.setLineNumber(lineNumber);
+
+            if (isDuplicate(cs)) {
+                handleError(errorAtLine(cs.getCodeSystemName() + " is already used in this library.",lineNumber));
+
+            }
             destinationModel.getCodeSystemList().add(cs);
         }
     }
+
+
 
     @Override
     public void valueSet(String name, String uri, int lineNumber) {
@@ -250,7 +260,6 @@ public class CqlToMatXml implements CqlVisitor {
                     evs -> StringUtils.equals(parseOid(evs.getOid()), parseOid(vs.getOid())));
             existingValueSet.ifPresentOrElse(v -> vs.setValidatedWithVsac(v.isValidatedWithVsac()),
                     () -> vs.setValidatedWithVsac(VsacStatus.PENDING.name()));
-
             destinationModel.getValueSetList().add(vs);
         }
     }
@@ -287,6 +296,10 @@ public class CqlToMatXml implements CqlVisitor {
             c.setLineNumber(lineNumber);
             updateCodeSystemFields(c);
             updateVsacValidation(c);
+
+            if (isDuplicate(c)) {
+                handleError(errorAtLine(c.getName() + " is already used in this library.",lineNumber));
+            }
             destinationModel.getCodeList().add(c);
         }
     }
@@ -309,7 +322,6 @@ public class CqlToMatXml implements CqlVisitor {
             } else {
                 p.setReadOnly(false);
             }
-
             destinationModel.getCqlParameters().add(p);
         }
     }
@@ -334,8 +346,8 @@ public class CqlToMatXml implements CqlVisitor {
             hasSeveres = true;
         }
         if (!hasSeveres){
-            //It is only save to continue if definition has all of it's components or we will NPE.
-            destinationModel.getDefinitionList().add(buildCQLDef(name, logic, comment));
+            CQLDefinition def = buildCQLDef(name, logic, comment);
+            destinationModel.getDefinitionList().add(def);
         }
     }
 
@@ -379,6 +391,42 @@ public class CqlToMatXml implements CqlVisitor {
             }).collect(Collectors.toList()));
             f.setContext(destinationModel.getContext());
             destinationModel.getCqlFunctions().add(f);
+        }
+    }
+
+    private void updateCodeSystemVersionFromVersionUri(CQLCodeSystem cs) {
+        // CQLCodeSystem version is always driven off of versionUri.
+        String versionUri = cs.getVersionUri();
+        if (StringUtils.isNotBlank(versionUri)) {
+            if (cs.getCodeSystem().equals(SNOWMED_URL)) {
+                String version = StringUtils.substringAfter(versionUri, "/version/");
+                if (StringUtils.isEmpty(version)) {
+                    log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", versionUri);
+                } else if (version.length() != 6) { //201907 YYYYMM
+                    log.warn("Version string length is not 6: {}", version);
+                } else {
+                    cs.setCodeSystemVersion(version.substring(0, 4) + "-" + version.substring(4));
+                }
+            } else {
+                cs.setCodeSystemVersion(versionUri);
+            }
+        } else {
+            cs.setCodeSystemVersion(null);
+        }
+    }
+
+
+    private void updateCodeSystemForConversion(CQLCodeSystem cs) {
+        // On conversion urn:hl7:version: is still left in the version URI.
+        // This code fixes that.
+        if (StringUtils.isNotBlank(cs.getVersionUri())) {
+            String cleanedVersionUri = StringUtils.remove(cs.getVersionUri(), "urn:hl7:version:");
+            if (StringUtils.equals(SNOWMED_URL, cs.getCodeSystem())) {
+                String cleanedVersion = StringUtils.remove(cleanedVersionUri, '-');
+                cs.setVersionUri(SNOWMED_URL + "/version/" + cleanedVersion);
+            } else {
+                cs.setVersionUri(cleanedVersionUri);
+            }
         }
     }
 
@@ -566,38 +614,18 @@ public class CqlToMatXml implements CqlVisitor {
         return e;
     }
 
-    public static void updateCodeSystemForConversion(CQLCodeSystem cs) {
-        // On conversion urn:hl7:version: is still left in the version URI.
-        // This code fixes that.
-        if (StringUtils.isNotBlank(cs.getVersionUri())) {
-            String cleanedVersionUri = StringUtils.remove(cs.getVersionUri(), "urn:hl7:version:");
-            if (StringUtils.equals(SNOWMED_URL, cs.getCodeSystem())) {
-                String cleanedVersion = StringUtils.remove(cleanedVersionUri, '-');
-                cs.setVersionUri(SNOWMED_URL + "/version/" + cleanedVersion);
-            } else {
-                cs.setVersionUri(cleanedVersionUri);
-            }
-        }
+    private boolean isDuplicate(CQLIncludeLibrary lib) {
+        return destinationModel.getCqlIncludeLibrarys().stream().anyMatch(
+                l -> StringUtils.equals(l.getAliasName(),lib.getAliasName()));
     }
 
-    public static void updateCodeSystemVersionFromVersionUri(CQLCodeSystem cs) {
-        // CQLCodeSystem version is always driven off of versionUri.
-        String versionUri = cs.getVersionUri();
-        if (StringUtils.isNotBlank(versionUri)) {
-            if (cs.getCodeSystem().equals(SNOWMED_URL)) {
-                String version = StringUtils.substringAfter(versionUri, "/version/");
-                if (StringUtils.isEmpty(version)) {
-                    log.warn("Cannot find SNOMED version in codeSystemVersionUri: {}", versionUri);
-                } else if (version.length() != 6) { //201907 YYYYMM
-                    log.warn("Version string length is not 6: {}", version);
-                } else {
-                    cs.setCodeSystemVersion(version.substring(0, 4) + "-" + version.substring(4));
-                }
-            } else {
-                cs.setCodeSystemVersion(versionUri);
-            }
-        } else {
-            cs.setCodeSystemVersion(null);
-        }
+    private boolean isDuplicate(CQLCode c) {
+        return destinationModel.getCodeList().stream().anyMatch(
+                ec -> StringUtils.equals(ec.getCodeName(),c.getCodeName()));
+    }
+
+    private boolean isDuplicate(CQLCodeSystem cs) {
+        return destinationModel.getCodeSystemList().stream().anyMatch(
+                ecs -> StringUtils.equals(ecs.getCodeSystemName(),cs.getCodeSystemName()));
     }
 }
