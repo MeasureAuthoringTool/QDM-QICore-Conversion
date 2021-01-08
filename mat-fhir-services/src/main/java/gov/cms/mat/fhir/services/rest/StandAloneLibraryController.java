@@ -36,7 +36,7 @@ import java.util.List;
 public class StandAloneLibraryController {
     @Getter
     @Setter
-    private static class PushAllResult {
+    public static class PushAllResult {
         private List<String> successes = new ArrayList<>();
         private List<String> failures = new ArrayList<>();
     }

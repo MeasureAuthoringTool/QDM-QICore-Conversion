@@ -11,9 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,10 +68,11 @@ class StandAloneLibraryControllerTest {
         cqlLibrary.setVersion(new BigDecimal("1.0"));
         cqlLibrary.setRevisionNumber(2);
 
-        when(cqlLibraryRepository.getAllVersionedCqlFhirLibs()).thenReturn(List.of(cqlLibrary));
+        when(cqlLibraryRepository.getAllVersionedCqlFhirLibs()).thenReturn(Collections.singletonList(ID));
+        when(cqlLibraryRepository.getCqlLibraryById(Mockito.eq(ID))).thenReturn(cqlLibrary);
 
-        List<String> result = standAloneLibraryController.pushAllVersionedLibs();
-        assertEquals(1, result.size());
-        assertEquals("id CqlName FHIR v1.0.002", result.get(0));
+        StandAloneLibraryController.PushAllResult result = standAloneLibraryController.pushAllVersionedLibs();
+        assertEquals(1, result.getSuccesses().size());
+        assertEquals("id CqlName FHIR v1.0.002", result.getSuccesses().get(0));
     }
 }
