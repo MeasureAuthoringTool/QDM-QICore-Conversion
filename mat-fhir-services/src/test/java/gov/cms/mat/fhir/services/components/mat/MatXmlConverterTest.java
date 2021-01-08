@@ -31,7 +31,7 @@ class MatXmlConverterTest implements ResourceFileUtil {
     private MatXmlConverter matXmlConverter;
 
     @Test
-    void toMeasureGroupingstoMeasureGroupings() {
+    void toMeasureGroupingsToMeasureGroupings() {
         when(matXpath.toMeasureGrouping(anyString())).thenReturn(XPATH);
         when(matXmlMarshaller.toMeasureGrouping(XPATH)).thenReturn(new MeasurePackageDetail());
 
@@ -57,7 +57,16 @@ class MatXmlConverterTest implements ResourceFileUtil {
     }
 
     @Test
-    void toCompositeMeasureDetailtoMeasureGroupings() {
+    void toCompositeMeasureDetail_ThrowsMatXmlException() {
+        when(matXpath.toCompositeMeasureDetail(XML)).thenThrow(new MatXmlException("oops"));
+
+        Assertions.assertThrows(MatXmlException.class, () -> matXmlConverter.toCompositeMeasureDetail(XML));
+
+        verify(matXpath).toCompositeMeasureDetail(XML);
+    }
+
+    @Test
+    void toCompositeMeasureDetailToMeasureGroupings() {
         ManageCompositeMeasureDetailModel modelToReturn = new ManageCompositeMeasureDetailModel();
 
         when(matXpath.toCompositeMeasureDetail(XML)).thenReturn(XPATH);

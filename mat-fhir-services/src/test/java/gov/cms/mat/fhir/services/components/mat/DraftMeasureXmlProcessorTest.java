@@ -3,6 +3,7 @@ package gov.cms.mat.fhir.services.components.mat;
 import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
+import gov.cms.mat.fhir.commons.objects.FhirResourceValidationError;
 import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
@@ -32,9 +33,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gov.cms.mat.fhir.services.translate.LibraryTranslator.SYSTEM_CODE;
 import static gov.cms.mat.fhir.services.translate.LibraryTranslator.SYSTEM_TYPE;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -84,16 +93,20 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil, FhirCreator {
                 .build();
     }
 
-
     @Test
-    public void pushStandAloneFhirValidatorFails() {
+    void pushStandAloneFhirValidatorFails() {
         String matXml = setUpStandAlone();
 
         Library library = new Library();
+        FhirResourceValidationResult result = new FhirResourceValidationResult();
+        FhirResourceValidationError validationError = new
+                FhirResourceValidationError("severity", "locationField", "errorDescription");
+        result.getValidationErrorList().add(validationError);
+
 
         when(libraryTranslator.translateToFhir(LIBRARY_ID, convertedCql, XML, JSON)).thenReturn(library);
 
-        when(fhirValidatorProcessor.validateResource(library)).thenThrow(new HapiResourceValidationException("You found Waldo. " + LIBRARY_ID));
+        when(fhirValidatorProcessor.validateResource(library)).thenReturn(result);
 
         Exception exception = assertThrows(HapiResourceValidationException.class, () -> {
             draftMeasureXmlProcessor.pushStandAlone(LIBRARY_ID, matXml);
@@ -105,7 +118,7 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil, FhirCreator {
     }
 
     @Test
-    public void pushStandAloneFhirValidatorSuccess() {
+    void pushStandAloneFhirValidatorSuccess() {
         String matXml = setUpStandAlone();
 
         Library library = new Library();
@@ -145,9 +158,24 @@ class DraftMeasureXmlProcessorTest implements ResourceFileUtil, FhirCreator {
     }
 
     @Test
-    void process() {
+    void processMeasureCqlLibraryNotFound() {
         Measure measure = new Measure();
-        measure.setId("1234567890");
+        measure.setId(MEASURE_ID);
+        when(matXmlProcessor.getXml(measure, XmlSource.MEASURE)).thenReturn(MEASURE_XML.getBytes());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            draftMeasureXmlProcessor.processMeasure(measure, true);
+        });
+
+        //Could not validate hapi Library with id: 123
+        assertTrue(exception.getMessage().contains(MEASURE_ID));
+    }
+
+
+    @Test
+    void processMeasure() {
+        Measure measure = new Measure();
+        measure.setId(MEASURE_ID);
 
         when(matXmlProcessor.getXml(measure, XmlSource.MEASURE)).thenReturn(MEASURE_XML.getBytes());
         when(matXpath.toQualityData(MEASURE_XML)).thenReturn(cqlLookUpXml);
