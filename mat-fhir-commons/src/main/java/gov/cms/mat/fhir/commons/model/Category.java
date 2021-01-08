@@ -1,19 +1,16 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "CATEGORY")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c"),
-    @NamedQuery(name = "Category.findByCategoryId", query = "SELECT c FROM Category c WHERE c.categoryId = :categoryId"),
-    @NamedQuery(name = "Category.findByDescription", query = "SELECT c FROM Category c WHERE c.description = :description"),
-    @NamedQuery(name = "Category.findByAbbreviation", query = "SELECT c FROM Category c WHERE c.abbreviation = :abbreviation")})
+        @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c"),
+        @NamedQuery(name = "Category.findByCategoryId", query = "SELECT c FROM Category c WHERE c.categoryId = :categoryId"),
+        @NamedQuery(name = "Category.findByDescription", query = "SELECT c FROM Category c WHERE c.description = :description"),
+        @NamedQuery(name = "Category.findByAbbreviation", query = "SELECT c FROM Category c WHERE c.abbreviation = :abbreviation")})
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -71,7 +68,7 @@ public class Category implements Serializable {
         this.abbreviation = abbreviation;
     }
 
-    @XmlTransient
+
     public Collection<DataType> getDataTypeCollection() {
         return dataTypeCollection;
     }
@@ -80,7 +77,7 @@ public class Category implements Serializable {
         this.dataTypeCollection = dataTypeCollection;
     }
 
-    @XmlTransient
+
     public Collection<CodeSystem> getCodeSystemCollection() {
         return codeSystemCollection;
     }
@@ -89,7 +86,7 @@ public class Category implements Serializable {
         this.codeSystemCollection = codeSystemCollection;
     }
 
-    @XmlTransient
+
     public Collection<ListObject> getListObjectCollection() {
         return listObjectCollection;
     }
@@ -122,5 +119,5 @@ public class Category implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Category[ categoryId=" + categoryId + " ]";
     }
-    
+
 }

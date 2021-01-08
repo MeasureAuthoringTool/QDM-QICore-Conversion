@@ -365,6 +365,35 @@ public class VsacService {
         }
     }
 
+    public BasicResponse getValueSet(String oid, String ticketGrantingTicket) {
+        String singleUseTicket = getServiceTicket(ticketGrantingTicket);
+
+        if (StringUtils.isEmpty(singleUseTicket)) {
+            throw new RuntimeException(CANNOT_OBTAIN_A_SINGLE_USE_SERVICE_TICKET);
+        }
+
+        final Map<String, String> params = new HashMap<>();
+        params.put("oid", oid);
+        params.put("profile", PROFILE);
+        params.put("includeDraft", "yes");
+        params.put("st", singleUseTicket);
+        URI uri = UriComponentsBuilder.fromUriString(baseVsacUrl + "/vsac/svs/RetrieveMultipleValueSets?" +
+                "id={oid}&profile={profile}&ticket={st}&includeDraft={includeDraft}")
+                .buildAndExpand(params)
+                .encode()
+                .toUri();
+
+        try {
+            return buildBasicResponseFromEntity(restTemplate.getForEntity(
+                    UriComponentsBuilder.fromUri(uri)
+                            .buildAndExpand(params)
+                            .encode()
+                            .toUri(), String.class));
+        } catch (HttpClientErrorException e) {
+            return buildBasicResponseForHttpClientError(e);
+        }
+    }
+
     public ValueSetResult getValueSetResult(String oid, String ticketGrantingTicket) {
         String singleUseTicket = getServiceTicket(ticketGrantingTicket);
 

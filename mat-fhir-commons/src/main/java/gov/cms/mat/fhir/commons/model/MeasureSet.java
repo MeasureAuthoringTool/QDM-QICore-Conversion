@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "MEASURE_SET")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "MeasureSet.findAll", query = "SELECT m FROM MeasureSet m"),
-    @NamedQuery(name = "MeasureSet.findById", query = "SELECT m FROM MeasureSet m WHERE m.id = :id"),
-    @NamedQuery(name = "MeasureSet.findByName", query = "SELECT m FROM MeasureSet m WHERE m.name = :name")})
+        @NamedQuery(name = "MeasureSet.findAll", query = "SELECT m FROM MeasureSet m"),
+        @NamedQuery(name = "MeasureSet.findById", query = "SELECT m FROM MeasureSet m WHERE m.id = :id"),
+        @NamedQuery(name = "MeasureSet.findByName", query = "SELECT m FROM MeasureSet m WHERE m.name = :name")})
 public class MeasureSet implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,7 +48,7 @@ public class MeasureSet implements Serializable {
         this.name = name;
     }
 
-    @XmlTransient
+
     public Collection<Measure> getMeasureCollection() {
         return measureCollection;
     }
@@ -81,5 +81,5 @@ public class MeasureSet implements Serializable {
     public String toString() {
         return "gov.cms.mat.qdm.qicore.commons.model.MeasureSet[ id=" + id + " ]";
     }
-    
+
 }

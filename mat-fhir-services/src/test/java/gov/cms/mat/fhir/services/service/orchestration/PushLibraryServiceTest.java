@@ -6,6 +6,7 @@ import gov.cms.mat.fhir.services.components.mat.DraftMeasureXmlProcessor;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultProcessorService;
 import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.exceptions.CqlConversionException;
+import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.CqlLibraryDataService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ class PushLibraryServiceTest {
     private static final String ID = "id";
 
     @Mock
+    private FhirValidatorProcessor fhirValidatorProcessor;
+    @Mock
     private LibraryOrchestrationService libraryOrchestrationService;
     @Mock
     private CqlLibraryDataService cqlLibraryDataService;
@@ -40,6 +43,9 @@ class PushLibraryServiceTest {
         OrchestrationProperties orchestrationProperties = OrchestrationProperties.builder().build();
         CqlLibrary cqlLibrary = new CqlLibrary();
         when(cqlLibraryDataService.findCqlLibraryRequired(ID)).thenReturn(cqlLibrary);
+        doThrow(new CqlConversionException("Library is not QDM"))
+                .when(fhirValidatorProcessor)
+                .checkStandAloneLibrary(cqlLibrary, "QDM");
 
         Exception exception = assertThrows(CqlConversionException.class, () -> {
             pushLibraryService.convertQdmToFhir(ID, orchestrationProperties);

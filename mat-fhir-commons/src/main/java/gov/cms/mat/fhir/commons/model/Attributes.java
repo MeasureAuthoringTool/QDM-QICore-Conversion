@@ -1,16 +1,14 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "ATTRIBUTES")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Attributes.findAll", query = "SELECT a FROM Attributes a"),
-    @NamedQuery(name = "Attributes.findById", query = "SELECT a FROM Attributes a WHERE a.id = :id"),
-    @NamedQuery(name = "Attributes.findByAttributeName", query = "SELECT a FROM Attributes a WHERE a.attributeName = :attributeName")})
+        @NamedQuery(name = "Attributes.findAll", query = "SELECT a FROM Attributes a"),
+        @NamedQuery(name = "Attributes.findById", query = "SELECT a FROM Attributes a WHERE a.id = :id"),
+        @NamedQuery(name = "Attributes.findByAttributeName", query = "SELECT a FROM Attributes a WHERE a.attributeName = :attributeName")})
 public class Attributes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -75,5 +73,5 @@ public class Attributes implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Attributes[ id=" + id + " ]";
     }
-    
+
 }

@@ -1,31 +1,28 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
 @Entity
 @Table(name = "USER")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
-    @NamedQuery(name = "User.findByUserId", query = "SELECT u FROM User u WHERE u.userId = :userId"),
-    @NamedQuery(name = "User.findByFirstName", query = "SELECT u FROM User u WHERE u.firstName = :firstName"),
-    @NamedQuery(name = "User.findByMiddleInitial", query = "SELECT u FROM User u WHERE u.middleInitial = :middleInitial"),
-    @NamedQuery(name = "User.findByLastName", query = "SELECT u FROM User u WHERE u.lastName = :lastName"),
-    @NamedQuery(name = "User.findByEmailAddress", query = "SELECT u FROM User u WHERE u.emailAddress = :emailAddress"),
-    @NamedQuery(name = "User.findByPhoneNo", query = "SELECT u FROM User u WHERE u.phoneNo = :phoneNo"),
-    @NamedQuery(name = "User.findByTitle", query = "SELECT u FROM User u WHERE u.title = :title"),
-    @NamedQuery(name = "User.findByTerminationDate", query = "SELECT u FROM User u WHERE u.terminationDate = :terminationDate"),
-    @NamedQuery(name = "User.findByActivationDate", query = "SELECT u FROM User u WHERE u.activationDate = :activationDate"),
-    @NamedQuery(name = "User.findBySignInDate", query = "SELECT u FROM User u WHERE u.signInDate = :signInDate"),
-    @NamedQuery(name = "User.findBySignOutDate", query = "SELECT u FROM User u WHERE u.signOutDate = :signOutDate"),
-    @NamedQuery(name = "User.findByLockedOutDate", query = "SELECT u FROM User u WHERE u.lockedOutDate = :lockedOutDate"),
-    @NamedQuery(name = "User.findByLoginId", query = "SELECT u FROM User u WHERE u.loginId = :loginId"),
-    @NamedQuery(name = "User.findBySessionId", query = "SELECT u FROM User u WHERE u.sessionId = :sessionId")})
+        @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
+        @NamedQuery(name = "User.findByUserId", query = "SELECT u FROM User u WHERE u.userId = :userId"),
+        @NamedQuery(name = "User.findByFirstName", query = "SELECT u FROM User u WHERE u.firstName = :firstName"),
+        @NamedQuery(name = "User.findByMiddleInitial", query = "SELECT u FROM User u WHERE u.middleInitial = :middleInitial"),
+        @NamedQuery(name = "User.findByLastName", query = "SELECT u FROM User u WHERE u.lastName = :lastName"),
+        @NamedQuery(name = "User.findByEmailAddress", query = "SELECT u FROM User u WHERE u.emailAddress = :emailAddress"),
+        @NamedQuery(name = "User.findByPhoneNo", query = "SELECT u FROM User u WHERE u.phoneNo = :phoneNo"),
+        @NamedQuery(name = "User.findByTitle", query = "SELECT u FROM User u WHERE u.title = :title"),
+        @NamedQuery(name = "User.findByTerminationDate", query = "SELECT u FROM User u WHERE u.terminationDate = :terminationDate"),
+        @NamedQuery(name = "User.findByActivationDate", query = "SELECT u FROM User u WHERE u.activationDate = :activationDate"),
+        @NamedQuery(name = "User.findBySignInDate", query = "SELECT u FROM User u WHERE u.signInDate = :signInDate"),
+        @NamedQuery(name = "User.findBySignOutDate", query = "SELECT u FROM User u WHERE u.signOutDate = :signOutDate"),
+        @NamedQuery(name = "User.findByLockedOutDate", query = "SELECT u FROM User u WHERE u.lockedOutDate = :lockedOutDate"),
+        @NamedQuery(name = "User.findByLoginId", query = "SELECT u FROM User u WHERE u.loginId = :loginId"),
+        @NamedQuery(name = "User.findBySessionId", query = "SELECT u FROM User u WHERE u.sessionId = :sessionId")})
 public class User implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -255,7 +252,6 @@ public class User implements Serializable {
         this.sessionId = sessionId;
     }
 
-    @XmlTransient
     public Collection<Measure> getMeasureCollection() {
         return measureCollection;
     }
@@ -264,7 +260,6 @@ public class User implements Serializable {
         this.measureCollection = measureCollection;
     }
 
-    @XmlTransient
     public Collection<Measure> getMeasureCollection1() {
         return measureCollection1;
     }
@@ -273,7 +268,7 @@ public class User implements Serializable {
         this.measureCollection1 = measureCollection1;
     }
 
-    @XmlTransient
+
     public Collection<Measure> getMeasureCollection2() {
         return measureCollection2;
     }
@@ -282,7 +277,7 @@ public class User implements Serializable {
         this.measureCollection2 = measureCollection2;
     }
 
-    @XmlTransient
+
     public Collection<AuditLog> getAuditLogCollection() {
         return auditLogCollection;
     }
@@ -291,7 +286,7 @@ public class User implements Serializable {
         this.auditLogCollection = auditLogCollection;
     }
 
-    @XmlTransient
+
     public Collection<AuditLog> getAuditLogCollection1() {
         return auditLogCollection1;
     }
@@ -357,7 +352,7 @@ public class User implements Serializable {
         return "gov.cms.mat.qdm.qicore.commons.model.User[ userId=" + userId + " ]";
     }
 
-    @XmlTransient
+
     public Collection<UserAuditLog> getUserAuditLogCollection() {
         return userAuditLogCollection;
     }
@@ -366,7 +361,7 @@ public class User implements Serializable {
         this.userAuditLogCollection = userAuditLogCollection;
     }
 
-    @XmlTransient
+
     public Collection<RecentMsrActivityLog> getRecentMsrActivityLogCollection() {
         return recentMsrActivityLogCollection;
     }
@@ -375,7 +370,7 @@ public class User implements Serializable {
         this.recentMsrActivityLogCollection = recentMsrActivityLogCollection;
     }
 
-    @XmlTransient
+
     public Collection<MeasureShare> getMeasureShareCollection() {
         return measureShareCollection;
     }
@@ -384,7 +379,7 @@ public class User implements Serializable {
         this.measureShareCollection = measureShareCollection;
     }
 
-    @XmlTransient
+
     public Collection<MeasureShare> getMeasureShareCollection1() {
         return measureShareCollection1;
     }
@@ -393,7 +388,7 @@ public class User implements Serializable {
         this.measureShareCollection1 = measureShareCollection1;
     }
 
-    @XmlTransient
+
     public Collection<UserPasswordHistory> getUserPasswordHistoryCollection() {
         return userPasswordHistoryCollection;
     }
@@ -402,7 +397,7 @@ public class User implements Serializable {
         this.userPasswordHistoryCollection = userPasswordHistoryCollection;
     }
 
-    @XmlTransient
+
     public Collection<CqlLibraryShare> getCqlLibraryShareCollection() {
         return cqlLibraryShareCollection;
     }
@@ -411,7 +406,7 @@ public class User implements Serializable {
         this.cqlLibraryShareCollection = cqlLibraryShareCollection;
     }
 
-    @XmlTransient
+
     public Collection<CqlLibraryShare> getCqlLibraryShareCollection1() {
         return cqlLibraryShareCollection1;
     }
@@ -420,7 +415,7 @@ public class User implements Serializable {
         this.cqlLibraryShareCollection1 = cqlLibraryShareCollection1;
     }
 
-    @XmlTransient
+
     public Collection<CqlLibrary> getCqlLibraryCollection() {
         return cqlLibraryCollection;
     }
@@ -429,7 +424,7 @@ public class User implements Serializable {
         this.cqlLibraryCollection = cqlLibraryCollection;
     }
 
-    @XmlTransient
+
     public Collection<CqlLibrary> getCqlLibraryCollection1() {
         return cqlLibraryCollection1;
     }
@@ -438,7 +433,7 @@ public class User implements Serializable {
         this.cqlLibraryCollection1 = cqlLibraryCollection1;
     }
 
-    @XmlTransient
+
     public Collection<CqlLibrary> getCqlLibraryCollection2() {
         return cqlLibraryCollection2;
     }
@@ -455,7 +450,7 @@ public class User implements Serializable {
         this.userPassword = userPassword;
     }
 
-    @XmlTransient
+
     public Collection<RecentCqlActivityLog> getRecentCqlActivityLogCollection() {
         return recentCqlActivityLogCollection;
     }
@@ -464,7 +459,7 @@ public class User implements Serializable {
         this.recentCqlActivityLogCollection = recentCqlActivityLogCollection;
     }
 
-    @XmlTransient
+
     public Collection<ListObject> getListObjectCollection() {
         return listObjectCollection;
     }
@@ -473,7 +468,7 @@ public class User implements Serializable {
         this.listObjectCollection = listObjectCollection;
     }
 
-    @XmlTransient
+
     public Collection<UserSecurityQuestions> getUserSecurityQuestionsCollection() {
         return userSecurityQuestionsCollection;
     }
@@ -482,7 +477,7 @@ public class User implements Serializable {
         this.userSecurityQuestionsCollection = userSecurityQuestionsCollection;
     }
 
-    @XmlTransient
+
     public Collection<UserPreference> getUserPreferenceCollection() {
         return userPreferenceCollection;
     }
@@ -491,7 +486,7 @@ public class User implements Serializable {
         this.userPreferenceCollection = userPreferenceCollection;
     }
 
-    @XmlTransient
+
     public Collection<UserBonnieAccessInfo> getUserBonnieAccessInfoCollection() {
         return userBonnieAccessInfoCollection;
     }
@@ -500,7 +495,7 @@ public class User implements Serializable {
         this.userBonnieAccessInfoCollection = userBonnieAccessInfoCollection;
     }
 
-    @XmlTransient
+
     public Collection<CqlLibraryHistory> getCqlLibraryHistoryCollection() {
         return cqlLibraryHistoryCollection;
     }
@@ -508,5 +503,5 @@ public class User implements Serializable {
     public void setCqlLibraryHistoryCollection(Collection<CqlLibraryHistory> cqlLibraryHistoryCollection) {
         this.cqlLibraryHistoryCollection = cqlLibraryHistoryCollection;
     }
-    
+
 }

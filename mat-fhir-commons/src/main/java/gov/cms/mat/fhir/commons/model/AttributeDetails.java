@@ -1,21 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "ATTRIBUTE_DETAILS")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "AttributeDetails.findAll", query = "SELECT a FROM AttributeDetails a"),
-    @NamedQuery(name = "AttributeDetails.findByAttributeDetailsId", query = "SELECT a FROM AttributeDetails a WHERE a.attributeDetailsId = :attributeDetailsId"),
-    @NamedQuery(name = "AttributeDetails.findByAttrName", query = "SELECT a FROM AttributeDetails a WHERE a.attrName = :attrName"),
-    @NamedQuery(name = "AttributeDetails.findByCode", query = "SELECT a FROM AttributeDetails a WHERE a.code = :code"),
-    @NamedQuery(name = "AttributeDetails.findByCodeSystem", query = "SELECT a FROM AttributeDetails a WHERE a.codeSystem = :codeSystem"),
-    @NamedQuery(name = "AttributeDetails.findByCodeSystemName", query = "SELECT a FROM AttributeDetails a WHERE a.codeSystemName = :codeSystemName"),
-    @NamedQuery(name = "AttributeDetails.findByMode", query = "SELECT a FROM AttributeDetails a WHERE a.mode = :mode"),
-    @NamedQuery(name = "AttributeDetails.findByTypeCode", query = "SELECT a FROM AttributeDetails a WHERE a.typeCode = :typeCode")})
+        @NamedQuery(name = "AttributeDetails.findAll", query = "SELECT a FROM AttributeDetails a"),
+        @NamedQuery(name = "AttributeDetails.findByAttributeDetailsId", query = "SELECT a FROM AttributeDetails a WHERE a.attributeDetailsId = :attributeDetailsId"),
+        @NamedQuery(name = "AttributeDetails.findByAttrName", query = "SELECT a FROM AttributeDetails a WHERE a.attrName = :attrName"),
+        @NamedQuery(name = "AttributeDetails.findByCode", query = "SELECT a FROM AttributeDetails a WHERE a.code = :code"),
+        @NamedQuery(name = "AttributeDetails.findByCodeSystem", query = "SELECT a FROM AttributeDetails a WHERE a.codeSystem = :codeSystem"),
+        @NamedQuery(name = "AttributeDetails.findByCodeSystemName", query = "SELECT a FROM AttributeDetails a WHERE a.codeSystemName = :codeSystemName"),
+        @NamedQuery(name = "AttributeDetails.findByMode", query = "SELECT a FROM AttributeDetails a WHERE a.mode = :mode"),
+        @NamedQuery(name = "AttributeDetails.findByTypeCode", query = "SELECT a FROM AttributeDetails a WHERE a.typeCode = :typeCode")})
 public class AttributeDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -139,5 +137,5 @@ public class AttributeDetails implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.AttributeDetails[ attributeDetailsId=" + attributeDetailsId + " ]";
     }
-    
+
 }

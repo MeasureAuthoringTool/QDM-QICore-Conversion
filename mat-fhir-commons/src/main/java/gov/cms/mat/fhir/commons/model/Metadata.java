@@ -1,17 +1,17 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "METADATA")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Metadata.findAll", query = "SELECT m FROM Metadata m"),
-    @NamedQuery(name = "Metadata.findByMetadataId", query = "SELECT m FROM Metadata m WHERE m.metadataId = :metadataId"),
-    @NamedQuery(name = "Metadata.findByName", query = "SELECT m FROM Metadata m WHERE m.name = :name"),
-    @NamedQuery(name = "Metadata.findByValue", query = "SELECT m FROM Metadata m WHERE m.value = :value")})
+        @NamedQuery(name = "Metadata.findAll", query = "SELECT m FROM Metadata m"),
+        @NamedQuery(name = "Metadata.findByMetadataId", query = "SELECT m FROM Metadata m WHERE m.metadataId = :metadataId"),
+        @NamedQuery(name = "Metadata.findByName", query = "SELECT m FROM Metadata m WHERE m.name = :name"),
+        @NamedQuery(name = "Metadata.findByValue", query = "SELECT m FROM Metadata m WHERE m.value = :value")})
 public class Metadata implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -98,5 +98,5 @@ public class Metadata implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Metadata[ metadataId=" + metadataId + " ]";
     }
-    
+
 }

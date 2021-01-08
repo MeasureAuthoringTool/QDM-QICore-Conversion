@@ -1,15 +1,15 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "MEASURE_SHARE")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "MeasureShare.findAll", query = "SELECT m FROM MeasureShare m"),
-    @NamedQuery(name = "MeasureShare.findByMeasureShareId", query = "SELECT m FROM MeasureShare m WHERE m.measureShareId = :measureShareId")})
+        @NamedQuery(name = "MeasureShare.findAll", query = "SELECT m FROM MeasureShare m"),
+        @NamedQuery(name = "MeasureShare.findByMeasureShareId", query = "SELECT m FROM MeasureShare m WHERE m.measureShareId = :measureShareId")})
 public class MeasureShare implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -101,5 +101,5 @@ public class MeasureShare implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.MeasureShare[ measureShareId=" + measureShareId + " ]";
     }
-    
+
 }

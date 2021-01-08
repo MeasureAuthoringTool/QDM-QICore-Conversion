@@ -2,16 +2,16 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 
 @Entity
 @Table(name = "UNIT_TYPE_MATRIX")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "UnitTypeMatrix.findAll", query = "SELECT u FROM UnitTypeMatrix u"),
-    @NamedQuery(name = "UnitTypeMatrix.findById", query = "SELECT u FROM UnitTypeMatrix u WHERE u.id = :id")})
+        @NamedQuery(name = "UnitTypeMatrix.findAll", query = "SELECT u FROM UnitTypeMatrix u"),
+        @NamedQuery(name = "UnitTypeMatrix.findById", query = "SELECT u FROM UnitTypeMatrix u WHERE u.id = :id")})
 public class UnitTypeMatrix implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -81,5 +81,5 @@ public class UnitTypeMatrix implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.UnitTypeMatrix[ id=" + id + " ]";
     }
-    
+
 }

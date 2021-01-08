@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "MODES")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Modes.findAll", query = "SELECT m FROM Modes m"),
-    @NamedQuery(name = "Modes.findById", query = "SELECT m FROM Modes m WHERE m.id = :id"),
-    @NamedQuery(name = "Modes.findByModeName", query = "SELECT m FROM Modes m WHERE m.modeName = :modeName")})
+        @NamedQuery(name = "Modes.findAll", query = "SELECT m FROM Modes m"),
+        @NamedQuery(name = "Modes.findById", query = "SELECT m FROM Modes m WHERE m.id = :id"),
+        @NamedQuery(name = "Modes.findByModeName", query = "SELECT m FROM Modes m WHERE m.modeName = :modeName")})
 public class Modes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,7 +55,7 @@ public class Modes implements Serializable {
         this.modeName = modeName;
     }
 
-    @XmlTransient
+
     public Collection<AttributesModes> getAttributesModesCollection() {
         return attributesModesCollection;
     }
@@ -88,5 +88,5 @@ public class Modes implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Modes[ id=" + id + " ]";
     }
-    
+
 }

@@ -66,7 +66,7 @@ public class IntegrationTest {
     public void testGetValueSetWrapper(String tgt) {
         ValueSetWrapper result = vsacService.getVSACValueSetWrapper("2.16.840.1.113883.3.117.1.7.1.201", tgt);
         log.info("ValueSetWrapper=" + result);
-        check(result.getValueSetList() != null);
+        check(result.getVsacValueSetList() != null);
     }
 
     public void testGetCodeSystemFromName(String tgt) {

@@ -1,18 +1,17 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "USER_SECURITY_QUESTIONS")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "UserSecurityQuestions.findAll", query = "SELECT u FROM UserSecurityQuestions u"),
-    @NamedQuery(name = "UserSecurityQuestions.findByUserSecurityQuestionsId", query = "SELECT u FROM UserSecurityQuestions u WHERE u.userSecurityQuestionsId = :userSecurityQuestionsId"),
-    @NamedQuery(name = "UserSecurityQuestions.findByRowId", query = "SELECT u FROM UserSecurityQuestions u WHERE u.rowId = :rowId"),
-    @NamedQuery(name = "UserSecurityQuestions.findByAnswer", query = "SELECT u FROM UserSecurityQuestions u WHERE u.answer = :answer"),
-    @NamedQuery(name = "UserSecurityQuestions.findBySalt", query = "SELECT u FROM UserSecurityQuestions u WHERE u.salt = :salt")})
+        @NamedQuery(name = "UserSecurityQuestions.findAll", query = "SELECT u FROM UserSecurityQuestions u"),
+        @NamedQuery(name = "UserSecurityQuestions.findByUserSecurityQuestionsId", query = "SELECT u FROM UserSecurityQuestions u WHERE u.userSecurityQuestionsId = :userSecurityQuestionsId"),
+        @NamedQuery(name = "UserSecurityQuestions.findByRowId", query = "SELECT u FROM UserSecurityQuestions u WHERE u.rowId = :rowId"),
+        @NamedQuery(name = "UserSecurityQuestions.findByAnswer", query = "SELECT u FROM UserSecurityQuestions u WHERE u.answer = :answer"),
+        @NamedQuery(name = "UserSecurityQuestions.findBySalt", query = "SELECT u FROM UserSecurityQuestions u WHERE u.salt = :salt")})
 public class UserSecurityQuestions implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -119,5 +118,5 @@ public class UserSecurityQuestions implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.UserSecurityQuestions[ userSecurityQuestionsId=" + userSecurityQuestionsId + " ]";
     }
-    
+
 }

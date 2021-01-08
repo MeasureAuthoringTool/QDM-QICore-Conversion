@@ -21,14 +21,16 @@ import static gov.cms.mat.fhir.services.components.reporting.HapiResourcePersist
 
 @Component
 @Slf4j
-public class MeasureOrchestrationValidationService implements FhirValidatorProcessor, ErrorSeverityChecker {
+public class MeasureOrchestrationValidationService implements ErrorSeverityChecker {
     private static final String FAILURE_MESSAGE = "Measure validation failed";
 
+    private final FhirValidatorProcessor fhirValidatorProcessor;
     private final HapiFhirServer hapiFhirServer;
     private final MeasureTranslator measureTranslator;
 
-    public MeasureOrchestrationValidationService(HapiFhirServer hapiFhirServer,
+    public MeasureOrchestrationValidationService(FhirValidatorProcessor fhirValidatorProcessor, HapiFhirServer hapiFhirServer,
                                                  MeasureTranslator measureTranslator) {
+        this.fhirValidatorProcessor = fhirValidatorProcessor;
         this.hapiFhirServer = hapiFhirServer;
         this.measureTranslator = measureTranslator;
     }
@@ -41,10 +43,10 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
 
         if (properties.isPush()) {
             org.hl7.fhir.r4.model.Measure fhirMeasure = processFhirMeasure(properties);
-            validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
+            fhirValidatorProcessor.validateResource(response, fhirMeasure);
         }
 
-        List<FhirValidationResult> list = buildResults(response);
+        List<FhirValidationResult> list = fhirValidatorProcessor.buildResults(response);
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(validationResult -> log.debug("FhirValidationResult error: {}", validationResult));
@@ -70,10 +72,10 @@ public class MeasureOrchestrationValidationService implements FhirValidatorProce
 
         if (properties.isPush()) {
             org.hl7.fhir.r4.model.Measure fhirMeasure = processFhirMeasure(properties);
-            validateResource(response, fhirMeasure, hapiFhirServer.getCtx());
+            fhirValidatorProcessor.validateResource(response, fhirMeasure);
         }
 
-        List<FhirValidationResult> list = buildResults(response);
+        List<FhirValidationResult> list = fhirValidatorProcessor.buildResults(response);
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(validationResult -> log.debug("FhirValidationResult error: {}", validationResult));

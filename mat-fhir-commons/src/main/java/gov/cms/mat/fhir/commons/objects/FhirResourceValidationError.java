@@ -2,10 +2,10 @@ package gov.cms.mat.fhir.commons.objects;
 
 import lombok.ToString;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+
+
+
 @ToString
 public class FhirResourceValidationError {
     private String severity;
@@ -21,7 +21,7 @@ public class FhirResourceValidationError {
     /**
      * @return the severity
      */
-    @XmlElement
+
     public String getSeverity() {
         return severity;
     }
@@ -36,7 +36,7 @@ public class FhirResourceValidationError {
     /**
      * @return the locationField
      */
-    @XmlElement
+
     public String getLocationField() {
         return locationField;
     }
@@ -51,7 +51,7 @@ public class FhirResourceValidationError {
     /**
      * @return the errorDescription
      */
-    @XmlElement
+
     public String getErrorDescription() {
         return errorDescription;
     }

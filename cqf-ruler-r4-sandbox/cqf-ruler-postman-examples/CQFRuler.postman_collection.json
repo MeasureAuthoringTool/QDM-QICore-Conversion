@@ -1,0 +1,56 @@
+{
+	"info": {
+		"_postman_id": "f8b8f7d0-e74d-4236-bd38-25ba453a4a80",
+		"name": "CQFRuler",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post Bundle",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"resourceType\": \"Bundle\",\n  \"id\": \"Bonnie2134234\",\n  \"type\": \"transaction\",\n  \"entry\": [\n    {\n      \"resource\": {\n        \"resourceType\": \"Patient\",\n        \"extension\": [\n          {\n            \"extension\": [\n              {\n                \"url\": \"ombCategory\",\n                \"valueCoding\": {\n                  \"system\": \"urn:oid:2.16.840.1.113883.6.238\",\n                  \"code\": \"1002-5\",\n                  \"display\": \"American Indian or Alaska Native\",\n                  \"userSelected\": true\n                }\n              },\n              {\n                \"url\": \"text\",\n                \"valueString\": \"American Indian or Alaska Native\"\n              }\n            ],\n            \"url\": \"http://hl7.org/fhir/us/core/StructureDefinition/us-core-race\"\n          },\n          {\n            \"extension\": [\n              {\n                \"url\": \"ombCategory\",\n                \"valueCoding\": {\n                  \"system\": \"urn:oid:2.16.840.1.113883.6.238\",\n                  \"code\": \"2135-2\",\n                  \"display\": \"Hispanic or Latino\",\n                  \"userSelected\": true\n                }\n              },\n              {\n                \"url\": \"text\",\n                \"valueString\": \"Hispanic or Latino\"\n              }\n            ],\n            \"url\": \"http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity\"\n          }\n        ],\n        \"name\": [\n          {\n            \"family\": \"john\",\n            \"given\": [\n              \"doe\"\n            ]\n          }\n        ],\n        \"gender\": \"female\",\n        \"birthDate\": \"1985-01-01\",\n        \"id\": \"5fda67a66c207a3b2de89bc8\"\n      },\n      \"request\": {\n        \"method\": \"PUT\",\n        \"url\": \"Patient/5fda67a66c207a3b2de89bc8\"\n      }\n    },\n    {\n      \"resource\": {\n        \"resourceType\": \"Encounter\",\n        \"status\": \"finished\",\n        \"type\": [\n          {\n            \"coding\": [\n              {\n                \"system\": \"http://snomed.info/sct\",\n                \"version\": \"2019-09\",\n                \"code\": \"183452005\",\n                \"display\": \"Emergency hospital admission (procedure)\",\n                \"userSelected\": true\n              }\n            ]\n          }\n        ],\n        \"period\": {\n          \"start\": \"2020-11-17T08:00:00.000+00:00\",\n          \"end\": \"2020-11-17T08:15:00.000+00:00\"\n        },\n        \"id\": \"5fb41031f00224624d8636dd\"\n      },\n      \"request\": {\n        \"method\": \"PUT\",\n        \"url\": \"Encounter/5fb41031f00224624d8636dd\"\n      }\n    }\n  ]\n}\n"
+				},
+				"url": {
+					"raw": "http://localhost:10010/cqf_ruler_r4_sandbox_war/fhir/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10010",
+					"path": [
+						"cqf_ruler_r4_sandbox_war",
+						"fhir",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "evaluate-measure",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	]
+}

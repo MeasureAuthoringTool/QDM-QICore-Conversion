@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 
 @Entity
 @Table(name = "CQL_LIBRARY_ASSOCIATION")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "CqlLibraryAssociation.findAll", query = "SELECT c FROM CqlLibraryAssociation c"),
-    @NamedQuery(name = "CqlLibraryAssociation.findById", query = "SELECT c FROM CqlLibraryAssociation c WHERE c.id = :id"),
-    @NamedQuery(name = "CqlLibraryAssociation.findByAssociationId", query = "SELECT c FROM CqlLibraryAssociation c WHERE c.associationId = :associationId"),
-    @NamedQuery(name = "CqlLibraryAssociation.findByCqlLibraryId", query = "SELECT c FROM CqlLibraryAssociation c WHERE c.cqlLibraryId = :cqlLibraryId")})
+        @NamedQuery(name = "CqlLibraryAssociation.findAll", query = "SELECT c FROM CqlLibraryAssociation c"),
+        @NamedQuery(name = "CqlLibraryAssociation.findById", query = "SELECT c FROM CqlLibraryAssociation c WHERE c.id = :id"),
+        @NamedQuery(name = "CqlLibraryAssociation.findByAssociationId", query = "SELECT c FROM CqlLibraryAssociation c WHERE c.associationId = :associationId"),
+        @NamedQuery(name = "CqlLibraryAssociation.findByCqlLibraryId", query = "SELECT c FROM CqlLibraryAssociation c WHERE c.cqlLibraryId = :cqlLibraryId")})
 public class CqlLibraryAssociation implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -88,5 +88,5 @@ public class CqlLibraryAssociation implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CqlLibraryAssociation[ id=" + id + " ]";
     }
-    
+
 }

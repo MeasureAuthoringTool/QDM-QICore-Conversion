@@ -1,16 +1,16 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "USER_PREFERENCE")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "UserPreference.findAll", query = "SELECT u FROM UserPreference u"),
-    @NamedQuery(name = "UserPreference.findById", query = "SELECT u FROM UserPreference u WHERE u.id = :id"),
-    @NamedQuery(name = "UserPreference.findByFreeTextEditorEnabled", query = "SELECT u FROM UserPreference u WHERE u.freeTextEditorEnabled = :freeTextEditorEnabled")})
+        @NamedQuery(name = "UserPreference.findAll", query = "SELECT u FROM UserPreference u"),
+        @NamedQuery(name = "UserPreference.findById", query = "SELECT u FROM UserPreference u WHERE u.id = :id"),
+        @NamedQuery(name = "UserPreference.findByFreeTextEditorEnabled", query = "SELECT u FROM UserPreference u WHERE u.freeTextEditorEnabled = :freeTextEditorEnabled")})
 public class UserPreference implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -80,5 +80,5 @@ public class UserPreference implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.UserPreference[ id=" + id + " ]";
     }
-    
+
 }

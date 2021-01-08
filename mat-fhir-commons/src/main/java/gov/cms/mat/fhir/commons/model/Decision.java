@@ -2,20 +2,20 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "DECISION")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Decision.findAll", query = "SELECT d FROM Decision d"),
-    @NamedQuery(name = "Decision.findById", query = "SELECT d FROM Decision d WHERE d.id = :id"),
-    @NamedQuery(name = "Decision.findByOperator", query = "SELECT d FROM Decision d WHERE d.operator = :operator"),
-    @NamedQuery(name = "Decision.findByOrderNum", query = "SELECT d FROM Decision d WHERE d.orderNum = :orderNum"),
-    @NamedQuery(name = "Decision.findByAttributeId", query = "SELECT d FROM Decision d WHERE d.attributeId = :attributeId")})
+        @NamedQuery(name = "Decision.findAll", query = "SELECT d FROM Decision d"),
+        @NamedQuery(name = "Decision.findById", query = "SELECT d FROM Decision d WHERE d.id = :id"),
+        @NamedQuery(name = "Decision.findByOperator", query = "SELECT d FROM Decision d WHERE d.operator = :operator"),
+        @NamedQuery(name = "Decision.findByOrderNum", query = "SELECT d FROM Decision d WHERE d.orderNum = :orderNum"),
+        @NamedQuery(name = "Decision.findByAttributeId", query = "SELECT d FROM Decision d WHERE d.attributeId = :attributeId")})
 public class Decision implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -93,7 +93,7 @@ public class Decision implements Serializable {
         this.clauseId = clauseId;
     }
 
-    @XmlTransient
+
     public Collection<Decision> getDecisionCollection() {
         return decisionCollection;
     }
@@ -110,7 +110,7 @@ public class Decision implements Serializable {
         this.parentId = parentId;
     }
 
-    @XmlTransient
+
     public Collection<MeasurementTerm> getMeasurementTermCollection() {
         return measurementTermCollection;
     }
@@ -143,5 +143,5 @@ public class Decision implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Decision[ id=" + id + " ]";
     }
-    
+
 }

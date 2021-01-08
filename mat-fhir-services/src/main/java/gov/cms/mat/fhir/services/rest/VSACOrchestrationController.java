@@ -100,9 +100,6 @@ public class VSACOrchestrationController {
                     .build();
 
             return process(orchestrationProperties);
-        } catch (RuntimeException e) {
-            log.error("getSingleUseTicket", e);
-            throw e;
         } finally {
             ConversionReporter.removeInThreadLocalAndComplete();
         }

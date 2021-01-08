@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 
 @Entity
 @Table(name = "MEASUREMENT_TERM")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "MeasurementTerm.findAll", query = "SELECT m FROM MeasurementTerm m"),
-    @NamedQuery(name = "MeasurementTerm.findById", query = "SELECT m FROM MeasurementTerm m WHERE m.id = :id"),
-    @NamedQuery(name = "MeasurementTerm.findByUnit", query = "SELECT m FROM MeasurementTerm m WHERE m.unit = :unit"),
-    @NamedQuery(name = "MeasurementTerm.findByQuantity", query = "SELECT m FROM MeasurementTerm m WHERE m.quantity = :quantity")})
+        @NamedQuery(name = "MeasurementTerm.findAll", query = "SELECT m FROM MeasurementTerm m"),
+        @NamedQuery(name = "MeasurementTerm.findById", query = "SELECT m FROM MeasurementTerm m WHERE m.id = :id"),
+        @NamedQuery(name = "MeasurementTerm.findByUnit", query = "SELECT m FROM MeasurementTerm m WHERE m.unit = :unit"),
+        @NamedQuery(name = "MeasurementTerm.findByQuantity", query = "SELECT m FROM MeasurementTerm m WHERE m.quantity = :quantity")})
 public class MeasurementTerm implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -97,5 +97,5 @@ public class MeasurementTerm implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.MeasurementTerm[ id=" + id + " ]";
     }
-    
+
 }

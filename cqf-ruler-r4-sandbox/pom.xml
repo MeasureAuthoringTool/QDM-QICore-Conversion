@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>gov.cms.mat</groupId>
+        <artifactId>qdm-qicore-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    <artifactId>cqf-ruler-r4-sandbox</artifactId>
+    <packaging>war</packaging>
+    <name>cqf-ruler-sandbox</name>
+    <description>cqf-ruler-r4-sandbox</description>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.opencds.cqf</groupId>
+            <artifactId>cqf-ruler-r4</artifactId>
+            <version>0.4.0</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <overlays>
+                        <overlay>
+                            <groupId>org.opencds.cqf</groupId>
+                            <artifactId>cqf-ruler-r4</artifactId>
+                        </overlay>
+                    </overlays>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

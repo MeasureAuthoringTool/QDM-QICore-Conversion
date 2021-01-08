@@ -1,20 +1,20 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "UNIT")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Unit.findAll", query = "SELECT u FROM Unit u"),
-    @NamedQuery(name = "Unit.findById", query = "SELECT u FROM Unit u WHERE u.id = :id"),
-    @NamedQuery(name = "Unit.findByName", query = "SELECT u FROM Unit u WHERE u.name = :name"),
-    @NamedQuery(name = "Unit.findBySortOrder", query = "SELECT u FROM Unit u WHERE u.sortOrder = :sortOrder"),
-    @NamedQuery(name = "Unit.findByCqlUnit", query = "SELECT u FROM Unit u WHERE u.cqlUnit = :cqlUnit")})
+        @NamedQuery(name = "Unit.findAll", query = "SELECT u FROM Unit u"),
+        @NamedQuery(name = "Unit.findById", query = "SELECT u FROM Unit u WHERE u.id = :id"),
+        @NamedQuery(name = "Unit.findByName", query = "SELECT u FROM Unit u WHERE u.name = :name"),
+        @NamedQuery(name = "Unit.findBySortOrder", query = "SELECT u FROM Unit u WHERE u.sortOrder = :sortOrder"),
+        @NamedQuery(name = "Unit.findByCqlUnit", query = "SELECT u FROM Unit u WHERE u.cqlUnit = :cqlUnit")})
 public class Unit implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -76,7 +76,7 @@ public class Unit implements Serializable {
         this.cqlUnit = cqlUnit;
     }
 
-    @XmlTransient
+
     public Collection<UnitTypeMatrix> getUnitTypeMatrixCollection() {
         return unitTypeMatrixCollection;
     }
@@ -109,5 +109,5 @@ public class Unit implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Unit[ id=" + id + " ]";
     }
-    
+
 }

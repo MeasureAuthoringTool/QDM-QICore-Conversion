@@ -1,19 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "ORGANIZATION")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "Organization.findAll", query = "SELECT o FROM Organization o"),
-    @NamedQuery(name = "Organization.findByOrgId", query = "SELECT o FROM Organization o WHERE o.orgId = :orgId"),
-    @NamedQuery(name = "Organization.findByOrgName", query = "SELECT o FROM Organization o WHERE o.orgName = :orgName"),
-    @NamedQuery(name = "Organization.findByOrgOid", query = "SELECT o FROM Organization o WHERE o.orgOid = :orgOid")})
+        @NamedQuery(name = "Organization.findAll", query = "SELECT o FROM Organization o"),
+        @NamedQuery(name = "Organization.findByOrgId", query = "SELECT o FROM Organization o WHERE o.orgId = :orgId"),
+        @NamedQuery(name = "Organization.findByOrgName", query = "SELECT o FROM Organization o WHERE o.orgName = :orgName"),
+        @NamedQuery(name = "Organization.findByOrgOid", query = "SELECT o FROM Organization o WHERE o.orgOid = :orgOid")})
 public class Organization implements Serializable {
 
     @OneToMany(mappedBy = "measureDeveloperId")
@@ -71,7 +71,7 @@ public class Organization implements Serializable {
         this.orgOid = orgOid;
     }
 
-    @XmlTransient
+
     public Collection<Measure> getMeasureCollection() {
         return measureCollection;
     }
@@ -80,7 +80,7 @@ public class Organization implements Serializable {
         this.measureCollection = measureCollection;
     }
 
-    @XmlTransient
+
     public Collection<User> getUserCollection() {
         return userCollection;
     }
@@ -114,7 +114,7 @@ public class Organization implements Serializable {
         return "gov.cms.mat.qdm.qicore.commons.model.Organization[ orgId=" + orgId + " ]";
     }
 
-    @XmlTransient
+
     public Collection<MeasureDeveloperAssociation> getMeasureDeveloperAssociationCollection() {
         return measureDeveloperAssociationCollection;
     }
@@ -122,5 +122,5 @@ public class Organization implements Serializable {
     public void setMeasureDeveloperAssociationCollection(Collection<MeasureDeveloperAssociation> measureDeveloperAssociationCollection) {
         this.measureDeveloperAssociationCollection = measureDeveloperAssociationCollection;
     }
-    
+
 }

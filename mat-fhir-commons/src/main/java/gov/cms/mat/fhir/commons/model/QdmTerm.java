@@ -1,17 +1,17 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "QDM_TERM")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "QdmTerm.findAll", query = "SELECT q FROM QdmTerm q"),
-    @NamedQuery(name = "QdmTerm.findById", query = "SELECT q FROM QdmTerm q WHERE q.id = :id"),
-    @NamedQuery(name = "QdmTerm.findByQdmElementId", query = "SELECT q FROM QdmTerm q WHERE q.qdmElementId = :qdmElementId"),
-    @NamedQuery(name = "QdmTerm.findByDecisionId", query = "SELECT q FROM QdmTerm q WHERE q.decisionId = :decisionId")})
+        @NamedQuery(name = "QdmTerm.findAll", query = "SELECT q FROM QdmTerm q"),
+        @NamedQuery(name = "QdmTerm.findById", query = "SELECT q FROM QdmTerm q WHERE q.id = :id"),
+        @NamedQuery(name = "QdmTerm.findByQdmElementId", query = "SELECT q FROM QdmTerm q WHERE q.qdmElementId = :qdmElementId"),
+        @NamedQuery(name = "QdmTerm.findByDecisionId", query = "SELECT q FROM QdmTerm q WHERE q.decisionId = :decisionId")})
 public class QdmTerm implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -87,5 +87,5 @@ public class QdmTerm implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.QdmTerm[ id=" + id + " ]";
     }
-    
+
 }

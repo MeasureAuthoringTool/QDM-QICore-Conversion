@@ -1,23 +1,20 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "CLAUSE")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Clause.findAll", query = "SELECT c FROM Clause c"),
-    @NamedQuery(name = "Clause.findById", query = "SELECT c FROM Clause c WHERE c.id = :id"),
-    @NamedQuery(name = "Clause.findByName", query = "SELECT c FROM Clause c WHERE c.name = :name"),
-    @NamedQuery(name = "Clause.findByCustomName", query = "SELECT c FROM Clause c WHERE c.customName = :customName"),
-    @NamedQuery(name = "Clause.findByDescription", query = "SELECT c FROM Clause c WHERE c.description = :description"),
-    @NamedQuery(name = "Clause.findByDecisionId", query = "SELECT c FROM Clause c WHERE c.decisionId = :decisionId"),
-    @NamedQuery(name = "Clause.findByClauseTypeId", query = "SELECT c FROM Clause c WHERE c.clauseTypeId = :clauseTypeId"),
-    @NamedQuery(name = "Clause.findByVersion", query = "SELECT c FROM Clause c WHERE c.version = :version")})
+        @NamedQuery(name = "Clause.findAll", query = "SELECT c FROM Clause c"),
+        @NamedQuery(name = "Clause.findById", query = "SELECT c FROM Clause c WHERE c.id = :id"),
+        @NamedQuery(name = "Clause.findByName", query = "SELECT c FROM Clause c WHERE c.name = :name"),
+        @NamedQuery(name = "Clause.findByCustomName", query = "SELECT c FROM Clause c WHERE c.customName = :customName"),
+        @NamedQuery(name = "Clause.findByDescription", query = "SELECT c FROM Clause c WHERE c.description = :description"),
+        @NamedQuery(name = "Clause.findByDecisionId", query = "SELECT c FROM Clause c WHERE c.decisionId = :decisionId"),
+        @NamedQuery(name = "Clause.findByClauseTypeId", query = "SELECT c FROM Clause c WHERE c.clauseTypeId = :clauseTypeId"),
+        @NamedQuery(name = "Clause.findByVersion", query = "SELECT c FROM Clause c WHERE c.version = :version")})
 public class Clause implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -111,7 +108,7 @@ public class Clause implements Serializable {
         this.version = version;
     }
 
-    @XmlTransient
+
     public Collection<Decision> getDecisionCollection() {
         return decisionCollection;
     }
@@ -120,7 +117,7 @@ public class Clause implements Serializable {
         this.decisionCollection = decisionCollection;
     }
 
-    @XmlTransient
+
     public Collection<Packager> getPackagerCollection() {
         return packagerCollection;
     }
@@ -169,5 +166,5 @@ public class Clause implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Clause[ id=" + id + " ]";
     }
-    
+
 }

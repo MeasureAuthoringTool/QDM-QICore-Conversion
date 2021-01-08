@@ -1,15 +1,13 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "COMPONENT_MEASURES")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ComponentMeasures.findAll", query = "SELECT c FROM ComponentMeasures c"),
-    @NamedQuery(name = "ComponentMeasures.findById", query = "SELECT c FROM ComponentMeasures c WHERE c.id = :id")})
+        @NamedQuery(name = "ComponentMeasures.findAll", query = "SELECT c FROM ComponentMeasures c"),
+        @NamedQuery(name = "ComponentMeasures.findById", query = "SELECT c FROM ComponentMeasures c WHERE c.id = :id")})
 public class ComponentMeasures implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -91,5 +89,5 @@ public class ComponentMeasures implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.ComponentMeasures[ id=" + id + " ]";
     }
-    
+
 }

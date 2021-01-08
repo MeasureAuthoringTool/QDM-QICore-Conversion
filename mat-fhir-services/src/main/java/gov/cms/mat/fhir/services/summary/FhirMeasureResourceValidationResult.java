@@ -4,7 +4,7 @@ import gov.cms.mat.fhir.commons.objects.FhirResourceValidationResult;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.rest.dto.FieldConversionResult;
 
-import javax.xml.bind.annotation.XmlElement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class FhirMeasureResourceValidationResult extends FhirResourceValidationR
         super(id, measure);
     }
 
-    @XmlElement
+
     public List<FieldConversionResult> getMeasureResults() {
         return measureResults;
     }
@@ -30,7 +30,7 @@ public class FhirMeasureResourceValidationResult extends FhirResourceValidationR
         this.measureResults = measureResults;
     }
 
-    @XmlElement
+
     public ConversionType getMeasureConversionType() {
         return measureConversionType;
     }

@@ -1,9 +1,9 @@
 package gov.cms.mat.fhir.commons.objects;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+
+
+
 public class CQLSourceForTranslation {
     private String id;
     private String measureId;
@@ -14,7 +14,7 @@ public class CQLSourceForTranslation {
     /**
      * @return the id
      */
-    @XmlElement
+
     public String getId() {
         return id;
     }
@@ -29,7 +29,7 @@ public class CQLSourceForTranslation {
     /**
      * @return the measureId
      */
-    @XmlElement
+
     public String getMeasureId() {
         return measureId;
     }
@@ -51,7 +51,7 @@ public class CQLSourceForTranslation {
     /**
      * @param cql the cql to set
      */
-    @XmlElement
+
     public void setCql(String cql) {
         this.cql = cql;
     }
@@ -59,7 +59,7 @@ public class CQLSourceForTranslation {
     /**
      * @return the qdmVersion
      */
-    @XmlElement
+
     public String getQdmVersion() {
         return qdmVersion;
     }
@@ -75,7 +75,7 @@ public class CQLSourceForTranslation {
     /**
      * @return the releaseVersion
      */
-    @XmlElement
+
     public String getReleaseVersion() {
         return releaseVersion;
     }

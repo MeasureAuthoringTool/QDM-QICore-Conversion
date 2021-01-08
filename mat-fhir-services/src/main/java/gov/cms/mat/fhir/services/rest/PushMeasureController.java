@@ -6,7 +6,6 @@ import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
-import gov.cms.mat.fhir.services.rest.support.FhirValidatorProcessor;
 import gov.cms.mat.fhir.services.service.orchestration.PushMeasureService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +24,7 @@ import java.time.Instant;
 @RequestMapping(path = "/measure")
 @Tag(name = "Measure-Controller", description = "API for Measures")
 @Slf4j
-public class PushMeasureController implements FhirValidatorProcessor {
+public class PushMeasureController {
     private final ConversionResultsService conversionResultsService;
     private final PushMeasureService pushMeasureService;
 
@@ -42,19 +41,14 @@ public class PushMeasureController implements FhirValidatorProcessor {
                     @ApiResponse(responseCode = "200", description = "Measure is found in mat and updated in hapi and json returned"),
                     @ApiResponse(responseCode = "404", description = "Measure is not found in the mat db using the id")})
     @PostMapping("/pushMeasure")
-    public PushValidationResult pushMeasure (
+    public PushValidationResult pushMeasure(
             @RequestParam @Min(10) String id,
             @RequestParam(required = false, defaultValue = "PUSH-MEASURE-ORCHESTRATION") String batchId) {
-        try {
 
-            ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, batchId);
-            OrchestrationProperties orchestrationProperties = buildProperties(threadSessionKey);
+        ThreadSessionKey threadSessionKey = buildThreadSessionKey(id, batchId);
+        OrchestrationProperties orchestrationProperties = buildProperties(threadSessionKey);
 
-            return pushMeasureService.convert(id, orchestrationProperties);
-        } catch (RuntimeException e) {
-            log.error("pushMeasure",e);
-            throw e;
-        }
+        return pushMeasureService.convert(id, orchestrationProperties);
     }
 
     private OrchestrationProperties buildProperties(ThreadSessionKey threadSessionKey) {

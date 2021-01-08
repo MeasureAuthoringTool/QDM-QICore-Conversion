@@ -116,7 +116,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
         String result = null;
         boolean needVersion = StringUtils.isBlank(c.getCodeSystemVersionUri());
         if (needVersion) {
-            String versionUri = parseMatVersionFromCodeSystemUri(c);
+            String versionUri = parseMatVersionFromCodeSystemUri(c.getCodeSystemVersionUri());
             if (StringUtils.isBlank(versionUri)) {
                 //This hit is cached so no need to optimize.
                 CodeSystemVersionResponse vsacResult = vsacService.getCodeSystemVersionFromName(c.getCodeSystemName(), ulmsToken);
@@ -139,7 +139,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
         } else {
             result = String.format(CODE_IDENTIFIER_FORMAT,
                     parseCodeSystemName(c.getCodeSystemName()).getLeft(),
-                    parseMatVersionFromCodeSystemUri(c),
+                    parseMatVersionFromCodeSystemUri(c.getCodeSystemVersionUri()),
                     c.getCodeOID());
         }
         return result;

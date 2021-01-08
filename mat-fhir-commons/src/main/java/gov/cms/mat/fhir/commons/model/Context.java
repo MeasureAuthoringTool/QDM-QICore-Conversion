@@ -1,18 +1,15 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "CONTEXT")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Context.findAll", query = "SELECT c FROM Context c"),
-    @NamedQuery(name = "Context.findByContextId", query = "SELECT c FROM Context c WHERE c.contextId = :contextId"),
-    @NamedQuery(name = "Context.findByDescription", query = "SELECT c FROM Context c WHERE c.description = :description")})
+        @NamedQuery(name = "Context.findAll", query = "SELECT c FROM Context c"),
+        @NamedQuery(name = "Context.findByContextId", query = "SELECT c FROM Context c WHERE c.contextId = :contextId"),
+        @NamedQuery(name = "Context.findByDescription", query = "SELECT c FROM Context c WHERE c.description = :description")})
 public class Context implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +51,7 @@ public class Context implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
+
     public Collection<Clause> getClauseCollection() {
         return clauseCollection;
     }
@@ -87,5 +84,5 @@ public class Context implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Context[ contextId=" + contextId + " ]";
     }
-    
+
 }

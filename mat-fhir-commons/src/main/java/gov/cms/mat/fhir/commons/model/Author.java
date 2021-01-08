@@ -1,16 +1,14 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "AUTHOR")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Author.findAll", query = "SELECT a FROM Author a"),
-    @NamedQuery(name = "Author.findById", query = "SELECT a FROM Author a WHERE a.id = :id"),
-    @NamedQuery(name = "Author.findByAuthorName", query = "SELECT a FROM Author a WHERE a.authorName = :authorName")})
+        @NamedQuery(name = "Author.findAll", query = "SELECT a FROM Author a"),
+        @NamedQuery(name = "Author.findById", query = "SELECT a FROM Author a WHERE a.id = :id"),
+        @NamedQuery(name = "Author.findByAuthorName", query = "SELECT a FROM Author a WHERE a.authorName = :authorName")})
 public class Author implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -74,5 +72,5 @@ public class Author implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.Author[ id=" + id + " ]";
     }
-    
+
 }

@@ -26,7 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
-public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionConverter, FhirValidatorProcessor {
+public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionConverter {
+    private final FhirValidatorProcessor fhirValidationProcessor;
     private final HapiFhirServer hapiFhirServer;
     private final MatXmlProcessor matXmlProcessor;
     private final MatXpath matXpath;
@@ -35,13 +36,15 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
     private final LibraryTranslator libraryTranslator;
     private final CqlLibraryRepository cqlLibRepo;
 
-    public DraftMeasureXmlProcessor(HapiFhirServer hapiFhirServer,
+    public DraftMeasureXmlProcessor(FhirValidatorProcessor fhirValidationProcessor,
+                                    HapiFhirServer hapiFhirServer,
                                     MatXmlProcessor matXmlProcessor,
                                     MatXpath matXpath,
                                     LibraryOrchestrationValidationService libraryOrchestrationValidationService,
                                     CQLLibraryTranslationService cqlLibraryTranslationService,
                                     LibraryTranslator libraryTranslator,
                                     CqlLibraryRepository cqlLibRepo) {
+        this.fhirValidationProcessor = fhirValidationProcessor;
         this.hapiFhirServer = hapiFhirServer;
         this.matXmlProcessor = matXmlProcessor;
         this.matXpath = matXpath;
@@ -59,7 +62,7 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
         library.setId(libraryId);
         library.setVersion(xmlKey.getVersion());
 
-        FhirResourceValidationResult result = validateResource(library, hapiFhirServer.getCtx());
+        FhirResourceValidationResult result = fhirValidationProcessor.validateResource(library);
 
         if (CollectionUtils.isNotEmpty(result.getValidationErrorList())) {
             log.error("Validation errors encountered {} errors ", result.getValidationErrorList().size());

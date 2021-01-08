@@ -1,6 +1,7 @@
 package gov.cms.mat.fhir.services.hapi;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
@@ -9,14 +10,8 @@ import gov.cms.mat.fhir.services.config.security.SecurityFilter;
 import gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.CodeSystem;
-import org.hl7.fhir.r4.model.Library;
-import org.hl7.fhir.r4.model.Measure;
-import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.r4.model.ValueSet;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -161,7 +156,7 @@ public class HapiFhirServer {
         return loggingInterceptor;
     }
 
-    public IBaseOperationOutcome delete(IBaseResource resource) {
+    public MethodOutcome delete(IBaseResource resource) {
         return hapiClient.delete()
                 .resource(resource)
                 .prettyPrint()

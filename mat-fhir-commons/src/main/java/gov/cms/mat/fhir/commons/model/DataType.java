@@ -1,18 +1,18 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
+
 import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "DATA_TYPE")
-@XmlRootElement
+
 @NamedQueries({
-    @NamedQuery(name = "DataType.findAll", query = "SELECT d FROM DataType d"),
-    @NamedQuery(name = "DataType.findByDataTypeId", query = "SELECT d FROM DataType d WHERE d.dataTypeId = :dataTypeId"),
-    @NamedQuery(name = "DataType.findByDescription", query = "SELECT d FROM DataType d WHERE d.description = :description")})
+        @NamedQuery(name = "DataType.findAll", query = "SELECT d FROM DataType d"),
+        @NamedQuery(name = "DataType.findByDataTypeId", query = "SELECT d FROM DataType d WHERE d.dataTypeId = :dataTypeId"),
+        @NamedQuery(name = "DataType.findByDescription", query = "SELECT d FROM DataType d WHERE d.description = :description")})
 public class DataType implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,7 +65,7 @@ public class DataType implements Serializable {
         this.categoryId = categoryId;
     }
 
-    @XmlTransient
+
     public Collection<QualityDataModel> getQualityDataModelCollection() {
         return qualityDataModelCollection;
     }
@@ -98,5 +98,5 @@ public class DataType implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.DataType[ dataTypeId=" + dataTypeId + " ]";
     }
-    
+
 }

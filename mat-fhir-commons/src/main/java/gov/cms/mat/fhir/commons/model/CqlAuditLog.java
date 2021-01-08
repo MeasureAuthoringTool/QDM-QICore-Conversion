@@ -1,21 +1,19 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "CQL_AUDIT_LOG")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CqlAuditLog.findAll", query = "SELECT c FROM CqlAuditLog c"),
-    @NamedQuery(name = "CqlAuditLog.findById", query = "SELECT c FROM CqlAuditLog c WHERE c.id = :id"),
-    @NamedQuery(name = "CqlAuditLog.findByCqlId", query = "SELECT c FROM CqlAuditLog c WHERE c.cqlId = :cqlId"),
-    @NamedQuery(name = "CqlAuditLog.findByActivityType", query = "SELECT c FROM CqlAuditLog c WHERE c.activityType = :activityType"),
-    @NamedQuery(name = "CqlAuditLog.findByUserId", query = "SELECT c FROM CqlAuditLog c WHERE c.userId = :userId"),
-    @NamedQuery(name = "CqlAuditLog.findByTimestamp", query = "SELECT c FROM CqlAuditLog c WHERE c.timestamp = :timestamp"),
-    @NamedQuery(name = "CqlAuditLog.findByAddlInfo", query = "SELECT c FROM CqlAuditLog c WHERE c.addlInfo = :addlInfo")})
+        @NamedQuery(name = "CqlAuditLog.findAll", query = "SELECT c FROM CqlAuditLog c"),
+        @NamedQuery(name = "CqlAuditLog.findById", query = "SELECT c FROM CqlAuditLog c WHERE c.id = :id"),
+        @NamedQuery(name = "CqlAuditLog.findByCqlId", query = "SELECT c FROM CqlAuditLog c WHERE c.cqlId = :cqlId"),
+        @NamedQuery(name = "CqlAuditLog.findByActivityType", query = "SELECT c FROM CqlAuditLog c WHERE c.activityType = :activityType"),
+        @NamedQuery(name = "CqlAuditLog.findByUserId", query = "SELECT c FROM CqlAuditLog c WHERE c.userId = :userId"),
+        @NamedQuery(name = "CqlAuditLog.findByTimestamp", query = "SELECT c FROM CqlAuditLog c WHERE c.timestamp = :timestamp"),
+        @NamedQuery(name = "CqlAuditLog.findByAddlInfo", query = "SELECT c FROM CqlAuditLog c WHERE c.addlInfo = :addlInfo")})
 public class CqlAuditLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -126,5 +124,5 @@ public class CqlAuditLog implements Serializable {
     public String toString() {
         return "gov.cms.mat.fhir.commons.model.CqlAuditLog[ id=" + id + " ]";
     }
-    
+
 }

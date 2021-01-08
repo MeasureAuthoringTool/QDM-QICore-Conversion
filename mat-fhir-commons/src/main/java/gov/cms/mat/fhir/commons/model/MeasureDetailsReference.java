@@ -1,13 +1,13 @@
 package gov.cms.mat.fhir.commons.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "MEASURE_DETAILS_REFERENCE")
-@XmlRootElement
+
 public class MeasureDetailsReference implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,7 +34,7 @@ public class MeasureDetailsReference implements Serializable {
         this.id = id;
     }
 
-    @XmlElement
+
     public Integer getId() {
         return id;
     }
@@ -43,7 +43,7 @@ public class MeasureDetailsReference implements Serializable {
         this.id = id;
     }
 
-    @XmlElement
+
     public String getReference() {
         return reference;
     }
@@ -52,7 +52,7 @@ public class MeasureDetailsReference implements Serializable {
         this.reference = reference;
     }
 
-    @XmlElement
+
     public Integer getReferenceNumber() {
         return referenceNumber;
     }
@@ -61,7 +61,7 @@ public class MeasureDetailsReference implements Serializable {
         this.referenceNumber = referenceNumber;
     }
 
-    @XmlElement
+
     public Integer getMeasureDetailsId() {
         return measureDetailsId;
     }

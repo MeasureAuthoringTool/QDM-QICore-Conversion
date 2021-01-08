@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class LibraryPackagerService implements FhirValidatorProcessor, FhirLibraryHelper {
+public class LibraryPackagerService implements FhirLibraryHelper {
     private final HapiFhirServer hapiFhirServer;
     private final FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor;
     private final FhirValidatorService fhirValidatorService;

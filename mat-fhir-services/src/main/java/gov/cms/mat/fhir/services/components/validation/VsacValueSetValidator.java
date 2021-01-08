@@ -2,7 +2,6 @@ package gov.cms.mat.fhir.services.components.validation;
 
 import gov.cms.mat.vsac.VsacService;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.Slf4j;
 import mat.model.cql.CQLQualityDataSetDTO;
 import mat.model.cql.VsacStatus;
 import org.apache.commons.lang3.StringUtils;

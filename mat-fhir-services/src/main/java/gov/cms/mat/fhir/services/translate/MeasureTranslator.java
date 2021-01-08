@@ -129,8 +129,8 @@ public class MeasureTranslator extends TranslatorBase {
         result.setGuidance(simpleXmlModel.getGuidance());
         result.setVersion(createVersion(matMeasure));
 
-        result.setName(simpleXmlModel.getShortName());
-        result.setTitle(simpleXmlModel.getMeasureName());
+        result.setName(matMeasure.getCqlName()); //cqlName
+        result.setTitle(simpleXmlModel.getMeasureName());  //measure name
 
         result.setExperimental(simpleXmlModel.isExperimental());
         result.setDescription(StringUtils.isBlank(simpleXmlModel.getDescription()) ? FHIR_UNKNOWN  :
@@ -138,7 +138,7 @@ public class MeasureTranslator extends TranslatorBase {
 
         result.setPublisher(StringUtils.isBlank(simpleXmlModel.getStewardValue()) ? FHIR_UNKNOWN  : simpleXmlModel.getStewardValue());
 
-        result.setPurpose(FHIR_UNKNOWN );
+        result.setPurpose(FHIR_UNKNOWN);
         result.setCopyright(simpleXmlModel.getCopyright());
         result.setDisclaimer(simpleXmlModel.getDisclaimer());
         result.setLibrary(Collections.singletonList(new CanonicalType(matFhirBaseUrl + "/Library/" + matMeasure.getCqlName())));
