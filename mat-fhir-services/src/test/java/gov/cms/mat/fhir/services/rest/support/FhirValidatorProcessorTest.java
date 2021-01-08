@@ -7,6 +7,7 @@ import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.config.HapiFhirConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Library;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 @Slf4j
 class FhirValidatorProcessorTest implements ResourceFileUtil {
 

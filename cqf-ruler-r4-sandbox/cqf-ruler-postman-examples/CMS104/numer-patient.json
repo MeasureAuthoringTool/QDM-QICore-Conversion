@@ -62,8 +62,8 @@
         "reference": "Patient/numer-EXM104"
       },
       "period": {
-        "start": "2019-08-21T00:00:00-06:00",
-        "end": "2019-12-19T08:15:00-07:00"
+        "start": "2020-08-21T00:00:00-06:00",
+        "end": "2020-12-19T08:15:00-07:00"
       },
       "diagnosis": [ {
         "condition": {
@@ -138,8 +138,8 @@
                 "url": "ombCategory",
                 "valueCoding": {
                   "system": "urn:oid:2.16.840.1.113883.6.238",
-                  "code": "2106-3",
-                  "display": "White"
+                  "code": "1002-5",
+                  "display": "American Indian or Alaska Native"
                 }
               } ]
             }, {
@@ -148,8 +148,8 @@
                 "url": "ombCategory",
                 "valueCoding": {
                   "system": "urn:oid:2.16.840.1.113883.6.238",
-                  "code": "2186-5",
-                  "display": "Not Hispanic or Latino"
+                  "code": "2135-2",
+                  "display": "Hispanic or Latino"
                 }
               } ]
             } ],
@@ -268,8 +268,8 @@
               "reference": "Patient/numer-EXM104"
             },
             "period": {
-              "start": "2019-08-21T00:00:00-06:00",
-              "end": "2019-12-19T08:15:00-07:00"
+              "start": "2020-08-21T00:00:00-06:00",
+              "end": "2020-12-19T08:15:00-07:00"
             },
             "diagnosis": [ {
               "condition": {
@@ -314,8 +314,8 @@
         "reference": "Patient/numer-EXM104"
       },
       "period": {
-        "start": "2018-12-31T17:00:00-07:00",
-        "end": "2019-12-30T17:00:00-07:00"
+        "start": "2020-12-31T17:00:00-07:00",
+        "end": "2020-12-30T17:00:00-07:00"
       },
       "group": [ {
         "id": "group-1",
@@ -391,7 +391,7 @@
       "subject": {
         "reference": "Patient/numer-EXM104"
       },
-      "authoredOn": "2019-12-17T08:00:00"
+      "authoredOn": "2020-12-17T08:00:00"
     },
     "request": {
       "method": "PUT",
@@ -410,8 +410,8 @@
           "url": "ombCategory",
           "valueCoding": {
             "system": "urn:oid:2.16.840.1.113883.6.238",
-            "code": "2106-3",
-            "display": "White"
+            "code": "1002-5",
+            "display": "American Indian or Alaska Native"
           }
         } ]
       }, {
@@ -420,8 +420,8 @@
           "url": "ombCategory",
           "valueCoding": {
             "system": "urn:oid:2.16.840.1.113883.6.238",
-            "code": "2186-5",
-            "display": "Not Hispanic or Latino"
+            "code": "2135-2",
+            "display": "Hispanic or Latino"
           }
         } ]
       } ],
