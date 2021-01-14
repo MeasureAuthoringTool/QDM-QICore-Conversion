@@ -12,4 +12,3 @@ RUN curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/cur
     && sed -i "/common: &default_settings/a \ \ host: gov-collector.newrelic.com" newrelic/newrelic.yml
 ENTRYPOINT ["java","-javaagent:newrelic/newrelic.jar","-jar","/app.jar"]
 
-ENTRYPOINT ["java","-jar","/app.jar"]

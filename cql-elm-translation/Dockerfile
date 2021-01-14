@@ -5,4 +5,3 @@ RUN curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/cur
     && unzip newrelic-java.zip \
     && sed -i "/common: &default_settings/a \ \ host: gov-collector.newrelic.com" newrelic/newrelic.yml
 ENTRYPOINT ["java","-Dspring.profiles.active=docker","-javaagent:newrelic/newrelic.jar","-jar","/app.jar"]
-ENTRYPOINT ["java","-Dspring.profiles.active=docker","-jar","/app.jar"]
