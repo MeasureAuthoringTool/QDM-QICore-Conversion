@@ -27,8 +27,8 @@ class VSACControllerTest {
 
     @Test
     void getSingleUseTicket() {
-        when(vsacService.getServiceTicket("grantingTicket")).thenReturn("serviceTicket");
+        when(vsacService.getServiceTicket("grantingTicket", "api-key")).thenReturn("serviceTicket");
 
-        assertEquals("serviceTicket", vsacController.getSingleUseTicket("grantingTicket"));
+        assertEquals("serviceTicket", vsacController.getSingleUseTicket("grantingTicket", "api-key"));
     }
 }
