@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CodeSystemValidatorTest implements CqlHelper {
     private static final String TOKEN = "token";
+    private static final String  API_KEY = "api_key";
 
     @Mock
     private VsacCodeSystemValidator vsacCodeSystemValidator;
@@ -41,10 +42,10 @@ class CodeSystemValidatorTest implements CqlHelper {
 
     @Test
     void validateNofFailingCodes() throws ExecutionException, InterruptedException {
-        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN)).thenReturn(Collections.emptyList());
+        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN, API_KEY)).thenReturn(Collections.emptyList());
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN);
+                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN, API_KEY);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 
@@ -62,10 +63,10 @@ class CodeSystemValidatorTest implements CqlHelper {
         cqlModel.getCodeList().get(0).setErrorCode(null);
         cqlModel.getCodeList().get(0).setErrorCode("802");
 
-        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN)).thenReturn(failingCodes);
+        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN, API_KEY)).thenReturn(failingCodes);
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN);
+                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN, API_KEY);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 
@@ -98,10 +99,10 @@ class CodeSystemValidatorTest implements CqlHelper {
         cqlCode1.setErrorCode("800");
         cqlCode2.setErrorCode("801");
 
-        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN)).thenReturn(failingCodes);
+        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN, API_KEY)).thenReturn(failingCodes);
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN);
+                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN, API_KEY);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 
@@ -114,7 +115,7 @@ class CodeSystemValidatorTest implements CqlHelper {
 
     @Test
     void validateUnreferencedCodeSystems() throws ExecutionException, InterruptedException {
-        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN))
+        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN,API_KEY))
                 .thenReturn(Collections.emptyList());
 
         CQLCodeSystem cqlCodeSystem = new CQLCodeSystem();
@@ -123,7 +124,7 @@ class CodeSystemValidatorTest implements CqlHelper {
         cqlModel.getCodeSystemList().add(cqlCodeSystem);
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN);
+                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN, API_KEY);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 
@@ -143,11 +144,11 @@ class CodeSystemValidatorTest implements CqlHelper {
         cqlCode.setName("I_HAVE_NO_SYSTEM");
         cqlCode.setErrorMessage("No Code System");
 
-        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN))
+        when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN, API_KEY))
                 .thenReturn(List.of(cqlCode));
 
         CompletableFuture<List<LibraryErrors>> completableFuture =
-                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN);
+                codeSystemValidator.validate(0, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN, API_KEY);
 
         List<LibraryErrors> libraryErrors = completableFuture.get();
 

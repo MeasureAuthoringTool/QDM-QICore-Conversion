@@ -26,8 +26,9 @@ public class ValueSetValidator extends CqlValidatorHelper {
     public CompletableFuture<List<LibraryErrors>> validate(long timeout,
                                                            List<CQLQualityDataSetDTO> valueSetList,
                                                            String cql,
-                                                           String umlsToken) {
-        List<CQLQualityDataSetDTO> failingValueSets = vsacValueSetValidator.validate(timeout, valueSetList, umlsToken);
+                                                           String umlsToken,
+                                                           String apiKey) {
+        List<CQLQualityDataSetDTO> failingValueSets = vsacValueSetValidator.validate(timeout, valueSetList, umlsToken, apiKey);
 
         if (failingValueSets.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());

@@ -53,7 +53,8 @@ public class ValidationOrchestrationService {
                                            CQLModel cqlModel,
                                            String ulmsToken,
                                            List<LibraryErrors> errorsDetectedAlready,
-                                           ValidationRequest validationRequest) {
+                                           ValidationRequest validationRequest,
+                                           String apiKey) {
         List<CompletableFuture<List<LibraryErrors>>> futures = new ArrayList<>();
         long validationTimeout = Math.max(validationRequest.getTimeoutSeconds(), validationPoolTimeOut);
 
@@ -73,7 +74,8 @@ public class ValidationOrchestrationService {
                         valueSetValidator.validate(validationRequest.getTimeoutSeconds(),
                                 cqlModel.getValueSetList(),
                                 cql,
-                                ulmsToken);
+                                ulmsToken,
+                                apiKey);
                 f.orTimeout(validationTimeout, TimeUnit.SECONDS);
                 futures.add(f);
             }
@@ -88,7 +90,8 @@ public class ValidationOrchestrationService {
                                 cqlModel.getCodeList(),
                                 cqlModel.getCodeSystemList(),
                                 cql,
-                                ulmsToken);
+                                ulmsToken,
+                                apiKey);
                 f.orTimeout(validationTimeout, TimeUnit.SECONDS);
                 futures.add(f);
             }

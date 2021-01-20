@@ -30,8 +30,9 @@ public class CodeSystemValidator extends CqlValidatorHelper {
                                                            List<CQLCode> codeList,
                                                            List<CQLCodeSystem> codeSystemList,
                                                            String cql,
-                                                           String umlsToken) {
-        List<CQLCode> failingCodes = vsacCodeSystemValidator.validate(timeout, codeList, umlsToken);
+                                                           String umlsToken,
+                                                           String apiKey) {
+        List<CQLCode> failingCodes = vsacCodeSystemValidator.validate(timeout, codeList, umlsToken, apiKey);
         List<CQLError> unReferencedCodeSystems = findUnreferencedCodeSystems(codeSystemList, codeList);
 
         if (failingCodes.isEmpty()) {

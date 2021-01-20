@@ -27,7 +27,7 @@ class VsacValueSetValidator extends VsacValidator {
         this.valueSetVsacAsync = valueSetVsacAsync;
     }
 
-    List<CQLQualityDataSetDTO> validate(long timeout, List<CQLQualityDataSetDTO> valueSetList, String umlsToken) {
+    List<CQLQualityDataSetDTO> validate(long timeout, List<CQLQualityDataSetDTO> valueSetList, String umlsToken, String apiKey) {
         long valueSetTimeout = Math.max(valueSetValidationPoolTimeout,timeout);
         if (StringUtils.isBlank(umlsToken)) {
             valueSetList.stream()
@@ -45,7 +45,7 @@ class VsacValueSetValidator extends VsacValidator {
             List<CompletableFuture<Void>> futures = new ArrayList<>();
 
             validationList.forEach(v -> {
-                CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(v, umlsToken);
+                CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(v, umlsToken, apiKey);
                 completableFuture.orTimeout(valueSetTimeout, TimeUnit.SECONDS);
                 futures.add(completableFuture);
             });

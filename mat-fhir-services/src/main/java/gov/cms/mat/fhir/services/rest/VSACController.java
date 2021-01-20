@@ -9,9 +9,9 @@ import gov.cms.mat.fhir.services.cql.LibraryCqlVisitor;
 import gov.cms.mat.fhir.services.cql.LibraryCqlVisitorFactory;
 import gov.cms.mat.fhir.services.cql.parser.CodeListService;
 import gov.cms.mat.fhir.services.cql.parser.CqlUtils;
-import gov.cms.mat.fhir.services.cql.parser.MappingSpreadsheetService;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
+import gov.cms.mat.fhir.services.rest.support.TokenResponseHeader;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import gov.cms.mat.vsac.VsacService;
 import gov.cms.mat.vsac.model.VsacCode;
@@ -24,8 +24,13 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeSystem;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.r4.model.ValueSet;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,7 +39,7 @@ import java.util.UUID;
 @Tag(name = "VSAC-Controller",
         description = "API for acquiring Tickets from VSAC Service for Testing and Integration Purposes.")
 @Slf4j
-public class VSACController {
+public class VSACController implements TokenResponseHeader {
     private final VsacService vsacService;
     private final ValueSetMapper valueSetMapper;
     private final FhirContext fhirContext;
@@ -64,60 +69,65 @@ public class VSACController {
     @Operation(summary = "Get service ticket from VSAC",
             description = "Gets the 5 minute singlue use ticket from VSAC for a ticket granting ticket.")
     @GetMapping(path = "/getServiceTicket")
-    public String getSingleUseTicket(@RequestParam String ticketGrantingTicket) {
-        return vsacService.getServiceTicket(ticketGrantingTicket);
+    public String getSingleUseTicket(@RequestParam String ticketGrantingTicket, @RequestParam String apiKey) {
+        return vsacService.getServiceTicket(ticketGrantingTicket, apiKey);
     }
 
     @Operation(summary = "Returns fhir resource bundle for the specified measure id.")
     @GetMapping(path = "/getFhirResources")
     public @ResponseBody
     JsonNode getFhirResources(@RequestParam String ulmsApiKey,
-                            @RequestParam String measureId) {
-        Bundle result = new Bundle();
-        result.setType(Bundle.BundleType.TRANSACTION);
-        CqlLibrary cqlLib = cqlLibRepo.getCqlLibraryByMeasureId(measureId);
-        Optional<Library> fhirLib = hapiFhirServer.fetchHapiLibrary(cqlLib.getCqlName(), cqlLib.getMatVersionFormat());
-        String ticketGrantingTicket = vsacService.getTicketGrantingTicket(ulmsApiKey);
-        fhirLib.ifPresent(l -> {
-            String cql = new String(l.getContent().stream().filter(
-                    c -> StringUtils.equals("text/cql", c.getContentType())).findAny().get().getData());
-            LibraryCqlVisitor libVisitor = libVisitorFactory.visit(cql);
+                              @RequestParam String measureId,
+                              HttpServletResponse response) {
 
-            libVisitor.getValueSets().forEach(mvs -> {
-                String oid = CqlUtils.parseOid(getOidFromValueSetUrl(getText(mvs.valuesetId())));
-                ValueSet fhirValueSet = valueSetMapper.mapToFhir(ticketGrantingTicket, oid, null);
-                result.addEntry().setResource(fhirValueSet).getRequest().setUrl("ValueSet/" +
-                        fhirValueSet.getId()).setMethod(Bundle.HTTPVerb.PUT);
-            });
-
-            libVisitor.getCodeSystems().forEach(mcs -> {
-                String uri = getText(mcs.codesystemId());
-                String version = getText(mcs.versionSpecifier());
-                String oid = getOidFromUrn(codeListService.getOidToVsacCodeSystemMap().values().stream().filter(
-                        cse -> StringUtils.equals(uri, cse.getUrl())).findFirst().get().getOid());
-
-                CodeSystem codeSystem = new CodeSystem();
-                codeSystem.setId(randomUUID());
-                codeSystem.setName(uri);
-                codeSystem.setUrl(uri);
-                codeSystem.setVersion(version);
-                libVisitor.getCodes().stream().filter(cdc -> StringUtils.equals(getText(mcs.identifier()), getText(cdc.codesystemIdentifier()))).forEach(cdc -> {
-                    //CODE:/CodeSystem/SNOMEDCT/Version/2020-09/Code/29857009/Info
-                    String path = "/CodeSystem/" + trimVersionFromCodeSystemIdentifier(getText(mcs.identifier())) + "/Version/" +
-                            CqlUtils.parseMatVersionFromCodeSystemUri(version) +
-                            "/Code/" + getText(cdc.codeId()) + "/Info";
-                    VsacCode code = vsacService.getCode(path, ticketGrantingTicket);
-                    VsacCode.VsacDataResultSet codeResult = code.getData().getResultSet().get(0);
-                    codeSystem.addConcept().setCode(codeResult.getCode()).setDisplay(codeResult.getCodeName()).setDefinition(codeResult.getCodeName());
-                });
-                result.addEntry().setResource(codeSystem).getRequest().setUrl("CodeSystem/" + codeSystem.getId()).
-                        setMethod(Bundle.HTTPVerb.PUT);
-            });
-        });
         try {
+            Bundle result = new Bundle();
+            result.setType(Bundle.BundleType.TRANSACTION);
+            CqlLibrary cqlLib = cqlLibRepo.getCqlLibraryByMeasureId(measureId);
+            Optional<Library> fhirLib = hapiFhirServer.fetchHapiLibrary(cqlLib.getCqlName(), cqlLib.getMatVersionFormat());
+            String ticketGrantingTicket = vsacService.getTicketGrantingTicket(ulmsApiKey);
+            fhirLib.ifPresent(l -> {
+                String cql = new String(l.getContent().stream().filter(
+                        c -> StringUtils.equals("text/cql", c.getContentType())).findAny().get().getData());
+                LibraryCqlVisitor libVisitor = libVisitorFactory.visit(cql);
+
+                libVisitor.getValueSets().forEach(mvs -> {
+                    String oid = CqlUtils.parseOid(getOidFromValueSetUrl(getText(mvs.valuesetId())));
+                    ValueSet fhirValueSet = valueSetMapper.mapToFhir(ticketGrantingTicket, oid, null, ulmsApiKey);
+                    result.addEntry().setResource(fhirValueSet).getRequest().setUrl("ValueSet/" +
+                            fhirValueSet.getId()).setMethod(Bundle.HTTPVerb.PUT);
+                });
+
+                libVisitor.getCodeSystems().forEach(mcs -> {
+                    String uri = getText(mcs.codesystemId());
+                    String version = getText(mcs.versionSpecifier());
+                    String oid = getOidFromUrn(codeListService.getOidToVsacCodeSystemMap().values().stream().filter(
+                            cse -> StringUtils.equals(uri, cse.getUrl())).findFirst().get().getOid());
+
+                    CodeSystem codeSystem = new CodeSystem();
+                    codeSystem.setId(randomUUID());
+                    codeSystem.setName(uri);
+                    codeSystem.setUrl(uri);
+                    codeSystem.setVersion(version);
+                    libVisitor.getCodes().stream().filter(cdc -> StringUtils.equals(getText(mcs.identifier()), getText(cdc.codesystemIdentifier()))).forEach(cdc -> {
+                        //CODE:/CodeSystem/SNOMEDCT/Version/2020-09/Code/29857009/Info
+                        String path = "/CodeSystem/" + trimVersionFromCodeSystemIdentifier(getText(mcs.identifier())) + "/Version/" +
+                                CqlUtils.parseMatVersionFromCodeSystemUri(version) +
+                                "/Code/" + getText(cdc.codeId()) + "/Info";
+                        VsacCode code = vsacService.getCode(path, ticketGrantingTicket, ulmsApiKey);
+                        VsacCode.VsacDataResultSet codeResult = code.getData().getResultSet().get(0);
+                        codeSystem.addConcept().setCode(codeResult.getCode()).setDisplay(codeResult.getCodeName()).setDefinition(codeResult.getCodeName());
+                    });
+                    result.addEntry().setResource(codeSystem).getRequest().setUrl("CodeSystem/" + codeSystem.getId()).
+                            setMethod(Bundle.HTTPVerb.PUT);
+                });
+            });
+
             return objectMapper.readTree(fhirContext.newJsonParser().encodeResourceToString(result));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
+        } finally {
+            processResponseHeader(response);
         }
     }
 
@@ -126,16 +136,20 @@ public class VSACController {
     public @ResponseBody
     JsonNode getFhirValueset(@RequestParam String ticketGrantingTicket,
                              @RequestParam String oid,
-                             @RequestParam(defaultValue = "") String version) {
+                             @RequestParam(defaultValue = "") String version,
+                             @RequestParam String apiKey,
+                             HttpServletResponse response) {
         try {
-            return objectMapper.readTree(fhirContext.newJsonParser().encodeResourceToString(valueSetMapper.mapToFhir(ticketGrantingTicket, oid, version)));
+            return objectMapper.readTree(fhirContext.newJsonParser().encodeResourceToString(valueSetMapper.mapToFhir(ticketGrantingTicket, oid, version, apiKey)));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
+        } finally {
+            processResponseHeader(response);
         }
     }
 
     private String randomUUID() {
-        return StringUtils.upperCase(StringUtils.remove(UUID.randomUUID().toString(),'-'));
+        return StringUtils.upperCase(StringUtils.remove(UUID.randomUUID().toString(), '-'));
     }
 
     private String trimVersionFromCodeSystemIdentifier(String codeSystemIdentifier) {

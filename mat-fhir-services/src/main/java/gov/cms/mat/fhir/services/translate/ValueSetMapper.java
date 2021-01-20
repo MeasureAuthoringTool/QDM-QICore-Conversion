@@ -29,8 +29,8 @@ public class ValueSetMapper {
         this.matXmlConverter = matXmlConverter;
     }
 
-    public ValueSet mapToFhir(String ticketGrantingTicket, String oid, String version) {
-        ValueSetResult valueSetResult = vsacService.getValueSetResult(oid, ticketGrantingTicket);
+    public ValueSet mapToFhir(String ticketGrantingTicket, String oid, String version, String apiKey) {
+        ValueSetResult valueSetResult = vsacService.getValueSetResult(oid, ticketGrantingTicket, apiKey);
         if (valueSetResult.isFailResponse()) {
             throw new RuntimeException(valueSetResult.getFailReason() +" oid=" + oid + (version == null ? "|" + version : ""));
         } else {
