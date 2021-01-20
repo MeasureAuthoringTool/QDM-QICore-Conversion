@@ -123,8 +123,10 @@ public class MeasureController {
                     measure.setMeasureSetId(newMeasureSet);
                     measureRepository.save(measure);
                     CqlLibrary cqlLibrary = cqlLibraryRepository.getCqlLibraryByMeasureId(measure.getId());
-                    cqlLibrary.setSetId(newSetId);
-                    cqlLibraryRepository.save(cqlLibrary);
+                    if (cqlLibrary != null) {
+                        cqlLibrary.setSetId(newSetId);
+                        cqlLibraryRepository.save(cqlLibrary);
+                    }
                     addToListMap(result.getSuccessSetIdToFhirMeasures(), newSetId, measure.getId());
                 });
             } else {
