@@ -18,13 +18,6 @@ public class ConversionDataComponent {
         this.mappingSpreadsheetService = mappingSpreadsheetService;
     }
 
-    public boolean isFhirAttributeMapped(String qdmType,
-                                        String fhirAttribute,
-                                        String fhirType) {
-        return mappingSpreadsheetService.fetchConversionAttributes().stream()
-                .anyMatch(c -> isFhirAttributeMatchByFhirAttribute(c, qdmType,fhirAttribute, fhirType));
-    }
-
     public Optional<ConversionDataTypeResult> findFhirType(String qdmType) {
         return mappingSpreadsheetService.fetchConversionDataTypes().stream()
                 .filter(c -> Objects.equals('"' + c.getQdmType() + '"', qdmType))
@@ -36,7 +29,6 @@ public class ConversionDataComponent {
                                                                      String qdmAttribute,
                                                                      String fhirType) {
         return mappingSpreadsheetService.fetchConversionAttributes().stream()
-                .peek(c -> log.debug("c= {}", c))
                 .filter(c -> isFhirAttributeMatchByQdmAttribute(c, qdmType, qdmAttribute, fhirType))
                 .map(c -> buildFhirAttributeResult(c.getFhirAttribute(), c.getComment(), c.getFhirAttribute()))
                 .findFirst();
@@ -50,8 +42,6 @@ public class ConversionDataComponent {
     }
 
     private boolean isCommentRow(String qdmAttribute, ConversionAttributes attributes) {
-
-
         return attributes.getQdmAttribute().equals(qdmAttribute) &&
                 attributes.getFhirType().equals("ALL") &&
                 StringUtils.isNotBlank(attributes.getComment());
@@ -64,16 +54,6 @@ public class ConversionDataComponent {
                                                        String fhirType) {
         return attributes.getQdmType().equals(qdmType.replace("\"", "")) &&
                 attributes.getQdmAttribute().equals(qdmAttribute) &&
-                attributes.getFhirType().equals(fhirType.replace("\"", ""));
-
-    }
-
-    private boolean isFhirAttributeMatchByFhirAttribute(ConversionAttributes attributes,
-                                                        String qdmType,
-                                                        String fhirAttribute,
-                                                        String fhirType) {
-        return attributes.getQdmType().equals(qdmType.replace("\"", "")) &&
-                attributes.getFhirAttribute().equals(fhirAttribute) &&
                 attributes.getFhirType().equals(fhirType.replace("\"", ""));
 
     }

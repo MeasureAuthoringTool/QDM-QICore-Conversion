@@ -20,13 +20,6 @@ import java.util.List;
 @Component
 @Slf4j
 public class ValueSetFhirValidationResults  {
-    private final HapiFhirServer hapiFhirServer;
-    private final FhirValidatorProcessor fhirValidatorProcessor;
-
-    public ValueSetFhirValidationResults(HapiFhirServer hapiFhirServer, FhirValidatorProcessor fhirValidatorProcessor) {
-        this.hapiFhirServer = hapiFhirServer;
-        this.fhirValidatorProcessor = fhirValidatorProcessor;
-    }
 
     public FhirValueSetResourceValidationResult generate(List<ValueSet> valueSets,
                                                          XmlSource xmlSource,
@@ -47,32 +40,5 @@ public class ValueSetFhirValidationResults  {
         response.setXmlSource(xmlSource);
 
         return response;
-    }
-
-    public void collectResults(List<ValueSet> valueSets, String measureId) {
-        valueSets.forEach(v -> createResult(v, measureId));
-    }
-
-    private void createResult(ValueSet valueSet, String measureId) {
-        log.debug("Validating oid: {} for measureId: {}", valueSet.getId(), measureId);
-        FhirResourceValidationResult res = new FhirResourceValidationResult();
-
-        fhirValidatorProcessor.validateResource(res, valueSet);
-
-        res.setId(valueSet.getId());
-        res.setType("ValueSet");
-
-        res.setMeasureId(measureId);
-
-        List<FhirValidationResult> results = buildResultList(res);
-        ConversionReporter.setValueSetsValidationResults(res.getId(), results);
-    }
-
-    private List<FhirValidationResult> buildResultList(FhirResourceValidationResult res) {
-        if (CollectionUtils.isEmpty(res.getValidationErrorList())) {
-            return Collections.emptyList();
-        } else {
-            return fhirValidatorProcessor.buildResults(res);
-        }
     }
 }
