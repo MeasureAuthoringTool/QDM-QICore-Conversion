@@ -121,20 +121,24 @@ public class StandAloneLibraryController {
         });
 
         mapBySetId.forEach((k, v) -> {
-            String newSetId = UUID.randomUUID().toString();
-            //Create new FhirConversionHistory.
-            var h = new FhirConversionHistory();
-            h.setFhirSetId(newSetId);
-            h.setQdmSetId(k);
-            h.setLastModifiedOn(new Timestamp(System.currentTimeMillis()));
-            fhirConversionHistoryRepository.save(h);
+            if (fhirConversionHistoryRepository.findById(k).isEmpty()) {
+                String newSetId = UUID.randomUUID().toString();
+                //Create new FhirConversionHistory.
+                var h = new FhirConversionHistory();
+                h.setFhirSetId(newSetId);
+                h.setQdmSetId(k);
+                h.setLastModifiedOn(new Timestamp(System.currentTimeMillis()));
+                fhirConversionHistoryRepository.save(h);
 
-            //Change to new fhir set id.
-            v.forEach(l -> {
-                l.setSetId(newSetId);
-                cqlLibraryRepository.save(l);
-                addToListMap(result.getSuccessSetIdToFhirLib(), newSetId, l.getId());
-            });
+                //Change to new fhir set id.
+                v.forEach(l -> {
+                    l.setSetId(newSetId);
+                    cqlLibraryRepository.save(l);
+                    addToListMap(result.getSuccessSetIdToFhirLib(), newSetId, l.getId());
+                });
+            } else {
+                log.info("fhirConversionHistory exists for " + k + " skipping.");
+            }
         });
 
         return result;
