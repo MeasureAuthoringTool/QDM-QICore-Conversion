@@ -125,24 +125,23 @@ public class CqlConversionController {
                     return json;
                 }
 
-                if (annotationNode.size() < 2) {
-                    if (libraryNode instanceof ObjectNode) {
-                        ObjectNode objectNode = (ObjectNode) libraryNode;
-                        objectNode.remove("annotation");
-                    }
-                } else {
-                    if (annotationNode instanceof ArrayNode) {
-                        ArrayNode arrayNode = (ArrayNode) annotationNode;
-                        arrayNode.remove(0);
-                    }
-                }
+//                if (annotationNode.size() < 2) {
+//                    if (libraryNode instanceof ObjectNode) {
+//                        ObjectNode objectNode = (ObjectNode) libraryNode;
+//                        objectNode.remove("annotation");
+//                    }
+//                } else {
+//                    if (annotationNode instanceof ArrayNode) {
+//                        ArrayNode arrayNode = (ArrayNode) annotationNode;
+//                        arrayNode.remove(0);
+//                    }
+//                }
 
                 return rootNode.toPrettyString();
 
             } catch (JsonProcessingException e) {
                 throw new UncheckedIOException(e);
             }
-
         }
 
     }
