@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.w3._1999.xhtml.A;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CodeSystemVsacAsyncTest {
     private static final String TOKEN = "token";
+    private static final String API_KEY = "api-key";
 
     CQLCode cqlCode;
 
@@ -47,9 +49,9 @@ class CodeSystemVsacAsyncTest {
 
         cqlCode.setCodeSystemName("LOINC");
 
-        when(vsacService.getCodeSystemVersionFromName("LOINC", TOKEN)).thenReturn(vsacResponse);
+        when(vsacService.getCodeSystemVersionFromName("LOINC", TOKEN, API_KEY)).thenReturn(vsacResponse);
 
-        CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
+        CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN, API_KEY);
         completableFuture.get();
 
         assertEquals("Can't log in", cqlCode.getErrorMessage());
@@ -70,9 +72,9 @@ class CodeSystemVsacAsyncTest {
 
         cqlCode.setCodeSystemName("LOINC");
 
-        when(vsacService.getCodeSystemVersionFromName("LOINC", TOKEN)).thenReturn(vsacResponse);
+        when(vsacService.getCodeSystemVersionFromName("LOINC", TOKEN, API_KEY)).thenReturn(vsacResponse);
 
-        CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN);
+        CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN,API_KEY);
         completableFuture.get();
 
         assertEquals("Code system name: LOINC not found in UMLS! Please verify the code system name.", cqlCode.getErrorMessage());

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
@@ -41,6 +42,8 @@ import static org.mockito.Mockito.when;
 class MatXmlControllerTest implements ResourceFileUtil {
     private static final String ID = "id";
     private static String ULMS_TOKEN = "token";
+    private static String API_KEY = "api-key";
+
     @Mock
     private MeasureXmlRepository measureXmlRepository;
     @Mock
@@ -57,9 +60,11 @@ class MatXmlControllerTest implements ResourceFileUtil {
     @InjectMocks
     private MatXmlController matXmlController;
 
+    MockHttpServletResponse mockHttpServletResponse;
+
     @BeforeEach
     void setUp() {
-
+        mockHttpServletResponse = new MockHttpServletResponse();
     }
 
     @Test
@@ -69,7 +74,7 @@ class MatXmlControllerTest implements ResourceFileUtil {
 
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            matXmlController.fromStandaloneLib(ULMS_TOKEN, ID, matXmlReq);
+            matXmlController.fromStandaloneLib(ULMS_TOKEN, API_KEY, ID, matXmlReq, mockHttpServletResponse);
         });
 
         verifyNoMoreInteractions(cqlLibraryRepository);
@@ -93,7 +98,7 @@ class MatXmlControllerTest implements ResourceFileUtil {
 
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            matXmlController.fromStandaloneLib(ULMS_TOKEN, ID, matXmlReq);
+            matXmlController.fromStandaloneLib(ULMS_TOKEN, API_KEY, ID, matXmlReq, mockHttpServletResponse);
         });
 
         verifyNoMoreInteractions(cqlLibraryRepository);
@@ -128,7 +133,7 @@ class MatXmlControllerTest implements ResourceFileUtil {
 
 
         MatXmlController.MatXmlResponse response =
-                matXmlController.fromStandaloneLib(ULMS_TOKEN, ID, matXmlReq);
+                matXmlController.fromStandaloneLib(ULMS_TOKEN, API_KEY, ID, matXmlReq, mockHttpServletResponse);
 
         assertEquals("AIS_HEDIS_2020", response.getCqlModel().getLibraryName());
         assertEquals("1.0.000", response.getCqlModel().getVersionUsed());
@@ -142,7 +147,7 @@ class MatXmlControllerTest implements ResourceFileUtil {
         MatXmlController.MatXmlReq matXmlReq = new MatXmlController.MatXmlReq();
 
         ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
-            matXmlController.fromMeasure(ULMS_TOKEN, ID, matXmlReq);
+            matXmlController.fromMeasure(ULMS_TOKEN, API_KEY, ID, matXmlReq, mockHttpServletResponse);
         });
 
         assertNotNull(exception.getReason());
@@ -165,7 +170,7 @@ class MatXmlControllerTest implements ResourceFileUtil {
         MatXmlController.MatXmlReq matXmlReq = new MatXmlController.MatXmlReq();
 
         ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
-            matXmlController.fromMeasure(ULMS_TOKEN, ID, matXmlReq);
+            matXmlController.fromMeasure(ULMS_TOKEN, API_KEY, ID, matXmlReq, mockHttpServletResponse);
         });
 
         assertNotNull(exception.getReason());
@@ -199,7 +204,7 @@ class MatXmlControllerTest implements ResourceFileUtil {
         matXmlReq.setValidationRequest(new ValidationRequest());
 
 
-        MatXmlController.MatXmlResponse response =    matXmlController.fromMeasure(ULMS_TOKEN, ID, matXmlReq);
+        MatXmlController.MatXmlResponse response =    matXmlController.fromMeasure(ULMS_TOKEN, API_KEY, ID, matXmlReq, mockHttpServletResponse);
 
         assertTrue(response.getCql().startsWith("library CDAYTest version '1.0.000'"));
     }
@@ -214,7 +219,7 @@ class MatXmlControllerTest implements ResourceFileUtil {
                 .thenReturn(new CqlToMatXml(manageCodeListService, cqlLibraryRepository));
 
 
-        MatXmlController.MatXmlResponse response =    matXmlController.fromCql(ULMS_TOKEN,  matCqlXmlReq);
+        MatXmlController.MatXmlResponse response =    matXmlController.fromCql(ULMS_TOKEN, API_KEY,  matCqlXmlReq, mockHttpServletResponse);
 
         assertNull(response.getCql());
     }

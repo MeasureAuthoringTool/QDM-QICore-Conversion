@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ValidationOrchestrationServiceTest implements CqlHelper {
     private static final String TOKEN = "token";
+    private static final String  API_KEY = "api_key";
     private static final String LIB_NAME = "Covid-22";
     private static final String LIB_VERSION = "1.0.000";
 
@@ -66,7 +67,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(false, false, false);
 
         List<LibraryErrors> libraryErrors =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest, API_KEY);
 
         assertTrue(libraryErrors.isEmpty());
 
@@ -82,7 +83,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(true, true, false);
 
         List<LibraryErrors> libraryErrors =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest, API_KEY);
 
         assertTrue(libraryErrors.isEmpty());
 
@@ -96,7 +97,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(false, false, true);
 
         List<LibraryErrors> libraryErrors =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest, API_KEY);
 
         assertTrue(libraryErrors.isEmpty());
 
@@ -110,7 +111,7 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         ValidationRequest validationRequest = getValidationRequest(false, false, true);
 
         List<LibraryErrors> result =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest, API_KEY);
 
         checkResult(result);
 
@@ -120,13 +121,13 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
 
     @Test
     void validateValueSets() {
-        when(valueSetValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getValueSetList(), cql, TOKEN))
+        when(valueSetValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getValueSetList(), cql, TOKEN, API_KEY))
                 .thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors)));
 
         ValidationRequest validationRequest = getValidationRequest(true, false, false);
 
         List<LibraryErrors> result =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest, API_KEY);
 
         checkResult(result);
 
@@ -135,13 +136,13 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
 
     @Test
     void validateCodeSystems() {
-        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN))
+        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN, API_KEY))
                 .thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors)));
 
         ValidationRequest validationRequest = getValidationRequest(false, true, false);
 
         List<LibraryErrors> result =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest, API_KEY);
 
         checkResult(result);
 
@@ -160,21 +161,21 @@ class ValidationOrchestrationServiceTest implements CqlHelper {
         when(validationService.validateCql(cql)).thenReturn(CompletableFuture.completedFuture(List.of(libraryErrors, externalLibError)));
 
         LibraryErrors valueSetErrors = new LibraryErrors(LIB_NAME, LIB_VERSION); // no errors
-        when(valueSetValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getValueSetList(), cql, TOKEN))
+        when(valueSetValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getValueSetList(), cql, TOKEN, API_KEY))
                 .thenReturn(CompletableFuture.completedFuture(List.of(valueSetErrors)));
 
         LibraryErrors codeSystemErrors = new LibraryErrors(LIB_NAME, LIB_VERSION);
         CQLError start = buildError(1);
         codeSystemErrors.getErrors().add(start);
 
-        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN))
+        when(codeSystemValidator.validate(VALIDATION_POOL_TIME_OUT, cqlModel.getCodeList(), cqlModel.getCodeSystemList(), cql, TOKEN, API_KEY))
                 .thenReturn(CompletableFuture.completedFuture(List.of(codeSystemErrors)));
 
 
         ValidationRequest validationRequest = getValidationRequest(true, true, true);
 
         List<LibraryErrors> result =
-                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest);
+                validationOrchestrationService.validateCql(cql, cqlModel, TOKEN, new ArrayList<>(), validationRequest, API_KEY);
 
         assertEquals(2, result.size());
 

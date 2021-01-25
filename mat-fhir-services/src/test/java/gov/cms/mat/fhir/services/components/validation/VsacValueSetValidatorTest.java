@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class VsacValueSetValidatorTest implements CqlHelper {
     private static final String TOKEN = "token";
+    private static final String API_KEY = "api-key";
 
     @Mock
     private VsacService vsacService;
@@ -48,7 +49,7 @@ class VsacValueSetValidatorTest implements CqlHelper {
     @Test
     void validateBlankToken() {
         cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.PENDING));
-        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), "");
+        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), "", API_KEY);
 
         assertEquals(cqlModel.getValueSetList().size(), dtoList.size());
 
@@ -61,7 +62,7 @@ class VsacValueSetValidatorTest implements CqlHelper {
     void validateAllValidatedWithVsac() {
         cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.VALID));
 
-        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN);
+        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN, API_KEY);
 
         assertTrue(dtoList.isEmpty()); // since all we valid nothing to do to create errors
 
@@ -71,12 +72,12 @@ class VsacValueSetValidatorTest implements CqlHelper {
     @Test
     void validateCompletableFutureProcessing() {
         cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.IN_VALID));
-        when(valueSetVsacAsync.validateWithVsac(any(), anyString())).thenReturn(CompletableFuture.completedFuture(null));
+        when(valueSetVsacAsync.validateWithVsac(any(), anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(null));
 
-        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN);
+        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), TOKEN, API_KEY);
 
         assertEquals(cqlModel.getValueSetList().size(), dtoList.size());
 
-        verify(valueSetVsacAsync, times(cqlModel.getValueSetList().size())).validateWithVsac(any(), anyString());
+        verify(valueSetVsacAsync, times(cqlModel.getValueSetList().size())).validateWithVsac(any(), anyString(), anyString());
     }
 }

@@ -36,13 +36,13 @@ public class CodeSystemVsacAsync extends VsacValidator {
     }
 
     @Async("codeSystemTheadPoolValidation")
-    CompletableFuture<Void> validateCode(CQLCode cqlCode, String umlsToken) {
+    CompletableFuture<Void> validateCode(CQLCode cqlCode, String umlsToken, String apiKey) {
 
         if (StringUtils.contains(cqlCode.getCodeSystemOID(), NOT_IN_VSAC)) {
             log.debug("No need to process NOT.IN.VSAC cqlCode: {}", cqlCode.getCodeSystemName());
         } else {
             try {
-                isDirectReferenceCodeValid(cqlCode, umlsToken);
+                isDirectReferenceCodeValid(cqlCode, umlsToken, apiKey);
                 log.debug("Validated code {} with vsac {} message: {}",
                         cqlCode.getCodeIdentifier(),
                         cqlCode.isValidatedWithVsac(),
@@ -69,15 +69,15 @@ public class CodeSystemVsacAsync extends VsacValidator {
         return result;
     }
 
-    private void isDirectReferenceCodeValid(CQLCode cqlCode, String umlsToken) {
-        String url = buildCodeIdentifier(cqlCode, umlsToken);
+    private void isDirectReferenceCodeValid(CQLCode cqlCode, String umlsToken, String apiKey) {
+        String url = buildCodeIdentifier(cqlCode, umlsToken, apiKey);
         if (StringUtils.isNotBlank(url)) {
             CQLModelValidator validator = new CQLModelValidator();
 
             if (validator.validateForCodeIdentifier(url)) {
                 throw new VsacCodeSystemValidatorException(INVALID_CODE_URL);
             }
-            VsacCode vsacResponse = vsacService.getCode(getCodeSystemUrlFromMatUrl(url), umlsToken);
+            VsacCode vsacResponse = vsacService.getCode(getCodeSystemUrlFromMatUrl(url), umlsToken, apiKey);
 
             if (vsacResponse.getStatus().equals("ok")) {
                 cqlCode.setErrorMessage(null);
@@ -112,14 +112,15 @@ public class CodeSystemVsacAsync extends VsacValidator {
      * @return The VSAC code url, null if an issue occured connecting to vsac. In the null case,
      * the error code, message, and validateWithVsac are populated.
      */
-    private String buildCodeIdentifier(CQLCode c, String ulmsToken) {
+    private String buildCodeIdentifier(CQLCode c, String ulmsToken, String apiKey) {
         String result = null;
         boolean needVersion = StringUtils.isBlank(c.getCodeSystemVersionUri());
         if (needVersion) {
             String versionUri = parseMatVersionFromCodeSystemUri(c.getCodeSystemVersionUri());
             if (StringUtils.isBlank(versionUri)) {
                 //This hit is cached so no need to optimize.
-                CodeSystemVersionResponse vsacResult = vsacService.getCodeSystemVersionFromName(c.getCodeSystemName(), ulmsToken);
+                CodeSystemVersionResponse vsacResult =
+                        vsacService.getCodeSystemVersionFromName(c.getCodeSystemName(), ulmsToken, apiKey);
                 if (vsacResult.getSuccess()) {
                     versionUri = vsacResult.getVersion();
                     result = String.format(CODE_IDENTIFIER_FORMAT,
