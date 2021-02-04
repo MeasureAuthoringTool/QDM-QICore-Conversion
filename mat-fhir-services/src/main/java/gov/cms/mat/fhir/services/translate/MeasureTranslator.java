@@ -285,10 +285,9 @@ public class MeasureTranslator extends TranslatorBase {
 
         if (matModel.geteMeasureId() != 0) {
             Identifier cms = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/cms",
-                    Integer.toString(matModel.geteMeasureId()));
+                    matModel.geteMeasureId() + "FHIR");
             fhirMeasure.getIdentifier().add(cms);
         }
-
 
         if (BooleanUtils.isTrue(matModel.getEndorseByNQF())) {
             Identifier nqf = createIdentifierOfficial("http://hl7.org/fhir/cqi/ecqm/Measure/Identifier/nqf",
