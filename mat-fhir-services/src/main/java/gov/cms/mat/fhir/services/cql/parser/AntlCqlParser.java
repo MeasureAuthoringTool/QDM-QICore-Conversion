@@ -147,7 +147,7 @@ public class AntlCqlParser implements CqlParser {
 
         @Override
         public void enterUsingDefinition(cqlParser.UsingDefinitionContext ctx) {
-            visitor.usingModelVersionTag(getUnquotedFullText(ctx.modelIdentifier()),
+            visitor.usingModelVersionTag(getUnquotedFullText(ctx.qualifiedIdentifier()),
                     getUnquotedFullText(ctx.versionSpecifier()),
                     getLine(ctx));
         }
