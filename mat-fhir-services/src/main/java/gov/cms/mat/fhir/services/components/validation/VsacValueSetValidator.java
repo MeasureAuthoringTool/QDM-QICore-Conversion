@@ -32,11 +32,9 @@ class VsacValueSetValidator extends VsacValidator {
         if (StringUtils.isBlank(umlsToken)) {
             valueSetList.stream()
                     .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
-                    .forEach(c -> {
-                        c.setErrorMessage(c.obtainValidatedWithVsac() == VsacStatus.PENDING ?
-                                ValueSetVsacAsync.REQURIES_VALIDATION:
-                                ValueSetVsacAsync.NOT_FOUND);
-                    });
+                    .forEach(c -> c.setErrorMessage(c.obtainValidatedWithVsac() == VsacStatus.PENDING ?
+                            ValueSetVsacAsync.REQURIES_VALIDATION:
+                            ValueSetVsacAsync.NOT_FOUND));
         } else {
             List<CQLQualityDataSetDTO> validationList = valueSetList.stream()
                     .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
@@ -60,15 +58,6 @@ class VsacValueSetValidator extends VsacValidator {
         return valueSetList.stream()
                 .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
                 .collect(Collectors.toList());
-    }
-
-    private void setAllNotValid(List<CQLQualityDataSetDTO> valueSetList, VsacStatus status, String message) {
-        valueSetList.stream()
-                .filter(c -> c.obtainValidatedWithVsac() != VsacStatus.VALID)
-                .forEach(c -> {
-                    c.addValidatedWithVsac(status);
-                    c.setErrorMessage(message);
-                });
     }
 }
 

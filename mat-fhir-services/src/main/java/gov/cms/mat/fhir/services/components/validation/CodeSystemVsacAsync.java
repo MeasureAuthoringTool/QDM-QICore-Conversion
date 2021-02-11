@@ -9,6 +9,7 @@ import mat.model.cql.CQLCode;
 import mat.model.cql.VsacStatus;
 import mat.shared.CQLModelValidator;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -49,9 +50,12 @@ public class CodeSystemVsacAsync extends VsacValidator {
                         cqlCode.getErrorMessage());
 
             } catch (VsacCodeSystemValidatorException vc) {
+                log.warn("VsacCodeSystemValidatorException: ", vc);
                 cqlCode.setErrorMessage(vc.getMessage());
+                cqlCode.addValidatedWithVsac(VsacStatus.IN_VALID);
             } catch (Exception e) {
-                log.warn("validateCode exception", e);
+                log.warn("validateCode exception :", e);
+                cqlCode.addValidatedWithVsac(VsacStatus.IN_VALID);
                 cqlCode.setErrorMessage(cqlCode.obtainValidatedWithVsac() == VsacStatus.PENDING ?
                         REQUIRES_VALIDATION : NOT_FOUND);
             }
@@ -77,6 +81,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
             if (validator.validateForCodeIdentifier(url)) {
                 throw new VsacCodeSystemValidatorException(INVALID_CODE_URL);
             }
+
             VsacCode vsacResponse = vsacService.getCode(getCodeSystemUrlFromMatUrl(url), umlsToken, apiKey);
 
             if (vsacResponse.getStatus().equals("ok")) {
@@ -108,40 +113,47 @@ public class CodeSystemVsacAsync extends VsacValidator {
     /**
      * Builds the code identifier vsac url.
      *
-     * @param c The CQLCode to build the Identifier for.
-     * @return The VSAC code url, null if an issue occured connecting to vsac. In the null case,
+     * @param cqlCode The CQLCode to build the Identifier for.
+     * @return The VSAC code url, null if an issue occurred connecting to vsac. In the null case,
      * the error code, message, and validateWithVsac are populated.
      */
-    private String buildCodeIdentifier(CQLCode c, String ulmsToken, String apiKey) {
+    private String buildCodeIdentifier(CQLCode cqlCode, String ulmsToken, String apiKey) {
         String result = null;
-        boolean needVersion = StringUtils.isBlank(c.getCodeSystemVersionUri());
+        boolean needVersion = StringUtils.isBlank(cqlCode.getCodeSystemVersionUri());
         if (needVersion) {
-            String versionUri = parseMatVersionFromCodeSystemUri(c.getCodeSystemVersionUri());
+            String versionUri = parseMatVersionFromCodeSystemUri(cqlCode.getCodeSystemVersionUri());
+
             if (StringUtils.isBlank(versionUri)) {
+
+                if (StringUtils.isBlank(cqlCode.getCodeSystemName())) {
+                    throw new VsacCodeSystemValidatorException(String.format(CODE_SYSTEM_NAME_IS_INVALID, cqlCode.getCodeSystemName()));
+                }
+
                 //This hit is cached so no need to optimize.
                 CodeSystemVersionResponse vsacResult =
-                        vsacService.getCodeSystemVersionFromName(c.getCodeSystemName(), ulmsToken, apiKey);
-                if (vsacResult.getSuccess()) {
+                        vsacService.getCodeSystemVersionFromName(cqlCode.getCodeSystemName(), ulmsToken, apiKey);
+
+                if (BooleanUtils.isTrue(vsacResult.getSuccess())) {
                     versionUri = vsacResult.getVersion();
                     result = String.format(CODE_IDENTIFIER_FORMAT,
-                            parseCodeSystemName(c.getCodeSystemName()).getLeft(),
+                            parseCodeSystemName(cqlCode.getCodeSystemName()).getLeft(),
                             versionUri,
-                            c.getCodeOID());
+                            cqlCode.getCodeOID());
                 } else if (StringUtils.equals(vsacResult.getMessage(), "CodeSystem not found.")) {
-                    c.setErrorMessage(String.format(CODE_SYSTEM_NAME_IS_INVALID, c.getCodeSystemName()));
-                    c.setErrorCode("802");
-                    c.addValidatedWithVsac(VsacStatus.IN_VALID);
+                    cqlCode.setErrorMessage(String.format(CODE_SYSTEM_NAME_IS_INVALID, cqlCode.getCodeSystemName()));
+                    cqlCode.setErrorCode("802");
+                    cqlCode.addValidatedWithVsac(VsacStatus.IN_VALID);
                 } else {
-                    c.setErrorMessage(StringUtils.isBlank(vsacResult.getMessage()) ? VSAC_INTERNAL_ERROR : vsacResult.getMessage());
-                    c.setErrorCode("802");
-                    c.addValidatedWithVsac(VsacStatus.PENDING);
+                    cqlCode.setErrorMessage(StringUtils.isBlank(vsacResult.getMessage()) ? VSAC_INTERNAL_ERROR : vsacResult.getMessage());
+                    cqlCode.setErrorCode("802");
+                    cqlCode.addValidatedWithVsac(VsacStatus.PENDING);
                 }
             }
         } else {
             result = String.format(CODE_IDENTIFIER_FORMAT,
-                    parseCodeSystemName(c.getCodeSystemName()).getLeft(),
-                    parseMatVersionFromCodeSystemUri(c.getCodeSystemVersionUri()),
-                    c.getCodeOID());
+                    parseCodeSystemName(cqlCode.getCodeSystemName()).getLeft(),
+                    parseMatVersionFromCodeSystemUri(cqlCode.getCodeSystemVersionUri()),
+                    cqlCode.getCodeOID());
         }
         return result;
     }
