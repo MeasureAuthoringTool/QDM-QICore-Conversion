@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 class ValueSetVsacAsyncTest {
     private static final String DEFAULT_EXP_ID = "default-exp-id";
     private static final String TOKEN = "token";
-
+    private static final String API_KEY = "api-key";
 
     @Mock
     private VsacService vsacService;
@@ -40,10 +40,9 @@ class ValueSetVsacAsyncTest {
         cqlQualityDataSetDTO.setOid("urn:oid:2.16.840.1.113883.17.4077.3.2056");
     }
 
-
     @Test
     void validateVsacServiceNotFinding() throws ExecutionException, InterruptedException {
-        CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN);
+        CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN, API_KEY);
         completableFuture.get();
 
         assertEquals("Value set not found in VSAC.", cqlQualityDataSetDTO.getErrorMessage());
@@ -52,18 +51,15 @@ class ValueSetVsacAsyncTest {
 
     @Test
     void validateVsacServiceFound() throws ExecutionException, InterruptedException {
-
-        //when(vsacService.getServiceTicket(TOKEN)).thenReturn(TICKET);
-
         ValueSetResult vsacResponseResult = ValueSetResult.builder()
                 .xmlPayLoad("<xml>xml</xml>")
                 .isFailResponse(false)
                 .build();
 
-        when(vsacService.getValueSetResult("2.16.840.1.113883.17.4077.3.2056", TOKEN))
+        when(vsacService.getValueSetResult("2.16.840.1.113883.17.4077.3.2056", TOKEN, API_KEY))
                 .thenReturn(vsacResponseResult);
 
-        CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN);
+        CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN, API_KEY);
         completableFuture.get();
 
         assertNull(cqlQualityDataSetDTO.getErrorMessage());

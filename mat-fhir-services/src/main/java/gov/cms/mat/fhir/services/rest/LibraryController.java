@@ -46,12 +46,7 @@ public class LibraryController {
             description = "The count of all the Libraries in the HAPI FHIR Database.")
     @GetMapping(path = "/count")
     public int countValueSets() {
-        try {
-            return libraryMapper.count();
-        } catch (RuntimeException r) {
-            log.error("countValueSets", r);
-            throw r;
-        }
+        return libraryMapper.count();
     }
 
     @Operation(summary = "Delete all persisted FHIR Libraries.",

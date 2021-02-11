@@ -3,7 +3,9 @@ package gov.cms.mat.fhir.services.components.mat;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.ResourceFileUtil;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.reporting.ConversionResult;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
+import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.exceptions.MatXmlMarshalException;
 import mat.client.measure.ManageCompositeMeasureDetailModel;
@@ -13,23 +15,35 @@ import mat.model.cql.CQLQualityDataModelWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 
+@ExtendWith(MockitoExtension.class)
 class MatXmlMarshallerTest implements ResourceFileUtil {
+    @Mock
+    private ConversionResultsService conversionResultsService;
+
+    @InjectMocks
     private MatXmlMarshaller matXmlMarshaller;
+
+    private ThreadSessionKey threadSessionKey;
 
     @BeforeEach
     void setUp() {
         matXmlMarshaller = new MatXmlMarshaller();
 
-        ConversionResultsService conversionResultsService = mock(ConversionResultsService.class);
-
-        ConversionReporter.setInThreadLocal("1",
+        threadSessionKey = ConversionReporter.setInThreadLocal("1",
                 "2",
                 conversionResultsService,
                 Instant.now(),
@@ -41,9 +55,35 @@ class MatXmlMarshallerTest implements ResourceFileUtil {
 
     @Test
     void toCQLDefinitions_ErrorIsBlankCheck() {
-        Assertions.assertThrows(MatXmlMarshalException.class, () -> {
+        Exception exception = Assertions.assertThrows(MatXmlMarshalException.class, () -> {
             matXmlMarshaller.toCQLDefinitionsSupplementalData(null);
         });
+
+        assertTrue(exception.getMessage().endsWith(", conversion result is null."));
+    }
+
+    @Test
+    void toCQLDefinitions_ErrorWithNullXmlSource() {
+        when(conversionResultsService.findConversionResult(threadSessionKey)).thenReturn(new ConversionResult());
+
+        Exception exception = Assertions.assertThrows(MatXmlMarshalException.class, () -> {
+            matXmlMarshaller.toCQLDefinitionsSupplementalData(null);
+        });
+
+        assertTrue(exception.getMessage().endsWith(", xmlSource is null."));
+    }
+
+    @Test
+    void toCQLDefinitions_ErrorWithXmlSource() {
+        ConversionResult conversionResult = new ConversionResult();
+        conversionResult.setXmlSource(XmlSource.SIMPLE);
+        when(conversionResultsService.findConversionResult(threadSessionKey)).thenReturn(conversionResult);
+
+        Exception exception = Assertions.assertThrows(MatXmlMarshalException.class, () -> {
+            matXmlMarshaller.toCQLDefinitionsSupplementalData(null);
+        });
+
+        assertTrue(exception.getMessage().endsWith(", using xmlSource: SIMPLE"));
     }
 
     @Test

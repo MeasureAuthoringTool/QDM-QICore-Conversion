@@ -100,15 +100,4 @@ public class FhirIncludeLibraryProcessor {
 
         return bundle;
     }
-
-    public Library fetchLibraryBundle(String version, String name) {
-        IncludeProperties include = IncludeProperties.builder()
-                .version(version)
-                .name(name)
-                .build();
-
-        Bundle bundle = fetchBundle(include);
-
-        return (Library) bundle.getEntry().get(0).getResource();
-    }
 }

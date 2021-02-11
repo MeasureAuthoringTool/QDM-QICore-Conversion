@@ -1,7 +1,8 @@
 package gov.cms.mat.fhir.services.rest;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.mat.fhir.commons.model.CqlLibrary;
+import gov.cms.mat.fhir.commons.model.FhirConversionHistory;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
@@ -9,6 +10,7 @@ import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
+import gov.cms.mat.fhir.services.repository.FhirConversionHistoryRepository;
 import gov.cms.mat.fhir.services.service.orchestration.PushLibraryService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,9 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Min;
+import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/library")
@@ -36,23 +38,31 @@ import java.util.List;
 public class StandAloneLibraryController {
     @Getter
     @Setter
-    private static class PushAllResult {
+    public static class PushAllResult {
         private List<String> successes = new ArrayList<>();
         private List<String> failures = new ArrayList<>();
+    }
+
+    @Getter
+    @Setter
+    public static class ConvertFhirLibsResult {
+        private Map<String, List<String>> successSetIdToFhirLib = new HashMap<String, List<String>>();
     }
 
 
     private final ConversionResultsService conversionResultsService;
     private final PushLibraryService pushLibraryService;
     private final CqlLibraryRepository cqlLibraryRepository;
+    private final FhirConversionHistoryRepository fhirConversionHistoryRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public StandAloneLibraryController(ConversionResultsService conversionResultsService,
                                        PushLibraryService pushLibraryService,
-                                       CqlLibraryRepository cqlLibraryRepository) {
+                                       CqlLibraryRepository cqlLibraryRepository, FhirConversionHistoryRepository fhirConversionHistoryRepository) {
         this.conversionResultsService = conversionResultsService;
         this.pushLibraryService = pushLibraryService;
         this.cqlLibraryRepository = cqlLibraryRepository;
+        this.fhirConversionHistoryRepository = fhirConversionHistoryRepository;
     }
 
     @Operation(summary = "Orchestrate QDM to Hapi FHIR Library with the id",
@@ -89,29 +99,83 @@ public class StandAloneLibraryController {
         return pushLibraryService.convertStandAloneFromMatToFhir(id, orchestrationProperties);
     }
 
+    /**
+     * Remove me after FHIR 6.04 release.
+     * @return
+     */
+    @Operation(summary = "For 6.04 release, converts libs to new set id. Not usable after 6.04 release")
+    @GetMapping("/dbConversionForFhirConversionIn6dot04")
+    public @ResponseBody ConvertFhirLibsResult dbConversionForFhirConversionIn6dot04() {
+        ConvertFhirLibsResult result = new ConvertFhirLibsResult();
+        var libIds = cqlLibraryRepository.getAllStandaloneCqlFhirLibs();
+
+        //Place in a map by qdm set id.
+        var mapBySetId = new HashMap<String, List<CqlLibrary>>();
+        libIds.forEach(l -> {
+            List<CqlLibrary> libs = mapBySetId.get(l.getSetId());
+            if (libs == null) {
+                libs = new ArrayList<>();
+                mapBySetId.put(l.getSetId(), libs);
+            }
+            libs.add(l);
+        });
+
+        mapBySetId.forEach((k, v) -> {
+            if (fhirConversionHistoryRepository.findById(k).isEmpty()) {
+                String newSetId = UUID.randomUUID().toString();
+                //Create new FhirConversionHistory.
+                var h = new FhirConversionHistory();
+                h.setFhirSetId(newSetId);
+                h.setQdmSetId(k);
+                h.setLastModifiedOn(new Timestamp(System.currentTimeMillis()));
+                fhirConversionHistoryRepository.save(h);
+
+                //Change to new fhir set id.
+                v.forEach(l -> {
+                    l.setSetId(newSetId);
+                    cqlLibraryRepository.save(l);
+                    addToListMap(result.getSuccessSetIdToFhirLib(), newSetId, l.getId());
+                });
+            } else {
+                log.info("fhirConversionHistory exists for " + k + " skipping.");
+            }
+        });
+
+        return result;
+    }
+
+    private void addToListMap(Map<String, List<String>> map, String key, String value) {
+        var valueList = map.get(key);
+        if (valueList == null) {
+            valueList = new ArrayList<>();
+            map.put(key, valueList);
+        }
+        valueList.add(value);
+    }
+
     @Operation(summary = "Pushes all versioned fhir libs in the mat DB into the hapi fhir db.",
             description = "Pushes all versioned fhir libs in the mat DB into the hapi fhir db. Returns a list of lib , names, and versions and the order they were pushed.")
     @GetMapping("/pushAllVersionedLibs")
     public @ResponseBody
     PushAllResult pushAllVersionedLibs() {
-           var result = new PushAllResult();
-            var libIds = cqlLibraryRepository.getAllVersionedCqlFhirLibs();
-            libIds.forEach(libId -> {
-                //Have to load them one at a time or else the result set is too big to handle by default.
-                var lib = cqlLibraryRepository.getCqlLibraryById(libId);
-                String name = lib.getId() + " " +
-                        lib.getCqlName() + " " +
-                        lib.getLibraryModel() + " v" +
-                        lib.getMatVersionFormat();
-                try {
-                    pushStandAloneFromMatToFhir(lib.getId(), null);
-                    result.getSuccesses().add(name);
-                } catch (RuntimeException rte) {
-                    log.error("Failed pushing lib to hapi. " + name,rte);
-                    result.getFailures().add(name);
-                }
-            });
-            return result;
+        var result = new PushAllResult();
+        var libIds = cqlLibraryRepository.getAllVersionedCqlFhirLibs();
+        libIds.forEach(libId -> {
+            //Have to load them one at a time or else the result set is too big to handle by default.
+            var lib = cqlLibraryRepository.getCqlLibraryById(libId);
+            String name = lib.getId() + " " +
+                    lib.getCqlName() + " " +
+                    lib.getLibraryModel() + " v" +
+                    lib.getMatVersionFormat();
+            try {
+                pushStandAloneFromMatToFhir(lib.getId(), null);
+                result.getSuccesses().add(name);
+            } catch (RuntimeException rte) {
+                log.error("Failed pushing lib to hapi. " + name, rte);
+                result.getFailures().add(name);
+            }
+        });
+        return result;
     }
 
     public OrchestrationProperties buildProperties(ConversionType conversionType,

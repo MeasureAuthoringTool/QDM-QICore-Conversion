@@ -86,10 +86,6 @@ public class ConversionReporter {
         conversionReporter.addCql(cql, name, versionString, matLibraryId);
     }
 
-    public static void setCqlNameAndVersion(String name, String version, String matLibraryId) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addCqlNameAndVersion(name, version, matLibraryId);
-    }
 
     public static void setExternalLibraryErrors(Map<String, List<CqlConversionError>> map, String matLibraryId) {
         ConversionReporter conversionReporter = getConversionReporter();
@@ -177,13 +173,6 @@ public class ConversionReporter {
         }
     }
 
-    public static void setValueSetsValidationLink(String oid,
-                                                  String link,
-                                                  HapiResourcePersistedState state) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetResult(oid, Boolean.TRUE, link, state.value);
-    }
-
     public static void setValueSetJson(String oid, String json) {
         ConversionReporter conversionReporter = getConversionReporter();
         conversionReporter.addValueSetJson(oid, json);
@@ -243,17 +232,6 @@ public class ConversionReporter {
         conversionReporter.addFhirMeasureLibraryResults(list, matLibraryId);
     }
 
-    public static void setValueSetsValidationResults(String oid,
-                                                     List<FhirValidationResult> list) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetValidationResults(oid, list);
-    }
-
-    public static void setValueSetsValidationError(String oid,
-                                                   String error) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addValueSetResult(oid, Boolean.FALSE, null, error);
-    }
 
     public static void setMeasureValidationLink(String link,
                                                 HapiResourcePersistedState state) {
@@ -282,11 +260,6 @@ public class ConversionReporter {
         conversionReporter.addLibraryConversionResult(link, reason, Boolean.FALSE, matCqlId);
     }
 
-    public static void setLibraryNotFoundInHapi(String matCqlId) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addLibraryConversionResult(null, "Not Found in Hapi", Boolean.FALSE, matCqlId);
-    }
-
     public static void setTerminalMessage(String errorMessage, ConversionOutcome outcome) {
         try {
             ConversionReporter conversionReporter = getConversionReporter();
@@ -297,18 +270,6 @@ public class ConversionReporter {
                     e.getMessage(),
                     outcome,
                     errorMessage);
-        }
-    }
-
-    public static void setValueSetCompletionMemo(String memo) {
-        try {
-            ConversionReporter conversionReporter = getConversionReporter();
-            conversionReporter.addValueSetProcessingMemo(memo);
-            log.debug("Setting memo: {}", memo);
-        } catch (Exception e) {
-            log.warn("Cannot find ConversionReporter: {} setting valueSetCompletionMemo: {}",
-                    e.getMessage(),
-                    memo);
         }
     }
 
@@ -327,10 +288,6 @@ public class ConversionReporter {
         conversionReporter.addXmlSource(xmlSource);
     }
 
-    public static void setFhirMeasureId(String id) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addFhirMeasureId(id);
-    }
 
     public static void setShowWarnings(boolean flag) {
         ConversionReporter conversionReporter = getConversionReporter();
@@ -351,10 +308,6 @@ public class ConversionReporter {
         conversionResultsService.addXmlSource(key, xmlSource);
     }
 
-    private void addFhirMeasureId(String id) {
-        conversionResultsService.addMeasureLibraryId(key, id);
-    }
-
     private void addShowWarnings(boolean flag) {
         conversionResultsService.addShowWarnings(key, flag);
     }
@@ -367,9 +320,6 @@ public class ConversionReporter {
         conversionResultsService.addErrorMessage(key, message, outcome);
     }
 
-    private void addValueSetProcessingMemo(String memo) {
-        conversionResultsService.addValueSetProcessingMemo(key, memo);
-    }
 
     private void addConversionType(ConversionType conversionType) {
         conversionResultsService.addConversionType(key, conversionType);
@@ -398,10 +348,6 @@ public class ConversionReporter {
 
     private void addCql(String cql, String name, String version, String matLibraryId) {
         conversionResultsService.addCql(key, cql, name, version, matLibraryId);
-    }
-
-    private void addCqlNameAndVersion(String name, String version, String matLibraryId) {
-        conversionResultsService.addCql(key, null, name, version, matLibraryId);
     }
 
     private void addFhirCql(String cql, String matLibraryId) {
@@ -475,10 +421,6 @@ public class ConversionReporter {
 
     private void addFhirMeasureLibraryResults(List<FhirValidationResult> list, String matLibraryId) {
         conversionResultsService.addLibraryValidationResults(key, list, matLibraryId);
-    }
-
-    private void addValueSetValidationResults(String oid, List<FhirValidationResult> list) {
-        conversionResultsService.addValueSetValidationResults(key, oid, list);
     }
 
     private void addValueSetResult(String oid, Boolean success, String link, String reason) {

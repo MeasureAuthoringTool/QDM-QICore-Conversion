@@ -2,9 +2,9 @@ package gov.cms.mat.fhir.services.rest;
 
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.service.packaging.LibraryPackagerService;
-import gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat;
 import gov.cms.mat.fhir.services.service.packaging.dto.LibraryPackageFullData;
 import gov.cms.mat.fhir.services.service.packaging.dto.LibraryPackageFullHapi;
+import gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +36,7 @@ public class LibraryPackagerController {
     @GetMapping(value = "/minimum/json", produces = {"application/json"})
     @ResponseBody
     public String packageMinimumJson(@RequestParam String id) {
-        try {
-            return packageLibraryMinimum(id, JSON);
-        } catch (RuntimeException r) {
-            log.error("packageMinimumJson", r);
-            throw r;
-        }
+        return packageLibraryMinimum(id, JSON);
     }
 
     @Operation(summary = "Full json Package of FHIR  Library",
@@ -49,12 +44,7 @@ public class LibraryPackagerController {
     @GetMapping(value = "/full/json")
     @ResponseBody
     public LibraryPackageFullData packageFullJson(@RequestParam String id) {
-        try {
-            return packageLibraryFull(id, JSON);
-        } catch (RuntimeException r) {
-            log.error("packageFullJson", r);
-            throw r;
-        }
+        return packageLibraryFull(id, JSON);
     }
 
     @Operation(summary = "Full xml Package of FHIR  Library",
@@ -62,12 +52,7 @@ public class LibraryPackagerController {
     @GetMapping(value = "/full/xml")
     @ResponseBody
     public LibraryPackageFullData packageFullXml(@RequestParam String id) {
-        try {
-            return packageLibraryFull(id, XML);
-        } catch (RuntimeException r) {
-            log.error("packageFullXml", r);
-            throw r;
-        }
+        return packageLibraryFull(id, XML);
     }
 
     @Operation(summary = "Minimum Package of FHIR  Library",
@@ -75,12 +60,7 @@ public class LibraryPackagerController {
     @GetMapping(value = "/minimum/xml", produces = {"application/json"})
     @ResponseBody
     public String packageMinimumXML(@RequestParam String id) {
-        try {
-            return packageLibraryMinimum(id, XML);
-        } catch (RuntimeException r) {
-            log.error("packageMinimumXML", r);
-            throw r;
-        }
+        return packageLibraryMinimum(id, XML);
     }
 
     private String packageLibraryMinimum(String id, PackageFormat format) {

@@ -14,8 +14,8 @@ public class VsacValidator {
         this.vsacService = vsacService;
     }
 
-    String fetchFiveMinuteTicket(String umlsToken) {
-        String fiveMinServiceTicket = vsacService.getServiceTicket(umlsToken);
+    String fetchFiveMinuteTicket(String umlsToken, String apiKey) {
+        String fiveMinServiceTicket = vsacService.getServiceTicket(umlsToken, apiKey);
 
         if (StringUtils.isBlank(fiveMinServiceTicket)) {
             throw new ExpiredTicketException(EXPIRED_TICKET);

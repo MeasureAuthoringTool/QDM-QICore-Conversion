@@ -110,7 +110,8 @@ public class Measure implements Serializable {
     private Date measurementPeriodTo;
     @Column(name = "CQL_NAME")
     private String cqlName;
-
+    @Column(name = "MEASURE_MODEL")
+    private String measureModel;
     @Column(name = "SOURCE_MEASURE_ID")
     private String sourceMeasureId;
 
@@ -386,6 +387,13 @@ public class Measure implements Serializable {
         this.cqlName = cqlName;
     }
 
+    public String getMeasureModel() {
+        return measureModel;
+    }
+
+    public void setMeasureModel(String measureModel) {
+        this.measureModel = measureModel;
+    }
 
     public User getLockedUserId() {
         return lockedUserId;

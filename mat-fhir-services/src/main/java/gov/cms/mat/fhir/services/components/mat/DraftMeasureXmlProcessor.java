@@ -81,7 +81,7 @@ public class DraftMeasureXmlProcessor implements FhirLibraryHelper, CqlVersionCo
 
         CqlLibrary cqlLibs = cqlLibRepo.getCqlLibraryByMeasureId(measure.getId());
         if (cqlLibs == null) {
-            throw new RuntimeException("Found more than 1 cql library for measure " + measure.getId());
+            throw new RuntimeException("Cannot find cql library for measure " + measure.getId());
         } else {
             Library fhirLibrary = buildLibraryFromXml(cqlLibs.getId(), xmlKey, cqlLookUpXml, showWarnings);
             libraryOrchestrationValidationService.validateFhirLibrary(xmlKey.create(),
