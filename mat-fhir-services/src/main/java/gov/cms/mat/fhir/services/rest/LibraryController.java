@@ -42,6 +42,29 @@ public class LibraryController {
         return hapiFhirServer.toJson(library);
     }
 
+    @Operation(summary = "Find a Hapi FHIR Library's cql with the name and version",
+            description = "Find the Hapi Library and show cql",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Library found and cql returned"),
+                    @ApiResponse(responseCode = "404", description = "Library is not found or does contain cql")})
+    @GetMapping(path = "/findCql")
+    public String findCql(String name, String version) {
+        var optionalLibrary = hapiFhirServer.fetchHapiLibrary(name, version);
+
+        if (optionalLibrary.isEmpty()) {
+            throw new HapiResourceNotFoundException(name, version, "Library");
+        } else {
+            Library library = optionalLibrary.get();
+
+            var optionalCql = library.getContent().stream()
+                    .filter(c -> c.getContentType().equals("text/cql"))
+                    .map(c -> new String(c.getData()))
+                    .findFirst();
+
+            return optionalCql.orElseThrow(() -> new HapiResourceNotFoundException("Library does not contain cql"));
+        }
+    }
+
     @Operation(summary = "Count of persisted FHIR Libraries.",
             description = "The count of all the Libraries in the HAPI FHIR Database.")
     @GetMapping(path = "/count")

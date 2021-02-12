@@ -98,15 +98,11 @@ public class QdmCqlToFhirCqlConverter {
         convertLibrary();
         convertUsing();
         convertIncludes();
-        // convertDefines();
         convertValueSets();
-
         convertCodeSystems();
-
         checkUnion(matLibId);
 
         String cql = addDefaultFhirLibraries();
-
 
         cql = fixDateTime(cql);
         return fixSDE(cql);
@@ -131,19 +127,6 @@ public class QdmCqlToFhirCqlConverter {
 
     private void processCodeSystem(CodeSystemProperties codeSystemProperties) {
         processCodeSystemInGlobalMap(codeSystemProperties);
-    }
-
-    private void processBundleWithEntry(CodeSystemProperties codeSystemProperties, Bundle bundle) {
-        Bundle.BundleEntryComponent bundleEntryComponent = bundle.getEntry().get(0);
-        Resource resource = bundleEntryComponent.getResource();
-
-        if (resource instanceof CodeSystem) {
-            CodeSystem codeSystem = (CodeSystem) resource;
-            log.debug("CodeSystem {} set to CodeSystem URL: {}", codeSystemProperties.getName(), codeSystem.getUrl());
-            codeSystemProperties.setUrnOid(codeSystem.getUrl());
-        } else {
-            log.debug("Resource is not a CodeSystem it is a: {}", resource.getClass().getName());
-        }
     }
 
     private void processCodeSystemInGlobalMap(CodeSystemProperties codeSystemProperties) {
@@ -263,16 +246,6 @@ public class QdmCqlToFhirCqlConverter {
             return symbolicProperties.stream()
                     .allMatch(s -> s.getMatDataTypeDescription().equals(name));
         }
-    }
-
-    private void convertDefines() {
-        List<DefineProperties> properties = cqlTextParser.getDefines();
-        properties.forEach(this::processSymbolics);
-        properties.forEach(this::setToFhir);
-    }
-
-    private void processSymbolics(DefineProperties properties) {
-        properties.getSymbolicProperties().forEach(p -> p.setHelper(mappingDataService.getQdmToFhirMappingHelper()));
     }
 
     private void convertIncludes() {

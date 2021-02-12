@@ -31,6 +31,7 @@ import java.util.Optional;
 @Getter
 @Slf4j
 public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
+    private static final String MISSING_INCLUDE_TEMPLATE = "Could not find included library: {} for parent library {}v{}";
     private final HapiFhirServer hapiServer;
     private final CQLAntlrUtils cqlAntlrUtils;
     private final LibraryCqlVisitorFactory factory;
@@ -43,6 +44,7 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
     private final List<RelatedArtifact> relatedArtifacts = new ArrayList<>();
     private final Map<String, Pair<Library, LibraryCqlVisitor>> libMap = new HashMap<>();
     private final String matFhirBaseUrl;
+    private final Map<Integer, Library> libraryCacheMap = new HashMap<>();
     private String name;
     private String version;
 
@@ -108,8 +110,9 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
             RelatedArtifact relatedArtifact = new RelatedArtifact();
             relatedArtifact.setType(RelatedArtifact.RelatedArtifactType.DEPENDSON);
             var nameVersion = getNameVersionFromInclude(ctx);
-            Optional<Library> lib = hapiServer.fetchHapiLibrary(nameVersion.getLeft(),
-                    nameVersion.getRight());
+
+            Optional<Library> lib = fetchOptionalLibraryWithCacheMap(nameVersion);
+
             if (lib.isPresent()) {
                 String identifier = ctx.localIdentifier().getText();
                 Library childLib = lib.get();
@@ -120,11 +123,25 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                 libMap.put(identifier, Pair.of(childLib, visitor));
                 relatedArtifacts.add(relatedArtifact);
             } else {
-                log.error("Could not find hapi fhir lib: " + name + "v" + version);
+                log.error(MISSING_INCLUDE_TEMPLATE, nameVersion, name, version);
             }
             includes.add(ctx);
         }
         return null;
+    }
+
+    private Optional<Library> fetchOptionalLibraryWithCacheMap(Pair<String, String> nameVersion) {
+        int hash = nameVersion.hashCode();
+
+        if (libraryCacheMap.containsKey(hash)) {
+            return Optional.of(libraryCacheMap.get(hash));
+        } else {
+            var optional = hapiServer.fetchHapiLibrary(nameVersion.getLeft(), nameVersion.getRight());
+
+            optional.ifPresent(library -> libraryCacheMap.put(hash, library));
+
+            return optional;
+        }
     }
 
     @Override

@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -13,8 +16,16 @@ class ApplicationTest {
     @Autowired
     ConversionLibraryLookup conversionLibraryLookup;
 
+
     @Test
     void contextLoads() {
-        assertFalse(conversionLibraryLookup.getMap().isEmpty());
+        assertEquals(8, conversionLibraryLookup.getMap().size());
+        assertEquals("4.0.001", conversionLibraryLookup.getMap().get("FHIRHelpers"));
+
+        List<String> keys = new ArrayList<>(conversionLibraryLookup.getMap().keySet());
+
+        assertEquals("FHIRHelpers", keys.get(0)); // Checks order is maintained
+        assertEquals("Hospice", keys.get(3));
+        assertEquals("VTEICU", keys.get(keys.size() - 1));
     }
 }
