@@ -19,7 +19,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <mat.microservices.version>0.0.1-SNAPSHOT</mat.microservices.version>
         <hapi.fhir.version>5.0.2</hapi.fhir.version>
-        <swagger.version>1.5.2</swagger.version>
+        <swagger.version>1.5.4</swagger.version>
         <commons.collections.version>4.1</commons.collections.version>
         <cqframework.version>1.5.2-SNAPSHOT</cqframework.version>
     </properties>
