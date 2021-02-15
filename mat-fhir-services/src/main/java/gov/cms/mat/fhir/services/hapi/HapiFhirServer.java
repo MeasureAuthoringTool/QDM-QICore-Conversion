@@ -11,7 +11,11 @@ import gov.cms.mat.fhir.services.service.packaging.dto.PackageFormat;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Library;
+import org.hl7.fhir.r4.model.Measure;
+import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,15 +32,13 @@ import java.util.Optional;
 public class HapiFhirServer {
     private static final String CACHE_HEADER_NAME = "Cache-Control";
     private static final String CACHE_HEADER_VALUE = "no-cache";
-
-    @Value("${mat-api-key}")
-    private String matApiKey;
-
     @Getter
     private final FhirContext ctx;
     private final RestTemplate restTemplate;
     @Getter
     IGenericClient hapiClient;
+    @Value("${mat-api-key}")
+    private String matApiKey;
     @Getter
     @Value("${fhir.r4.baseurl}")
     private String baseURL;
@@ -52,10 +54,6 @@ public class HapiFhirServer {
         hapiClient.registerInterceptor(createLoggingInterceptor());
 
         log.info("Created hapi client for server: {} ", baseURL);
-    }
-
-    public Optional<ValueSet> fetchHapiValueSet(String oid) {
-        return findResourceInBundle(getValueSetBundle(oid), ValueSet.class);
     }
 
     public Optional<Library> fetchHapiLibrary(String id) {
@@ -101,19 +99,6 @@ public class HapiFhirServer {
         }
     }
 
-
-    public Optional<String> processBundleLink(Bundle bundle) {
-        if (bundle.hasEntry()) {
-            if (bundle.getEntry().isEmpty()) {
-                return Optional.of(bundle.getLink().get(0).getUrl());
-            } else {
-                return Optional.of(bundle.getEntry().get(0).getFullUrl());
-            }
-        } else {
-            return Optional.empty();
-        }
-    }
-
     public String persist(Resource resource) {
         log.debug("Persisting resource {} with id {}",
                 resource.getResourceType() != null ? resource.getResourceType().name() : "null",
@@ -126,19 +111,6 @@ public class HapiFhirServer {
         restTemplate.put(url, request, new HashMap<>());
         return url;
     }
-
-    public String buildResourceUrl(Resource resource) {
-        return buildHapiFhirUrl(resource.fhirType(), resource.getId());
-    }
-
-    public String buildHapiFhirUrl(String type, String id) {
-        return new StringBuilder(hapiClient.getServerBase())
-                .append(type)
-                .append('/')
-                .append(id)
-                .toString();
-    }
-
 
     private LoggingInterceptor createLoggingInterceptor() {
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
@@ -161,17 +133,12 @@ public class HapiFhirServer {
                 .resource(resource)
                 .prettyPrint()
                 .encodedJson()
-                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey)
                 .execute();
     }
 
-
     public Bundle getValueSetBundle(String oid) {
         return getOidBundle(ValueSet.class, oid);
-    }
-
-    public Bundle getCodeSystemBundle(String oid) {
-        return getOidBundle(CodeSystem.class, oid);
     }
 
     private Bundle getOidBundle(Class<? extends IBaseResource> resource, String oid) {
@@ -180,7 +147,7 @@ public class HapiFhirServer {
                 .where(ValueSet.IDENTIFIER.exactly().systemAndIdentifier("urn:ietf:rfc:3986", oid))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
-                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey)
                 .execute();
     }
 
@@ -190,7 +157,7 @@ public class HapiFhirServer {
                 .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
-                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey)
                 .execute();
     }
 
@@ -200,7 +167,7 @@ public class HapiFhirServer {
                 .where(new TokenClientParam("_id").exactly().code(id))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
-                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey)
                 .execute();
     }
 
@@ -211,17 +178,7 @@ public class HapiFhirServer {
                 .and(Library.NAME.matches().value(name))
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
-                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
-                .execute();
-    }
-
-    public Bundle fetchLibraryBundleByName(String name) {
-        return hapiClient.search()
-                .forResource(Library.class)
-                .and(Library.NAME.matches().value(name))
-                .returnBundle(Bundle.class)
-                .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
-                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey)
                 .execute();
     }
 
@@ -231,7 +188,7 @@ public class HapiFhirServer {
                 .totalMode(SearchTotalModeEnum.ACCURATE)
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
-                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey)
                 .execute()
                 .getTotal();
     }
@@ -241,15 +198,23 @@ public class HapiFhirServer {
                 .forResource(resourceClass)
                 .returnBundle(Bundle.class)
                 .withAdditionalHeader(CACHE_HEADER_NAME, CACHE_HEADER_VALUE)
-                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey)
                 .execute();
     }
 
     public Bundle getNextPage(Bundle bundle) {
+        bundle.getLink()
+                .forEach(l -> l.setUrl(fixUrl(l.getUrl())));
+
         return hapiClient.loadPage()
                 .next(bundle)
-                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey )
+                .withAdditionalHeader(SecurityFilter.MAT_API_KEY, matApiKey)
                 .execute();
+    }
+
+    private String fixUrl(String url) {
+        String fixedUrl = url.replace("/*", "");
+        return hapiClient.getServerBase() + fixedUrl;
     }
 
     public String formatResource(Resource resource, PackageFormat packageFormat) {

@@ -1,12 +1,15 @@
 package gov.cms.mat.fhir.services.rest;
 
+import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
 import gov.cms.mat.fhir.services.components.reporting.ThreadSessionKey;
 import gov.cms.mat.fhir.services.components.xml.XmlSource;
+import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
+import gov.cms.mat.fhir.services.rest.support.CqlVersionConverter;
 import gov.cms.mat.fhir.services.service.orchestration.PushLibraryService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,41 +27,33 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Min;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/library")
 @Tag(name = "Library-Controller", description = "API for Libraries")
 @Slf4j
-public class StandAloneLibraryController {
-    @Getter
-    @Setter
-    public static class PushAllResult {
-        private List<String> successes = new ArrayList<>();
-        private List<String> failures = new ArrayList<>();
-    }
-
-    @Getter
-    @Setter
-    public static class ConvertFhirLibsResult {
-        private Map<String, List<String>> successSetIdToFhirLib = new HashMap<String, List<String>>();
-    }
-
-
+public class StandAloneLibraryController implements CqlVersionConverter {
     private final ConversionResultsService conversionResultsService;
     private final PushLibraryService pushLibraryService;
     private final CqlLibraryRepository cqlLibraryRepository;
+    private final ConversionLibraryLookup conversionLibraryLookup;
 
     public StandAloneLibraryController(ConversionResultsService conversionResultsService,
                                        PushLibraryService pushLibraryService,
-                                       CqlLibraryRepository cqlLibraryRepository) {
+                                       CqlLibraryRepository cqlLibraryRepository,
+                                       ConversionLibraryLookup conversionLibraryLookup) {
         this.conversionResultsService = conversionResultsService;
         this.pushLibraryService = pushLibraryService;
         this.cqlLibraryRepository = cqlLibraryRepository;
+        this.conversionLibraryLookup = conversionLibraryLookup;
     }
 
     @Operation(summary = "Orchestrate QDM to Hapi FHIR Library with the id",
@@ -100,7 +96,8 @@ public class StandAloneLibraryController {
     public @ResponseBody
     PushAllResult pushAllVersionedLibs() {
         var result = new PushAllResult();
-        var libIds = cqlLibraryRepository.getAllVersionedCqlFhirLibs();
+        var libIds = buildLibraryIds();
+
         libIds.forEach(libId -> {
             //Have to load them one at a time or else the result set is too big to handle by default.
             var lib = cqlLibraryRepository.getCqlLibraryById(libId);
@@ -108,6 +105,8 @@ public class StandAloneLibraryController {
                     lib.getCqlName() + " " +
                     lib.getLibraryModel() + " v" +
                     lib.getMatVersionFormat();
+            log.debug("VersionedCqlFhirLib name: {} ", name);
+
             try {
                 pushStandAloneFromMatToFhir(lib.getId(), null);
                 result.getSuccesses().add(name);
@@ -145,5 +144,55 @@ public class StandAloneLibraryController {
                 XmlSource.MEASURE,
                 showWarnings,
                 "");
+    }
+
+    private List<String> buildLibraryIds() {
+        List<String> allIds = cqlLibraryRepository.getAllVersionedCqlFhirLibs();
+
+        List<String> stdLibIds = getStandardLibIds();
+
+        List<String> filtered = allIds.stream()
+                .filter(s -> !stdLibIds.contains(s))
+                .collect(Collectors.toList());
+
+        stdLibIds.addAll(filtered);
+        return stdLibIds;
+    }
+
+    @NotNull
+    private List<String> getStandardLibIds() {
+        return conversionLibraryLookup.getMap().entrySet()
+                .stream()
+                .map(e -> findStandardCqlLibrary(e.getKey(), e.getValue()))
+                .filter(Optional::isPresent)
+                .map(o -> o.get().getId())
+                .collect(Collectors.toList());
+    }
+
+    private Optional<CqlLibrary> findStandardCqlLibrary(String cqlName, String versionString) {
+        BigDecimal versionDecimal = convertVersionToBigDecimal(versionString);
+        String fhirCqlName = convertCqlNameToFhir(cqlName);
+        return cqlLibraryRepository.getCqlLibraryByNameAndVersion(fhirCqlName, versionDecimal);
+    }
+
+    private String convertCqlNameToFhir(String cqlName) {
+        if (cqlName.contains("FHIR")) {
+            return cqlName;
+        } else {
+            return cqlName + "FHIR4";
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class PushAllResult {
+        private List<String> successes = new ArrayList<>();
+        private List<String> failures = new ArrayList<>();
+    }
+
+    @Getter
+    @Setter
+    public static class ConvertFhirLibsResult {
+        private Map<String, List<String>> successSetIdToFhirLib = new HashMap<>();
     }
 }

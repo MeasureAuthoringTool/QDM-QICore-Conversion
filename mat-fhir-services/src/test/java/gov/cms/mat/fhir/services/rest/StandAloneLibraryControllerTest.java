@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionResultDto;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
 import gov.cms.mat.fhir.services.components.reporting.ConversionResultsService;
+import gov.cms.mat.fhir.services.config.ConversionLibraryLookup;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.service.orchestration.PushLibraryService;
 import gov.cms.mat.fhir.services.summary.OrchestrationProperties;
@@ -32,6 +33,8 @@ class StandAloneLibraryControllerTest {
     private PushLibraryService pushLibraryService;
     @Mock
     private CqlLibraryRepository cqlLibraryRepository;
+    @Mock
+    private  ConversionLibraryLookup conversionLibraryLookup;
 
     @InjectMocks
     private StandAloneLibraryController standAloneLibraryController;

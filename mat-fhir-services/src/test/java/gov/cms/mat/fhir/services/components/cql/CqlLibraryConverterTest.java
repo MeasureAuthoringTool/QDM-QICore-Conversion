@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,16 +51,16 @@ class CqlLibraryConverterTest implements ResourceFileUtil, HapiFhirServerTest {
                 conversionParserListener);
     }
 
-    private Map<String, String> createConvertedLibLookUpMap() {
-        return Map.of(
-                "FHIRHelpers", "4.0.001",
-                "AdultOutpatientEncounters", "2.0.000",
-                "AdvancedIllnessandFrailtyExclusion", "5.0.000",
-                "Hospice", "2.0.000",
-                "MATGlobalCommonFunctions", "5.0.000",
-                "SupplementalDataElements", "2.0.000",
-                "TJCOverall", "5.0.000",
-                "VTEICU", "4.0.000");
+    private LinkedHashMap<String, String> createConvertedLibLookUpMap() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        map.put("FHIRHelpers", "4.0.001");
+        map.put("AdultOutpatientEncounters", "2.0.000");
+        map.put("AdvancedIllnessandFrailtyExclusion", "5.0.000");
+        map.put("Hospice", "2.0.000");
+        map.put("MATGlobalCommonFunctions", "5.0.000");
+        map.put("SupplementalDataElements", "2.0.000");
+        map.put("VTEICU", "4.0.000");
+        return map;
     }
 
     @Test
