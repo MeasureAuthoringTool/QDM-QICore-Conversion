@@ -21,7 +21,12 @@ import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 @Slf4j
 @Getter
@@ -140,15 +145,33 @@ public class LibraryTranslator extends TranslatorBase {
         List<DataRequirement> result = new ArrayList<>(reqs.size());
         //Remove duplicates. I wish HapiFhir implemented equals. Today it is SadFhir for me.
         //Object.deepEquals doesn't work at all on codeFilter for some reason.
-        reqs.forEach(r -> {
-            if (result.stream().noneMatch(rr -> StringUtils.equals(r.getType(), rr.getType()) &&
-                    ((CollectionUtils.isEmpty(r.getCodeFilter()) && CollectionUtils.isEmpty(rr.getCodeFilter())) ||
-                            (r.getCodeFilter().size() == rr.getCodeFilter().size() &&
-                                    StringUtils.equals(r.getCodeFilter().get(0).getValueSet(), rr.getCodeFilter().get(0).getValueSet()) &&
-                                    StringUtils.equals(r.getCodeFilter().get(0).getPath(), rr.getCodeFilter().get(0).getPath()))))) {
-                result.add(r);
+        for (DataRequirement req : reqs) {
+            if(result.stream().noneMatch(r -> matchType(req.getType()).and(matchCodeFilter(req)).test(r))) {
+                result.add(req);
             }
-        });
+        }
         return result;
+    }
+
+    private Predicate<DataRequirement> matchType(String type) {
+        return d -> StringUtils.equals(d.getType(), type);
+    }
+
+    private Predicate<DataRequirement> matchCodeFilter(DataRequirement o) {
+        return d ->
+            //Both code filters are empty
+            (CollectionUtils.isEmpty(d.getCodeFilter()) && CollectionUtils.isEmpty(o.getCodeFilter())) ||
+            // OR both match on path AND code or value set
+            (StringUtils.equals(d.getCodeFilter().get(0).getPath(), o.getCodeFilter().get(0).getPath()) && (hasMatchingValueSet(d, o) || hasMatchingCode(o, d)));
+    }
+
+    private boolean hasMatchingCode(DataRequirement o, DataRequirement d) {
+        return (!CollectionUtils.isEmpty(d.getCodeFilter().get(0).getCode()) && !CollectionUtils.isEmpty(o.getCodeFilter().get(0).getCode())) &&
+                StringUtils.equals(d.getCodeFilter().get(0).getCode().get(0).getCode(), o.getCodeFilter().get(0).getCode().get(0).getCode());
+    }
+
+    private boolean hasMatchingValueSet(DataRequirement d, DataRequirement o) {
+        return (d.getCodeFilter().get(0).getValueSet() != null && o.getCodeFilter().get(0).getValueSet() != null) &&
+                StringUtils.equals(d.getCodeFilter().get(0).getValueSet(), o.getCodeFilter().get(0).getValueSet());
     }
 }
