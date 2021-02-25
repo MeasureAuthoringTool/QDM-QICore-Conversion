@@ -175,8 +175,8 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                     .codesystemName(csName)
                     .codesystemVersion(csVersionUri)
                     .isCodesystemVersionIncluded(csVersionUri != null)
-                    .datatype(null).
-                            build());
+                    .datatype(null)
+                    .build());
         }, () -> log.error("Invalid code " + ctx.getText() + ". Could not find code system name " + codeSystemName));
         return null;
     }
@@ -205,7 +205,6 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
 
         return null;
     }
-
 
     public HumanReadableCodeModel getCode(String codeName) {
         HumanReadableCodeModel result = null;
@@ -338,8 +337,8 @@ public class LibraryCqlVisitor extends cqlBaseVisitor<String> {
                         .codesystemName(hrCode.getCodesystemName())
                         .codesystemVersion(hrCode.getCodesystemVersion())
                         .isCodesystemVersionIncluded(hrCode.isCodesystemVersionIncluded())
-                        .datatype(null).
-                                build());
+                        .datatype(type)
+                        .build());
             } else {
                 log.info("Could not find a value set or code matching name " + valueSetOrCodeName + ". " +
                         "This is likely a FHIR type with attribute and we don't know how to handle those yet :(.");
