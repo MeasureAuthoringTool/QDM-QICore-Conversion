@@ -70,6 +70,7 @@ class StandAloneLibraryControllerTest {
         cqlLibrary.setLibraryModel("FHIR");
         cqlLibrary.setVersion(new BigDecimal("1.0"));
         cqlLibrary.setRevisionNumber(2);
+        cqlLibrary.setDraft(false);
 
         when(cqlLibraryRepository.getAllVersionedCqlFhirLibs()).thenReturn(Collections.singletonList(ID));
         when(cqlLibraryRepository.getCqlLibraryById(Mockito.eq(ID))).thenReturn(cqlLibrary);

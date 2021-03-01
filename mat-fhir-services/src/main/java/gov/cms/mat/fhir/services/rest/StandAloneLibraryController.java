@@ -172,7 +172,7 @@ public class StandAloneLibraryController implements CqlVersionConverter {
     private Optional<CqlLibrary> findStandardCqlLibrary(String cqlName, String versionString) {
         BigDecimal versionDecimal = convertVersionToBigDecimal(versionString);
         String fhirCqlName = convertCqlNameToFhir(cqlName);
-        return cqlLibraryRepository.getCqlLibraryByNameAndVersion(fhirCqlName, versionDecimal);
+        return cqlLibraryRepository.getVersionedCqlLibraryByNameAndVersion(fhirCqlName, versionDecimal);
     }
 
     private String convertCqlNameToFhir(String cqlName) {
