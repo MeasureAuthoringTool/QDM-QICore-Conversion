@@ -107,22 +107,22 @@
             <dependency>
                 <groupId>info.cqframework</groupId>
                 <artifactId>cql</artifactId>
-                <version>1.5.2-20210210.000412-5</version>
+                <version>1.5.2-20210219.013806-7</version>
             </dependency>
             <dependency>
                 <groupId>info.cqframework</groupId>
                 <artifactId>model</artifactId>
-                <version>1.5.2-20210210.000512-5</version>
+                <version>1.5.2-20210219.013859-7</version>
             </dependency>
             <dependency>
                 <groupId>info.cqframework</groupId>
                 <artifactId>cql-to-elm</artifactId>
-                <version>1.5.2-20210210.000425-5</version>
+                <version>1.5.2-20210219.013818-7</version>
             </dependency>
             <dependency>
                 <groupId>info.cqframework</groupId>
                 <artifactId>elm</artifactId>
-                <version>1.5.2-20210210.000504-5</version>
+                <version>1.5.2-20210219.013851-7</version>
             </dependency>
             <dependency>
                 <groupId>info.cqframework</groupId>
