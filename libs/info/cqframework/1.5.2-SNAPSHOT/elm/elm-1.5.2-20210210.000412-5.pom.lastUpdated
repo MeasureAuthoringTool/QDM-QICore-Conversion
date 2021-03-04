@@ -1,0 +1,8 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Mar 02 17:35:07 EST 2021
+https\://oss.sonatype.org/content/repositories/snapshots/.lastUpdated=1614724507389
+https\://oss.sonatype.org/content/repositories/snapshots/.error=
+@default-mvn-central-public-https\://mvnrepository.com/.lastUpdated=1614724507691
+https\://oss.sonatype.org/content/groups/public/.error=
+https\://oss.sonatype.org/content/groups/public/.lastUpdated=1614724507551
+https\://mvnrepository.com/.error=Could not transfer artifact info.cqframework\:elm\:pom\:1.5.2-20210210.000412-5 from/to mvn-central-public (https\://mvnrepository.com)\: Authorization failed for https\://mvnrepository.com/info/cqframework/elm/1.5.2-SNAPSHOT/elm-1.5.2-20210210.000412-5.pom 403 Forbidden
