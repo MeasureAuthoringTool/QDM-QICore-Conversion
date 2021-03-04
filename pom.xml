@@ -107,22 +107,22 @@
             <dependency>
                 <groupId>info.cqframework</groupId>
                 <artifactId>cql</artifactId>
-                <version>1.5.2-20210210.000412-5</version>
+                <version>${cqframework.version}</version>
             </dependency>
             <dependency>
                 <groupId>info.cqframework</groupId>
                 <artifactId>model</artifactId>
-                <version>1.5.2-20210210.000512-5</version>
+                <version>${cqframework.version}</version>
             </dependency>
             <dependency>
                 <groupId>info.cqframework</groupId>
                 <artifactId>cql-to-elm</artifactId>
-                <version>1.5.2-20210210.000425-5</version>
+                <version>${cqframework.version}</version>
             </dependency>
             <dependency>
                 <groupId>info.cqframework</groupId>
                 <artifactId>elm</artifactId>
-                <version>1.5.2-20210210.000504-5</version>
+                <version>${cqframework.version}</version>
             </dependency>
             <dependency>
                 <groupId>info.cqframework</groupId>
@@ -157,6 +157,11 @@
     </modules>
 
     <repositories>
+        <repository>
+            <id>local</id>
+            <name>Local cqframework SNAPSHOT</name>
+            <url>file://${project.basedir}/libs</url>
+        </repository>
         <repository>
             <id>oss-sonatype</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
