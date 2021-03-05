@@ -21,9 +21,12 @@
 	
 	<repositories>
 		<repository>
-			<id>local</id>
+			<id>cqframework-local</id>
 			<name>Local cqframework SNAPSHOT</name>
-			<url>file://${project.basedir}/libs</url>
+			<url>file://${project.basedir}/../libs</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>oss-sonatype</id>
