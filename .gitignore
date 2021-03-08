@@ -11,9 +11,12 @@
 *.rar
 *.log
 *.gz
+*.html
 docker-env.sh
 temp
 
+# Include snapshot cqframework libs
+!libs/**/*.jar
 
 #Intellij files.
 *.iml
