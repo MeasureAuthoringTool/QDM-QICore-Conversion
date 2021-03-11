@@ -157,7 +157,7 @@ public class CQLtoELM {
         formats.add("JSON");
         doTranslation(false, true, true, true, false, false,
                 true, true, false, false,
-                true, true, CqlTranslatorException.ErrorSeverity.Error, validationOnly, formats);
+                true, true, CqlTranslatorException.ErrorSeverity.Warning, validationOnly, formats);
     }
 
     /**
