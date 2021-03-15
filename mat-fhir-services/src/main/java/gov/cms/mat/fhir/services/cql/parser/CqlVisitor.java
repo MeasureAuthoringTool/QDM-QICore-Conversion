@@ -34,6 +34,8 @@ public interface CqlVisitor {
                             String version,
                             @Nullable String libraryComment,
                             int lineNumber) {
+
+        System.out.println("here");
         // by default do nothing unless its implemented.
     }
 
@@ -60,6 +62,7 @@ public interface CqlVisitor {
 
     default void valueSet(String type, String uri, int lineNumber) {
         //by default do nothing unless its implemented.
+        System.out.println("Here");
     }
 
     default void code(String name, String code, String codeSystemName, String displayName, int lineNumber) {
