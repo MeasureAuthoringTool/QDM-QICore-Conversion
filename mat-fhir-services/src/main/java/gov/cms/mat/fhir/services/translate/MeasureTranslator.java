@@ -51,7 +51,7 @@ import static org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType.JUSTIFIC
 @Service
 public class MeasureTranslator extends TranslatorBase {
     public static final RelatedArtifact.RelatedArtifactType DEFAULT_ARTIFACT_TYPE = CITATION;
-    public static final String MEASURE_TYPE = "http://hl7.org/fhir/measure-type";
+    public static final String MEASURE_TYPE = "http://terminology.hl7.org/CodeSystem/measure-type";
 
     public static final String EXTENSION_POPULATION_BASIS = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-populationBasis";
     public static final String EXTENSION_SOFTWARE_SYSTEM = "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-softwaresystem";
