@@ -157,14 +157,14 @@
     </modules>
 
     <repositories>
-        <repository>
-            <id>cqframework-local</id>
-            <name>Local cqframework SNAPSHOT</name>
-            <url>file://${project.basedir}/libs</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+<!--        <repository>-->
+<!--            <id>cqframework-local</id>-->
+<!--            <name>Local cqframework SNAPSHOT</name>-->
+<!--            <url>file://${project.basedir}/libs</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
         <repository>
             <id>oss-sonatype</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
