@@ -3,9 +3,9 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/matprod?serverTimezone=UTC&max_allowed_packet=16777216
-    username: root
-    password: password
+    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
+    username: mat
+    password: mat
   jpa:
     hibernate.ddl-auto: none
     hibernate:

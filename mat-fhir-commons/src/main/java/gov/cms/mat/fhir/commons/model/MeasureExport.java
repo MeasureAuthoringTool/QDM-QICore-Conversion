@@ -38,6 +38,8 @@ public class MeasureExport implements Serializable, MatXmlBytes {
     private byte[] json;
     @Column(name = "MEASURE_ID")
     private String measureId;
+    @Column(name = "FHIR_LIBS_JSON")
+    private byte[] fhirLibsJson;
 
     public MeasureExport() {
     }
@@ -51,6 +53,13 @@ public class MeasureExport implements Serializable, MatXmlBytes {
         this.simpleXml = simpleXml;
     }
 
+    public byte[] getFhirLibsJson() {
+        return fhirLibsJson;
+    }
+
+    public void setFhirLibsJson(byte[] fhirLibsJson) {
+        this.fhirLibsJson = fhirLibsJson;
+    }
 
     public String getMeasureExportId() {
         return measureExportId;
