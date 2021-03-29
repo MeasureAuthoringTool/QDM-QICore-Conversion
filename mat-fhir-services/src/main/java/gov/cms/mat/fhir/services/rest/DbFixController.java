@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,6 +86,7 @@ public class DbFixController {
         return measureDetailsReferenceRepository.findAll().stream().parallel()
                 .filter(x -> x.getReference() != null)
                 .map(this::createRowResultMeasureDetailsReference)
+                .sorted(Comparator.comparing(RowResult::getId))
                 .collect(Collectors.toList());
     }
 
@@ -92,19 +94,24 @@ public class DbFixController {
         return measureXmlRepository.findAll().stream().parallel()
                 .filter(x -> x.getSevereErrorCql() != null)
                 .map(this::createRowResultMeasureXml)
+                .sorted(Comparator.comparing(RowResult::getId))
                 .collect(Collectors.toList());
     }
 
     public List<RowResult> createRowResultsCqlLibraryExport() {
         return cqlLibraryExportRepository.findAll().stream().parallel()
+                .filter(export -> export.getElm() != null)
                 .map(this::createRowResultCqlLibraryExport)
+                .sorted(Comparator.comparing(RowResult::getId))
                 .collect(Collectors.toList());
     }
 
 
     public List<RowResult> createRowResultsMeasureExport() {
         return measureExportRepository.findAll().stream().parallel()
+                .filter(export -> export.getElm() != null)
                 .map(this::createRowResultMeasureExport)
+                .sorted(Comparator.comparing(RowResult::getId))
                 .collect(Collectors.toList());
     }
 
