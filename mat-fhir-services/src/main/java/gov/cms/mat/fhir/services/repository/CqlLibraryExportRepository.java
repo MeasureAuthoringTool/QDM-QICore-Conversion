@@ -13,6 +13,6 @@ public interface CqlLibraryExportRepository extends JpaRepository<CqlLibraryExpo
     @Query("select a from CqlLibraryExport a where a.cqlLibraryId = :cqlLibraryId")
     CqlLibraryExport getCqlLibraryExportByCqlLibraryId(@Param("cqlLibraryId") String cqlLibraryId);
 
-    @Query(value = "select * from CQL_LIBRARY_EXPORT a where a.elm IS NOT NULL", nativeQuery = true)
+    @Query(value = "select a.ID, a.CQL, a.ELM, a.JSON, a.CQL_LIBRARY_ID from CQL_LIBRARY_EXPORT a where a.elm IS NOT NULL", nativeQuery = true)
     List<CqlLibraryExport> findExportedLibraries();
 }

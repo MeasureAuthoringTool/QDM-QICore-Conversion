@@ -17,6 +17,6 @@ public interface MeasureXmlRepository extends JpaRepository<MeasureXml, String> 
     @Query("select a from MeasureXml a where a.measureId = :measureId")
     Optional<MeasureXml> findByMeasureId(@Param("measureId") String measureId);
 
-    @Query(value = "select * from MEASURE_XML a where a.SEVERE_ERROR_CQL is not null", nativeQuery = true)
+    @Query(value = "select a.ID, a.SEVERE_ERROR_CQL, a.MEASURE_ID, a.MEASURE_XML from MEASURE_XML a where a.SEVERE_ERROR_CQL is not null", nativeQuery = true)
     List<MeasureXml> findErroredMeasureXml();
 }

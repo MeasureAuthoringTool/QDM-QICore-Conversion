@@ -13,6 +13,6 @@ public interface MeasureDetailsReferenceRepository extends JpaRepository<Measure
     @Query("select a from MeasureDetailsReference a where a.measureDetailsId = :measureDetailsId")
     List<MeasureDetailsReference> getMeasureDetailsReferenceByMeasureDetailsId(@Param("measureDetailsId") Integer measureDetailsId);
 
-    @Query(value = "select * from MEASURE_DETAILS_REFERENCE a WHERE a.REFERENCE is not null", nativeQuery = true)
+    @Query(value = "select a.MEASURE_DETAILS_ID, a.ID, a.REFERENCE, a.REFERENCE_TYPE, a.REFERENCE_NUMBER from MEASURE_DETAILS_REFERENCE a WHERE a.REFERENCE is not null", nativeQuery = true)
     List<MeasureDetailsReference> findPopulatedReferences();
 }
