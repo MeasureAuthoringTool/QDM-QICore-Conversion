@@ -83,7 +83,7 @@ public class DbFixController {
     }
 
     private List<RowResult>   createRowResultsMeasureDetailsReference() {
-        return measureDetailsReferenceRepository.findAll().stream().parallel()
+        return measureDetailsReferenceRepository.findPopulatedReferences().stream().parallel()
                 .filter(x -> x.getReference() != null)
                 .map(this::createRowResultMeasureDetailsReference)
                 .sorted(Comparator.comparing(RowResult::getId))
@@ -91,7 +91,7 @@ public class DbFixController {
     }
 
     private List<RowResult> createRowResultsMeasureXml() {
-        return measureXmlRepository.findAll().stream().parallel()
+        return measureXmlRepository.findErroredMeasureXml().stream().parallel()
                 .filter(x -> x.getSevereErrorCql() != null)
                 .map(this::createRowResultMeasureXml)
                 .sorted(Comparator.comparing(RowResult::getId))
@@ -99,7 +99,7 @@ public class DbFixController {
     }
 
     public List<RowResult> createRowResultsCqlLibraryExport() {
-        return cqlLibraryExportRepository.findAll().stream().parallel()
+        return cqlLibraryExportRepository.findExportedLibraries().stream().parallel()
                 .filter(export -> export.getElm() != null)
                 .map(this::createRowResultCqlLibraryExport)
                 .sorted(Comparator.comparing(RowResult::getId))
@@ -108,7 +108,7 @@ public class DbFixController {
 
 
     public List<RowResult> createRowResultsMeasureExport() {
-        return measureExportRepository.findAll().stream().parallel()
+        return measureExportRepository.findExportedMeasures().stream().parallel()
                 .filter(export -> export.getElm() != null)
                 .map(this::createRowResultMeasureExport)
                 .sorted(Comparator.comparing(RowResult::getId))
@@ -156,6 +156,9 @@ public class DbFixController {
 
         result.getColumnResults()
                 .add(createColumnResult("JSON", measureExport.getJson()));
+
+         result.getColumnResults()
+                 .add(createColumnResult("ELM", measureExport.getElm()));
 
         result.getColumnResults()
                 .add(createColumnResult("FHIR_LIBS_JSON", measureExport.getFhirLibsJson()));
