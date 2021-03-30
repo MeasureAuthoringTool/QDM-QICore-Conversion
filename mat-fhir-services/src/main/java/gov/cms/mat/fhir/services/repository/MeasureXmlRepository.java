@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,4 +16,7 @@ public interface MeasureXmlRepository extends JpaRepository<MeasureXml, String> 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @Query("select a from MeasureXml a where a.measureId = :measureId")
     Optional<MeasureXml> findByMeasureId(@Param("measureId") String measureId);
+
+    @Query(value = "select * from MEASURE_XML a where a.SEVERE_ERROR_CQL is not null", nativeQuery = true)
+    List<MeasureXml> findErroredMeasureXml();
 }

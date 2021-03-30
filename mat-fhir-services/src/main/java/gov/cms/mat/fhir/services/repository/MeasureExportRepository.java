@@ -31,4 +31,8 @@ public interface MeasureExportRepository extends JpaRepository<MeasureExport, St
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @Query("select a from MeasureExport a where a.measureId = :measureId")
     Optional<MeasureExport> findByMeasureId(String measureId);
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    @Query(value = "select * from MEASURE_EXPORT a where a.elm IS NOT NULL", nativeQuery = true)
+    List<MeasureExport> findExportedMeasures();
 }

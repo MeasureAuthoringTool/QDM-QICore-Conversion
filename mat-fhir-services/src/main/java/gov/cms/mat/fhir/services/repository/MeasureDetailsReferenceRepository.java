@@ -12,4 +12,7 @@ import java.util.List;
 public interface MeasureDetailsReferenceRepository extends JpaRepository<MeasureDetailsReference, String> {
     @Query("select a from MeasureDetailsReference a where a.measureDetailsId = :measureDetailsId")
     List<MeasureDetailsReference> getMeasureDetailsReferenceByMeasureDetailsId(@Param("measureDetailsId") Integer measureDetailsId);
+
+    @Query(value = "select * from MEASURE_DETAILS_REFERENCE a WHERE a.REFERENCE is not null", nativeQuery = true)
+    List<MeasureDetailsReference> findPopulatedReferences();
 }
