@@ -60,6 +60,7 @@ services:
       args:
         ENV: ${ENV}
     environment:
+      JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS}
       VSAC_TICKET_URL_BASE: ${VSAC_TICKET_URL_BASE}
       VSAC_URL_BASE: ${VSAC_URL_BASE}
       MAT_DB_URL: ${MAT_DB_URL}
