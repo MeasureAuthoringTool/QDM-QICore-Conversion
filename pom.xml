@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.1</version>
+        <version>2.4.2</version>
         <relativePath/>
     </parent>
     <groupId>gov.cms.mat</groupId>
@@ -19,9 +19,9 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <mat.microservices.version>0.0.1-SNAPSHOT</mat.microservices.version>
         <hapi.fhir.version>5.0.2</hapi.fhir.version>
-        <swagger.version>1.5.2</swagger.version>
-        <commons.collections.version>4.1</commons.collections.version>
-        <cqframework.version>1.5.2-SNAPSHOT</cqframework.version>
+        <swagger.version>1.5.4</swagger.version>
+        <commons.collections.version>4.4</commons.collections.version>
+        <cqframework.version>1.5.2</cqframework.version>
     </properties>
 
     <dependencies>
@@ -138,7 +138,7 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.22</version>
+                <version>8.0.23</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -157,6 +157,14 @@
     </modules>
 
     <repositories>
+<!--        <repository>-->
+<!--            <id>cqframework-local</id>-->
+<!--            <name>Local cqframework SNAPSHOT</name>-->
+<!--            <url>file://${project.basedir}/libs</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
         <repository>
             <id>oss-sonatype</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>

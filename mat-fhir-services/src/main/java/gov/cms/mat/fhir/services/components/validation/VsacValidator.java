@@ -6,23 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 public class VsacValidator {
-    static final String EXPIRED_TICKET = "VSAC ticket has expired";
-
     final VsacService vsacService;
 
     public VsacValidator(VsacService vsacService) {
         this.vsacService = vsacService;
-    }
-
-    String fetchFiveMinuteTicket(String umlsToken, String apiKey) {
-        String fiveMinServiceTicket = vsacService.getServiceTicket(umlsToken, apiKey);
-
-        if (StringUtils.isBlank(fiveMinServiceTicket)) {
-            throw new ExpiredTicketException(EXPIRED_TICKET);
-        } else {
-            return fiveMinServiceTicket;
-        }
-
     }
 
     static class ExpiredTicketException extends RuntimeException {

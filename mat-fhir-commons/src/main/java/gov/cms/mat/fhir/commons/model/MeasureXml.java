@@ -24,11 +24,23 @@ public class MeasureXml implements Serializable, MatXmlBytes {
     @Column(name = "MEASURE_ID")
     private String measureId;
 
+
+    @Column(name = "SEVERE_ERROR_CQL")
+    private byte[] severeErrorCql;
+
     public MeasureXml() {
     }
 
     public MeasureXml(String id) {
         this.id = id;
+    }
+
+    public byte[] getSevereErrorCql() {
+        return severeErrorCql;
+    }
+
+    public void setSevereErrorCql(byte[] severeErrorCql) {
+        this.severeErrorCql = severeErrorCql;
     }
 
     public String getId() {

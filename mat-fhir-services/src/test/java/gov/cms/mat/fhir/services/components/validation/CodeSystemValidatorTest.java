@@ -112,7 +112,6 @@ class CodeSystemValidatorTest implements CqlHelper {
         assertEquals(244, libraryErrors.get(0).getErrors().get(1).getErrorInLine());
     }
 
-
     @Test
     void validateUnreferencedCodeSystems() throws ExecutionException, InterruptedException {
         when(vsacCodeSystemValidator.validate(0, cqlModel.getCodeList(), TOKEN,API_KEY))

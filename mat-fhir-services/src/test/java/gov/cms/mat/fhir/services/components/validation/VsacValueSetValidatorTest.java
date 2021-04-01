@@ -47,14 +47,28 @@ class VsacValueSetValidatorTest implements CqlHelper {
     }
 
     @Test
-    void validateBlankToken() {
+    void validateBlankTokenStatusPending() {
         cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.PENDING));
+        //cqlModel.getValueSetList().forEach(c -> c.obtainValidatedWithVsac());
+
         List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), "", API_KEY);
 
         assertEquals(cqlModel.getValueSetList().size(), dtoList.size());
 
         dtoList.forEach(d -> assertEquals("Value set requires validation. Please login to UMLS to validate it.", d.getErrorMessage()));
         dtoList.forEach(d -> assertEquals(VsacStatus.PENDING, d.obtainValidatedWithVsac()));
+        verifyNoInteractions(vsacService);
+    }
+
+    @Test
+    void validateBlankTokenStatusValid() {
+        cqlModel.getValueSetList().forEach(c -> c.addValidatedWithVsac(VsacStatus.IN_VALID));
+
+        List<CQLQualityDataSetDTO> dtoList = vsacValueSetValidator.validate(0, cqlModel.getValueSetList(), "", API_KEY);
+
+
+        dtoList.forEach(d -> assertEquals("Value set not found in VSAC.", d.getErrorMessage()));
+        dtoList.forEach(d -> assertEquals(VsacStatus.IN_VALID, d.obtainValidatedWithVsac()));
         verifyNoInteractions(vsacService);
     }
 
