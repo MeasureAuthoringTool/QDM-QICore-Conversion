@@ -3,9 +3,9 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: ${MAT_DB_URL:jdbc:mysql://localhost:3306/matprod?serverTimezone=UTC&max_allowed_packet=16777216}
-    username: ${MAT_DB_USER:root}
-    password: ${MAT_DB_PASS:password}
+    url: jdbc:mysql://localhost:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216
+    username: mat
+    password: mat
   jpa:
     hibernate.ddl-auto: none
     hibernate:
@@ -16,7 +16,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: false
-    show-sql: false
+    show-sql: true
 
 mat-api-key: ${MAT_API_KEY:DISABLED}
 
