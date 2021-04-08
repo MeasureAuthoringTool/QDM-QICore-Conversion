@@ -4,6 +4,7 @@ import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.commons.model.Measure;
 import gov.cms.mat.fhir.commons.model.MeasureXml;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
+import gov.cms.mat.fhir.services.components.validation.unused.UnusedValidator;
 import gov.cms.mat.fhir.services.cql.parser.CqlParser;
 import gov.cms.mat.fhir.services.cql.parser.CqlToMatXml;
 import gov.cms.mat.fhir.services.cql.parser.CqlVisitorFactory;
@@ -13,6 +14,7 @@ import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
 import gov.cms.mat.fhir.services.repository.MeasureXmlRepository;
 import gov.cms.mat.fhir.services.rest.dto.CQLObject;
 import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
+import gov.cms.mat.fhir.services.rest.dto.UnusedCqlElements;
 import gov.cms.mat.fhir.services.rest.dto.ValidationRequest;
 import gov.cms.mat.fhir.services.rest.support.TokenResponseHeader;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
@@ -171,6 +173,15 @@ public class MatXmlController implements TokenResponseHeader {
                     null,
                     apiKey);
             log.trace("MatXmlController::fromCql -> exit {}", resp);
+
+            ValidationRequest validationRequest = new ValidationRequest();
+            validationRequest.setValidateReturnType(true);
+
+            if (resp.getCqlModel().isFhir()) {
+                UnusedValidator unused = new UnusedValidator(resp.getCqlModel());
+                resp.setUnusedCqlElements(unused.findUnused());
+            }
+
             return resp;
         } finally {
             processResponseHeader(response);
@@ -210,6 +221,7 @@ public class MatXmlController implements TokenResponseHeader {
             matXmlResponse.getCqlModel().setLibraryName(sourceModel.getLibraryName());
             matXmlResponse.getCqlModel().setUsingModelVersion(sourceModel.getUsingModelVersion());
         }
+
 
         if (!cqlToMatXml.getSeveres().isEmpty()) {
             // If there are any severe errors, we stop and don't validate any further.
@@ -301,6 +313,8 @@ public class MatXmlController implements TokenResponseHeader {
         private String cql;
         @NotNull
         private CQLObject cqlObject;
+        @Null
+        private UnusedCqlElements unusedCqlElements;
     }
 
     @Getter
