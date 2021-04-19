@@ -14,10 +14,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.DataRequirement;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Library;
 import org.hl7.fhir.utilities.xhtml.NodeType;
 import org.hl7.fhir.utilities.xhtml.XhtmlNode;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,11 +29,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -159,5 +164,71 @@ class TestLibraryTranslator {
 //                lib.getDataRequirement().get(1).getCodeFilter().get(0).getValueSet());
 //        assertEquals("'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1110.39'",
 //                lib.getDataRequirement().get(2).getCodeFilter().get(0).getValueSet());
+    }
+
+    @Test
+    void testUniqueDataRequirementsAreNotDropped() {
+        List<DataRequirement> dataRequirements = new ArrayList<>();
+        dataRequirements.add(generateDataRequirementWithCode("Encounter", "systemA", "1234"));
+        dataRequirements.add(generateDataRequirementWithValueSet("Encounter", "http://host/fhir/ValueSet/abcd"));
+        dataRequirements.add(generateDataRequirementWithoutFilter("Encounter"));
+
+        List<DataRequirement> dedupResult = libTranslator.distinctDataRequirements(dataRequirements);
+
+        Assertions.assertEquals(dataRequirements, dedupResult);
+        assertThat(dedupResult, containsInAnyOrder(dataRequirements.toArray()));
+    }
+
+    @Test
+    void testDuplicateDataRequirementIsDropped() {
+        List<DataRequirement> uniqueList = new ArrayList<>();
+        uniqueList.add(generateDataRequirementWithCode("Encounter", "systemA", "1234"));
+        uniqueList.add(generateDataRequirementWithValueSet("Encounter", "http://host/fhir/ValueSet/abcd"));
+        uniqueList.add(generateDataRequirementWithoutFilter("Encounter"));
+
+        List<DataRequirement> duplicateList = new ArrayList<>(uniqueList);
+        duplicateList.add(generateDataRequirementWithoutFilter("Encounter"));
+        duplicateList.add(generateDataRequirementWithValueSet("Encounter", "http://host/fhir/ValueSet/abcd"));
+
+        List<DataRequirement> dedupResult = libTranslator.distinctDataRequirements(duplicateList);
+
+        Assertions.assertNotEquals(duplicateList, dedupResult);
+        Assertions.assertEquals(uniqueList, dedupResult);
+        assertThat(dedupResult, containsInAnyOrder(uniqueList.toArray()));
+    }
+
+    @Test
+    void testDedupZeroDataRequirements() {
+        List<DataRequirement> emptyList = Collections.emptyList();
+        List<DataRequirement> dedupResult = libTranslator.distinctDataRequirements(emptyList);
+        assertThat(dedupResult.size(), is(0));
+    }
+
+    private DataRequirement generateDataRequirementWithCode(String type, String system, String code) {
+        Coding drc = new Coding();
+        drc.setSystem(system).setCode(code).setDisplay("Coding Terminology: " + code);
+        return generateDataRequirement(type, null, drc);
+    }
+
+    private DataRequirement generateDataRequirementWithValueSet(String type, String valueSet) {
+        return generateDataRequirement(type, valueSet, null);
+    }
+
+    private DataRequirement generateDataRequirementWithoutFilter(String type) {
+        DataRequirement dataRequirement =
+                new DataRequirement();
+        return dataRequirement.setType(type);
+    }
+
+    private DataRequirement generateDataRequirement(String type, String valueSet, Coding drc) {
+        DataRequirement dataRequirement =
+                new DataRequirement();
+        DataRequirement.DataRequirementCodeFilterComponent filterComponent =
+                new DataRequirement.DataRequirementCodeFilterComponent();
+
+        return dataRequirement.setType(type).setCodeFilter(List.of(filterComponent
+                .setPath("code")
+                .setValueSet(valueSet)
+                .addCode(drc)));
     }
 }
