@@ -141,7 +141,7 @@ public class LibraryTranslator extends TranslatorBase {
         return result;
     }
 
-    private List<DataRequirement> distinctDataRequirements(List<DataRequirement> reqs) {
+    List<DataRequirement> distinctDataRequirements(List<DataRequirement> reqs) {
         List<DataRequirement> result = new ArrayList<>(reqs.size());
         //Remove duplicates. I wish HapiFhir implemented equals. Today it is SadFhir for me.
         //Object.deepEquals doesn't work at all on codeFilter for some reason.
@@ -158,11 +158,19 @@ public class LibraryTranslator extends TranslatorBase {
     }
 
     private Predicate<DataRequirement> matchCodeFilter(DataRequirement o) {
-        return d ->
-            //Both code filters are empty
-            (CollectionUtils.isEmpty(d.getCodeFilter()) && CollectionUtils.isEmpty(o.getCodeFilter())) ||
-            // OR both match on path AND code or value set
-            (StringUtils.equals(d.getCodeFilter().get(0).getPath(), o.getCodeFilter().get(0).getPath()) && (hasMatchingValueSet(d, o) || hasMatchingCode(o, d)));
+        return d -> {
+            if ((CollectionUtils.isEmpty(d.getCodeFilter()) && CollectionUtils.isEmpty(o.getCodeFilter()))) {
+                // Match when both code filters are empty
+                return true;
+            } else if ((CollectionUtils.isEmpty(d.getCodeFilter()) || CollectionUtils.isEmpty(o.getCodeFilter()))) {
+                // No match if either code filter is empty
+                return false;
+            } else {
+                // Match on path AND (code or value set)
+                return StringUtils.equals(d.getCodeFilter().get(0).getPath(), o.getCodeFilter().get(0).getPath())
+                        && (hasMatchingValueSet(d, o) || hasMatchingCode(o, d));
+            }
+        };
     }
 
     private boolean hasMatchingCode(DataRequirement o, DataRequirement d) {
