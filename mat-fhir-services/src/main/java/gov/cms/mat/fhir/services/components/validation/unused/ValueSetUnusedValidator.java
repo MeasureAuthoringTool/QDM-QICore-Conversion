@@ -28,6 +28,6 @@ public class ValueSetUnusedValidator extends UnusedValidatorBase<CQLQualityDataS
 
     @Override
     String findTarget(CQLQualityDataSetDTO valueSet) {
-        return '"' + valueSet.getCodeIdentifier() + '"';
+        return '"' + valueSet.getCodeListName() + '"';
     }
 }
