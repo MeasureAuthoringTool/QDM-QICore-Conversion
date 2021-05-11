@@ -24,8 +24,8 @@ class ValueSetUnusedValidatorTest {
         cqlModel = new CQLModel();
         validator = new ValueSetUnusedValidator(cqlModel);
 
-        used = creaeValueSet("used");
-        unUsed = creaeValueSet("unused");
+        used = createValueSet("used");
+        unUsed = createValueSet("unused");
     }
 
     @Test
@@ -59,10 +59,12 @@ class ValueSetUnusedValidatorTest {
         assertEquals(unUsed, unused.get(0));
     }
 
-    private CQLQualityDataSetDTO creaeValueSet(String codeIdentifier) {
+    private CQLQualityDataSetDTO createValueSet(String codeIdentifier) {
         CQLQualityDataSetDTO cqlQualityDataSetDTO = new CQLQualityDataSetDTO();
         cqlQualityDataSetDTO.setId(codeIdentifier);
-        cqlQualityDataSetDTO.setCodeIdentifier(codeIdentifier);
+
+        cqlQualityDataSetDTO.setCodeListName(codeIdentifier);
+
         return cqlQualityDataSetDTO;
     }
 }
