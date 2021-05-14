@@ -120,8 +120,7 @@ class MatXmlControllerTest implements ResourceFileUtil {
 //                any(), any(ValidationRequest.class))).thenReturn(Collections.emptyList());
 
         CqlLibrary cqlLibrary = new CqlLibrary();
-        String cqlXml = getStringFromResource("/cqlLookUp.xml");
-        cqlLibrary.setCqlXml(cqlXml);
+        cqlLibrary.setCqlXml(getStringFromResource("/cqlLookUp.xml"));
         when(cqlLibraryRepository.findById(ID)).thenReturn(Optional.of(cqlLibrary));
         MatXmlController.MatXmlReq matXmlReq = new MatXmlController.MatXmlReq();
 
@@ -136,8 +135,8 @@ class MatXmlControllerTest implements ResourceFileUtil {
                 matXmlController.fromStandaloneLib(ULMS_TOKEN, API_KEY, ID, matXmlReq, mockHttpServletResponse);
 
         assertEquals("AIS_HEDIS_2020", response.getCqlModel().getLibraryName());
-        assertEquals("1.0.000", response.getCqlModel().getVersionUsed());
-        assertTrue(response.getCql().startsWith("library AIS_HEDIS_2020 version '1.0.000'"));
+        assertEquals("0.0.000", response.getCqlModel().getVersionUsed());
+        assertTrue(response.getCql().startsWith("library AIS_HEDIS_2020 version '0.0.000'"));
     }
 
     @Test
@@ -206,7 +205,7 @@ class MatXmlControllerTest implements ResourceFileUtil {
 
         MatXmlController.MatXmlResponse response =    matXmlController.fromMeasure(ULMS_TOKEN, API_KEY, ID, matXmlReq, mockHttpServletResponse);
 
-        assertTrue(response.getCql().startsWith("library CDAYTest version '1.0.000'"));
+        assertTrue(response.getCql().startsWith("library CDAYTest version '0.0.000'"));
     }
 
     @Test
