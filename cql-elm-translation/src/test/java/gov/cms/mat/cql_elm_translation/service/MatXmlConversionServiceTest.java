@@ -26,6 +26,6 @@ class MatXmlConversionServiceTest implements ResourceFileUtil {
     void processCalXml_SendValidXml() {
         String xml = getData("/test_mat_cql.xml");
         String cql = matXmlConversionService.processCqlXml(xml);
-        assertTrue(cql.startsWith("library THKR version '1.13.000'"));
+        assertTrue(cql.startsWith("library THKR version '0.0.000'"));
     }
 }

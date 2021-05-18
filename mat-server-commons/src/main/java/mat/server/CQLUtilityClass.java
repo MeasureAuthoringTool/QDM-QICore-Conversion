@@ -97,7 +97,7 @@ public final class CQLUtilityClass {
         AtomicInteger size = new AtomicInteger(0);
         StringBuilder cqlStr = new StringBuilder();
         // library Name and Using
-        cqlStr.append(CQLUtilityClass.createLibraryNameSection(cqlModel));
+        cqlStr.append(CQLUtilityClass.createLibraryNameSection(cqlModel, isFhir));
 
         //includes
         cqlStr.append(CQLUtilityClass.createIncludesSection(cqlModel.getCqlIncludeLibrarys()));
@@ -132,13 +132,13 @@ public final class CQLUtilityClass {
         return Pair.of(cqlStr.toString(), size.get());
     }
 
-    private static String createLibraryNameSection(CQLModel cqlModel) {
+    private static String createLibraryNameSection(CQLModel cqlModel, boolean isFhir) {
         StringBuilder sb = new StringBuilder();
 
         if (StringUtils.isNotBlank(cqlModel.getLibraryName())) {
 
             sb.append("library ").append(cqlModel.getLibraryName());
-            sb.append(VERSION).append("'" + cqlModel.getVersionUsed()).append("'");
+            sb.append(VERSION).append("'" + (isFhir ? cqlModel.getVersionUsed() : "0.0.000")).append("'");
             sb.append(System.lineSeparator()).append(System.lineSeparator());
 
             if (StringUtils.isNotBlank(cqlModel.getLibraryComment())) {
