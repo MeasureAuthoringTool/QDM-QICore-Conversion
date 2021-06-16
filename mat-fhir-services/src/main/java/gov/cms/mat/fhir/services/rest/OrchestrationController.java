@@ -111,7 +111,7 @@ public class OrchestrationController implements OrchestrationParameterChecker {
         }
     }
 
-    public ConversionResultDto process(OrchestrationProperties orchestrationProperties) {
+    private ConversionResultDto process(OrchestrationProperties orchestrationProperties) {
         log.debug("Started Orchestrating Measure key: {}", orchestrationProperties.getThreadSessionKey());
         orchestrationService.process(orchestrationProperties);
         return conversionResultProcessorService.process(orchestrationProperties.getThreadSessionKey());

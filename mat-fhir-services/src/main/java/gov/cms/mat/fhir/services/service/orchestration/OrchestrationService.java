@@ -2,7 +2,6 @@ package gov.cms.mat.fhir.services.service.orchestration;
 
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.rest.dto.ConversionType;
-import gov.cms.mat.fhir.services.components.mat.DraftMeasureXmlProcessor;
 import gov.cms.mat.fhir.services.components.mat.MatXmlException;
 import gov.cms.mat.fhir.services.components.reporting.ConversionReporter;
 import gov.cms.mat.fhir.services.exceptions.*;
@@ -20,39 +19,33 @@ public class OrchestrationService {
     private final LibraryOrchestrationValidationService libraryOrchestrationValidationService;
     private final MeasureOrchestrationValidationService measureOrchestrationValidationService;
     private final MeasureOrchestrationConversionService measureOrchestrationConversionService;
-    private final DraftMeasureXmlProcessor draftMeasureXmlProcessor;
 
     public OrchestrationService(CQLLibraryTranslationService cqlLibraryTranslationService,
                                 LibraryOrchestrationConversionService libraryOrchestrationConversionService,
                                 LibraryOrchestrationValidationService libraryOrchestrationValidationService,
                                 MeasureOrchestrationValidationService measureOrchestrationValidationService,
-                                MeasureOrchestrationConversionService measureOrchestrationConversionService,
-                                DraftMeasureXmlProcessor draftMeasureXmlProcessor) {
+                                MeasureOrchestrationConversionService measureOrchestrationConversionService) {
 
         this.cqlLibraryTranslationService = cqlLibraryTranslationService;
         this.libraryOrchestrationConversionService = libraryOrchestrationConversionService;
         this.libraryOrchestrationValidationService = libraryOrchestrationValidationService;
         this.measureOrchestrationValidationService = measureOrchestrationValidationService;
         this.measureOrchestrationConversionService = measureOrchestrationConversionService;
-        this.draftMeasureXmlProcessor = draftMeasureXmlProcessor;
     }
 
     public boolean process(OrchestrationProperties properties) {
-        boolean processPrerequisitesFlag = processPrerequisites(properties);
-
-        if (!processPrerequisitesFlag) {
+        if (!processPrerequisites(properties)) {
             log.debug("Conversion Stopped due to Prerequisites failures measureId: {}", properties.getMeasureId());
             return false;
         } else if (!processConversion(properties)) {
             log.debug("Conversion Stopped due to validation errors measureId: {}", properties.getMeasureId());
             return false;
         } else {
-            return properties.isPush() ?
-                    processPersistToHapiFhir(properties) : true;
+            return !properties.isPush() || processPersistToHapiFhir(properties);
         }
     }
 
-    public boolean processPrerequisites(OrchestrationProperties properties) {
+    private boolean processPrerequisites(OrchestrationProperties properties) {
         try {
             processAndGetMeasureLib(properties);
             processFhirMeasure(properties);
@@ -71,7 +64,7 @@ public class OrchestrationService {
         measureOrchestrationConversionService.processExistingFhirMeasure(properties);
     }
 
-    public void processAndGetMeasureLib(OrchestrationProperties properties) {
+    private void processAndGetMeasureLib(OrchestrationProperties properties) {
 
         CqlLibrary cqlLib = libraryOrchestrationConversionService.getCqlLibRequired(properties);
 
@@ -119,9 +112,7 @@ public class OrchestrationService {
         log.debug("Validation has started for measureId: {}, xmlSource: {} and conversionType: {}",
                 properties.getMeasureId(), properties.getXmlSource(), properties.getConversionType());
 
-        boolean validated = validate(properties);
-
-        if (!validated) {
+        if (!validate(properties)) {
             log.debug("Validation has failed for measureId: {}", properties.getMeasureId());
             log.warn("Validation has failed for measureId: {} BUT CONVERTING ANYWAY", properties.getMeasureId());
             return true; //todo mcg
