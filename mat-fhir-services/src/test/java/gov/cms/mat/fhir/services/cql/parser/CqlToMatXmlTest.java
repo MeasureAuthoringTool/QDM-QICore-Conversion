@@ -303,11 +303,18 @@ public class CqlToMatXmlTest {
     public void testFunctionFhirComment() throws Exception {
         var destination = parseModel("testfunctions_fhir.cql");
 
-        assertEquals(2, destination.getCqlFunctions().size());
+        assertEquals(3, destination.getCqlFunctions().size());
         assertEquals("testfunction", destination.getCqlFunctions().get(0).getName());
         assertEquals("testfunction comment", destination.getCqlFunctions().get(0).getCommentString());
         assertEquals("testpopulationfunction", destination.getCqlFunctions().get(1).getName());
         assertEquals("testpopulationfunction comment", destination.getCqlFunctions().get(1).getCommentString());
+    }
+
+    @Test
+    public void testNoArgFunctionPasses() throws Exception {
+        var model = parseModel("testfunctions_fhir.cql");
+        // 3rd function in test file has 0 args
+        assertEquals(0, model.getCqlFunctions().get(2).getArgumentList().size());
     }
 
     @Test

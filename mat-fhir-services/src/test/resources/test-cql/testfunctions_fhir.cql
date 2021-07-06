@@ -11,3 +11,6 @@ define function "testfunction"(arg1 Boolean, arg2 Interval<DateTime>, arg3 "Enco
 /*testpopulationfunction comment*/
 define function "testpopulationfunction"(arg1 Boolean):
   true
+
+define function "testNoArgsFunction"():
+  false
