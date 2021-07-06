@@ -359,10 +359,6 @@ public class CqlToMatXml implements CqlVisitor {
             handleError(severErrorAtLine("define function must have a name", lineNumber));
             hasSeveres = true;
         }
-        if (CollectionUtils.isEmpty(args)) {
-            handleError(severErrorAtLine("define function must have arguments", lineNumber));
-            hasSeveres = true;
-        }
         if (StringUtils.isBlank(logic)) {
             handleError(severErrorAtLine("define function must have logic", lineNumber));
             hasSeveres = true;

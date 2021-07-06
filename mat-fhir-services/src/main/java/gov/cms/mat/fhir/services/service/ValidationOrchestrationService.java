@@ -192,6 +192,9 @@ public class ValidationOrchestrationService {
     }
 
     private List<CQLExpressionOprandObject> convert(CQLFunctions function) {
+        if (CollectionUtils.isEmpty(function.getArgumentList())) {
+            return Collections.emptyList();
+        }
         return function.getArgumentList().stream().map(a -> {
             var operand = new CQLExpressionOprandObject();
             operand.setName(a.getArgumentName());
