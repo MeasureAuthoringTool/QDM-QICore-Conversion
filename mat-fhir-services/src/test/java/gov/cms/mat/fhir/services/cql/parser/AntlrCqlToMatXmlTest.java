@@ -327,7 +327,7 @@ public class AntlrCqlToMatXmlTest {
     public void testFunctionFhirComment() throws Exception {
         var destination = parseModel("testfunctions_fhir.cql");
 
-        assertEquals(2, destination.getCqlFunctions().size());
+        assertEquals(3, destination.getCqlFunctions().size());
         assertEquals("testfunction", destination.getCqlFunctions().get(0).getName());
         assertEquals("testfunction comment", destination.getCqlFunctions().get(0).getCommentString());
         assertEquals("testpopulationfunction", destination.getCqlFunctions().get(1).getName());
