@@ -54,12 +54,12 @@
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-core</artifactId>
-			<version>3.0.0</version>
+			<version>3.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
-			<version>3.0.0</version>
+			<version>3.0.1</version>
 		</dependency>
 		<dependency>
 		    <groupId>javax.validation</groupId>
@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>info.cqframework</groupId>
 			<artifactId>cql-formatter</artifactId>
-			<version>1.5.1</version>
+			<version>1.5.3</version>
 		</dependency>
 	</dependencies>
 	<build>
