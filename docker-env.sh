@@ -1,12 +1,12 @@
 #!/bin/sh
 export MAT_DB_URL='jdbc:mysql://host.docker.internal:3306/mat?serverTimezone=UTC&max_allowed_packet=16777216'
 export MAT_DB_USER=root
-export MAT_DB_PASS=password
+export MAT_DB_PASS=changeme
 
 export HAPI_DB=hapi-r4-db
-export HAPI_DB_URL='jdbc:mysql://host.docker.internal/'${HAPI_DB}'?serverTimezone=UTC&max_allowed_packet=16777216&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false'
-export HAPI_DB_USER=root
-export HAPI_DB_PASS=password
+export HAPI_DB_URL='jdbc:mysql://hapi-fhir-mysql:3306/'${HAPI_DB}'?serverTimezone=UTC&max_allowed_packet=16777216&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false'
+export HAPI_DB_USER=admin
+export HAPI_DB_PASS=changeme
 
 export LOG_LEVEL=INFO
 export MAT_API_KEY=DISABLED
