@@ -188,8 +188,9 @@ public class GoogleSpreadsheetService {
 
 
     @Cacheable("conversionDataTypes")
-    public List<ConversionDataTypes> getConversionDataTypes() {
-        GoogleConversionDataTypesData data = restTemplate.getForObject(conversionDataTypesUrl, GoogleConversionDataTypesData.class);
+    public List<ConversionDataTypes> getConversionDataTypes() throws IOException {
+        GoogleConversionDataTypesData data = objectMapper.readValue(new URL(conversionDataTypesUrl), GoogleConversionDataTypesData.class);
+//        GoogleConversionDataTypesData data = restTemplate.getForObject(conversionDataTypesUrl, GoogleConversionDataTypesData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
             log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), conversionDataTypesUrl);
@@ -208,8 +209,9 @@ public class GoogleSpreadsheetService {
 
 
     @Cacheable("conversionAttributes")
-    public List<ConversionAttributes> getConversionAttributes() {
-        GoogleConversionAttributesData data = restTemplate.getForObject(attributesUrl, GoogleConversionAttributesData.class);
+    public List<ConversionAttributes> getConversionAttributes() throws IOException {
+        GoogleConversionAttributesData data = objectMapper.readValue(new URL(attributesUrl), GoogleConversionAttributesData.class);
+//        GoogleConversionAttributesData data = restTemplate.getForObject(attributesUrl, GoogleConversionAttributesData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
             log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), attributesUrl);
@@ -227,9 +229,10 @@ public class GoogleSpreadsheetService {
         }
     }
 
-    public List<FhirLightBoxDatatypeAttributeAssociations> getFhirLightBoxDatatypeAttributeAssociation() {
-        GoogleFhirLightBoxDatatypeAttributeAssociationData
-                data = restTemplate.getForObject(fhirLightboxDatatypeAttributeAssociationUrl, GoogleFhirLightBoxDatatypeAttributeAssociationData.class);
+    public List<FhirLightBoxDatatypeAttributeAssociations> getFhirLightBoxDatatypeAttributeAssociation() throws IOException {
+        GoogleFhirLightBoxDatatypeAttributeAssociationData data = objectMapper.readValue(new URL(fhirLightboxDatatypeAttributeAssociationUrl), GoogleFhirLightBoxDatatypeAttributeAssociationData.class);
+//        GoogleFhirLightBoxDatatypeAttributeAssociationData
+//                data = restTemplate.getForObject(fhirLightboxDatatypeAttributeAssociationUrl, GoogleFhirLightBoxDatatypeAttributeAssociationData.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
             log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), attributesUrl);
@@ -288,8 +291,9 @@ public class GoogleSpreadsheetService {
         }
     }
 
-    public List<CodeSystemEntry> getCodeSystemEntries() {
-        GoogleConversionDataCodeSystemEntry data = restTemplate.getForObject(codeSystemEntryUrl, GoogleConversionDataCodeSystemEntry.class);
+    public List<CodeSystemEntry> getCodeSystemEntries() throws IOException {
+        GoogleConversionDataCodeSystemEntry data = objectMapper.readValue(new URL(codeSystemEntryUrl), GoogleConversionDataCodeSystemEntry.class);
+//        GoogleConversionDataCodeSystemEntry data = restTemplate.getForObject(codeSystemEntryUrl, GoogleConversionDataCodeSystemEntry.class);
 
         if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
             log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), codeSystemEntryUrl);

@@ -14,12 +14,12 @@ json:
     data-types-url: ${GOOGLE_DATA_TYPES_URL}
     required-measure-fields-url: ${GOOGLE_REQUIRED_MEASURE_FIELDS_URL}
     resource-definition-url: ${GOOGLE_RESOURCE_DEFINITION_URL}
-    conversion-data-types-url: ${GOOGLE_CONVERSION_DATA_TYPES_URL:https://spreadsheets.google.com/feeds/list/1lV1N4O7xmSxjRH6ghuCj3mYcntPsTz8qBcpQ6DO7Se4/1/public/values?alt=json}
-    attributes-url: ${GOOGLE_ATTRIBUTES_URL:https://spreadsheets.google.com/feeds/list/1lV1N4O7xmSxjRH6ghuCj3mYcntPsTz8qBcpQ6DO7Se4/2/public/values?alt=json}
-    fhir-lightbox-datatype_attribute_association-url: ${GOOGLE_FHIR_LIGHTBOX_DATATYPE_ATTRIBUTE_ASSOCIATION_URL:https://spreadsheets.google.com/feeds/list/1ecwDn7YfmqYhXJqtAFwayyAXFQ4EZ2sEeyKT5TBtttc/3/public/values?alt=json}
+    conversion-data-types-url: ${GOOGLE_CONVERSION_DATA_TYPES_URL}
+    attributes-url: ${GOOGLE_ATTRIBUTES_URL}
+    fhir-lightbox-datatype_attribute_association-url: ${GOOGLE_FHIR_LIGHTBOX_DATATYPE_ATTRIBUTE_ASSOCIATION_URL}
     fhir-lightbox-datatype_for_function_args-url: ${GOOGLE_FHIR_LIGHTBOX_DATATYPE_FOR_FUNCTION_ARGS_URL}
     population-basis-valid-values-url: ${GOOGLE_POPULATION_BASIS_VALID_VALUES_URL}
-    code-system-entry-url: ${GOOGLE_CODE_SYSTEM_ENTRY_URL:https://spreadsheets.google.com/feeds/list/1_heoWR09X3UnyEvyyHLzVXT_D1Hhdt3OPztpgr1hW_k/od6/public/values?alt=json}
+    code-system-entry-url: ${GOOGLE_CODE_SYSTEM_ENTRY_URL}
 
 
 springdoc:
