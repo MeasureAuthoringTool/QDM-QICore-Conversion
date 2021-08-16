@@ -55,17 +55,17 @@ public class GoogleSpreadsheetController {
     }
 
     @GetMapping(path = "/conversionDataTypes")
-    public List<ConversionDataTypes> conversionDataTypes() {
+    public List<ConversionDataTypes> conversionDataTypes() throws IOException {
         return spreadsheetService.getConversionDataTypes();
     }
 
     @GetMapping(path = "/conversionAttributes")
-    public List<ConversionAttributes> conversionAttributes() {
+    public List<ConversionAttributes> conversionAttributes() throws IOException {
         return spreadsheetService.getConversionAttributes();
     }
 
     @GetMapping(path = "/fhirLightBoxDatatypeAttributeAssociation")
-    public List<FhirLightBoxDatatypeAttributeAssociations> fhirLightBoxDatatypeAttributeAssociation() {
+    public List<FhirLightBoxDatatypeAttributeAssociations> fhirLightBoxDatatypeAttributeAssociation() throws IOException {
         return spreadsheetService.getFhirLightBoxDatatypeAttributeAssociation();
     }
 
@@ -80,7 +80,7 @@ public class GoogleSpreadsheetController {
     }
 
     @GetMapping(path = "/codeSystemEntries")
-    public List<CodeSystemEntry> codeSystemEntries() {
+    public List<CodeSystemEntry> codeSystemEntries() throws IOException {
         return spreadsheetService.getCodeSystemEntries();
     }
 }
