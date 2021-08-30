@@ -61,6 +61,7 @@ class LibraryUnusedValidatorTest {
     private CQLIncludeLibrary createIncludeLibrary(String alias) {
         CQLIncludeLibrary cqlIncludeLibrary = new CQLIncludeLibrary();
         cqlIncludeLibrary.setAliasName(alias);
+        cqlIncludeLibrary.setCqlLibraryName(alias);
         return cqlIncludeLibrary;
     }
 }
