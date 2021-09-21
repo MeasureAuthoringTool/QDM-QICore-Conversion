@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk
+FROM openjdk:15.0-jdk
 ARG JAR_FILE=target/hapi-fhir-jpaserver-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
@@ -11,4 +11,3 @@ RUN curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/cur
     && unzip newrelic-java.zip \
     && sed -i "/common: &default_settings/a \ \ host: gov-collector.newrelic.com" newrelic/newrelic.yml
 ENTRYPOINT ["java","-javaagent:newrelic/newrelic.jar","-jar","/app.jar"]
-
