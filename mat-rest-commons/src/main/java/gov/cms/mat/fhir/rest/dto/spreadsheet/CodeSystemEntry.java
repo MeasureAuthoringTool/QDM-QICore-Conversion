@@ -17,7 +17,6 @@ public class CodeSystemEntry implements Comparable<CodeSystemEntry> {
     private String oid;
     private String url;
     private String name;
-    private String defaultVsacVersion;
 
     @Override
     public int compareTo(CodeSystemEntry rhs) {

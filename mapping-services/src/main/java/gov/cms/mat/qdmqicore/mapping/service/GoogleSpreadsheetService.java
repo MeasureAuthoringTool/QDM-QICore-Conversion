@@ -32,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -292,25 +293,12 @@ public class GoogleSpreadsheetService {
     }
 
     public List<CodeSystemEntry> getCodeSystemEntries() throws IOException {
-        GoogleConversionDataCodeSystemEntry data = objectMapper.readValue(new URL(codeSystemEntryUrl), GoogleConversionDataCodeSystemEntry.class);
-//        GoogleConversionDataCodeSystemEntry data = restTemplate.getForObject(codeSystemEntryUrl, GoogleConversionDataCodeSystemEntry.class);
+        CodeSystemEntry[] data = objectMapper.readValue(new URL(codeSystemEntryUrl), CodeSystemEntry[].class);
 
-        if (data != null && data.getFeed() != null && data.getFeed().getEntry() != null) {
-            log.info(LOG_MESSAGE, data.getFeed().getEntry().size(), codeSystemEntryUrl);
-
-            return data.getFeed().getEntry().stream()
-                    .map(e -> {
-                        var r = new CodeSystemEntry();
-                        r.setOid(getData(e.getOid()));
-                        r.setUrl(getData(e.getUrl()));
-                        r.setName(getData(e.getName()));
-                        r.setDefaultVsacVersion(getData(e.getDefaultVsacVersion()));
-                        return r;
-
-                    }).sorted()
-                    .collect(Collectors.toList());
-        } else {
-            return Collections.emptyList();
+        if(data != null) {
+            return Arrays.asList(data);
         }
+
+        return Collections.emptyList();
     }
 }
