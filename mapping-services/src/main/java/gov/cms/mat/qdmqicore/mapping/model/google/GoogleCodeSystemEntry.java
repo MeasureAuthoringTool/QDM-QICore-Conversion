@@ -19,7 +19,4 @@ public class GoogleCodeSystemEntry {
 
     @JsonProperty("gsx$codesystemname")
     Cell name;
-
-    @JsonProperty("gsx$defaultvsacversion")
-    Cell defaultVsacVersion;
 }
