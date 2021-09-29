@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +25,7 @@ class ConversionDataControllerTest {
     private GoogleSpreadsheetController conversionDataController;
 
     @Test
-    void getMatAttributes() {
+    void getMatAttributes() throws IOException {
         List<MatAttribute> listToReturn = Collections.singletonList(new MatAttribute());
         when(spreadSheetService.getMatAttributes()).thenReturn(listToReturn);
 

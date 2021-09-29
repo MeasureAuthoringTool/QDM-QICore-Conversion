@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,57 +30,57 @@ public class GoogleSpreadsheetController {
     }
 
     @GetMapping(path = "/matAttributes")
-    public List<MatAttribute> matAttributes() {
+    public List<MatAttribute> matAttributes() throws IOException {
         return spreadsheetService.getMatAttributes();
     }
 
     @GetMapping(path = "/qdmToQicoreMappings")
-    public List<QdmToQicoreMapping> qdmToQicoreMappings() {
+    public List<QdmToQicoreMapping> qdmToQicoreMappings() throws IOException {
         return spreadsheetService.getQdmToQicoreMapping();
     }
 
     @GetMapping(path = "/dataTypes")
-    public List<DataType> dataTypes() {
+    public List<DataType> dataTypes() throws IOException {
         return spreadsheetService.getDataTypes();
     }
 
     @GetMapping(path = "/requiredMeasureFields")
-    public List<RequiredMeasureField> requiredMeasureFields() {
+    public List<RequiredMeasureField> requiredMeasureFields() throws IOException {
         return spreadsheetService.getRequiredMeasureFields();
     }
 
     @GetMapping(path = "/resourceDefinition")
-    public List<ResourceDefinition> resourceDefinition() {
+    public List<ResourceDefinition> resourceDefinition() throws IOException {
         return spreadsheetService.getResourceDefinitions();
     }
 
     @GetMapping(path = "/conversionDataTypes")
-    public List<ConversionDataTypes> conversionDataTypes() {
+    public List<ConversionDataTypes> conversionDataTypes() throws IOException {
         return spreadsheetService.getConversionDataTypes();
     }
 
     @GetMapping(path = "/conversionAttributes")
-    public List<ConversionAttributes> conversionAttributes() {
+    public List<ConversionAttributes> conversionAttributes() throws IOException {
         return spreadsheetService.getConversionAttributes();
     }
 
     @GetMapping(path = "/fhirLightBoxDatatypeAttributeAssociation")
-    public List<FhirLightBoxDatatypeAttributeAssociations> fhirLightBoxDatatypeAttributeAssociation() {
+    public List<FhirLightBoxDatatypeAttributeAssociations> fhirLightBoxDatatypeAttributeAssociation() throws IOException {
         return spreadsheetService.getFhirLightBoxDatatypeAttributeAssociation();
     }
 
     @GetMapping(path = "/fhirLightboxDataTypesForFunctionArgs")
-    public List<String> fhirLightboxDataTypesForFunctionArgs() {
+    public List<String> fhirLightboxDataTypesForFunctionArgs() throws IOException {
         return spreadsheetService.getFhirLightboxDataTypesForFunctionArgs();
     }
 
     @GetMapping(path = "/populationBasisValidValues")
-    public Collection<String> populationBasisValidValues() {
+    public Collection<String> populationBasisValidValues() throws IOException {
         return spreadsheetService.getPopulationBasisValidValues();
     }
 
     @GetMapping(path = "/codeSystemEntries")
-    public List<CodeSystemEntry> codeSystemEntries() {
+    public List<CodeSystemEntry> codeSystemEntries() throws IOException {
         return spreadsheetService.getCodeSystemEntries();
     }
 }

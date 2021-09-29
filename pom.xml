@@ -21,7 +21,7 @@
         <hapi.fhir.version>5.0.2</hapi.fhir.version>
         <swagger.version>1.5.4</swagger.version>
         <commons.collections.version>4.4</commons.collections.version>
-        <cqframework.version>1.5.2</cqframework.version>
+        <cqframework.version>1.5.4</cqframework.version>
     </properties>
 
     <dependencies>
@@ -157,14 +157,6 @@
     </modules>
 
     <repositories>
-<!--        <repository>-->
-<!--            <id>cqframework-local</id>-->
-<!--            <name>Local cqframework SNAPSHOT</name>-->
-<!--            <url>file://${project.basedir}/libs</url>-->
-<!--            <snapshots>-->
-<!--                <enabled>true</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
         <repository>
             <id>oss-sonatype</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>

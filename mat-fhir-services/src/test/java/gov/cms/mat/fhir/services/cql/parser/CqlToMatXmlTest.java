@@ -49,28 +49,28 @@ public class CqlToMatXmlTest {
         log.info("an offering to the Codacy gods: " + codeListService);
         log.info("an offering to the Codacy gods: " + cqlLibraryRepository);
         Map<String, CodeSystemEntry> map = new HashMap<>();
-        map.put("urn:oid:2.16.840.1.113883.6.96", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.96", "http://snomed.info/sct/731000124108", "SNOMEDCT", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.5.1001", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.1001", "http://terminology.hl7.org/CodeSystem/v3-ActMood", "ActMood", "TBD"));
-        map.put("urn:oid:2.16.840.1.113883.5.1", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.1", "http://hl7.org/fhir/ValueSet/v3-AdministrativeGender", "SNOMEDCT", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.6.88", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.88", "http://www.nlm.nih.gov/research/umls/rxnorm", "SNOMEDCT", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.6.1", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.1", "http://loinc.org", "SNOMEDCT", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.6.12", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.12", "http://www.ama-assn.org/go/cpt", "SNOMEDCT", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.12.292", new CodeSystemEntry("urn:oid:2.16.840.1.113883.12.292", "http://hl7.org/fhir/sid/cvx", "SNOMEDCT", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.6.238", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.238", "https://www.hl7.org/fhir/us/core/CodeSystem-cdcrec.html", "SNOMEDCT", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.6.259", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.259", "http://terminology.hl7.org/codesystem/nhsn/hsloc", "SNOMEDCT", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.12.112", new CodeSystemEntry("urn:oid:2.16.840.1.113883.12.112", "http://ToBeDone.org", "DischargeDisposition", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.6.285", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.285", "http://snomed.info/sct/731000124108", "HCPCS", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.6.90", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.90", "http://hl7.org/fhir/sid/icd-10-cm", "ICD10CM", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.3.221.5", new CodeSystemEntry("urn:oid:2.16.840.1.113883.3.221.5", "http://nahdo.org/sopt", "SOP", "2019-03"));
-        map.put("urn:oid:2.16.840.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/v3-RoleCode", "RoleCode", "2019-03"));
-        map.put("urn:oid:2.15.840.1.113883.5.111", new CodeSystemEntry("urn:oid:2.15.840.1.113883.5.111", "http://hl7.org/fhir/v3/RoleCode", "RoleCode", "2019-03"));
-        map.put("urn:oid:2.16.1.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.1.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/diagnosis-role", "RoleCode", "2019-03"));
-        map.put("urn:oid:2.16.2.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.2.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/request-intent", "RoleCode", "2019-03"));
-        map.put("urn:oid:2.16.3.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.3.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/medicationrequest-category", "RoleCode", "2019-03"));
-        map.put("urn:oid:2.16.4.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.4.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/condition-clinical", "RoleCode", "2019-03"));
-        map.put("urn:oid:2.16.5.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.5.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/condition-verification", "RoleCode", "2019-03"));
-        map.put("urn:oid:2.16.6.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.6.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical", "RoleCode", "2019-03"));
-        map.put("urn:oid:2.16.7.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.7.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/allergyintolerance-verification", "RoleCode", "2019-03"));
+        map.put("urn:oid:2.16.840.1.113883.6.96", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.96", "http://snomed.info/sct/731000124108", "SNOMEDCT"));
+        map.put("urn:oid:2.16.840.1.113883.5.1001", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.1001", "http://terminology.hl7.org/CodeSystem/v3-ActMood", "ActMood"));
+        map.put("urn:oid:2.16.840.1.113883.5.1", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.1", "http://hl7.org/fhir/ValueSet/v3-AdministrativeGender", "SNOMEDCT"));
+        map.put("urn:oid:2.16.840.1.113883.6.88", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.88", "http://www.nlm.nih.gov/research/umls/rxnorm", "SNOMEDCT"));
+        map.put("urn:oid:2.16.840.1.113883.6.1", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.1", "http://loinc.org", "SNOMEDCT"));
+        map.put("urn:oid:2.16.840.1.113883.6.12", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.12", "http://www.ama-assn.org/go/cpt", "SNOMEDCT"));
+        map.put("urn:oid:2.16.840.1.113883.12.292", new CodeSystemEntry("urn:oid:2.16.840.1.113883.12.292", "http://hl7.org/fhir/sid/cvx", "SNOMEDCT"));
+        map.put("urn:oid:2.16.840.1.113883.6.238", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.238", "https://www.hl7.org/fhir/us/core/CodeSystem-cdcrec.html", "SNOMEDCT"));
+        map.put("urn:oid:2.16.840.1.113883.6.259", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.259", "http://terminology.hl7.org/codesystem/nhsn/hsloc", "SNOMEDCT"));
+        map.put("urn:oid:2.16.840.1.113883.12.112", new CodeSystemEntry("urn:oid:2.16.840.1.113883.12.112", "http://ToBeDone.org", "DischargeDisposition"));
+        map.put("urn:oid:2.16.840.1.113883.6.285", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.285", "http://snomed.info/sct/731000124108", "HCPCS"));
+        map.put("urn:oid:2.16.840.1.113883.6.90", new CodeSystemEntry("urn:oid:2.16.840.1.113883.6.90", "http://hl7.org/fhir/sid/icd-10-cm", "ICD10CM"));
+        map.put("urn:oid:2.16.840.1.113883.3.221.5", new CodeSystemEntry("urn:oid:2.16.840.1.113883.3.221.5", "http://nahdo.org/sopt", "SOP"));
+        map.put("urn:oid:2.16.840.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.840.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/v3-RoleCode", "RoleCode"));
+        map.put("urn:oid:2.15.840.1.113883.5.111", new CodeSystemEntry("urn:oid:2.15.840.1.113883.5.111", "http://hl7.org/fhir/v3/RoleCode", "RoleCode"));
+        map.put("urn:oid:2.16.1.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.1.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/diagnosis-role", "RoleCode"));
+        map.put("urn:oid:2.16.2.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.2.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/request-intent", "RoleCode"));
+        map.put("urn:oid:2.16.3.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.3.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/medicationrequest-category", "RoleCode"));
+        map.put("urn:oid:2.16.4.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.4.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/condition-clinical", "RoleCode"));
+        map.put("urn:oid:2.16.5.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.5.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/condition-verification", "RoleCode"));
+        map.put("urn:oid:2.16.6.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.6.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical", "RoleCode"));
+        map.put("urn:oid:2.16.7.1.113883.5.111", new CodeSystemEntry("urn:oid:2.16.7.1.113883.5.111", "http://terminology.hl7.org/CodeSystem/allergyintolerance-verification", "RoleCode"));
 
 
         // when(codeListService.getOidToVsacCodeSystemMap()).thenReturn(map);
@@ -303,11 +303,18 @@ public class CqlToMatXmlTest {
     public void testFunctionFhirComment() throws Exception {
         var destination = parseModel("testfunctions_fhir.cql");
 
-        assertEquals(2, destination.getCqlFunctions().size());
+        assertEquals(3, destination.getCqlFunctions().size());
         assertEquals("testfunction", destination.getCqlFunctions().get(0).getName());
         assertEquals("testfunction comment", destination.getCqlFunctions().get(0).getCommentString());
         assertEquals("testpopulationfunction", destination.getCqlFunctions().get(1).getName());
         assertEquals("testpopulationfunction comment", destination.getCqlFunctions().get(1).getCommentString());
+    }
+
+    @Test
+    public void testNoArgFunctionPasses() throws Exception {
+        var model = parseModel("testfunctions_fhir.cql");
+        // 3rd function in test file has 0 args
+        assertEquals(0, model.getCqlFunctions().get(2).getArgumentList().size());
     }
 
     @Test

@@ -20,6 +20,8 @@ public class LibraryUnusedValidator extends UnusedValidatorBase<CQLIncludeLibrar
         } else {
             return cqlModel.getCqlIncludeLibrarys()
                     .stream()
+                    //Ignore FHIRHelpers when determining unused list. It is needed for under-the-hood processing by the Translator.
+                    .filter(l -> !l.getCqlLibraryName().equals("FHIRHelpers"))
                     .filter(this::isNotUsedInCql)
                     .collect(Collectors.toList());
         }

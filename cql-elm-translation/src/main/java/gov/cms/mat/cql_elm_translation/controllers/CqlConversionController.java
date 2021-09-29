@@ -12,7 +12,11 @@ import gov.cms.mat.cql_elm_translation.service.MatXmlConversionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.cqframework.cql.cql2elm.LibraryBuilder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UncheckedIOException;
 
@@ -100,7 +104,7 @@ public class CqlConversionController {
     }
 
     /**
-     * Removes this node which blows up array processing for annotation array.
+     * Removes this node, when present, which blows up array processing for annotation array.
      * {
      * "translatorOptions": "DisableMethodInvocation,EnableLocators,DisableListPromotion,EnableDetailedErrors,EnableAnnotations,DisableListDemotion",
      * "type": "CqlToElmInfo"
@@ -125,15 +129,17 @@ public class CqlConversionController {
                     return json;
                 }
 
-                if (annotationNode.size() < 2) {
-                    if (libraryNode instanceof ObjectNode) {
-                        ObjectNode objectNode = (ObjectNode) libraryNode;
-                        objectNode.remove("annotation");
-                    }
-                } else {
-                    if (annotationNode instanceof ArrayNode) {
-                        ArrayNode arrayNode = (ArrayNode) annotationNode;
-                        arrayNode.remove(0);
+                if (annotationNode.isEmpty() &&
+                        libraryNode instanceof ObjectNode) {
+                    ObjectNode objectNode = (ObjectNode) libraryNode;
+                    objectNode.remove("annotation");
+                    return rootNode.toPrettyString();
+                }
+
+                for (int i = 0; i < annotationNode.size(); i++) {
+                    if(annotationNode.get(i).has("translatorOptions")) {
+                        ((ArrayNode)annotationNode).remove(i);
+                        break;
                     }
                 }
 
