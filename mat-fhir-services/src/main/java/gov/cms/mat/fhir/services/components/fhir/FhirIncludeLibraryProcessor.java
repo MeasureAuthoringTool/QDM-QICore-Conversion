@@ -101,7 +101,7 @@ public class FhirIncludeLibraryProcessor implements FhirLibraryHelper {
             } catch (Exception e) {
                 log.debug("Error when processing include: {}", include);
                 fhirIncludeLibraryReferences.setSearchResult(false);
-                result = false;
+                fhirIncludeLibraryReferences.setOutcome(false);
             }
             fhirIncludeLibraryResult.getLibraryReferences().add(fhirIncludeLibraryReferences);
         }
