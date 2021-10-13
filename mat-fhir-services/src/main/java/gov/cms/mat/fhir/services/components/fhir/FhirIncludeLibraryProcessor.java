@@ -68,12 +68,12 @@ public class FhirIncludeLibraryProcessor implements FhirLibraryHelper {
 
         getIncludedLibraryReferences(cqlTextParser, fhirIncludeLibraryResult);
 
-        fhirIncludeLibraryResult.setOutcome(result);
+//        fhirIncludeLibraryResult.setOutcome(result);
 
         return fhirIncludeLibraryResult;
     }
 
-    private void getIncludedLibraryReferences(CqlTextParser cqlTextParser, FhirIncludeLibraryResult fhirIncludeLibraryResult, boolean result) {
+    private void getIncludedLibraryReferences(CqlTextParser cqlTextParser, FhirIncludeLibraryResult fhirIncludeLibraryResult) {
         for (IncludeProperties include : cqlTextParser.getIncludes()) {
             var fhirIncludeLibraryReferences = new FhirIncludeLibraryReferences();
 
@@ -96,12 +96,12 @@ public class FhirIncludeLibraryProcessor implements FhirLibraryHelper {
                     Attachment cqlAttachment = findCqlAttachment(library, "text/cql");
                     String data = new String(cqlAttachment.getData(), StandardCharsets.UTF_8);
                     var cqlTextParserIncludedLibrary = new CqlTextParser(data);
-                    getIncludedLibraryReferences(cqlTextParserIncludedLibrary, fhirIncludeLibraryResult, result);
+                    getIncludedLibraryReferences(cqlTextParserIncludedLibrary, fhirIncludeLibraryResult);
                 }
             } catch (Exception e) {
                 log.debug("Error when processing include: {}", include);
                 fhirIncludeLibraryReferences.setSearchResult(false);
-                fhirIncludeLibraryReferences.setOutcome(false);
+                fhirIncludeLibraryResult.setOutcome(false);
             }
             fhirIncludeLibraryResult.getLibraryReferences().add(fhirIncludeLibraryReferences);
         }
