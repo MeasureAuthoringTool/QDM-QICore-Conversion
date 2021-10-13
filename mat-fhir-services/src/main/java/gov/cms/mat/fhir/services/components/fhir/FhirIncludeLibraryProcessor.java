@@ -59,7 +59,7 @@ public class FhirIncludeLibraryProcessor implements FhirLibraryHelper {
     private FhirIncludeLibraryResult processParser(CqlTextParser cqlTextParser) {
         var fhirIncludeLibraryResult = new FhirIncludeLibraryResult();
 
-        boolean result = true;
+        fhirIncludeLibraryResult.setOutcome(true);
 
         LibraryProperties libraryProperties = cqlTextParser.getLibrary();
 
