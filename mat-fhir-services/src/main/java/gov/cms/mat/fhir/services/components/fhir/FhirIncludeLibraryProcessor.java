@@ -68,8 +68,6 @@ public class FhirIncludeLibraryProcessor implements FhirLibraryHelper {
 
         getIncludedLibraryReferences(cqlTextParser, fhirIncludeLibraryResult);
 
-//        fhirIncludeLibraryResult.setOutcome(result);
-
         return fhirIncludeLibraryResult;
     }
 

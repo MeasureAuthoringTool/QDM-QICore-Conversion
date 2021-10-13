@@ -127,7 +127,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleTestHel
     }
 
     @Test
-    void findIncludedFhirLibraries_IncludedLibraryReferences_Found() {
+    void findIncludedFhirLibrariesIncludedLibraryReferencesFound() {
         String fhirHelpersCql = getStringFromResource("/includes/FHIRHelpers.cql");
         Bundle fhirHelpersBundle = createBundle(FULL_URL, createLib(fhirHelpersCql));
         lenient().when(hapiFhirServer.fetchLibraryBundleByVersionAndName("4.0.000", "FHIRHelpers"))
