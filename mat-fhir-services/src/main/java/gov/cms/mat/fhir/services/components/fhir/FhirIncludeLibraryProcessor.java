@@ -66,7 +66,7 @@ public class FhirIncludeLibraryProcessor implements FhirLibraryHelper {
         fhirIncludeLibraryResult.setLibraryName(libraryProperties.getName());
         fhirIncludeLibraryResult.setLibraryVersion(libraryProperties.getVersion());
 
-        getIncludedLibraryReferences(cqlTextParser, fhirIncludeLibraryResult, result);
+        getIncludedLibraryReferences(cqlTextParser, fhirIncludeLibraryResult);
 
         fhirIncludeLibraryResult.setOutcome(result);
 
