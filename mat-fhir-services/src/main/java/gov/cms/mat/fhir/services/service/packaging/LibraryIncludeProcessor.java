@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -73,7 +74,7 @@ public class LibraryIncludeProcessor implements FhirLibraryHelper {
         }
     }
 
-    private boolean isAllNotScanned(List<FhirIncludeLibraryReferences> libraryReferences) {
+    private boolean isAllNotScanned(Set<FhirIncludeLibraryReferences> libraryReferences) {
         return libraryReferences.stream()
                 .anyMatch(r -> !r.isScannedForIncludedLibraries());
     }

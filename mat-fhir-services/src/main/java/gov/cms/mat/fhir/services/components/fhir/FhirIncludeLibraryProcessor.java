@@ -9,17 +9,22 @@ import gov.cms.mat.fhir.rest.dto.FhirIncludeLibraryResult;
 import gov.cms.mat.fhir.services.exceptions.CqlNotFhirException;
 import gov.cms.mat.fhir.services.exceptions.FhirLibraryNotFoundException;
 import gov.cms.mat.fhir.services.exceptions.FhirNotUniqueException;
+import gov.cms.mat.fhir.services.exceptions.cql.LibraryAttachmentNotFoundException;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
+import gov.cms.mat.fhir.services.translate.creators.FhirLibraryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Library;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+
 @Component
 @Slf4j
-public class FhirIncludeLibraryProcessor {
+public class FhirIncludeLibraryProcessor implements FhirLibraryHelper {
 
     private final HapiFhirServer hapiFhirServer;
 
@@ -51,40 +56,53 @@ public class FhirIncludeLibraryProcessor {
         }
     }
 
-
     private FhirIncludeLibraryResult processParser(CqlTextParser cqlTextParser) {
-        FhirIncludeLibraryResult res = new FhirIncludeLibraryResult();
+        var fhirIncludeLibraryResult = new FhirIncludeLibraryResult();
 
-        boolean result = true;
+        fhirIncludeLibraryResult.setOutcome(true);
 
         LibraryProperties libraryProperties = cqlTextParser.getLibrary();
 
-        res.setLibraryName(libraryProperties.getName());
-        res.setLibraryVersion(libraryProperties.getVersion());
+        fhirIncludeLibraryResult.setLibraryName(libraryProperties.getName());
+        fhirIncludeLibraryResult.setLibraryVersion(libraryProperties.getVersion());
 
+        getIncludedLibraryReferences(cqlTextParser, fhirIncludeLibraryResult);
+
+        return fhirIncludeLibraryResult;
+    }
+
+    private void getIncludedLibraryReferences(CqlTextParser cqlTextParser, FhirIncludeLibraryResult fhirIncludeLibraryResult) {
         for (IncludeProperties include : cqlTextParser.getIncludes()) {
-            FhirIncludeLibraryReferences libraryReferences = new FhirIncludeLibraryReferences();
+            var fhirIncludeLibraryReferences = new FhirIncludeLibraryReferences();
 
-            libraryReferences.setName(include.getName());
-            libraryReferences.setVersion(include.getVersion());
+            fhirIncludeLibraryReferences.setName(include.getName());
+            fhirIncludeLibraryReferences.setVersion(include.getVersion());
 
             try {
                 Bundle bundle = fetchBundle(include);
-                libraryReferences.setSearchResult(true);
-                libraryReferences.setReferenceEndpoint(bundle.getEntry().get(0).getFullUrl());
-                libraryReferences.setLibrary((Library) bundle.getEntry().get(0).getResource());
+
+                Library library = (Library) bundle.getEntry().get(0).getResource();
+
+                fhirIncludeLibraryReferences.setSearchResult(true);
+                fhirIncludeLibraryReferences.setReferenceEndpoint(bundle.getEntry().get(0).getFullUrl());
+                fhirIncludeLibraryReferences.setLibrary(library);
+
+                // to check if any included library has any included libraries.
+                if (CollectionUtils.isEmpty(library.getContent())) {
+                    throw new LibraryAttachmentNotFoundException(library);
+                } else {
+                    Attachment cqlAttachment = findCqlAttachment(library, "text/cql");
+                    String data = new String(cqlAttachment.getData(), StandardCharsets.UTF_8);
+                    var cqlTextParserIncludedLibrary = new CqlTextParser(data);
+                    getIncludedLibraryReferences(cqlTextParserIncludedLibrary, fhirIncludeLibraryResult);
+                }
             } catch (Exception e) {
                 log.debug("Error when processing include: {}", include);
-                libraryReferences.setSearchResult(false);
-                result = false;
+                fhirIncludeLibraryReferences.setSearchResult(false);
+                fhirIncludeLibraryResult.setOutcome(false);
             }
-
-            res.getLibraryReferences().add(libraryReferences);
+            fhirIncludeLibraryResult.getLibraryReferences().add(fhirIncludeLibraryReferences);
         }
-
-        res.setOutcome(result);
-
-        return res;
     }
 
     private Bundle fetchBundle(IncludeProperties include) {
@@ -97,7 +115,6 @@ public class FhirIncludeLibraryProcessor {
         if (bundle.getEntry().size() > 1) {
             throw new FhirNotUniqueException(include.toString(), bundle.getEntry().size());
         }
-
         return bundle;
     }
 }

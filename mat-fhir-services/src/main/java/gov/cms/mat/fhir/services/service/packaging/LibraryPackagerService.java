@@ -26,6 +26,7 @@ import org.hl7.fhir.r4.model.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,7 +122,7 @@ public class LibraryPackagerService implements FhirLibraryHelper {
     }
 
     private void addIncludedLibraries(Bundle libraryBundle, FhirIncludeLibraryResult fhirIncludeLibraryResult, String id) {
-        List<FhirIncludeLibraryReferences> libraryReferences = fhirIncludeLibraryResult.getLibraryReferences();
+        Set<FhirIncludeLibraryReferences> libraryReferences = fhirIncludeLibraryResult.getLibraryReferences();
 
         List<String> missingLibs = libraryReferences.stream()
                 .filter(r -> r.getLibrary() == null)
