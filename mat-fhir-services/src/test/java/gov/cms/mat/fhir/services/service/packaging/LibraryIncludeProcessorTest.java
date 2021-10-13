@@ -15,9 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -131,7 +129,7 @@ class LibraryIncludeProcessorTest implements ResourceFileUtil, LibraryHelper {
         verifyNoMoreInteractions(fhirIncludeLibraryProcessor);
     }
 
-    private boolean containsLibrary(List<FhirIncludeLibraryReferences> libraryReferences, Library library) {
+    private boolean containsLibrary(Set<FhirIncludeLibraryReferences> libraryReferences, Library library) {
         return libraryReferences.stream()
                 .map(FhirIncludeLibraryReferences::getLibrary)
                 .anyMatch(l -> l.equals(library));
@@ -144,7 +142,7 @@ class LibraryIncludeProcessorTest implements ResourceFileUtil, LibraryHelper {
     private FhirIncludeLibraryResult createMatGlobalCommonFunctionsFhir4Response() {
         FhirIncludeLibraryResult result = buildResult(matGlobalCommonFunctionsFhir4Library);
 
-        result.setLibraryReferences(new ArrayList<>());
+        result.setLibraryReferences(new HashSet<>());
         result.getLibraryReferences().add(buildReference(fhirHelpersLibrary));
         result.getLibraryReferences().add(buildReference(scratchLibrary));
 
@@ -158,7 +156,7 @@ class LibraryIncludeProcessorTest implements ResourceFileUtil, LibraryHelper {
     private FhirIncludeLibraryResult createQiCoreResponse() {
         FhirIncludeLibraryResult result = buildResult(qiCorePatternLibrary);
 
-        result.setLibraryReferences(new ArrayList<>());
+        result.setLibraryReferences(new HashSet<>());
         result.getLibraryReferences().add(buildReference(fhirHelpersLibrary));
         result.getLibraryReferences().add(buildReference(matGlobalCommonFunctionsFhir4Library));
 

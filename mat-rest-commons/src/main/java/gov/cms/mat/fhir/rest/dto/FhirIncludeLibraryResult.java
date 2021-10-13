@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Data
@@ -16,5 +18,5 @@ public class FhirIncludeLibraryResult {
     String libraryName;
     String libraryVersion;
     boolean outcome;
-    List<FhirIncludeLibraryReferences> libraryReferences = new ArrayList<>();
+    Set<FhirIncludeLibraryReferences> libraryReferences = new HashSet<>();
 }

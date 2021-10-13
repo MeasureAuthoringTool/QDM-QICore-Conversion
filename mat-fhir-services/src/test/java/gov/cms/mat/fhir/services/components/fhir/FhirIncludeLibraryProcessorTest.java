@@ -45,7 +45,8 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleTestHel
 
         assertEquals(1, fhirIncludeLibraryResult.getLibraryReferences().size());
 
-        FhirIncludeLibraryReferences reference = fhirIncludeLibraryResult.getLibraryReferences().get(0);
+        FhirIncludeLibraryReferences reference = fhirIncludeLibraryResult.getLibraryReferences().iterator().next();
+
         assertTrue(reference.isSearchResult());
         assertEquals(name, reference.getName());
         assertEquals(version, reference.getVersion());
