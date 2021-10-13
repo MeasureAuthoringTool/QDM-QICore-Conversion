@@ -56,7 +56,6 @@ public class FhirIncludeLibraryProcessor implements FhirLibraryHelper {
         }
     }
 
-
     private FhirIncludeLibraryResult processParser(CqlTextParser cqlTextParser) {
         var fhirIncludeLibraryResult = new FhirIncludeLibraryResult();
 
@@ -100,7 +99,7 @@ public class FhirIncludeLibraryProcessor implements FhirLibraryHelper {
                     getIncludedLibraryReferences(cqlTextParserIncludedLibrary, fhirIncludeLibraryResult, result);
                 }
             } catch (Exception e) {
-                log.error("Error when processing include: {}", include);
+                log.debug("Error when processing include: {}", include);
                 fhirIncludeLibraryReferences.setSearchResult(false);
                 result = false;
             }
