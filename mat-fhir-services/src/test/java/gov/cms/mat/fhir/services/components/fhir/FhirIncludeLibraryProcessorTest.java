@@ -31,7 +31,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleTestHel
     private FhirIncludeLibraryProcessor fhirIncludeLibraryProcessor;
 
     @Test
-    void findIncludedFhirLibraries_LibraryReference_Found() {
+    void findIncludedFhirLibrariesLibraryReferenceFound() {
         String name = "MATGlobalCommonFunctions_FHIR";
         String version = "4.1.000";
 
@@ -57,7 +57,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleTestHel
     }
 
     @Test
-    void findIncludedFhirLibraries_ManyLibraryReferences_Found() {
+    void findIncludedFhirLibrariesManyLibraryReferencesFound() {
         when(hapiFhirServer.fetchLibraryBundleByVersionAndName(anyString(), anyString()))
                 .thenReturn(createBundle(FULL_URL, new Library()));
 
@@ -79,7 +79,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleTestHel
     }
 
     @Test
-    void findIncludedFhirLibraries_ManyLibraryReferences_NotFound() {
+    void findIncludedFhirLibrariesManyLibraryReferencesNotFound() {
         when(hapiFhirServer.fetchLibraryBundleByVersionAndName(anyString(), anyString()))
                 .thenReturn(new Bundle());
 
@@ -95,7 +95,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleTestHel
     }
 
     @Test
-    void findIncludedFhirLibraries_ManyLibraryReferences_MoreThanOneFound() {
+    void findIncludedFhirLibrariesManyLibraryReferencesMoreThanOneFound() {
         when(hapiFhirServer.fetchLibraryBundleByVersionAndName(anyString(), anyString()))
                 .thenReturn(createBundle(FULL_URL, new Library(), new Library(), new Library()));
 
@@ -111,7 +111,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleTestHel
     }
 
     @Test
-    void findIncludedFhirLibraries_NotFhir() {
+    void findIncludedFhirLibrariesNotFhir() {
         String cql = getStringFromResource("/called.cql");
 
         Assertions.assertThrows(CqlNotFhirException.class,
@@ -119,7 +119,7 @@ class FhirIncludeLibraryProcessorTest implements ResourceFileUtil, BundleTestHel
     }
 
     @Test
-    void findIncludedFhirLibraries_EmptyCql() {
+    void findIncludedFhirLibrariesEmptyCql() {
         String cql = "";
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->
