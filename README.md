@@ -4,14 +4,15 @@ to Fast Healthcare Interoperable Resources(FHIR) release R4.  It utilizes MAT my
 such as NLMs VSAC to gather valueSets needed for measure evaluation.
 
 ## Requirements
-1.  Java 1.11
-2.  Maven 3.3.9 or higher
-2.  MySQL 5.7.x (Mat DB)
-4.  User login to NLM VSAC system via UMLS.
+1.  Java 15
+2.  Maven 3.8.3 or higher
+2.  MySQL 8.0.26 (Mat DB)
+4.  User login to NLM VSAC system via UMLS
+5.  (Optional) Docker v20 or higher
 
 # Initial Setup
 
-## Checking out. ##
+## Checking out ##
 Checkout this project
 ```shell script
 git clone https://github.com/MeasureAuthoringTool/QDM-QICore-Conversion.git
@@ -53,7 +54,7 @@ Run the following shell script to setup links for hapi-fhir libraries and value-
 ```
 
 ### Maven
-Do a clean build of everything.
+Do a clean build of everything. This step is required to ensure Spring Boot can auto-configure the `BuildProperties` bean.
 ```shell script
 mvn clean install
 ```
@@ -85,31 +86,21 @@ curl -X GET "http://localhost:9080/library/find/load" -H "accept: */*"
 #### mat-fhir-services:
 -  Actuator: 
    -  (local) http://localhost:9080/actuator
-   -  (dev) https://matdev.semanticbits.com/mat-fhir-services/actuator
 -  Swagger:  
    -  (local) http://localhost:9080/swagger
-   -  (dev) https://matdev.semanticbits.com/mat-fhir-services/swagger
 
 #### hapi-fhir-server:
 -  Test Overlay: 
     - (local) http://localhost:6060/
-    - (dev) https://matdev.semanticbits.com/hapi-fhir-jpaserver/
 
 #### qdm-qicore-mapping-services:
 -  Actuator:  
    -  (local) http://localhost:9090/actuator
-   -  (dev) https://matdev.semanticbits.com/qdm-qicore-mapping-services/actuator   
 -  Swagger:   
    - (local) http://localhost:9090/swagger
-   - (dev) http://matdev.semanticbits.com/qdm-qicore-mapping-services/swagger
 
 #### cql-elm-translation:
 -  Actuator: 
    - (local) http://localhost:7070/actuator
-   -  (dev) https://matdev.semanticbits.com/cql-elm-translation/actuator   
 -  Swagger:  
    - (local) http://localhost:7070/swagger
-   - (dev) http://matdev.semanticbits.com/cql-elm-translation/swagger
-   
-   
-
