@@ -8,22 +8,22 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleResourceDefinition {
-    @JsonProperty("gsx$elementid")
+public class ResourceDefinition {
+    @JsonProperty("elementId")
     private Cell elementId;
 
-    @JsonProperty("gsx$definition")
+    @JsonProperty("definition")
     private Cell definition;
 
-    @JsonProperty("gsx$cardinality")
+    @JsonProperty("cardinality")
     private Cell cardinality;
 
-    @JsonProperty("gsx$type")
+    @JsonProperty("type")
     private Cell type;
 
-    @JsonProperty("gsx$summary")
-    private Cell isSummary;
+    @JsonProperty("summary")
+    private Cell summary;
 
-    @JsonProperty("gsx$ismodifier")
+    @JsonProperty("isModifier")
     private Cell isModifier;
 }

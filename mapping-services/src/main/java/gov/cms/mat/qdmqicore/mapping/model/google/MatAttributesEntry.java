@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleFhirLightBoxDatatypeAttributeAssociationFeed {
-    List<GoogleFhirLightBoxDatatypeAttributeAssociationTypes> entry;
+public class MatAttributesEntry {
+    List<MatAttributes> entry;
 }

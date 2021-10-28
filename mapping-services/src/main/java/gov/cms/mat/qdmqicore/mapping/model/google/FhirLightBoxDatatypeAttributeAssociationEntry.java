@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleConversionAttributesFeed {
-    private List<GoogleConversionAttributes> entry;
+public class FhirLightBoxDatatypeAttributeAssociationEntry {
+    List<FhirLightBoxDatatypeAttributeAssociationTypes> entry;
 }

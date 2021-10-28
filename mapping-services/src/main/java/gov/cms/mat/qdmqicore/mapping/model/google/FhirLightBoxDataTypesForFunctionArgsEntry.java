@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleFhirLightBoxDataTypesForFunctionArgsFeed {
-    List<GoogleFhirLightBoxDataTypesForFunctionArgsTypes> entry;
+public class FhirLightBoxDataTypesForFunctionArgsEntry {
+    List<String> entry;
 }

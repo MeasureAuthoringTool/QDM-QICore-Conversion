@@ -1,14 +1,14 @@
 package gov.cms.mat.qdmqicore.mapping.model.google;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GooglePopulationBasisValidValuesTypes {
-    @JsonProperty("gsx$baseresource")
-    private Cell baseResource;
+public class QdmToQicoreMappingEntry {
+    List<QdmToQicoreMapping> entry;
 }

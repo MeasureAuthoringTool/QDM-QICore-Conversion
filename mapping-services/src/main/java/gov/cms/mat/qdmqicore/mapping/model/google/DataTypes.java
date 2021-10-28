@@ -8,7 +8,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleFhirLightBoxDataTypesForFunctionArgsTypes {
-    @JsonProperty("gsx$datatype")
-    private Cell datatype;
+public class DataTypes {
+    @JsonProperty("dataType")
+    private String dataType;
+
+    @JsonProperty("validValues")
+    private String validValues;
+
+    @JsonProperty("regex")
+    private String regex;
+
+    @JsonProperty("fieldType")
+    private String fieldType;
 }

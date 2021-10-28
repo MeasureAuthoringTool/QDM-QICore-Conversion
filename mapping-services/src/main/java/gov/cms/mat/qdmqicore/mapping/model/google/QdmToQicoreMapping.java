@@ -8,58 +8,59 @@ import lombok.NoArgsConstructor;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class GoogleQdmToQicoreMapping {
+public class QdmToQicoreMapping {
     @JsonProperty("title")
     private Cell title;
 
+    // input doesn't contain matDataType
     @JsonProperty("gsx$matdatatype")
     private Cell matDataType;
 
-    @JsonProperty("gsx$matattributenameoriginal")
+    @JsonProperty("matAttributeNameOriginal")
     private Cell matAttributeNameOriginal;
 
-    @JsonProperty("gsx$matattributenamenormal")
+    @JsonProperty("matAttributeNameNormal")
     private Cell matAttributeNameNormal;
 
-    @JsonProperty("gsx$fhirr4qicoremapping")
+    @JsonProperty("fhirR4QicoreMapping")
     private Cell fhir4QiCoreMapping;
 
-    @JsonProperty("gsx$comment")
+    @JsonProperty("comment")
     private Cell comment;
 
-    @JsonProperty("gsx$qdmcontextversusattributes")
-    private Cell qdmContextVersionAttributes;
+    @JsonProperty("qdmContextVersusAttributes")
+    private Cell qdmContextVersusAttributes;
 
-    @JsonProperty("gsx$publicationofmapdate")
+    @JsonProperty("publicationOfMapDate")
     private Cell publicationOfMapDate;
 
-    @JsonProperty("gsx$elementid")
+    @JsonProperty("elementId")
     private Cell elementId;
 
-    @JsonProperty("gsx$definition")
+    @JsonProperty("definition")
     private Cell definition;
 
-    @JsonProperty("gsx$cardinality")
+    @JsonProperty("cardinality")
     private Cell cardinality;
 
-    @JsonProperty("gsx$terminologybinding")
+    @JsonProperty("terminologyBinding")
     private Cell terminologyBinding;
 
-    @JsonProperty("gsx$type")
+    @JsonProperty("type")
     private Cell type;
 
-    @JsonProperty("gsx$ismodifier")
+    @JsonProperty("isModifier")
     private Cell isModifier;
 
-    @JsonProperty("gsx$altnames")
+    @JsonProperty("altNames")
     private Cell altNames;
 
-    @JsonProperty("gsx$summary")
+    @JsonProperty("summary")
     private Cell summary;
 
-    @JsonProperty("gsx$compositehelp")
+    @JsonProperty("compositeHelp")
     private Cell compositeHelp;
 
-    @JsonProperty("gsx$sourcepage")
+    @JsonProperty("sourcePage")
     private Cell sourcePage;
 }

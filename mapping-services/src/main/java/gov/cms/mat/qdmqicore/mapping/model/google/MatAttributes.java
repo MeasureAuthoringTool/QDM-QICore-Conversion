@@ -8,31 +8,31 @@ import lombok.NoArgsConstructor;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class GoogleMatAttributes {
+public class MatAttributes {
     @JsonProperty("title")
     Cell title;
     @JsonProperty("updated")
     Cell updated;
-    @JsonProperty("gsx$matdatatypedescription")
+    @JsonProperty("matDataTypeDescription")
     Cell matDataTypeDescription;
-    @JsonProperty("gsx$matattributename")
+    @JsonProperty("matAttributeName")
     Cell matAttributeName;
-    @JsonProperty("gsx$matdatatypeid")
+    @JsonProperty("matDataTypeId")
     Cell matDataTypeId;
-    @JsonProperty("gsx$matattributeid")
+    @JsonProperty("matAttributeId")
     Cell matAttributeId;
-    @JsonProperty("gsx$fhirr4qicoremapping")
+    @JsonProperty("fhirR4QiCoreMapping")
     Cell fhirR4QiCoreMapping;
-    @JsonProperty("gsx$fhirresource")
+    @JsonProperty("fhirResource")
     Cell fhirResource;
-    @JsonProperty("gsx$fhirelement")
+    @JsonProperty("fhirElement")
     Cell fhirElement;
-    @JsonProperty("gsx$fhirtype")
+    @JsonProperty("fhirType")
     Cell fhirType;
-    @JsonProperty("gsx$helpwording")
+    @JsonProperty("helpWording")
     Cell helpWording;
-    @JsonProperty("gsx$dropdownvalues")
+    @JsonProperty("dropDownValues")
     Cell dropDown;
-    @JsonProperty("gsx$commentforynmodemodedetails")
+    @JsonProperty("commentForynModeModeDetails")
     Cell recommendations;
 }

@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleQdmToQicoreMappingFeed {
-    List<GoogleQdmToQicoreMapping> entry;
+public class ConversionAttributesEntry {
+    private List<ConversionAttributes> entry;
 }

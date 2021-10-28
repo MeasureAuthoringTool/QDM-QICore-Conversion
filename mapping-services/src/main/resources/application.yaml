@@ -30,7 +30,7 @@ swagger-server: ${MAPPING_SWAGGER_URL}
 
 mat-api-key: ${MAT-API-KEY}
 
-cache-names: matAttributes, qdmToQicoreMapping, dataTypes, requiredMeasureFields, resourceDefinitions, conversionDataTypes, conversionAttributes, fhirLightboxDataTypesForFunctionArgs, fhirLightboxDataTypesForFunctionArg, populationBasisValidValues
+cache-names: matAttributes, qdmToQicoreMapping, dataTypes, requiredMeasureFields, resourceDefinitions, conversionDataTypes, conversionAttributes, fhirLightBoxDatatypeAttributeAssociation, fhirLightboxDataTypesForFunctionArgs, populationBasisValidValues, codeSystemEntries
 
 logging:
   level:

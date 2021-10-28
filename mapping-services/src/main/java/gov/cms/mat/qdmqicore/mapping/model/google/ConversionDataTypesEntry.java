@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleRequiredFieldsData {
-    private GoogleRequiredFieldsFeed feed;
+public class ConversionDataTypesEntry {
+    private List<ConversionDataTypes> entry;
 }
