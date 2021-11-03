@@ -22,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class GoogleSpreadsheetServiceTest {
+class MappingServiceTest {
 
     @Autowired
-    private MappingService googleSpreadsheetService;
+    private MappingService mappingService;
 
     @Test
     void getMatAttributes() throws IOException {
-        List<MatAttribute> result = googleSpreadsheetService.getMatAttributes();
+        List<MatAttribute> result = mappingService.getMatAttributes();
         assertAll(
                 "get Mat Attributes Successfully",
                 () -> assertEquals(5, result.size()),
@@ -45,7 +45,7 @@ class GoogleSpreadsheetServiceTest {
 
     @Test
     void getQdmToQicoreMapping() throws IOException {
-        List<QdmToQicoreMapping> result = googleSpreadsheetService.getQdmToQicoreMapping();
+        List<QdmToQicoreMapping> result = mappingService.getQdmToQicoreMapping();
         assertAll(
                 "get Qdm to Qicore mapping successfully",
                 () -> assertEquals(5, result.size()),
@@ -60,7 +60,7 @@ class GoogleSpreadsheetServiceTest {
 
     @Test
     void getDataTypes() throws IOException {
-        List<DataType> result = googleSpreadsheetService.getDataTypes();
+        List<DataType> result = mappingService.getDataTypes();
         assertAll(
                 "get data types successfully",
                 () -> assertEquals(5, result.size()),
@@ -73,7 +73,7 @@ class GoogleSpreadsheetServiceTest {
 
     @Test
     void getRequiredMeasureFields() throws IOException {
-        List<RequiredMeasureField> result = googleSpreadsheetService.getRequiredMeasureFields();
+        List<RequiredMeasureField> result = mappingService.getRequiredMeasureFields();
         assertAll(
                 "get required measure fields successfully",
                 () -> assertEquals(8, result.size()),
@@ -84,7 +84,7 @@ class GoogleSpreadsheetServiceTest {
 
     @Test
     void getResourceDefinitions() throws IOException {
-        List<ResourceDefinition> result = googleSpreadsheetService.getResourceDefinitions();
+        List<ResourceDefinition> result = mappingService.getResourceDefinitions();
         assertAll(
                 "get resource definitions successfully",
                 () -> assertEquals(4, result.size()),
@@ -98,7 +98,7 @@ class GoogleSpreadsheetServiceTest {
 
     @Test
     void getConversionDataTypes() throws IOException {
-        List<ConversionDataTypes> result = googleSpreadsheetService.getConversionDataTypes();
+        List<ConversionDataTypes> result = mappingService.getConversionDataTypes();
         assertAll(
                 "get conversion data types successfully",
                 () -> assertEquals(5, result.size()),
@@ -111,7 +111,7 @@ class GoogleSpreadsheetServiceTest {
 
     @Test
     void getConversionAttributes() throws IOException {
-        List<ConversionAttributes> result = googleSpreadsheetService.getConversionAttributes();
+        List<ConversionAttributes> result = mappingService.getConversionAttributes();
         assertAll(
                 "get conversion attributes successfully",
                 () -> assertEquals(5, result.size()),
@@ -125,7 +125,7 @@ class GoogleSpreadsheetServiceTest {
 
     @Test
     void getFhirLightBoxDatatypeAttributeAssociation() throws IOException {
-        List<FhirLightBoxDatatypeAttributeAssociations> result = googleSpreadsheetService.getFhirLightBoxDatatypeAttributeAssociation();
+        List<FhirLightBoxDatatypeAttributeAssociations> result = mappingService.getFhirLightBoxDatatypeAttributeAssociation();
         assertAll(
                 "get fhir lightbox datatype attribute associations successfully",
                 () -> assertEquals(6, result.size()),
@@ -138,19 +138,19 @@ class GoogleSpreadsheetServiceTest {
 
     @Test
     void getFhirLightboxDataTypesForFunctionArgs() throws IOException {
-        List<String> result = googleSpreadsheetService.getFhirLightboxDataTypesForFunctionArgs();
+        List<String> result = mappingService.getFhirLightboxDataTypesForFunctionArgs();
         assertEquals(10, result.size());
     }
 
     @Test
     void getPopulationBasisValidValues() throws IOException {
-        List<String> result = googleSpreadsheetService.getPopulationBasisValidValues();
+        List<String> result = mappingService.getPopulationBasisValidValues();
         assertEquals(10, result.size());
     }
 
     @Test
     void getCodeSystemEntries() throws IOException {
-        List<CodeSystemEntry> result = googleSpreadsheetService.getCodeSystemEntries();
+        List<CodeSystemEntry> result = mappingService.getCodeSystemEntries();
         assertAll(
                 "get code systems successfully",
                 () -> assertEquals(5, result.size()),

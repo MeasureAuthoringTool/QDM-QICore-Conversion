@@ -14,64 +14,64 @@ import java.util.List;
 @RequestMapping(path = "/")
 @Slf4j
 public class MappingController {
-    private final MappingService spreadsheetService;
+    private final MappingService mappingService;
 
-    public MappingController(MappingService spreadsheetService) {
-        this.spreadsheetService = spreadsheetService;
+    public MappingController(MappingService mappingService) {
+        this.mappingService = mappingService;
     }
 
     @GetMapping(path = "/matAttributes")
     public List<MatAttribute> matAttributes() throws IOException {
-        return spreadsheetService.getMatAttributes();
+        return mappingService.getMatAttributes();
     }
 
     @GetMapping(path = "/qdmToQicoreMappings")
     public List<QdmToQicoreMapping> qdmToQicoreMappings() throws IOException {
-        return spreadsheetService.getQdmToQicoreMapping();
+        return mappingService.getQdmToQicoreMapping();
     }
 
     @GetMapping(path = "/dataTypes")
     public List<DataType> dataTypes() throws IOException {
-        return spreadsheetService.getDataTypes();
+        return mappingService.getDataTypes();
     }
 
     @GetMapping(path = "/requiredMeasureFields")
     public List<RequiredMeasureField> requiredMeasureFields() throws IOException {
-        return spreadsheetService.getRequiredMeasureFields();
+        return mappingService.getRequiredMeasureFields();
     }
 
     @GetMapping(path = "/resourceDefinition")
     public List<ResourceDefinition> resourceDefinition() throws IOException {
-        return spreadsheetService.getResourceDefinitions();
+        return mappingService.getResourceDefinitions();
     }
 
     @GetMapping(path = "/conversionDataTypes")
     public List<ConversionDataTypes> conversionDataTypes() throws IOException {
-        return spreadsheetService.getConversionDataTypes();
+        return mappingService.getConversionDataTypes();
     }
 
     @GetMapping(path = "/conversionAttributes")
     public List<ConversionAttributes> conversionAttributes() throws IOException {
-        return spreadsheetService.getConversionAttributes();
+        return mappingService.getConversionAttributes();
     }
 
     @GetMapping(path = "/fhirLightBoxDatatypeAttributeAssociation")
     public List<FhirLightBoxDatatypeAttributeAssociations> fhirLightBoxDatatypeAttributeAssociation() throws IOException {
-        return spreadsheetService.getFhirLightBoxDatatypeAttributeAssociation();
+        return mappingService.getFhirLightBoxDatatypeAttributeAssociation();
     }
 
     @GetMapping(path = "/fhirLightboxDataTypesForFunctionArgs")
     public List<String> fhirLightboxDataTypesForFunctionArgs() throws IOException {
-        return spreadsheetService.getFhirLightboxDataTypesForFunctionArgs();
+        return mappingService.getFhirLightboxDataTypesForFunctionArgs();
     }
 
     @GetMapping(path = "/populationBasisValidValues")
     public List<String> populationBasisValidValues() throws IOException {
-        return spreadsheetService.getPopulationBasisValidValues();
+        return mappingService.getPopulationBasisValidValues();
     }
 
     @GetMapping(path = "/codeSystemEntries")
     public List<CodeSystemEntry> codeSystemEntries() throws IOException {
-        return spreadsheetService.getCodeSystemEntries();
+        return mappingService.getCodeSystemEntries();
     }
 }
