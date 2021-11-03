@@ -1,0 +1,34 @@
+[
+  {
+    "elementId": "Account",
+    "definition": "A financial tool for tracking value accrued for a particular purpose.  In the healthcare field, used to track charges for a patient, cost centers, etc.",
+    "cardinality": "0..*",
+    "type": "DomainResource\n",
+    "isSummary": "",
+    "isModifier": ""
+  },
+  {
+    "elementId": "Account.identifier",
+    "definition": "Unique identifier used to reference the account.  Might or might not be intended for human use (e.g. credit card number).",
+    "cardinality": "0..*",
+    "type": "Identifier\n",
+    "isSummary": "TRUE",
+    "isModifier": ""
+  },
+  {
+    "elementId": "Account.status",
+    "definition": "Indicates whether the account is presently used/usable or not.",
+    "cardinality": "1..1",
+    "type": "code\n",
+    "isSummary": "TRUE",
+    "isModifier": "true (Reason: This element is labelled as a modifier because it is a status element that contains status entered-in-error which means that the resource should not be treated as valid)"
+  },
+  {
+    "elementId": "Account.type",
+    "definition": "Categorizes the account for reporting and searching purposes.",
+    "cardinality": "0..1",
+    "type": "CodeableConcept\n",
+    "isSummary": "TRUE",
+    "isModifier": ""
+  }
+]

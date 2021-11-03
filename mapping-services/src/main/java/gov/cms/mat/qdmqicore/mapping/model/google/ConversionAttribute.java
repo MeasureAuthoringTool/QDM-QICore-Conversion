@@ -8,13 +8,15 @@ import lombok.NoArgsConstructor;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class ConversionDataTypes {
+public class ConversionAttribute {
     @JsonProperty("qdmType")
     private String qdmType;
+    @JsonProperty("qdmAttribute")
+    private String qdmAttribute;
     @JsonProperty("fhirType")
     private String fhirType;
-    @JsonProperty("whereAdjustment")
-    private String whereAdjustment;
+    @JsonProperty("fhirAttribute")
+    private String fhirAttribute;
     @JsonProperty("comment")
     private String comment;
 }

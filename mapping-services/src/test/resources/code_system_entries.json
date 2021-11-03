@@ -1,0 +1,27 @@
+[
+  {
+    "oid": "urn:oid:2.16.840.1.113883.5.4",
+    "url": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+    "name": "ActCode"
+  },
+  {
+    "oid": "urn:oid:2.16.840.1.113883.5.1001",
+    "url": "http://terminology.hl7.org/CodeSystem/v3-ActMood",
+    "name": "ActMood"
+  },
+  {
+    "oid": "NOT.IN.VSAC",
+    "url": "http://hl7.org/fhir/address-type",
+    "name": "AddressType"
+  },
+  {
+    "oid": "urn:oid:2.16.840.1.113883.5.1",
+    "url": "http://terminology.hl7.org/CodeSystem/v3-AdministrativeGender",
+    "name": "AdministrativeGender"
+  },
+  {
+    "oid": "NOT.IN.VSAC",
+    "url": "http://terminology.hl7.org/CodeSystem/admit-source",
+    "name": "AdmitSource"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  "AdverseEvent",
+  "AllergyIntolerance",
+  "BodyStructure",
+  "CarePlan",
+  "CareTeam",
+  "Claim",
+  "Communication",
+  "CommunicationRequest",
+  "Condition",
+  "Coverage"
+]

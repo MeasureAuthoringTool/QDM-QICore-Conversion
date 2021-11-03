@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Adverse Event",
+    "matDataType": null,
+    "matAttributeType": "",
+    "fhirQICoreMapping": "AdverseEvent.actuality",
+    "type": "code\n",
+    "cardinality": "1..1"
+  },
+  {
+    "title": "Adverse Event",
+    "matDataType": null,
+    "matAttributeType": "code",
+    "fhirQICoreMapping": "AdverseEvent.event",
+    "type": "CodeableConcept\n",
+    "cardinality": "0..1"
+  },
+  {
+    "title": "Adverse Event",
+    "matDataType": null,
+    "matAttributeType": "type",
+    "fhirQICoreMapping": "AdverseEvent.category",
+    "type": "CodeableConcept\n",
+    "cardinality": "0..*"
+  },
+  {
+    "title": "Adverse Event",
+    "matDataType": null,
+    "matAttributeType": "severity",
+    "fhirQICoreMapping": "AdverseEvent.severity",
+    "type": "CodeableConcept\n",
+    "cardinality": "0..1"
+  },
+  {
+    "title": "Adverse Event",
+    "matDataType": null,
+    "matAttributeType": "relevant dateTime",
+    "fhirQICoreMapping": "AdverseEvent.date",
+    "type": "dateTime\n",
+    "cardinality": "0..1"
+  }
+]

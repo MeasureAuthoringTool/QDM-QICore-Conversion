@@ -6,11 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RequiredFields {
-    @JsonProperty("field")
-    private String field;
+@NoArgsConstructor
+public class QdmToQicoreMappings {
+    @JsonProperty("title")
+    private String title;
+    @JsonProperty("matAttributeType")
+    private String matAttributeType;
+    @JsonProperty("fhirQICoreMapping")
+    private String fhirQICoreMapping;
     @JsonProperty("type")
     private String type;
+    @JsonProperty("cardinality")
+    private String cardinality;
 }

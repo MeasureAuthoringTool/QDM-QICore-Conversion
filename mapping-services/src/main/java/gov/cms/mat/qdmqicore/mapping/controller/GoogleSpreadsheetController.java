@@ -1,14 +1,6 @@
 package gov.cms.mat.qdmqicore.mapping.controller;
 
-import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionAttributes;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionDataTypes;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.DataType;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.FhirLightBoxDatatypeAttributeAssociations;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToQicoreMapping;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.RequiredMeasureField;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.ResourceDefinition;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.*;
 import gov.cms.mat.qdmqicore.mapping.service.GoogleSpreadsheetService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -75,7 +66,7 @@ public class GoogleSpreadsheetController {
     }
 
     @GetMapping(path = "/populationBasisValidValues")
-    public Collection<String> populationBasisValidValues() throws IOException {
+    public List<String> populationBasisValidValues() throws IOException {
         return spreadsheetService.getPopulationBasisValidValues();
     }
 

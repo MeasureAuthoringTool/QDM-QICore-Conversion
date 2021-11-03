@@ -1,34 +1,21 @@
 package gov.cms.mat.qdmqicore.mapping.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionAttributes;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionDataTypes;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.DataType;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.FhirLightBoxDatatypeAttributeAssociations;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToQicoreMapping;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.RequiredMeasureField;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.ResourceDefinition;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.*;
 import gov.cms.mat.qdmqicore.mapping.model.google.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gov.cms.mat.qdmqicore.mapping.utils.SpreadSheetUtils.commaDelimitedStringToList;
-import static gov.cms.mat.qdmqicore.mapping.utils.SpreadSheetUtils.getData;
 
 @Service
 @Slf4j
@@ -58,6 +45,7 @@ public class GoogleSpreadsheetService {
     @Value("${json.data.code-system-entry-url}")
     private String codeSystemEntryUrl;
 
+    @Autowired
     private final ObjectMapper objectMapper;
 
     public GoogleSpreadsheetService(ObjectMapper objectMapper) {
@@ -66,20 +54,20 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("matAttributes")
     public List<MatAttribute> getMatAttributes() throws IOException {
-        MatAttributesEntry data = objectMapper.readValue(new URL(matAttributesUrl), MatAttributesEntry.class);
+        List<MatAttributes> data = objectMapper.readValue(new URL(matAttributesUrl), new TypeReference<>() {});
 
-        if (data != null && data.getEntry() != null) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), matAttributesUrl);
-            return data.getEntry().stream().map(e -> {
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), matAttributesUrl);
+            return data.stream().map(e -> {
                 var m = new MatAttribute();
-                m.setDataTypeDescription(getData(e.getMatDataTypeDescription()));
-                m.setDropDown(commaDelimitedStringToList(e.getDropDown()));
-                m.setFhirQicoreMapping(getData(e.getFhirR4QiCoreMapping()));
-                m.setFhirResource(getData(e.getFhirResource()));
-                m.setFhirType(getData(e.getFhirType()));
-                m.setHelpWording(getData(e.getHelpWording()));
-                m.setFhirElement(getData(e.getFhirElement()));
-                m.setMatAttributeName(getData(e.getMatAttributeName()));
+                m.setDataTypeDescription(e.getDataTypeDescription());
+                m.setMatAttributeName(e.getMatAttributeName());
+                m.setFhirQicoreMapping(e.getFhirQicoreMapping());
+                m.setFhirResource(e.getFhirResource());
+                m.setFhirType(e.getFhirType());
+                m.setFhirElement(e.getFhirElement());
+                m.setHelpWording(e.getHelpWording());
+                m.setDropDown(e.getDropDown());
                 return m;
             }).collect(Collectors.toList());
         } else {
@@ -89,18 +77,17 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("qdmToQicoreMapping")
     public List<QdmToQicoreMapping> getQdmToQicoreMapping() throws IOException {
-        QdmToQicoreMappingEntry data = objectMapper.readValue(new URL(qdmQiCoreMappingUrl), QdmToQicoreMappingEntry.class);
+        List<QdmToQicoreMappings> data = objectMapper.readValue(new URL(qdmQiCoreMappingUrl), new TypeReference<>() {});
 
-        if (data != null && data.getEntry() != null) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), qdmQiCoreMappingUrl);
-            return data.getEntry().stream().map(e -> {
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), qdmQiCoreMappingUrl);
+            return data.stream().map(e -> {
                 var q = new QdmToQicoreMapping();
-                q.setFhirQICoreMapping(getData(e.getFhir4QiCoreMapping()));
-                q.setMatAttributeType(getData(e.getMatAttributeNameNormal()));
-                q.setMatDataType(getData(e.getMatDataType()));
-                q.setTitle(getData(e.getTitle()));
-                q.setType(getData(e.getType()));
-                q.setCardinality(getData(e.getCardinality()));
+                q.setTitle(e.getTitle());
+                q.setMatAttributeType(e.getMatAttributeType());
+                q.setFhirQICoreMapping(e.getFhirQICoreMapping());
+                q.setType(e.getType());
+                q.setCardinality(e.getCardinality());
                 return q;
             }).collect(Collectors.toList());
         } else {
@@ -110,16 +97,16 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("dataTypes")
     public List<DataType> getDataTypes() throws IOException {
-        DataTypesEntry data = objectMapper.readValue(new URL(dataTypesUrl), DataTypesEntry.class);
+        List<DataTypes> data = objectMapper.readValue(new URL(dataTypesUrl), new TypeReference<>() {});
 
-        if (data != null && data.getEntry() != null) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), dataTypesUrl);
-            return data.getEntry().stream().map(e -> {
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), dataTypesUrl);
+            return data.stream().map(e -> {
                 var d = new DataType();
                 d.setDataType(e.getDataType());
-                d.setRegex(e.getRegex());
-                d.setType(e.getFieldType());
                 d.setValidValues(e.getValidValues());
+                d.setRegex(e.getRegex());
+                d.setType(e.getType());
                 return d;
             }).collect(Collectors.toList());
         } else {
@@ -129,14 +116,14 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("requiredMeasureFields")
     public List<RequiredMeasureField> getRequiredMeasureFields() throws IOException {
-        RequiredFieldsEntry data = objectMapper.readValue(new URL(requiredMeasureFieldsUrl), RequiredFieldsEntry.class);
+        List<RequiredFields> data = objectMapper.readValue(new URL(requiredMeasureFieldsUrl), new TypeReference<>() {});
 
-        if (data != null && data.getEntry() != null) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), requiredMeasureFieldsUrl);
-            return data.getEntry().stream().map(e -> {
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), requiredMeasureFieldsUrl);
+            return data.stream().map(e -> {
                 var r = new RequiredMeasureField();
                 r.setField(e.getField());
-                r.setType(e.getFieldType());
+                r.setType(e.getType());
                 return r;
             }).collect(Collectors.toList());
         } else {
@@ -146,18 +133,18 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("resourceDefinitions")
     public List<ResourceDefinition> getResourceDefinitions() throws IOException {
-        ResourceDefinitionEntry data = objectMapper.readValue(new URL(resourceDefinitionUrl), ResourceDefinitionEntry.class);
+        List<ResourceDefinitions> data = objectMapper.readValue(new URL(resourceDefinitionUrl), new TypeReference<>() {});
 
-        if (data != null && data.getEntry() != null) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), resourceDefinitionUrl);
-            return data.getEntry().stream().map(e -> {
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), resourceDefinitionUrl);
+            return data.stream().map(e -> {
                 var r = new ResourceDefinition();
-                r.setCardinality(getData(e.getCardinality()));
-                r.setDefinition(getData(e.getDefinition()));
-                r.setElementId(getData(e.getElementId()));
-                r.setIsModifier(getData(e.getIsModifier()));
-                r.setIsSummary(getData(e.getSummary()));
-                r.setType(getData(e.getType()));
+                r.setElementId(e.getElementId());
+                r.setDefinition(e.getDefinition());
+                r.setCardinality(e.getCardinality());
+                r.setType(e.getType());
+                r.setIsSummary(e.getIsSummary());
+                r.setIsModifier(e.getIsModifier());
                 return r;
             }).collect(Collectors.toList());
         } else {
@@ -167,11 +154,11 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("conversionDataTypes")
     public List<ConversionDataTypes> getConversionDataTypes() throws IOException {
-        ConversionDataTypesEntry data = objectMapper.readValue(new URL(conversionDataTypesUrl), ConversionDataTypesEntry.class);
+        List<ConversionDataType> data = objectMapper.readValue(new URL(conversionDataTypesUrl), new TypeReference<>() {});
 
-        if (data != null && data.getEntry() != null) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), conversionDataTypesUrl);
-            return data.getEntry().stream().map(e -> {
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), conversionDataTypesUrl);
+            return data.stream().map(e -> {
                 var r = new ConversionDataTypes();
                 r.setFhirType(e.getFhirType());
                 r.setQdmType(e.getQdmType());
@@ -186,11 +173,11 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("conversionAttributes")
     public List<ConversionAttributes> getConversionAttributes() throws IOException {
-        ConversionAttributesEntry data = objectMapper.readValue(new URL(attributesUrl), ConversionAttributesEntry.class);
+        List<ConversionAttribute> data = objectMapper.readValue(new URL(attributesUrl), new TypeReference<>() {});
 
-        if (data != null && data.getEntry() != null) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), attributesUrl);
-            return data.getEntry().stream().map(e -> {
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), attributesUrl);
+            return data.stream().map(e -> {
                 var r = new ConversionAttributes();
                 r.setFhirType(e.getFhirType());
                 r.setQdmType(e.getQdmType());
@@ -206,22 +193,16 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("fhirLightBoxDatatypeAttributeAssociation")
     public List<FhirLightBoxDatatypeAttributeAssociations> getFhirLightBoxDatatypeAttributeAssociation() throws IOException {
-        FhirLightBoxDatatypeAttributeAssociationEntry data = objectMapper.readValue(new URL(fhirLightboxDatatypeAttributeAssociationUrl), FhirLightBoxDatatypeAttributeAssociationEntry.class);
+        List<FhirLightBoxDatatypeAttributeAssociationTypes> data = objectMapper.readValue(new URL(fhirLightboxDatatypeAttributeAssociationUrl), new TypeReference<>() {});
 
-        if (data != null && data.getEntry() != null) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), fhirLightboxDatatypeAttributeAssociationUrl);
-            return data.getEntry().stream().map(e -> {
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), fhirLightboxDatatypeAttributeAssociationUrl);
+            return data.stream().map(e -> {
                 var r = new FhirLightBoxDatatypeAttributeAssociations();
-                r.setDatatype(e.getDatatype());
+                r.setDatatype(e.getDataType());
                 r.setAttribute(e.getAttribute());
                 r.setAttributeType(e.getAttributeType());
-
-                String hasBinding = e.getHasBinding();
-
-                if (StringUtils.isNotBlank(hasBinding)) {
-                    r.setHasBinding(Boolean.parseBoolean(hasBinding));
-                }
-
+                r.setHasBinding(e.getHasBinding());
                 return r;
             }).sorted().collect(Collectors.toList());
         } else {
@@ -231,12 +212,11 @@ public class GoogleSpreadsheetService {
 
     @Cacheable("fhirLightboxDataTypesForFunctionArgs")
     public List<String> getFhirLightboxDataTypesForFunctionArgs() throws IOException {
-        FhirLightBoxDataTypesForFunctionArgsEntry data = objectMapper.readValue(new URL(fhirLightboxDataTypesForFunctionArgsUrl), FhirLightBoxDataTypesForFunctionArgsEntry.class);
+        List<String> data = objectMapper.readValue(new URL(fhirLightboxDataTypesForFunctionArgsUrl), new TypeReference<>() {});
 
-        if (data != null && !CollectionUtils.isEmpty(data.getEntry())) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), fhirLightboxDataTypesForFunctionArgsUrl);
-
-            return data.getEntry().stream()
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), fhirLightboxDataTypesForFunctionArgsUrl);
+            return data.stream()
                     .sorted(String::compareToIgnoreCase)
                     .collect(Collectors.toList());
         } else {
@@ -245,15 +225,14 @@ public class GoogleSpreadsheetService {
     }
 
     @Cacheable("populationBasisValidValues")
-    public Collection<String> getPopulationBasisValidValues() throws IOException {
-        PopulationBasisValidValues data = objectMapper.readValue(new URL(populationBasisValidValuesUrl), PopulationBasisValidValues.class);
+    public List<String> getPopulationBasisValidValues() throws IOException {
+        List<String> data = objectMapper.readValue(new URL(populationBasisValidValuesUrl), new TypeReference<>() {});
 
-        if (data != null && !CollectionUtils.isEmpty(data.getEntry())) {
-            log.info(LOG_MESSAGE, data.getEntry().size(), populationBasisValidValuesUrl);
-
-            return data.getEntry().stream()
+        if (data != null) {
+            log.info(LOG_MESSAGE, data.size(), populationBasisValidValuesUrl);
+            return data.stream()
                     .sorted()
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+                    .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }

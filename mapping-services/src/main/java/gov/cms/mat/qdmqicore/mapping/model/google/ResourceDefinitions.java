@@ -8,22 +8,22 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ResourceDefinition {
+public class ResourceDefinitions {
     @JsonProperty("elementId")
-    private Cell elementId;
+    private String elementId;
 
     @JsonProperty("definition")
-    private Cell definition;
+    private String definition;
 
     @JsonProperty("cardinality")
-    private Cell cardinality;
+    private String cardinality;
 
     @JsonProperty("type")
-    private Cell type;
+    private String type;
 
-    @JsonProperty("summary")
-    private Cell summary;
+    @JsonProperty("isSummary")
+    private String isSummary;
 
     @JsonProperty("isModifier")
-    private Cell isModifier;
+    private String isModifier;
 }

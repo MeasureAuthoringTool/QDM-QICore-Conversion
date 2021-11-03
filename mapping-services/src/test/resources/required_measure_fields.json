@@ -1,0 +1,34 @@
+[
+  {
+    "field": "id",
+    "type": "string"
+  },
+  {
+    "field": "cqfm-populationBasis",
+    "type": "code"
+  },
+  {
+    "field": "url",
+    "type": "uri"
+  },
+  {
+    "field": "identifier",
+    "type": "identifier"
+  },
+  {
+    "field": "version",
+    "type": "string"
+  },
+  {
+    "field": "name",
+    "type": "string"
+  },
+  {
+    "field": "title",
+    "type": "string"
+  },
+  {
+    "field": "status",
+    "type": "code"
+  }
+]

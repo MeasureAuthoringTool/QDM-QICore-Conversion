@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FhirLightBoxDatatypeAttributeAssociationTypes {
-    @JsonProperty("dataType")
-    private String datatype;
+    @JsonProperty("datatype")
+    private String dataType;
 
     @JsonProperty("attribute")
     private String attribute;
@@ -19,6 +19,6 @@ public class FhirLightBoxDatatypeAttributeAssociationTypes {
     private String attributeType;
 
     @JsonProperty("hasBinding")
-    private String hasBinding;
+    private Boolean hasBinding;
 }
 

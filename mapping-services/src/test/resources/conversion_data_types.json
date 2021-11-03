@@ -1,0 +1,32 @@
+[
+  {
+    "qdmType": "Adverse Event",
+    "fhirType": "AdverseEvent",
+    "whereAdjustment": "",
+    "comment": ""
+  },
+  {
+    "qdmType": "Allergy/Intolerance",
+    "fhirType": "AllergyIntolerance",
+    "whereAdjustment": "",
+    "comment": ""
+  },
+  {
+    "qdmType": "Assessment, Not Ordered",
+    "fhirType": "ServiceRequest",
+    "whereAdjustment": "alias.status = 'completed' and alias.doNotPerform is true",
+    "comment": ""
+  },
+  {
+    "qdmType": "Assessment, Not Performed",
+    "fhirType": "Observation",
+    "whereAdjustment": "",
+    "comment": "Logical mapping needed  - requires use of something like \"GetExtension\". Refer to https://build.fhir.org/ig/HL7/fhir-qi-core/patterns.html#extensions"
+  },
+  {
+    "qdmType": "Assessment, Not Recommended",
+    "fhirType": "ServiceRequest",
+    "whereAdjustment": "alias.status = 'completed' and alias.doNotPerform is true",
+    "comment": ""
+  }
+]

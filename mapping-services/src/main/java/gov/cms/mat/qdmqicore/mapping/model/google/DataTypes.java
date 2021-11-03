@@ -18,6 +18,6 @@ public class DataTypes {
     @JsonProperty("regex")
     private String regex;
 
-    @JsonProperty("fieldType")
-    private String fieldType;
+    @JsonProperty("type")
+    private String type;
 }

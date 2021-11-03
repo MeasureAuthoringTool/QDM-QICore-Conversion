@@ -5,34 +5,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 public class MatAttributes {
-    @JsonProperty("title")
-    Cell title;
-    @JsonProperty("updated")
-    Cell updated;
-    @JsonProperty("matDataTypeDescription")
-    Cell matDataTypeDescription;
+    @JsonProperty("dataTypeDescription")
+    String dataTypeDescription;
     @JsonProperty("matAttributeName")
-    Cell matAttributeName;
-    @JsonProperty("matDataTypeId")
-    Cell matDataTypeId;
-    @JsonProperty("matAttributeId")
-    Cell matAttributeId;
-    @JsonProperty("fhirR4QiCoreMapping")
-    Cell fhirR4QiCoreMapping;
+    String matAttributeName;
+    @JsonProperty("fhirQicoreMapping")
+    String fhirQicoreMapping;
     @JsonProperty("fhirResource")
-    Cell fhirResource;
-    @JsonProperty("fhirElement")
-    Cell fhirElement;
+    String fhirResource;
     @JsonProperty("fhirType")
-    Cell fhirType;
+    String fhirType;
+    @JsonProperty("fhirElement")
+    String fhirElement;
     @JsonProperty("helpWording")
-    Cell helpWording;
-    @JsonProperty("dropDownValues")
-    Cell dropDown;
-    @JsonProperty("commentForynModeModeDetails")
-    Cell recommendations;
+    String helpWording;
+    @JsonProperty("dropDown")
+    List<String> dropDown;
 }
