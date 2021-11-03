@@ -1,0 +1,38 @@
+[
+  {
+    "datatype": "AdverseEvent",
+    "attribute": "actuality",
+    "attributeType": "FHIR.AdverseEventActuality",
+    "hasBinding": true
+  },
+  {
+    "datatype": "AdverseEvent",
+    "attribute": "category",
+    "attributeType": "ListTypeSpecifier <FHIR.CodeableConcept>",
+    "hasBinding": false
+  },
+  {
+    "datatype": "AdverseEvent",
+    "attribute": "contributor",
+    "attributeType": "ListTypeSpecifier <FHIR.Reference>",
+    "hasBinding": false
+  },
+  {
+    "datatype": "AdverseEvent",
+    "attribute": "date",
+    "attributeType": "FHIR.dateTime",
+    "hasBinding": false
+  },
+  {
+    "datatype": "AdverseEvent",
+    "attribute": "detected",
+    "attributeType": "FHIR.dateTime",
+    "hasBinding": false
+  },
+  {
+    "datatype": "AdverseEvent",
+    "attribute": "encounter",
+    "attributeType": "FHIR.Reference",
+    "hasBinding": false
+  }
+]

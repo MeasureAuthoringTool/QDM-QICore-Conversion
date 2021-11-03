@@ -37,6 +37,6 @@ public class OpenApiConfig {
     private Info buildInfo() {
         return new Info()
                 .title("Mapping services API")
-                .description("This is a SpringBoot v2.3.x restful service for obtaining data from google spreadsheets.");
+                .description("This is a SpringBoot v2.3.x restful service for obtaining data from externally stored json files.");
     }
 }

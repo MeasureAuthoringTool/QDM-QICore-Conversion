@@ -1,0 +1,32 @@
+[
+  {
+    "dataType": "Boolean",
+    "validValues": "True\nFalse",
+    "regex": "true|false",
+    "type": "string"
+  },
+  {
+    "dataType": "Decimal",
+    "validValues": "Decimal",
+    "regex": "-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][+-]?[0-9]+)?",
+    "type": "code"
+  },
+  {
+    "dataType": "Integer",
+    "validValues": "−2,147,483,648..2,147,483,647",
+    "regex": "[0]|[-+]?[1-9][0-9]*",
+    "type": "uri"
+  },
+  {
+    "dataType": "String",
+    "validValues": "Text String or numeric code[for instance, an OID referencing a value set]",
+    "regex": "[ \\r\\n\\t\\S]+",
+    "type": "identifier"
+  },
+  {
+    "dataType": "Instant",
+    "validValues": " Instant in time; format: YYYY-MM-DDThh:mm:ss.ssss time stamp; must go to the second",
+    "regex": "([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\\.[0-9]+)?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))",
+    "type": "string"
+  }
+]

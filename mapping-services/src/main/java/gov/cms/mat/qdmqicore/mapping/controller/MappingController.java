@@ -1,86 +1,77 @@
 package gov.cms.mat.qdmqicore.mapping.controller;
 
-import gov.cms.mat.fhir.rest.dto.spreadsheet.CodeSystemEntry;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionAttributes;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.ConversionDataTypes;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.DataType;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.FhirLightBoxDatatypeAttributeAssociations;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.MatAttribute;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.QdmToQicoreMapping;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.RequiredMeasureField;
-import gov.cms.mat.fhir.rest.dto.spreadsheet.ResourceDefinition;
-import gov.cms.mat.qdmqicore.mapping.service.GoogleSpreadsheetService;
+import gov.cms.mat.fhir.rest.dto.spreadsheet.*;
+import gov.cms.mat.qdmqicore.mapping.service.MappingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/")
 @Slf4j
-public class GoogleSpreadsheetController {
-    private final GoogleSpreadsheetService spreadsheetService;
+public class MappingController {
+    private final MappingService mappingService;
 
-    public GoogleSpreadsheetController(GoogleSpreadsheetService spreadsheetService) {
-        this.spreadsheetService = spreadsheetService;
+    public MappingController(MappingService mappingService) {
+        this.mappingService = mappingService;
     }
 
     @GetMapping(path = "/matAttributes")
     public List<MatAttribute> matAttributes() throws IOException {
-        return spreadsheetService.getMatAttributes();
+        return mappingService.getMatAttributes();
     }
 
     @GetMapping(path = "/qdmToQicoreMappings")
     public List<QdmToQicoreMapping> qdmToQicoreMappings() throws IOException {
-        return spreadsheetService.getQdmToQicoreMapping();
+        return mappingService.getQdmToQicoreMapping();
     }
 
     @GetMapping(path = "/dataTypes")
     public List<DataType> dataTypes() throws IOException {
-        return spreadsheetService.getDataTypes();
+        return mappingService.getDataTypes();
     }
 
     @GetMapping(path = "/requiredMeasureFields")
     public List<RequiredMeasureField> requiredMeasureFields() throws IOException {
-        return spreadsheetService.getRequiredMeasureFields();
+        return mappingService.getRequiredMeasureFields();
     }
 
     @GetMapping(path = "/resourceDefinition")
     public List<ResourceDefinition> resourceDefinition() throws IOException {
-        return spreadsheetService.getResourceDefinitions();
+        return mappingService.getResourceDefinitions();
     }
 
     @GetMapping(path = "/conversionDataTypes")
     public List<ConversionDataTypes> conversionDataTypes() throws IOException {
-        return spreadsheetService.getConversionDataTypes();
+        return mappingService.getConversionDataTypes();
     }
 
     @GetMapping(path = "/conversionAttributes")
     public List<ConversionAttributes> conversionAttributes() throws IOException {
-        return spreadsheetService.getConversionAttributes();
+        return mappingService.getConversionAttributes();
     }
 
     @GetMapping(path = "/fhirLightBoxDatatypeAttributeAssociation")
     public List<FhirLightBoxDatatypeAttributeAssociations> fhirLightBoxDatatypeAttributeAssociation() throws IOException {
-        return spreadsheetService.getFhirLightBoxDatatypeAttributeAssociation();
+        return mappingService.getFhirLightBoxDatatypeAttributeAssociation();
     }
 
     @GetMapping(path = "/fhirLightboxDataTypesForFunctionArgs")
     public List<String> fhirLightboxDataTypesForFunctionArgs() throws IOException {
-        return spreadsheetService.getFhirLightboxDataTypesForFunctionArgs();
+        return mappingService.getFhirLightboxDataTypesForFunctionArgs();
     }
 
     @GetMapping(path = "/populationBasisValidValues")
-    public Collection<String> populationBasisValidValues() throws IOException {
-        return spreadsheetService.getPopulationBasisValidValues();
+    public List<String> populationBasisValidValues() throws IOException {
+        return mappingService.getPopulationBasisValidValues();
     }
 
     @GetMapping(path = "/codeSystemEntries")
     public List<CodeSystemEntry> codeSystemEntries() throws IOException {
-        return spreadsheetService.getCodeSystemEntries();
+        return mappingService.getCodeSystemEntries();
     }
 }

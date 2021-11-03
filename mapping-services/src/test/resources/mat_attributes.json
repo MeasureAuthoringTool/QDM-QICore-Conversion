@@ -1,0 +1,52 @@
+[
+  {
+    "dataTypeDescription": "Adverse Event",
+    "matAttributeName": "severity",
+    "fhirQicoreMapping": "AdverseEvent.severity",
+    "fhirResource": "AdverseEvent",
+    "fhirType": "CodeableConcept",
+    "fhirElement": "severity",
+    "helpWording": "Definition: Describes the severity of the adverse event, in relation to the subject. Contrast to AdverseEvent.seriousness - a severe rash might not be serious, but a mild heart problem is.\n",
+    "dropDown": ["mild", "moderate", "severe"]
+  },
+  {
+    "dataTypeDescription": "Adverse Event",
+    "matAttributeName": "patientId",
+    "fhirQicoreMapping": "",
+    "fhirResource": "",
+    "fhirType": "-MAN_patientid",
+    "fhirElement": "",
+    "helpWording": "NA",
+    "dropDown": []
+  },
+  {
+    "dataTypeDescription": "Adverse Event",
+    "matAttributeName": "code",
+    "fhirQicoreMapping": "AdverseEvent.event",
+    "fhirResource": "AdverseEvent",
+    "fhirType": "CodeableConcept",
+    "fhirElement": "event",
+    "helpWording": "Definition: This element defines the specific type of event that occurred or that was prevented from occurring.\n",
+    "dropDown": []
+  },
+  {
+    "dataTypeDescription": "Adverse Event",
+    "matAttributeName": "type",
+    "fhirQicoreMapping": "AdverseEvent.category",
+    "fhirResource": "AdverseEvent",
+    "fhirType": "CodeableConcept",
+    "fhirElement": "category",
+    "helpWording": "Definition: The overall type of event, intended for search and filtering purposes.\n",
+    "dropDown": []
+  },
+  {
+    "dataTypeDescription": "Adverse Event",
+    "matAttributeName": "relevantDatetime",
+    "fhirQicoreMapping": "AdverseEvent.date",
+    "fhirResource": "AdverseEvent",
+    "fhirType": "dateTime",
+    "fhirElement": "date",
+    "helpWording": "Definition: The date (and perhaps time) when the adverse event occurred.\n",
+    "dropDown": []
+  }
+]

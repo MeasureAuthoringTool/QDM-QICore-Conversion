@@ -1,0 +1,37 @@
+[
+  {
+    "qdmType": "Adverse Event",
+    "qdmAttribute": "authorDatetime",
+    "fhirType": "AdverseEvent",
+    "fhirAttribute": "recordedDate",
+    "comment": ""
+  },
+  {
+    "qdmType": "Adverse Event",
+    "qdmAttribute": "code",
+    "fhirType": "AdverseEvent",
+    "fhirAttribute": "event",
+    "comment": ""
+  },
+  {
+    "qdmType": "Adverse Event",
+    "qdmAttribute": "facilityLocation",
+    "fhirType": "AdverseEvent",
+    "fhirAttribute": "location",
+    "comment": ""
+  },
+  {
+    "qdmType": "Adverse Event",
+    "qdmAttribute": "id",
+    "fhirType": "AdverseEvent",
+    "fhirAttribute": "id",
+    "comment": ""
+  },
+  {
+    "qdmType": "Adverse Event",
+    "qdmAttribute": "recorder",
+    "fhirType": "AdverseEvent",
+    "fhirAttribute": "recorder",
+    "comment": ""
+  }
+]
