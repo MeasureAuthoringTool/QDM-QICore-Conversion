@@ -1,0 +1,40 @@
+server:
+  port: 9090
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+json:
+  data:
+    mat-attributes-url: file:src/test/resources/mat_attributes.json
+    qdm-qi-core-mapping-url: file:src/test/resources/qdm_to_qicore_mapping.json
+    data-types-url: file:src/test/resources/data_types.json
+    required-measure-fields-url: file:src/test/resources/required_measure_fields.json
+    resource-definition-url: file:src/test/resources/resource_definitions.json
+    conversion-data-types-url: file:src/test/resources/conversion_data_types.json
+    attributes-url: file:src/test/resources/conversion_attributes.json
+    fhir-lightbox-datatype_attribute_association-url: file:src/test/resources/fhir_lightBox_datatype_attribute_association.json
+    fhir-lightbox-datatype_for_function_args-url: file:src/test/resources/fhir_lightbox_data_types_for_functionArgs.json
+    population-basis-valid-values-url: file:src/test/resources/population_basis_valid_values.json
+    code-system-entry-url: file:src/test/resources/code_system_entries.json
+
+
+springdoc:
+  swagger-ui:
+    path: /swagger
+
+swagger-server: http://local
+
+mat-api-key: DEFAULT
+
+cache-names: matAttributes, qdmToQicoreMapping, dataTypes, requiredMeasureFields, resourceDefinitions, conversionDataTypes, conversionAttributes, fhirLightBoxDatatypeAttributeAssociation, fhirLightboxDataTypesForFunctionArgs, populationBasisValidValues, codeSystemEntries
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
+
