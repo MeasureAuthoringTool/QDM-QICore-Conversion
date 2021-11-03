@@ -1,7 +1,7 @@
 package gov.cms.mat.qdmqicore.mapping.controller;
 
 import gov.cms.mat.fhir.rest.dto.spreadsheet.*;
-import gov.cms.mat.qdmqicore.mapping.service.GoogleSpreadsheetService;
+import gov.cms.mat.qdmqicore.mapping.service.MappingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,10 +13,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/")
 @Slf4j
-public class GoogleSpreadsheetController {
-    private final GoogleSpreadsheetService spreadsheetService;
+public class MappingController {
+    private final MappingService spreadsheetService;
 
-    public GoogleSpreadsheetController(GoogleSpreadsheetService spreadsheetService) {
+    public MappingController(MappingService spreadsheetService) {
         this.spreadsheetService = spreadsheetService;
     }
 

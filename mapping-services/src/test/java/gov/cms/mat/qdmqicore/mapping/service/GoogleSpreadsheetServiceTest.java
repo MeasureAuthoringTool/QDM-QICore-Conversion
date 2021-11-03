@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GoogleSpreadsheetServiceTest {
 
     @Autowired
-    private GoogleSpreadsheetService googleSpreadsheetService;
+    private MappingService googleSpreadsheetService;
 
     @Test
     void getMatAttributes() throws IOException {
