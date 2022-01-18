@@ -222,7 +222,6 @@ public class MatXmlController implements TokenResponseHeader {
             matXmlResponse.getCqlModel().setUsingModelVersion(sourceModel.getUsingModelVersion());
         }
 
-
         if (!cqlToMatXml.getSeveres().isEmpty()) {
             // If there are any severe errors, we stop and don't validate any further.
             // The are intended to mean we can't save the CQL like it is now because it is invalid.
