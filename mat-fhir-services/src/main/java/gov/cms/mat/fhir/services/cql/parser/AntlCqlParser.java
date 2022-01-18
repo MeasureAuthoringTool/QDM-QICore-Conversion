@@ -33,7 +33,7 @@ public class AntlCqlParser implements CqlParser {
 
     public void parse(String cql, CqlVisitor v) {
         try {
-            v.validateBeforeParse();
+            v.validateBeforeParse(); // Creates new CQLModel obj if null.
 
             InputStream stream = new ByteArrayInputStream(cql.getBytes());
             cqlLexer lexer = new cqlLexer(new ANTLRInputStream(stream));

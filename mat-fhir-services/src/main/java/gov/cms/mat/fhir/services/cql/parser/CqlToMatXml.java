@@ -222,8 +222,6 @@ public class CqlToMatXml implements CqlVisitor {
         }
     }
 
-
-
     @Override
     public void valueSet(String name, String uri, int lineNumber) {
         boolean hasSeveres = false;
