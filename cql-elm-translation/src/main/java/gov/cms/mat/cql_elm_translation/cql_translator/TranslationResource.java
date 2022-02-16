@@ -14,7 +14,7 @@ import java.util.List;
 
 public class TranslationResource {
 
-    private static final MultivaluedMap<String, CqlTranslator.Options> PARAMS_TO_OPTIONS_MAP = new MultivaluedHashMap<String, CqlTranslator.Options>() {{
+    private static final MultivaluedMap<String, CqlTranslator.Options> PARAMS_TO_OPTIONS_MAP = new MultivaluedHashMap<>() {{
         putSingle("date-range-optimization", CqlTranslator.Options.EnableDateRangeOptimization);
         putSingle("annotations", CqlTranslator.Options.EnableAnnotations);
         putSingle("locators", CqlTranslator.Options.EnableLocators);
@@ -60,6 +60,11 @@ public class TranslationResource {
 
         this.libraryManager = new LibraryManager(modelManager);
     }
+
+    /**
+     * sets the options and calls cql-elm-translator using MatLibrarySourceProvider,
+     * which helps the translator to fetch the CQL of the included libraries from HAPI.
+     */
 
     public CqlTranslator buildTranslator(InputStream cqlStream, MultivaluedMap<String, String> params) {
         try {

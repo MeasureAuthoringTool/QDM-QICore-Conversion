@@ -70,7 +70,7 @@ public class CqlConversionService {
         CqlTextParser cqlTextParser = new CqlTextParser(new String(requestData.getCqlDataInputStream().readAllBytes()));
         UsingProperties usingProperties = cqlTextParser.getUsing();
 
-        return new TranslationResource(usingProperties.isFhir())
+        return new TranslationResource(usingProperties != null && usingProperties.isFhir())
                 .buildTranslator(requestData.getCqlDataInputStream(), requestData.createMap());
     }
 

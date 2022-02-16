@@ -21,6 +21,9 @@ public class CqlExceptionErrorProcessor {
     private final String json;
     private final Library library;
 
+    /**
+     * Transforms CqlTranslatorException to MatCqlConversionException and prepend with "errorExceptions" object to the translator.json
+     */
     public CqlExceptionErrorProcessor(List<CqlTranslatorException> cqlErrors, String json, Library library) {
         this.cqlErrors = cqlErrors;
         this.json = json;
@@ -47,9 +50,7 @@ public class CqlExceptionErrorProcessor {
         List<MatCqlConversionException> matErrors = buildMatErrors();
         String jsonToInsert = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(matErrors);
 
-        String temp = json.replaceFirst("\n", "\n  \"errorExceptions\":" + jsonToInsert + ",\n");
-
-        return temp;
+        return json.replaceFirst("\n", "\n  \"errorExceptions\":" + jsonToInsert + ",\n");
     }
 
     private String escape(String raw) {
@@ -116,7 +117,6 @@ public class CqlExceptionErrorProcessor {
         MatCqlConversionException matCqlConversionException = new MatCqlConversionException();
         matCqlConversionException.setErrorSeverity(c.getSeverity().name());
 
-
         try {
             String payload = escape(c.getMessage());
             matCqlConversionException.setMessage(payload);
@@ -124,8 +124,6 @@ public class CqlExceptionErrorProcessor {
             log.debug("Error building MatError", e);
             matCqlConversionException.setMessage("Exception");
         }
-
         return matCqlConversionException;
     }
-
 }
