@@ -5,9 +5,7 @@ import gov.cms.mat.fhir.services.service.MappingDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -24,9 +22,7 @@ public class ManageCodeListServiceImpl implements CodeListService {
 
     @Cacheable(OID_TO_VSAC_CODE_SYSTEM_DTO)
     @Override
-    public Map<String, CodeSystemEntry> getOidToVsacCodeSystemMap() {
-        Map<String, CodeSystemEntry> result = new HashMap<>();
-        mappingDataService.getCodeSystemEntries().forEach(v -> result.put(v.getOid(), v));
-        return result;
+    public List<CodeSystemEntry> getOidToVsacCodeSystemMap() {
+        return mappingDataService.getCodeSystemEntries();
     }
 }

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.mat.fhir.commons.model.CqlLibrary;
 import gov.cms.mat.fhir.services.cql.LibraryCqlVisitor;
 import gov.cms.mat.fhir.services.cql.LibraryCqlVisitorFactory;
-import gov.cms.mat.fhir.services.cql.parser.CodeListService;
 import gov.cms.mat.fhir.services.cql.parser.CqlUtils;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
@@ -46,17 +45,15 @@ public class VSACController implements TokenResponseHeader {
     private final CqlLibraryRepository cqlLibRepo;
     private final HapiFhirServer hapiFhirServer;
     private final LibraryCqlVisitorFactory libVisitorFactory;
-    private final CodeListService codeListService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public VSACController(VsacService vsacService, ValueSetMapper valueSetMapper, FhirContext fhirContext, CqlLibraryRepository cqlLibRepo, HapiFhirServer hapiFhirServer, LibraryCqlVisitorFactory libVisitorFactory, CodeListService codeListService) {
+    public VSACController(VsacService vsacService, ValueSetMapper valueSetMapper, FhirContext fhirContext, CqlLibraryRepository cqlLibRepo, HapiFhirServer hapiFhirServer, LibraryCqlVisitorFactory libVisitorFactory) {
         this.vsacService = vsacService;
         this.valueSetMapper = valueSetMapper;
         this.fhirContext = fhirContext;
         this.cqlLibRepo = cqlLibRepo;
         this.hapiFhirServer = hapiFhirServer;
         this.libVisitorFactory = libVisitorFactory;
-        this.codeListService = codeListService;
     }
 
     @Operation(summary = "Get Ticket Granting TIcket from VSAC",
@@ -101,9 +98,6 @@ public class VSACController implements TokenResponseHeader {
                 libVisitor.getCodeSystems().forEach(mcs -> {
                     String uri = getText(mcs.codesystemId());
                     String version = getText(mcs.versionSpecifier());
-                    String oid = getOidFromUrn(codeListService.getOidToVsacCodeSystemMap().values().stream().filter(
-                            cse -> StringUtils.equals(uri, cse.getUrl())).findFirst().get().getOid());
-
                     CodeSystem codeSystem = new CodeSystem();
                     codeSystem.setId(randomUUID());
                     codeSystem.setName(uri);

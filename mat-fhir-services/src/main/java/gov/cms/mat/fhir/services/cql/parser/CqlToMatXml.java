@@ -564,8 +564,10 @@ public class CqlToMatXml implements CqlVisitor {
     }
 
     private Optional<CodeSystemEntry> getSpreadsheetRow(CQLCode c) {
-        return codeListService.getOidToVsacCodeSystemMap().values().stream().filter(
-                v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID())).findFirst();
+        return codeListService.getOidToVsacCodeSystemMap()
+                .stream()
+                .filter(v -> StringUtils.equals(v.getUrl(), c.getCodeSystemOID()))
+                .findFirst();
     }
 
     private Optional<CQLCode> getPreviousCode(CQLCode c) {
