@@ -20,7 +20,7 @@ class ApplicationTest {
     @Test
     void contextLoads() {
         assertEquals(8, conversionLibraryLookup.getMap().size());
-        assertEquals("4.0.001", conversionLibraryLookup.getMap().get("FHIRHelpers"));
+        assertEquals("4.1.000", conversionLibraryLookup.getMap().get("FHIRHelpers"));
 
         List<String> keys = new ArrayList<>(conversionLibraryLookup.getMap().keySet());
 
