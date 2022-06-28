@@ -16,12 +16,12 @@ mat.qdm.default.expansion.id: Most Recent Code System Versions in VSAC
 
 conversion-lib-lookup-4-1:
   map:
-    FHIRHelpers: 4.0.001
+    FHIRHelpers: 4.1.000
     AdultOutpatientEncounters: 2.0.000
     AdvancedIllnessandFrailtyExclusion: 5.0.000
     Hospice: 2.0.000
-    MATGlobalCommonFunctions: 5.0.000
-    SupplementalDataElements: 2.0.000
+    MATGlobalCommonFunctions: 7.0.000
+    SupplementalDataElements: 2.1.000
     TJCOverall: 5.0.000
     VTEICU: 4.0.000
 
