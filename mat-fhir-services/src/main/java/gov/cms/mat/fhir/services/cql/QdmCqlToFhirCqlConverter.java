@@ -35,7 +35,7 @@ public class QdmCqlToFhirCqlConverter {
 
     private static final StandardLib[] STANDARD_LIBS = {
             new StandardLib("FHIRHelpers", "4.1.000", "FHIRHelpers"),
-            new StandardLib("SupplementalDataElementsFHIR4", "2.1.000", "SDE"),
+            new StandardLib("SupplementalDataElementsFHIR4", "3.0.000", "SDE"),
             new StandardLib("MATGlobalCommonFunctionsFHIR4", "7.0.000", "Global")
     };
 
