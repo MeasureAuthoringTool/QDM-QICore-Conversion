@@ -6,7 +6,7 @@
     <parent>
         <artifactId>qdm-qicore-parent</artifactId>
         <groupId>gov.cms.mat</groupId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <packaging>jar</packaging>
