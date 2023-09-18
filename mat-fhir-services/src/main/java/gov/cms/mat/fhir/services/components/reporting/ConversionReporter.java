@@ -196,14 +196,14 @@ public class ConversionReporter {
                                                     ConversionType conversionType,
                                                     XmlSource xmlSource,
                                                     boolean showWarnings,
-                                                    String vsacGrantingTicket) {
+                                                    String apiKey) {
         removeInThreadLocal();
         threadLocal.set(new ConversionReporter(measureId, conversionResultsService, instant));
         setConversionType(conversionType);
         setBatchId(batchId);
         setXmlSource(xmlSource);
         setShowWarnings(showWarnings);
-        setVsacGrantingTicket(vsacGrantingTicket);
+        setVsacApiKey(apiKey);
 
         return getKey();
     }
@@ -295,10 +295,10 @@ public class ConversionReporter {
     }
 
 
-    public static void setVsacGrantingTicket(String vsacGrantingTicket) {
-        ConversionReporter conversionReporter = getConversionReporter();
-        conversionReporter.addVsacGrantingTicket(vsacGrantingTicket);
-    }
+    public static void setVsacApiKey(String apiKey) {
+      ConversionReporter conversionReporter = getConversionReporter();
+      conversionReporter.addVsacApiKey(apiKey);
+  }
 
     private void addBatchId(String batchId) {
         conversionResultsService.addBatchId(key, batchId);
@@ -312,8 +312,8 @@ public class ConversionReporter {
         conversionResultsService.addShowWarnings(key, flag);
     }
 
-    private void addVsacGrantingTicket(String vsacGrantingTicket) {
-        conversionResultsService.addVsacGrantingTicket(key, vsacGrantingTicket);
+    private void addVsacApiKey(String apiKey) {
+      conversionResultsService.addVsacApiKey(key, apiKey);
     }
 
     private void addErrorMessage(String message, ConversionOutcome outcome) {

@@ -11,7 +11,7 @@ import gov.cms.mat.fhir.services.cql.parser.CodeListService;
 import gov.cms.mat.fhir.services.cql.parser.CqlUtils;
 import gov.cms.mat.fhir.services.hapi.HapiFhirServer;
 import gov.cms.mat.fhir.services.repository.CqlLibraryRepository;
-import gov.cms.mat.fhir.services.rest.support.TokenResponseHeader;
+import gov.cms.mat.fhir.services.rest.support.ApiKeyResponseHeader;
 import gov.cms.mat.fhir.services.translate.ValueSetMapper;
 import gov.cms.mat.vsac.VsacService;
 import gov.cms.mat.vsac.model.VsacCode;
@@ -39,7 +39,7 @@ import java.util.UUID;
 @Tag(name = "VSAC-Controller",
         description = "API for acquiring Tickets from VSAC Service for Testing and Integration Purposes.")
 @Slf4j
-public class VSACController implements TokenResponseHeader {
+public class VSACController implements ApiKeyResponseHeader {
     private final VsacService vsacService;
     private final ValueSetMapper valueSetMapper;
     private final FhirContext fhirContext;
@@ -59,20 +59,6 @@ public class VSACController implements TokenResponseHeader {
         this.codeListService = codeListService;
     }
 
-    @Operation(summary = "Get Ticket Granting TIcket from VSAC",
-            description = "Gets the 8 hour ticket that can be used to get single use service tickets.")
-    @GetMapping(path = "/getTicketGrantingTicket")
-    public String getGrantingTicket(@RequestParam String apiKey) {
-        return vsacService.getTicketGrantingTicket(apiKey);
-    }
-
-    @Operation(summary = "Get service ticket from VSAC",
-            description = "Gets the 5 minute singlue use ticket from VSAC for a ticket granting ticket.")
-    @GetMapping(path = "/getServiceTicket")
-    public String getSingleUseTicket(@RequestParam String ticketGrantingTicket, @RequestParam String apiKey) {
-        return vsacService.getServiceTicket(ticketGrantingTicket, apiKey);
-    }
-
     @Operation(summary = "Returns fhir resource bundle for the specified measure id.")
     @GetMapping(path = "/getFhirResources")
     public @ResponseBody
@@ -85,7 +71,7 @@ public class VSACController implements TokenResponseHeader {
             result.setType(Bundle.BundleType.TRANSACTION);
             CqlLibrary cqlLib = cqlLibRepo.getCqlLibraryByMeasureId(measureId);
             Optional<Library> fhirLib = hapiFhirServer.fetchHapiLibrary(cqlLib.getCqlName(), cqlLib.getMatVersionFormat());
-            String ticketGrantingTicket = vsacService.getTicketGrantingTicket(ulmsApiKey);
+
             fhirLib.ifPresent(l -> {
                 String cql = new String(l.getContent().stream().filter(
                         c -> StringUtils.equals("text/cql", c.getContentType())).findAny().get().getData());
@@ -93,7 +79,7 @@ public class VSACController implements TokenResponseHeader {
 
                 libVisitor.getValueSets().forEach(mvs -> {
                     String oid = CqlUtils.parseOid(getOidFromValueSetUrl(getText(mvs.valuesetId())));
-                    ValueSet fhirValueSet = valueSetMapper.mapToFhir(ticketGrantingTicket, oid, null, ulmsApiKey);
+                    ValueSet fhirValueSet = valueSetMapper.mapToFhir(oid, null, ulmsApiKey);
                     result.addEntry().setResource(fhirValueSet).getRequest().setUrl("ValueSet/" +
                             fhirValueSet.getId()).setMethod(Bundle.HTTPVerb.PUT);
                 });
@@ -114,7 +100,7 @@ public class VSACController implements TokenResponseHeader {
                         String path = "/CodeSystem/" + trimVersionFromCodeSystemIdentifier(getText(mcs.identifier())) + "/Version/" +
                                 CqlUtils.parseMatVersionFromCodeSystemUri(version) +
                                 "/Code/" + getText(cdc.codeId()) + "/Info";
-                        VsacCode code = vsacService.getCode(path, ticketGrantingTicket, ulmsApiKey);
+                        VsacCode code = vsacService.getCode(path, ulmsApiKey);
                         VsacCode.VsacDataResultSet codeResult = code.getData().getResultSet().get(0);
                         codeSystem.addConcept().setCode(codeResult.getCode()).setDisplay(codeResult.getCodeName()).setDefinition(codeResult.getCodeName());
                     });
@@ -140,7 +126,7 @@ public class VSACController implements TokenResponseHeader {
                              @RequestParam String apiKey,
                              HttpServletResponse response) {
         try {
-            return objectMapper.readTree(fhirContext.newJsonParser().encodeResourceToString(valueSetMapper.mapToFhir(ticketGrantingTicket, oid, version, apiKey)));
+        	return objectMapper.readTree(fhirContext.newJsonParser().encodeResourceToString(valueSetMapper.mapToFhir(oid, version, apiKey)));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         } finally {

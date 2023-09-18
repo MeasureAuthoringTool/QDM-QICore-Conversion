@@ -16,7 +16,7 @@ import gov.cms.mat.fhir.services.rest.dto.CQLObject;
 import gov.cms.mat.fhir.services.rest.dto.LibraryErrors;
 import gov.cms.mat.fhir.services.rest.dto.UnusedCqlElements;
 import gov.cms.mat.fhir.services.rest.dto.ValidationRequest;
-import gov.cms.mat.fhir.services.rest.support.TokenResponseHeader;
+import gov.cms.mat.fhir.services.rest.support.ApiKeyResponseHeader;
 import gov.cms.mat.fhir.services.service.MeasureDataService;
 import gov.cms.mat.fhir.services.service.ValidationOrchestrationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -59,7 +59,7 @@ import static gov.cms.mat.fhir.rest.dto.ConversionOutcome.MEASURE_RELEASE_VERSIO
 @Tag(name = "MatXmlController", description = "API for validating cql")
 @Slf4j
 @Controller
-public class MatXmlController implements TokenResponseHeader {
+public class MatXmlController implements ApiKeyResponseHeader {
 
     private final MeasureXmlRepository measureXmlRepository;
     private final CqlLibraryRepository cqlLibraryRepository;

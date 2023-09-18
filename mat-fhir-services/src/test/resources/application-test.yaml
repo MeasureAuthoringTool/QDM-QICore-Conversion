@@ -28,7 +28,6 @@ measures:
     greater-than: 5.4
 
 vsac:
-  ticket-url-base: ${VSAC_TICKET_URL_BASE:https://utslogin.nlm.nih.gov/cas/v1}
   url-base: ${VSAC_URL_BASE:https://vsac.nlm.nih.gov}
 
 mat-api-key: ${MAT_API_KEY:LOCAL_KEY}

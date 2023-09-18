@@ -7,11 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class VsacValidatorTest {
 
     @Test
-    void fetchFiveMinuteTicket() {
-        VsacValidator.ExpiredTicketException expiredTicketException =
-                new VsacValidator.ExpiredTicketException("oops1");
-        assertEquals("oops1", expiredTicketException.getMessage());
-
+    void testVsacCodeSystemValidatorException() {
         VsacValidator.VsacCodeSystemValidatorException vsacCodeSystemValidatorException =
                 new VsacValidator.VsacCodeSystemValidatorException("oops2");
         assertEquals("oops2", vsacCodeSystemValidatorException.getMessage());

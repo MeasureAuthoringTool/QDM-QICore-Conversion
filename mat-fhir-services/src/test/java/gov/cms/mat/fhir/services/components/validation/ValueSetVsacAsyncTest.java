@@ -12,14 +12,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static gov.cms.mat.fhir.services.components.validation.ValueSetVsacAsync.NOT_FOUND;
 import static gov.cms.mat.fhir.services.components.validation.ValueSetVsacAsync.REQURIES_VALIDATION;
-import static gov.cms.mat.fhir.services.components.validation.ValueSetVsacAsync.TICKET_EXPIRED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
@@ -61,8 +57,8 @@ class ValueSetVsacAsyncTest {
                 .isFailResponse(false)
                 .build();
 
-        when(vsacService.getValueSetResult("2.16.840.1.113883.17.4077.3.2056", TOKEN, API_KEY))
-                .thenReturn(vsacResponseResult);
+        when(vsacService.getValueSetResult("2.16.840.1.113883.17.4077.3.2056", API_KEY))
+        .thenReturn(vsacResponseResult);
 
         CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN, API_KEY);
         completableFuture.get();
@@ -72,21 +68,9 @@ class ValueSetVsacAsyncTest {
     }
 
     @Test
-    void validateVsacExpiredTicketException() throws ExecutionException, InterruptedException {
-        when(vsacService.getValueSetResult("2.16.840.1.113883.17.4077.3.2056", TOKEN, API_KEY))
-                .thenThrow(new VsacValidator.ExpiredTicketException("your too old"));
-
-        CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN, API_KEY);
-        completableFuture.get();
-
-        assertEquals(TICKET_EXPIRED, cqlQualityDataSetDTO.getErrorMessage());
-        assertEquals(VsacStatus.PENDING, cqlQualityDataSetDTO.obtainValidatedWithVsac());
-    }
-
-    @Test
     void validateVsacExpiredExceptionWhilePending() throws ExecutionException, InterruptedException {
-        when(vsacService.getValueSetResult("2.16.840.1.113883.17.4077.3.2056", TOKEN, API_KEY))
-                .thenThrow(new IllegalArgumentException("your too illegal"));
+    	when(vsacService.getValueSetResult("2.16.840.1.113883.17.4077.3.2056", API_KEY))
+      .thenThrow(new IllegalArgumentException("your too illegal"));
 
         cqlQualityDataSetDTO.setValidatedWithVsac(VsacStatus.PENDING.toString());
 
@@ -97,17 +81,4 @@ class ValueSetVsacAsyncTest {
         assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
     }
 
-    @Test
-    void validateVsacExpiredExceptionWhileInvalid() throws ExecutionException, InterruptedException {
-        when(vsacService.getValueSetResult("2.16.840.1.113883.17.4077.3.2056", TOKEN, API_KEY))
-                .thenThrow(new UncheckedIOException(new IOException("input and outputs is hard")));
-
-        cqlQualityDataSetDTO.setValidatedWithVsac(VsacStatus.IN_VALID.toString());
-
-        CompletableFuture<Void> completableFuture = valueSetVsacAsync.validateWithVsac(cqlQualityDataSetDTO, TOKEN, API_KEY);
-        completableFuture.get();
-
-        assertEquals(NOT_FOUND, cqlQualityDataSetDTO.getErrorMessage());
-        assertEquals(VsacStatus.IN_VALID, cqlQualityDataSetDTO.obtainValidatedWithVsac());
-    }
 }

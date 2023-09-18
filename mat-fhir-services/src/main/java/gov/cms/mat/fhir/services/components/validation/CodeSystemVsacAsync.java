@@ -82,7 +82,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
                 throw new VsacCodeSystemValidatorException(INVALID_CODE_URL);
             }
 
-            VsacCode vsacResponse = vsacService.getCode(getCodeSystemUrlFromMatUrl(url), umlsToken, apiKey);
+            VsacCode vsacResponse = vsacService.getCode(getCodeSystemUrlFromMatUrl(url), apiKey);
 
             if (vsacResponse.getStatus().equals("ok")) {
                 cqlCode.setErrorMessage(null);
@@ -131,7 +131,7 @@ public class CodeSystemVsacAsync extends VsacValidator {
 
                 //This hit is cached so no need to optimize.
                 CodeSystemVersionResponse vsacResult =
-                        vsacService.getCodeSystemVersionFromName(cqlCode.getCodeSystemName(), ulmsToken, apiKey);
+                			vsacService.getCodeSystemVersionFromName(cqlCode.getCodeSystemName(), apiKey);
 
                 if (BooleanUtils.isTrue(vsacResult.getSuccess())) {
                     versionUri = vsacResult.getVersion();
