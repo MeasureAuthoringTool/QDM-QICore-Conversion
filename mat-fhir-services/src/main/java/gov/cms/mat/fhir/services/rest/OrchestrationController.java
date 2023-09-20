@@ -60,7 +60,6 @@ public class OrchestrationController implements OrchestrationParameterChecker {
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam(required = false, defaultValue = "MEASURE-ORCHESTRATION") String batchId,
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
-//            @RequestParam(required = false, defaultValue = "") String vsacGrantingTicket) {
             @RequestParam(required = false, defaultValue = "") String apiKey) {
 
         checkParameters(xmlSource, conversionType);
@@ -89,7 +88,6 @@ public class OrchestrationController implements OrchestrationParameterChecker {
                         .conversionType(conversionType)
                         .xmlSource(xmlSource)
                         .threadSessionKey(threadSessionKey)
-//                        .vsacGrantingTicket(vsacGrantingTicket)
                         .vsacApiKey(apiKey)
                         .build();
 
