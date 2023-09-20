@@ -323,9 +323,9 @@ class ConversionResultsServiceTest {
     }
 
     @Test
-    void addVsacGrantingTicket() {
-        conversionResultsService.addVsacGrantingTicket(key, "vsacGrantingTicket");
-        assertEquals("vsacGrantingTicket", getConversionResult().getVsacGrantingTicket());
+    void addVsacApiKey() {
+        conversionResultsService.addVsacApiKey(key, "vsacApiKey");
+        assertEquals("vsacApiKey", getConversionResult().getVsacApiKey());
     }
 
 

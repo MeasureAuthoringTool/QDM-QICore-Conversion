@@ -67,7 +67,7 @@ public class VSACOrchestrationController {
             @RequestParam(required = false, defaultValue = "SIMPLE") XmlSource xmlSource,
             @RequestParam(required = false, defaultValue = "ORCHESTRATION") String batchId,
             @RequestParam(required = false, defaultValue = "false") boolean showWarnings,
-            @RequestParam(required = false, defaultValue = "") String vsacGrantingTicket) {
+            @RequestParam(required = false, defaultValue = "") String apiKey) {
         ThreadSessionKey threadSessionKey =
                 ConversionReporter.setInThreadLocal(id,
                         batchId,
@@ -76,7 +76,7 @@ public class VSACOrchestrationController {
                         conversionType,
                         xmlSource,
                         showWarnings,
-                        vsacGrantingTicket);
+                        apiKey);
         try {
             Measure matMeasure;
 
@@ -95,7 +95,7 @@ public class VSACOrchestrationController {
                     .matMeasure(matMeasure)
                     .conversionType(conversionType)
                     .xmlSource(xmlSource)
-                    .vsacGrantingTicket(vsacGrantingTicket)
+                    .vsacApiKey(apiKey)
                     .threadSessionKey(threadSessionKey)
                     .build();
 

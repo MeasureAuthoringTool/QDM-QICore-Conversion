@@ -318,9 +318,9 @@ public class ConversionResultsService {
         conversionResult.setShowWarnings(flag);
     }
 
-    public void addVsacGrantingTicket(ThreadSessionKey key, String vsacGrantingTicket) {
-        ConversionResult conversionResult = findOrCreate(key);
-        conversionResult.setVsacGrantingTicket(vsacGrantingTicket);
+    public void addVsacApiKey(ThreadSessionKey key, String apiKey) {
+      ConversionResult conversionResult = findOrCreate(key);
+      conversionResult.setVsacApiKey(apiKey);
     }
 
     private ConversionResult findOrCreate(ThreadSessionKey key) {

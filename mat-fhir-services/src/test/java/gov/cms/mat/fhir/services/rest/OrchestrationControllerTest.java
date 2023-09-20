@@ -50,12 +50,12 @@ class OrchestrationControllerTest {
         when(conversionResultProcessorService.process(any(ThreadSessionKey.class))).thenReturn(conversionResultToReturn);
 
         ConversionResultDto conversionResultReturned =
-                orchestrationController.translateMeasureById(MEASURE_ID,
-                        ConversionType.VALIDATION,
-                        XmlSource.SIMPLE,
-                        "batchId",
-                        true,
-                        "vsacGrantingTicket");
+            orchestrationController.translateMeasureById(MEASURE_ID,
+                    ConversionType.VALIDATION,
+                    XmlSource.SIMPLE,
+                    "batchId",
+                    true,
+                    "vsacApiKey");
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
@@ -73,12 +73,12 @@ class OrchestrationControllerTest {
         when(conversionResultProcessorService.process(any(ThreadSessionKey.class))).thenReturn(conversionResultToReturn);
 
         ConversionResultDto conversionResultReturned =
-                orchestrationController.translateMeasureById(MEASURE_ID,
-                        ConversionType.VALIDATION,
-                        XmlSource.MEASURE,
-                        "batchId",
-                        true,
-                        "vsacGrantingTicket");
+            orchestrationController.translateMeasureById(MEASURE_ID,
+                    ConversionType.VALIDATION,
+                    XmlSource.MEASURE,
+                    "batchId",
+                    true,
+                    "vsacApiKey");
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 
@@ -96,12 +96,12 @@ class OrchestrationControllerTest {
         when(conversionResultProcessorService.process(any(ThreadSessionKey.class))).thenReturn(conversionResultToReturn);
 
         ConversionResultDto conversionResultReturned =
-                orchestrationController.translateMeasureById(MEASURE_ID,
-                        ConversionType.VALIDATION,
-                        XmlSource.SIMPLE,
-                        "batchId",
-                        true,
-                        "vsacGrantingTicket");
+            orchestrationController.translateMeasureById(MEASURE_ID,
+                    ConversionType.VALIDATION,
+                    XmlSource.SIMPLE,
+                    "batchId",
+                    true,
+                    "vsacApiKey");
 
         assertEquals(conversionResultToReturn, conversionResultReturned);
 

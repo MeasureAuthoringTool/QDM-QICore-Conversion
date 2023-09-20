@@ -177,11 +177,11 @@ class VSACOrchestrationControllerTest {
 
 
     private ConversionResultDto translate() {
-        return vsacOrchestrationController.translateMeasureById(ID,
-                ConversionType.CONVERSION,
-                XmlSource.MEASURE,
-                "batchId",
-                false,
-                "vsacGrantingTicket");
+    	return vsacOrchestrationController.translateMeasureById(ID,
+          ConversionType.CONVERSION,
+          XmlSource.MEASURE,
+          "batchId",
+          false,
+          "vsacApiKey");
     }
 }

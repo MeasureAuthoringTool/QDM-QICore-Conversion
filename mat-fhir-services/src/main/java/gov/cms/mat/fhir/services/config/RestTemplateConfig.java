@@ -3,7 +3,6 @@ package gov.cms.mat.fhir.services.config;
 import gov.cms.mat.fhir.services.config.logging.RequestResponseLoggingExternalInterceptor;
 import gov.cms.mat.fhir.services.config.logging.RequestResponseLoggingInterceptor;
 import gov.cms.mat.fhir.services.config.logging.RequestResponseLoggingMdcInternalInterceptor;
-import gov.cms.mat.vsac.RefreshTokenManagerImpl;
 import gov.cms.mat.vsac.VsacService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +20,6 @@ import java.util.List;
 @Configuration
 @Component
 public class RestTemplateConfig {
-    @Value("${vsac.ticket-url-base}")
-    private String ticketUrlBase;
     @Value("${vsac.url-base}")
     private String vsacUrlBase;
 
@@ -45,7 +42,7 @@ public class RestTemplateConfig {
 
     @Bean
     public VsacService vsacService(@Named("externalRestTemplate") RestTemplate restTemplate) {
-        return new VsacService(ticketUrlBase,vsacUrlBase,restTemplate, RefreshTokenManagerImpl.getInstance());
+        return new VsacService(vsacUrlBase,restTemplate);
     }
 
     public RestTemplate getRestTemplate(RequestResponseLoggingInterceptor interceptor) {

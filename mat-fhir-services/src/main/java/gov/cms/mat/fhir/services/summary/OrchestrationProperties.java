@@ -28,7 +28,7 @@ public class OrchestrationProperties {
     private CqlLibrary measureLib;
     private ThreadSessionKey threadSessionKey;
     private Measure matMeasure;
-    private String vsacGrantingTicket;
+    private String vsacApiKey;
     private boolean showWarnings;
     private boolean includeStdLibs;
     private boolean isPush;

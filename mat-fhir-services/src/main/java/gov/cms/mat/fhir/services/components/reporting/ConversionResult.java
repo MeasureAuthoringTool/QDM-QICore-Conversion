@@ -52,6 +52,6 @@ public class ConversionResult implements LibraryResultsHelper, ValueSetResultsHe
     private Instant start;
     private Instant finished;
     private Instant valueSetsProcessed;
-    private String vsacGrantingTicket;
+    private String vsacApiKey;
     private String valueSetProcessingMemo;
 }

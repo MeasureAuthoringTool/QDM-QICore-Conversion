@@ -50,13 +50,14 @@ class CodeSystemVsacAsyncTest {
 
 
     @Test
-    void validateCodeTicketInvalid() throws ExecutionException, InterruptedException {
+    void validateCodeApiKeyInvalid() throws ExecutionException, InterruptedException {
+
 
         CodeSystemVersionResponse vsacResponse = buildCodeSystemVersionResponse(false, "Can't log in", null);
 
         cqlCode.setCodeSystemName(LOINC);
 
-        when(vsacService.getCodeSystemVersionFromName(LOINC, TOKEN, API_KEY)).thenReturn(vsacResponse);
+        when(vsacService.getCodeSystemVersionFromName(LOINC, API_KEY)).thenReturn(vsacResponse);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN, API_KEY);
         completableFuture.get();
@@ -90,7 +91,7 @@ class CodeSystemVsacAsyncTest {
 
         cqlCode.setCodeSystemName(LOINC);
 
-        when(vsacService.getCodeSystemVersionFromName(LOINC, TOKEN, API_KEY)).thenReturn(vsacResponse);
+        when(vsacService.getCodeSystemVersionFromName(LOINC, API_KEY)).thenReturn(vsacResponse);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN, API_KEY);
         completableFuture.get();
@@ -116,7 +117,7 @@ class CodeSystemVsacAsyncTest {
         cqlCode.setCodeSystemName(LOINC);
         cqlCode.setCodeOID(CODE);
 
-        when(vsacService.getCodeSystemVersionFromName(LOINC, TOKEN, API_KEY)).thenThrow(new IllegalArgumentException("oops"));
+        when(vsacService.getCodeSystemVersionFromName(LOINC, API_KEY)).thenThrow(new IllegalArgumentException("oops"));
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN, API_KEY);
         completableFuture.get();
@@ -134,11 +135,11 @@ class CodeSystemVsacAsyncTest {
 
         CodeSystemVersionResponse vsacResponse = buildCodeSystemVersionResponse(true, null, VERSION);
 
-        when(vsacService.getCodeSystemVersionFromName(LOINC, TOKEN, API_KEY)).thenReturn(vsacResponse);
+        when(vsacService.getCodeSystemVersionFromName(LOINC, API_KEY)).thenReturn(vsacResponse);
 
         VsacCode vsacCode = createVsacCode("ok", null);
 
-        when(vsacService.getCode(path, TOKEN, API_KEY)).thenReturn(vsacCode);
+        when(vsacService.getCode(path, API_KEY)).thenReturn(vsacCode);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN, API_KEY);
         completableFuture.get();
@@ -155,7 +156,7 @@ class CodeSystemVsacAsyncTest {
         cqlCode.setCodeSystemVersionUri(VERSION);
 
         VsacCode vsacCode = createVsacCode("ok", null);
-        when(vsacService.getCode(path, TOKEN, API_KEY)).thenReturn(vsacCode);
+        when(vsacService.getCode(path, API_KEY)).thenReturn(vsacCode);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN, API_KEY);
         completableFuture.get();
@@ -172,10 +173,10 @@ class CodeSystemVsacAsyncTest {
 
         CodeSystemVersionResponse vsacResponse = buildCodeSystemVersionResponse(true, null, VERSION);
 
-        when(vsacService.getCodeSystemVersionFromName(LOINC, TOKEN, API_KEY)).thenReturn(vsacResponse);
+        when(vsacService.getCodeSystemVersionFromName(LOINC, API_KEY)).thenReturn(vsacResponse);
 
         VsacCode vsacCode = createVsacCode("awful", "It is awful");
-        when(vsacService.getCode(path, TOKEN, API_KEY)).thenReturn(vsacCode);
+        when(vsacService.getCode(path, API_KEY)).thenReturn(vsacCode);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN, API_KEY);
         completableFuture.get();
@@ -193,13 +194,13 @@ class CodeSystemVsacAsyncTest {
 
         CodeSystemVersionResponse vsacResponse = buildCodeSystemVersionResponse(true, null, VERSION);
 
-        when(vsacService.getCodeSystemVersionFromName(LOINC, TOKEN, API_KEY)).thenReturn(vsacResponse);
+        when(vsacService.getCodeSystemVersionFromName(LOINC, API_KEY)).thenReturn(vsacResponse);
 
         VsacCode vsacCode = createVsacCode("awful", "It is awful");
         vsacCode.setErrors(new VsacCode.VsacError());
         vsacCode.getErrors().setResultSet(createErrors());
 
-        when(vsacService.getCode(path, TOKEN, API_KEY)).thenReturn(vsacCode);
+        when(vsacService.getCode(path, API_KEY)).thenReturn(vsacCode);
 
         CompletableFuture<Void> completableFuture = codeSystemVsacAsync.validateCode(cqlCode, TOKEN, API_KEY);
         completableFuture.get();
