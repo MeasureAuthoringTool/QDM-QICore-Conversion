@@ -354,12 +354,12 @@ public class VsacService {
     }
 
 
-    public BasicResponse getAllPrograms(String apiKey) {
+    public BasicResponse getAllPrograms() {
         // https://vsac.nlm.nih.gov/vsac/programs
         try {
         	URI uri = UriComponentsBuilder.fromUriString(baseVsacUrl + "/vsac/programs").build().encode().toUri();
           ResponseEntity<String> response = restTemplate.exchange(uri,  
-          		HttpMethod.GET, getHeaderEntityWithAuthentication(apiKey), String.class);
+          		HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 BasicResponse result = new BasicResponse();
                 result.setXmlPayLoad(response.getBody());
