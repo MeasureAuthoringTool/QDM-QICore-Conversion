@@ -1,6 +1,8 @@
 server:
   port: 6060
 spring:
+  main:
+    allow-circular-references: true
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: ${HAPI_DB_URL}
