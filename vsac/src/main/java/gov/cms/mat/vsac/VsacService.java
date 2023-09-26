@@ -17,10 +17,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +28,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -354,12 +350,12 @@ public class VsacService {
     }
 
 
-    public BasicResponse getAllPrograms(String apiKey) {
+    public BasicResponse getAllPrograms() {
         // https://vsac.nlm.nih.gov/vsac/programs
         try {
         	URI uri = UriComponentsBuilder.fromUriString(baseVsacUrl + "/vsac/programs").build().encode().toUri();
           ResponseEntity<String> response = restTemplate.exchange(uri,  
-          		HttpMethod.GET, getHeaderEntityWithAuthentication(apiKey), String.class);
+          		HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 BasicResponse result = new BasicResponse();
                 result.setXmlPayLoad(response.getBody());
@@ -384,13 +380,13 @@ public class VsacService {
         }
     }
 
-    public BasicResponse getReleasesOfProgram(String program, String apiKey) {
+    public BasicResponse getReleasesOfProgram(String program) {
         // https://vsac.nlm.nih.gov/vsac/program/NAME
         try {          
             URI uri = UriComponentsBuilder.fromUriString(baseVsacUrl + "/vsac/program/{program}")
             		.buildAndExpand(program).encode().toUri();
             ResponseEntity<String> response = restTemplate.exchange(uri,  
-            		HttpMethod.GET, getHeaderEntityWithAuthentication(apiKey), String.class);
+            		HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 BasicResponse result = new BasicResponse();
                 result.setXmlPayLoad(response.getBody());
@@ -530,42 +526,10 @@ public class VsacService {
                 vsacResponseResult.getXmlPayLoad() != null &&
                 !vsacResponseResult.isFailResponse();
     }
-
-    private <T> String postForString2xx(URI uri, HttpEntity<T> request) {
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            log.debug("Vsac Rest Error", e);
-            return null;
-        }
-    }
-
-    private HttpEntity<String> buildEntityWithTicketHeaders() {
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("content-type", "application/x-www-form-urlencoded");
-        return new HttpEntity<>(headers);
-    }
-
-    private HttpEntity<MultiValueMap<String,String>> buildEntityWithUrlEncodedBody(MultiValueMap<String, String> body) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        return new HttpEntity<>(body, headers);
-    }
     
     private HttpEntity<String> getHeaderEntityWithAuthentication(String apiKey) {
     	HttpHeaders headers = new HttpHeaders();
-      headers.add("Authorization", getBasicAuthenticationHeader("apikey", apiKey));
+      headers.setBasicAuth("apikey", apiKey);
       return new HttpEntity<>(headers);
     }
-    
-    private static final String getBasicAuthenticationHeader(String username, String password) {
-      String valueToEncode = username + ":" + password;
-      return "Basic " + Base64.getEncoder().encodeToString(valueToEncode.getBytes());
-  }
 }
