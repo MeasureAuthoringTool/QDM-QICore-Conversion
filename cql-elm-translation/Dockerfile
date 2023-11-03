@@ -1,4 +1,4 @@
-FROM openjdk:15.0-jdk
+FROM openjdk:16.0.2-jdk
 ARG JAR_FILE=target/cql-elm-translation-0.0.1-SNAPSHOT.war
 COPY ${JAR_FILE} app.jar
 
