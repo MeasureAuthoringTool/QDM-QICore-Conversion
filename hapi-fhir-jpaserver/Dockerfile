@@ -1,4 +1,4 @@
-FROM openjdk:15.0-jdk
+FROM amazoncorretto:17-al2-jdk
 ARG JAR_FILE=target/hapi-fhir-jpaserver-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
