@@ -21,7 +21,7 @@
         <hapi.fhir.version>5.0.2</hapi.fhir.version>
         <swagger.version>1.5.4</swagger.version>
         <commons.collections.version>4.4</commons.collections.version>
-        <cqframework.version>1.5.4</cqframework.version>
+        <cqframework.version>3.6.0</cqframework.version>
     </properties>
 
     <dependencies>
