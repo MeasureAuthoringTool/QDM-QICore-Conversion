@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-al2-jdk
+FROM amazoncorretto:21-al2-jdk
 ARG JAR_FILE=target/mapping-services-0.0.1-SNAPSHOT.war
 COPY ${JAR_FILE} app.jar
 
