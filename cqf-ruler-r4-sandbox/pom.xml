@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.opencds.cqf</groupId>
             <artifactId>cqf-ruler-r4</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1</version>
             <type>war</type>
         </dependency>
     </dependencies>
@@ -28,7 +28,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.4.0</version>
                 <configuration>
                     <overlays>
                         <overlay>
